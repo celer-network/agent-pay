@@ -1,0 +1,81 @@
+{
+    "max_dispute_timeout": 15,
+    "min_dispute_timeout": 5,
+    "log_level": "info",
+    "osp_to_osp_open_configs": {
+        "configs": {
+            "0015f5863ddc59ab6610d7b6d73b2eacd43e6b7e": {
+                "tokens_config": {
+                    "0000000000000000000000000000000000000000": {
+                        "min_deposit": "0",
+                        "max_deposit": "10000000000000000000",
+                        "min_deadline_delta": 1,
+                        "max_deadline_delta": 500,
+                        "matching_ratio": 1.0
+                    }
+                }
+            },
+            "00290a43e5b2b151d530845b2d5a818240bc7c70": {
+                "tokens_config": {
+                    "0000000000000000000000000000000000000000": {
+                        "min_deposit": "0",
+                        "max_deposit": "10000000000000000000",
+                        "min_deadline_delta": 1,
+                        "max_deadline_delta": 500,
+                        "matching_ratio": 1.0
+                    }
+                }
+            },
+            "003ea363bccfd7d14285a34a6b1deb862df0bc84": {
+                "tokens_config": {
+                    "0000000000000000000000000000000000000000": {
+                        "min_deposit": "0",
+                        "max_deposit": "10000000000000000000",
+                        "min_deadline_delta": 1,
+                        "max_deadline_delta": 500,
+                        "matching_ratio": 1.0
+                    }
+                }
+            },
+            "00495b55a68b5d5d1b0860b2c9eeb839e7d3a362": {
+                "tokens_config": {
+                    "0000000000000000000000000000000000000000": {
+                        "min_deposit": "0",
+                        "max_deposit": "10000000000000000000",
+                        "min_deadline_delta": 1,
+                        "max_deadline_delta": 500,
+                        "matching_ratio": 1.0
+                    }
+                }
+            },
+            "005e9930a80df77fe686225a95be93548cdfa4b0": {
+                "tokens_config": {
+                    "0000000000000000000000000000000000000000": {
+                        "min_deposit": "0",
+                        "max_deposit": "10000000000000000000",
+                        "min_deadline_delta": 1,
+                        "max_deadline_delta": 500,
+                        "matching_ratio": 1.0
+                    }
+                }
+            }
+        }
+    },
+    "standard_configs": {
+        "config": {
+            "f3ccc0a86f8451ab193011fbb408db2e38eaf10a": {
+                "min_deposit": "0",
+                "max_deposit": "1",
+                "min_deadline_delta": 1,
+                "max_deadline_delta": 500
+            },
+            "0000000000000000000000000000000000000000": {
+                "min_deposit": "0",
+                "max_deposit": "5000000000000000000",
+                "min_deadline_delta": 1,
+                "max_deadline_delta": 500,
+                "matching_ratio": 1.0
+            }
+        }
+    }
+}

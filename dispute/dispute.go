@@ -1,0 +1,59 @@
+// Copyright 2018-2025 Celer Network
+
+package dispute
+
+import (
+	"github.com/celer-network/agent-pay/common"
+	"github.com/celer-network/agent-pay/common/intfs"
+	"github.com/celer-network/agent-pay/route"
+	"github.com/celer-network/agent-pay/storage"
+	"github.com/celer-network/goutils/eth"
+)
+
+// Processor struct implements the actual disputing logic
+type Processor struct {
+	nodeConfig      common.GlobalNodeConfig
+	transactor      *eth.Transactor
+	transactorPool  *eth.TransactorPool
+	routeController *route.Controller
+	monitorService  intfs.MonitorService
+	dal             *storage.DAL
+	isOSP           bool
+}
+
+// NewProcessor creates a new Disputer struct
+func NewProcessor(
+	nodeConfig common.GlobalNodeConfig,
+	transactor *eth.Transactor,
+	transactorPool *eth.TransactorPool,
+	routeController *route.Controller,
+	monitorService intfs.MonitorService,
+	dal *storage.DAL,
+	isOSP bool,
+) *Processor {
+	p := &Processor{
+		nodeConfig:      nodeConfig,
+		transactor:      transactor,
+		transactorPool:  transactorPool,
+		routeController: routeController,
+		monitorService:  monitorService,
+		dal:             dal,
+		isOSP:           isOSP,
+	}
+
+	if isOSP {
+		p.monitorOnAllLedgers()
+	}
+	return p
+}
+
+func (p *Processor) monitorOnAllLedgers() {
+	ledgers := p.nodeConfig.GetAllLedgerContracts()
+
+	for _, contract := range ledgers {
+		if contract != nil {
+			p.monitorPaymentChannelSettleEvent(contract)
+			p.monitorNoncooperativeWithdrawEvent(contract)
+		}
+	}
+}

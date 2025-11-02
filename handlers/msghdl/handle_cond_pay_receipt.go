@@ -1,0 +1,193 @@
+// Copyright 2018-2025 Celer Network
+
+package msghdl
+
+import (
+	"bytes"
+	"errors"
+	"fmt"
+
+	"github.com/celer-network/agent-pay/common"
+	enums "github.com/celer-network/agent-pay/common/structs"
+	"github.com/celer-network/agent-pay/ctype"
+	"github.com/celer-network/agent-pay/entity"
+	"github.com/celer-network/agent-pay/rpc"
+	"github.com/celer-network/agent-pay/utils"
+	"github.com/celer-network/agent-pay/utils/hashlist"
+	"github.com/celer-network/goutils/eth"
+	"github.com/celer-network/goutils/log"
+)
+
+func (h *CelerMsgHandler) HandleCondPayReceipt(frame *common.MsgFrame) error {
+	receipt := frame.Message.GetCondPayReceipt()
+	logEntry := frame.LogEntry
+	if receipt == nil {
+		return common.ErrInvalidMsgType
+	}
+	dst := ctype.Bytes2Addr(frame.Message.GetToAddr())
+	logEntry.Dst = ctype.Addr2Hex(dst)
+	payID := ctype.Bytes2PayID(receipt.PayId)
+	logEntry.PayId = ctype.PayID2Hex(payID)
+
+	// Forward Msg if not destination
+	if dst != h.nodeConfig.GetOnChainAddr() {
+		_, peer, err := h.routeForwarder.LookupIngressChannelOnPay(payID)
+		if err != nil {
+			if (err == common.ErrPayNotFound || err == common.ErrPayNoIngress) && receipt.GetOriginalPayId() != nil {
+				// proceed as crossnet payment
+				logEntry.Xnet.OriginalPayId = ctype.Bytes2Hex(receipt.GetOriginalPayId())
+				peer, err = h.forwardCrossNetPayReceipt(frame)
+				if err != nil {
+					return err
+				}
+			} else {
+				return fmt.Errorf("LookupIngressChannelOnPay err: %w", err)
+			}
+		}
+		logEntry.MsgTo = ctype.Addr2Hex(peer)
+		log.Debugf("Forwarding cond pay receipt to %x, next hop %x", dst, peer)
+		return h.messager.ForwardCelerMsg(peer, frame.Message)
+	}
+
+	pay, payBytes, egstate, found, err := h.dal.GetPayAndEgressState(payID)
+	if err != nil {
+		return fmt.Errorf("GetPayment err %w", err)
+	}
+	if !found {
+		return common.ErrPayNotFound
+	}
+	if egstate == enums.PayState_COSIGNED_PAID || egstate == enums.PayState_COSIGNED_CANCELED {
+		log.Warn(common.ErrPayOffChainResolved, payID.Hex())
+		return nil
+	}
+
+	// verify pay source
+	if ctype.Bytes2Addr(pay.GetSrc()) != h.nodeConfig.GetOnChainAddr() {
+		return common.ErrInvalidPaySrc
+	}
+	var delegateDescription *rpc.DelegationDescription
+	proof := receipt.GetDelegationProof()
+	if proof != nil {
+		description, unmarhsalErr := utils.UnmarshalDelegationDescription(proof)
+		if unmarhsalErr != nil {
+			return unmarhsalErr
+		}
+		delegateDescription = description
+		delegationErr := h.verifyDelegationProof(proof, description, pay, payBytes, receipt)
+		logEntry.DelegationDescription = description
+		if delegationErr != nil {
+			return delegationErr
+		}
+	} else {
+		// Check signature of receipt signed by destination
+		if !eth.IsSignatureValid(ctype.Bytes2Addr(pay.GetDest()), payBytes, receipt.PayDestSig) {
+			return errors.New("RECEIPT_NOT_SIGNED_BY_DEST")
+		}
+	}
+
+	// Return secret
+	// The first condition is always HashLock
+	if len(pay.GetConditions()) == 0 {
+		log.Warnln(common.ErrZeroConditions, payID.Hex())
+		return nil
+	}
+	secretHash := ctype.Bytes2Hex(pay.Conditions[0].GetHashLock())
+	secret, found, err := h.dal.GetSecret(secretHash)
+	if err != nil {
+		return fmt.Errorf("GetSecret err %w hash %x", err, secretHash)
+	}
+	if !found {
+		return fmt.Errorf("%w, hash %x", common.ErrSecretNotRevealed, secretHash)
+	}
+	secretBytes := ctype.Hex2Bytes(secret)
+	secretMsg := &rpc.RevealSecret{
+		PayId:  receipt.PayId,
+		Secret: secretBytes,
+	}
+	if receipt.GetOriginalPayId() != nil {
+		secretMsg.OriginalPayId = payID.Bytes()
+	}
+	toAddr := pay.GetDest()
+	if delegateDescription != nil {
+		toAddr = delegateDescription.GetDelegator()
+		err = h.dal.InsertPayDelegator(
+			payID, ctype.Bytes2Addr(pay.GetDest()), ctype.Bytes2Addr(delegateDescription.GetDelegator()))
+		if err != nil {
+			return fmt.Errorf("InsertPayDelegator err %w", err)
+		}
+	}
+	celerMsg := &rpc.CelerMsg{
+		ToAddr: toAddr,
+		Message: &rpc.CelerMsg_RevealSecret{
+			RevealSecret: secretMsg,
+		},
+	}
+	err = h.streamWriter.WriteCelerMsg(frame.PeerAddr, celerMsg)
+	if err != nil {
+		return fmt.Errorf("WriteCelerMsg err %w", err)
+	}
+
+	return nil
+}
+
+func (h *CelerMsgHandler) verifyDelegationProof(
+	proof *rpc.DelegationProof,
+	description *rpc.DelegationDescription,
+	pay *entity.ConditionalPay,
+	payBytes []byte,
+	receipt *rpc.CondPayReceipt) error {
+	if ctype.Bytes2Addr(description.GetDelegatee()) != ctype.Bytes2Addr(pay.GetDest()) {
+		return errors.New("destination is NOT delegatee in delegation description")
+	}
+	tokenAddr := utils.GetTokenAddr(pay.GetTransferFunc().GetMaxTransfer().GetToken())
+	if !hashlist.Exist(description.GetTokenToDelegate(), tokenAddr.Bytes()) {
+		return errors.New("token type not approved by destination to be delegated")
+	}
+	if description.GetExpiresAfterBlock() < h.monitorService.GetCurrentBlockNumber().Int64() {
+		return errors.New("description expired")
+	}
+	if !eth.IsSignatureValid(ctype.Bytes2Addr(description.GetDelegator()), payBytes, receipt.GetPayDelegatorSig()) {
+		return errors.New("paybytes not signed by delegator")
+	}
+	if len(pay.GetConditions()) != 1 || pay.GetConditions()[0].GetConditionType() != entity.ConditionType_HASH_LOCK {
+		return errors.New("delegating pay having more than HL condition")
+	}
+	if bytes.Compare(description.GetDelegatee(), proof.GetSigner()) != 0 {
+		return errors.New("delegatee in description not same as signer in proof")
+	}
+	return nil
+}
+
+func (h *CelerMsgHandler) forwardCrossNetPayReceipt(frame *common.MsgFrame) (ctype.Addr, error) {
+	logEntry := frame.LogEntry
+	receipt := frame.Message.GetCondPayReceipt()
+	logEntry.Xnet.OriginalPayId = ctype.Bytes2Hex(receipt.GetOriginalPayId())
+
+	payID, state, bridgeAddr, found, err :=
+		h.dal.GetCrossNetInfoByOrignalPayID(ctype.Bytes2PayID(receipt.GetOriginalPayId()))
+	if err != nil {
+		return ctype.ZeroAddr, fmt.Errorf("GetCrossNetInfo err %w", err)
+	}
+	if !found {
+		return ctype.ZeroAddr, fmt.Errorf("GetCrossNetInfo %w", common.ErrPayNotFound)
+	}
+	logEntry.PayId = ctype.PayID2Hex(payID)
+
+	if state == enums.CrossNetPay_INGRESS {
+		return bridgeAddr, nil
+	} else if state == enums.CrossNetPay_EGRESS {
+		_, peer, err := h.routeForwarder.LookupIngressChannelOnPay(payID)
+		if err != nil {
+			return ctype.ZeroAddr, fmt.Errorf("LookupIngressChannelOnPay err: %w", err)
+		}
+		receipt.PayId = payID.Bytes()
+		frame.Message = &rpc.CelerMsg{
+			ToAddr: frame.Message.GetToAddr(),
+			Message: &rpc.CelerMsg_CondPayReceipt{
+				CondPayReceipt: receipt,
+			},
+		}
+		return peer, nil
+	}
+	return ctype.ZeroAddr, fmt.Errorf("invalid cross net pay state %d", state)
+}

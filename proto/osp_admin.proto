@@ -1,0 +1,224 @@
+// Copyright 2018-2025 Celer Network
+
+syntax = "proto3";
+package rpc;
+option go_package = "github.com/celer-network/agent-pay/rpc";
+
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+import "entity.proto";
+import "message.proto";
+
+// Next Tag: 3
+message RegisterStreamRequest {
+  string peer_rpc_address = 1;
+  bytes peer_eth_address = 2;
+}
+
+// Next Tag: 5
+message SendTokenRequest {
+  string dst_addr = 1;
+  string amt_wei = 2;
+  string token_addr = 3;
+  google.protobuf.Any note = 4;
+  uint64 dst_net_id = 5;
+}
+
+// Next Tag: 4
+message SendTokenResponse {
+  int32 status = 1;
+  string error = 2;
+  string pay_id = 3;
+}
+
+// Next Tag: 6
+message DepositRequest {
+  // payment channel peer address
+  string peer_addr = 1;
+  // payment channel token address
+  string token_addr = 2;
+  // deposit to channel peer or self (default: false, to self)
+  bool to_peer = 3;
+  // deposit amount in wei
+  string amt_wei = 4;
+  // time (in seconds) allowed for OSP to wait and batch requests before submitting the on-chain transaction
+  uint64 max_wait_s = 5;
+}
+
+// Next Tag: 4
+message DepositResponse {
+  int32 status = 1;
+  string error = 2;
+  string deposit_id = 3;
+}
+
+// Next Tag: 2
+message QueryDepositRequest {
+  string deposit_id = 1;
+}
+
+enum DepositState {
+  Deposit_NOT_FOUND = 0;
+  Deposit_QUEUED = 1;
+  Deposit_SUBMITTED = 2;
+  Deposit_SUCCEEDED = 3;
+  Deposit_FAILED = 4;
+}
+
+// Next Tag: 3
+message QueryDepositResponse {
+  DepositState deposit_state = 1;
+  string error = 2;
+}
+
+// Admin request to ask the receiving osp to open a channel with peer.
+// Next tag: 6
+message OspOpenChannelRequest {
+  // Peer to open channel with the osp.
+  bytes peer_eth_address = 1;
+  // ETH or ERC20
+  entity.TokenType token_type = 2;
+  // where the token is defined.
+  bytes token_address = 3;
+  // Deposit from myself in wei in decimal
+  string self_deposit_amt_wei = 4;
+  // Deposit asking to peer in wei in decimal
+  string peer_deposit_amt_wei = 5;
+}
+
+// Admin request to build routing table.
+// Next tag: 2
+message BuildRoutingTableRequest {
+  bytes token_address = 1;
+}
+
+// Admin request to clear expired pays.
+// Next tag: 2
+message ClearExpiredPaysRequest {
+  bytes token_address = 1;
+}
+
+// Admin request to confirm on-chain resolved pays.
+// Next tag: 2
+message ConfirmOnChainResolvedPaysRequest {
+  bytes token_address = 1;
+}
+
+message TokenCidPair {
+  string token_address = 1;
+  string cid = 2;
+}
+
+message PeerOsp {
+  // eth addr of peer osp
+  string osp_address = 1;
+  // channels with the peer osp
+  repeated TokenCidPair token_cid_pairs = 2;
+  // last update timestamp
+  uint64 update_ts = 3;
+}
+
+// Admin request to list all peer osps.
+// Next tag: 2
+message PeerOspsResponse {
+  // info of peer osps.
+  repeated PeerOsp peer_osps = 1;
+}
+
+// cooperative withdraw/settle channel request
+message ChannelOpRequest {
+  string cid = 1; // hex string of channel id, accept both with and w/o 0x prefix
+  string wei = 2; // decimal string of withdraw amount in wei, if not specified, will withdraw all free balance
+}
+
+message ChannelOpResponse {
+  int32 status = 1; // 0 means success
+  string error = 2;
+}
+
+service Admin {
+  // ConfirmOnChainResolvedPaysWithPeerOsps instructs Osp to confirm on-chain resolved pays between itself and connected osps.
+  rpc ConfirmOnChainResolvedPaysWithPeerOsps(ConfirmOnChainResolvedPaysRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/peer/confirm_onchain_resolved_pays"
+      body: "*"
+    };
+  }
+  // ClearExpiredPaysWithPeerOsps instructs Osp to clear expired pays between itself and connected osps.
+  rpc ClearExpiredPaysWithPeerOsps(ClearExpiredPaysRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/peer/clear_expired_pays"
+      body: "*"
+    };
+  }
+  // BuildRoutingTable instructs Osp to build routing table.
+  rpc BuildRoutingTable(BuildRoutingTableRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/route/build"
+      body: "*"
+    };
+  }
+  // RecvBcastRoutingInfo gives the OSP (listener & router) the incoming
+  // broadcast routing information (OSP server forwarding to the listener).
+  rpc RecvBcastRoutingInfo(RoutingRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/route/recv_bcast"
+      body: "*"
+    };
+  }
+  // GetPeerOsps returns info of all peer osps.
+  rpc GetPeerOsps(google.protobuf.Empty) returns (PeerOspsResponse) {
+    option (google.api.http) = {
+      post: "/admin/peer/peer_osps"
+      body: "*"
+    };
+  }
+  // OspOpenChannel instructs Osp to open a state channel with a peer described in request.
+  rpc OspOpenChannel(OspOpenChannelRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/peer/openchannel"
+      body: "*"
+    };
+  }
+  // SendToken instructs the OSP to send token specified in SendTokenRequest.
+  rpc SendToken(SendTokenRequest) returns (SendTokenResponse) {
+    option (google.api.http) = {
+      post: "/admin/sendtoken"
+      body: "*"
+    };
+  }
+  // Deposit instructs the OSP to deposit token specified in DepositRequest.
+  rpc Deposit(DepositRequest) returns (DepositResponse) {
+    option (google.api.http) = {
+      post: "/admin/deposit"
+      body: "*"
+    };
+  }
+  // QueryDeposit asks OSP about the deposit status
+  rpc QueryDeposit(QueryDepositRequest) returns (QueryDepositResponse) {
+    option (google.api.http) = {
+      post: "/admin/query_deposit"
+      body: "*"
+    };
+  }
+  // RegisterStream instructs the OSP to connect with other osp specified in RegisterStreamRequest.
+  rpc RegisterStream(RegisterStreamRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/peer/registerstream"
+      body: "*"
+    };
+  }
+  rpc CooperativeWithdraw(ChannelOpRequest) returns (ChannelOpResponse) {
+    option (google.api.http) = {
+      post: "/admin/channel/coopwithdraw"
+      body: "*"
+    };
+  }
+  rpc CooperativeSettle(ChannelOpRequest) returns (ChannelOpResponse) {
+    option (google.api.http) = {
+      post: "/admin/channel/coopsettle"
+      body: "*"
+    };
+  }
+}
