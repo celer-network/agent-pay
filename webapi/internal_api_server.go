@@ -86,56 +86,11 @@ func (s *InternalApiServer) InstantiateTrustedPaymentChannel(
 
 func (s *InternalApiServer) DepositNonBlocking(
 	context context.Context, request *rpc.DepositOrWithdrawRequest) (*rpc.DepositOrWithdrawJob, error) {
-	cb := &depositCallback{
-		apiClient: s.apiClient,
-		txHash:    make(chan string),
-		err:       make(chan string),
-	}
-	var err error
-	var jobID string
-	tokenInfo := request.TokenInfo
-	switch entity.TokenType(tokenInfo.TokenType) {
-	case entity.TokenType_ETH:
-		jobID, err = s.apiClient.DepositETH(request.Amount, cb)
-	case entity.TokenType_ERC20:
-		jobID, err = s.apiClient.DepositERC20(
-			&celersdk.Token{Erctype: "ERC20", Addr: tokenInfo.TokenAddress},
-			request.Amount,
-			cb)
-	default:
-		err = errors.New("Unknown token type")
-	}
-	if err != nil {
-		return nil, err
-	}
-	return &rpc.DepositOrWithdrawJob{JobId: jobID}, nil
+	return s.ApiServer.DepositNonBlocking(context, request)
 }
 
 func (s *InternalApiServer) CooperativeWithdrawNonBlocking(
 	context context.Context,
 	request *rpc.DepositOrWithdrawRequest) (*rpc.DepositOrWithdrawJob, error) {
-	cb := &withdrawCallback{
-		apiClient: s.apiClient,
-		txHash:    make(chan string),
-		err:       make(chan string),
-	}
-
-	var err error
-	var jobID string
-	tokenInfo := request.TokenInfo
-	switch entity.TokenType(tokenInfo.TokenType) {
-	case entity.TokenType_ETH:
-		jobID, err = s.apiClient.WithdrawETH(request.Amount, cb)
-	case entity.TokenType_ERC20:
-		jobID, err = s.apiClient.WithdrawERC20(
-			&celersdk.Token{Erctype: "ERC20", Addr: tokenInfo.TokenAddress},
-			request.Amount,
-			cb)
-	default:
-		err = errors.New("Unknown token type")
-	}
-	if err != nil {
-		return nil, err
-	}
-	return &rpc.DepositOrWithdrawJob{JobId: jobID}, nil
+	return s.ApiServer.CooperativeWithdrawNonBlocking(context, request)
 }

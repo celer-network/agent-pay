@@ -8,8 +8,11 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"math/big"
+	"net"
 	"os"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -117,18 +120,42 @@ func GetClientTlsOption() grpc.DialOption {
 	return grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(cpool, ""))
 }
 
+func IsPermissiveClientTLS() bool {
+	v := os.Getenv("CELER_INSECURE_TLS")
+	return v == "1" || strings.EqualFold(v, "true")
+}
+
 // GetClientTlsOptionPermissive returns insecure transport credentials when the
 // environment variable CELER_INSECURE_TLS is set ("1"/"true"). This is useful
 // for local e2e tests where the server uses a self-signed localhost certificate
 // that may not chain to CAs available to the client.
 func GetClientTlsOptionPermissive() grpc.DialOption {
-	v := os.Getenv("CELER_INSECURE_TLS")
-	if v == "1" || v == "true" || v == "TRUE" {
+	if IsPermissiveClientTLS() {
 		// Connect to a TLS server but skip certificate verification.
 		// This is only for local e2e where server uses a self-signed localhost cert.
 		return grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{InsecureSkipVerify: true}))
 	}
 	return GetClientTlsOption()
+}
+
+func IsLoopbackTarget(target string) bool {
+	host := target
+	if parsedHost, _, err := net.SplitHostPort(target); err == nil {
+		host = parsedHost
+	}
+	host = strings.Trim(host, "[]")
+	if strings.EqualFold(host, "localhost") {
+		return true
+	}
+	ip := net.ParseIP(host)
+	return ip != nil && ip.IsLoopback()
+}
+
+func WrapLocalTLSDialError(target string, err error) error {
+	if err == nil || IsPermissiveClientTLS() || !IsLoopbackTarget(target) {
+		return err
+	}
+	return fmt.Errorf("%w; local TLS hint: %s uses the built-in self-signed localhost certificate, set CELER_INSECURE_TLS=1 on the dialing process or configure a trusted cert via -tlscert/-tlskey", err, target)
 }
 
 // GetClientTlsConfig returns tls.Config with system and celerCA, for https interaction

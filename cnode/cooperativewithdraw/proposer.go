@@ -352,6 +352,18 @@ func (p *Processor) resumeJobs() error {
 }
 
 func (p *Processor) resumeJob(withdrawHash string) {
+	hasJob, err := p.dal.HasCooperativeWithdrawJob(withdrawHash)
+	if err != nil {
+		p.maybeFireErrCallbackWithWithdrawHash(
+			withdrawHash, fmt.Sprintf("Cannot retrieve cooperative withdraw job %s, err %s", withdrawHash, err))
+		return
+	}
+	if !hasJob {
+		p.maybeFireErrCallbackWithWithdrawHash(
+			withdrawHash,
+			fmt.Sprintf("cooperative withdraw job %s not found; WebApi.CooperativeWithdraw blocks until completion and removes the job before returning, so use WebApi.CooperativeWithdrawNonBlocking or InternalWebApi.CooperativeWithdrawNonBlocking when you want to start a job and later monitor it", withdrawHash))
+		return
+	}
 	job, err := p.dal.GetCooperativeWithdrawJob(withdrawHash)
 	if err != nil {
 		p.maybeFireErrCallbackWithWithdrawHash(

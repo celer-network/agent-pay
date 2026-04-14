@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/celer-network/agent-pay/ctype"
@@ -15,12 +16,9 @@ import (
 )
 
 var auto = flag.Bool("auto", false, "automatically add/approve fund and register osps when setup")
+var outRootDir = flag.String("outroot", "/tmp/celer_manual_test/", "output root dir for generated profiles, stores, and local chain data")
 
 const (
-	outRootDir = "/tmp/celer_manual_test/"
-	profileDir = outRootDir + "profile/"
-	storeDir   = outRootDir + "store/" // OSP SQLite store path is `storeDir/ospAddr`
-
 	osp1Addr = "0015f5863ddc59ab6610d7b6d73b2eacd43e6b7e"
 	osp2Addr = "00290a43e5b2b151d530845b2d5a818240bc7c70"
 	osp3Addr = "003ea363bccfd7d14285a34a6b1deb862df0bc84"
@@ -54,19 +52,32 @@ const (
 	osp5Keystore = "../../testing/env/keystore/osp5.json"
 )
 
+func normalizeOutRootDir(dir string) string {
+	if dir == "" {
+		dir = "/tmp/celer_manual_test/"
+	}
+	if !strings.HasSuffix(dir, "/") {
+		dir += "/"
+	}
+	return dir
+}
+
 func main() {
 	flag.Parse()
+	rootDir := normalizeOutRootDir(*outRootDir)
+	profileDir := rootDir + "profile/"
+	storeDir := rootDir + "store/"
 	// mkdir out root
-	err := os.MkdirAll(outRootDir, os.ModePerm)
+	err := os.MkdirAll(rootDir, os.ModePerm)
 	e2e.CheckError(err, "creating root dir")
-	fmt.Println("Using folder:", outRootDir)
+	fmt.Println("Using folder:", rootDir)
 	os.MkdirAll(profileDir, os.ModePerm)
 	os.MkdirAll(storeDir, os.ModePerm)
 	agentPayDir := os.Getenv("AGENTPAY") + "/"
 	tf.SetEnvDir(agentPayDir + "testing/env/")
-	tf.SetOutRootDir(outRootDir)
+	tf.SetOutRootDir(rootDir)
 	e2e.SetEnvDir(agentPayDir + "testing/env/")
-	e2e.SetOutRootDir(outRootDir)
+	e2e.SetOutRootDir(rootDir)
 	ethProc, err := e2e.StartChain()
 	defer ethProc.Kill()
 	time.Sleep(3 * time.Second)
@@ -122,10 +133,7 @@ func advanceBlocks() {
 		ticker.Stop()
 	}()
 
-	for {
-		select {
-		case <-ticker.C:
-			tf.AdvanceBlock()
-		}
+	for range ticker.C {
+		tf.AdvanceBlock()
 	}
 }

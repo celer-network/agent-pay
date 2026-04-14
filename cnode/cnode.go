@@ -144,7 +144,7 @@ func (c *CNode) RegisterStream(peerAddr ctype.Addr, peerHTTPTarget string) error
 	}
 	conn, err := grpc.Dial(peerHTTPTarget, c.dialOpts(*dropMsg)...)
 	if err != nil {
-		return fmt.Errorf("grpcDial %s failed: %w", peerHTTPTarget, err)
+		return utils.WrapLocalTLSDialError(peerHTTPTarget, fmt.Errorf("grpcDial %s failed: %w", peerHTTPTarget, err))
 	}
 	c.connManager.AddConnection(peerAddr, conn)
 	dialClient := rpc.NewRpcClient(conn)
@@ -931,13 +931,10 @@ func (c *CNode) runOspRoutineJob() {
 		clearPayTicker.Stop()
 	}()
 
-	for {
-		select {
-		case <-clearPayTicker.C:
-			err := c.ClearPaymentsWithPeerOsps()
-			if err != nil {
-				log.Error(err)
-			}
+	for range clearPayTicker.C {
+		err := c.ClearPaymentsWithPeerOsps()
+		if err != nil {
+			log.Error(err)
 		}
 	}
 }

@@ -1,17 +1,19 @@
 #!/bin/sh
 set -e
 
+MANUAL_ROOT="${AGENTPAY_MANUAL_ROOT:-/tmp/celer_manual_test}"
+
 start_db() {
     echo "start cockroach db"
     cockroach start --insecure \
         --listen-addr=localhost:26257 \
-        --store=path=/tmp/celer_manual_test/cockroach &
+        --store=path="${MANUAL_ROOT}/cockroach" &
 }
 
 stop_db() {
     echo "stop cockroach db"
     pkill cockroach
-    rm -rf /tmp/celer_manual_test/cockroach
+    rm -rf "${MANUAL_ROOT}/cockroach"
 }
 
 setup_osp_1() {

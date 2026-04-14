@@ -704,6 +704,69 @@ func (m *SendConditionalPaymentRequest) GetNote() *any.Any {
 	return nil
 }
 
+type SendTokenRequest struct {
+	TokenInfo            *TokenInfo `protobuf:"bytes,1,opt,name=token_info,json=tokenInfo,proto3" json:"token_info,omitempty"`
+	Amount               string     `protobuf:"bytes,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	Destination          string     `protobuf:"bytes,3,opt,name=destination,proto3" json:"destination,omitempty"`
+	Note                 *any.Any   `protobuf:"bytes,4,opt,name=note,proto3" json:"note,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
+}
+
+func (m *SendTokenRequest) Reset()         { *m = SendTokenRequest{} }
+func (m *SendTokenRequest) String() string { return proto.CompactTextString(m) }
+func (*SendTokenRequest) ProtoMessage()    {}
+func (*SendTokenRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4cedb4ba9fba0c04, []int{44}
+}
+
+func (m *SendTokenRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SendTokenRequest.Unmarshal(m, b)
+}
+func (m *SendTokenRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SendTokenRequest.Marshal(b, m, deterministic)
+}
+func (m *SendTokenRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SendTokenRequest.Merge(m, src)
+}
+func (m *SendTokenRequest) XXX_Size() int {
+	return xxx_messageInfo_SendTokenRequest.Size(m)
+}
+func (m *SendTokenRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_SendTokenRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SendTokenRequest proto.InternalMessageInfo
+
+func (m *SendTokenRequest) GetTokenInfo() *TokenInfo {
+	if m != nil {
+		return m.TokenInfo
+	}
+	return nil
+}
+
+func (m *SendTokenRequest) GetAmount() string {
+	if m != nil {
+		return m.Amount
+	}
+	return ""
+}
+
+func (m *SendTokenRequest) GetDestination() string {
+	if m != nil {
+		return m.Destination
+	}
+	return ""
+}
+
+func (m *SendTokenRequest) GetNote() *any.Any {
+	if m != nil {
+		return m.Note
+	}
+	return nil
+}
+
 type PaymentID struct {
 	PaymentId            string   `protobuf:"bytes,1,opt,name=payment_id,json=paymentId,proto3" json:"payment_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -2126,6 +2189,7 @@ func init() {
 	proto.RegisterType((*FreeBalance)(nil), "webrpc.FreeBalance")
 	proto.RegisterType((*Condition)(nil), "webrpc.Condition")
 	proto.RegisterType((*SendConditionalPaymentRequest)(nil), "webrpc.SendConditionalPaymentRequest")
+	proto.RegisterType((*SendTokenRequest)(nil), "webrpc.SendTokenRequest")
 	proto.RegisterType((*PaymentID)(nil), "webrpc.PaymentID")
 	proto.RegisterType((*PaymentInfo)(nil), "webrpc.PaymentInfo")
 	proto.RegisterType((*OutgoingPaymentInfo)(nil), "webrpc.OutgoingPaymentInfo")
@@ -2339,11 +2403,14 @@ type WebApiClient interface {
 	SetDelegation(ctx context.Context, in *SetDelegationRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	OpenPaymentChannel(ctx context.Context, in *OpenPaymentChannelRequest, opts ...grpc.CallOption) (*ChannelID, error)
 	Deposit(ctx context.Context, in *DepositOrWithdrawRequest, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error)
+	DepositNonBlocking(ctx context.Context, in *DepositOrWithdrawRequest, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error)
 	MonitorDepositJob(ctx context.Context, in *DepositOrWithdrawJob, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error)
 	CooperativeWithdraw(ctx context.Context, in *DepositOrWithdrawRequest, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error)
+	CooperativeWithdrawNonBlocking(ctx context.Context, in *DepositOrWithdrawRequest, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error)
 	MonitorCooperativeWithdrawJob(ctx context.Context, in *DepositOrWithdrawJob, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error)
 	GetBalance(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*GetBalanceResponse, error)
 	GetPeerFreeBalance(ctx context.Context, in *GetPeerFreeBalanceRequest, opts ...grpc.CallOption) (*FreeBalance, error)
+	SendToken(ctx context.Context, in *SendTokenRequest, opts ...grpc.CallOption) (*PaymentID, error)
 	SendConditionalPayment(ctx context.Context, in *SendConditionalPaymentRequest, opts ...grpc.CallOption) (*PaymentID, error)
 	SubscribeIncomingPayments(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (WebApi_SubscribeIncomingPaymentsClient, error)
 	// TODO(mzhou): Refine the outgoing payment API.
@@ -2435,6 +2502,15 @@ func (c *webApiClient) Deposit(ctx context.Context, in *DepositOrWithdrawRequest
 	return out, nil
 }
 
+func (c *webApiClient) DepositNonBlocking(ctx context.Context, in *DepositOrWithdrawRequest, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error) {
+	out := new(DepositOrWithdrawJob)
+	err := c.cc.Invoke(ctx, "/webrpc.WebApi/DepositNonBlocking", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *webApiClient) MonitorDepositJob(ctx context.Context, in *DepositOrWithdrawJob, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error) {
 	out := new(DepositOrWithdrawJob)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/MonitorDepositJob", in, out, opts...)
@@ -2447,6 +2523,15 @@ func (c *webApiClient) MonitorDepositJob(ctx context.Context, in *DepositOrWithd
 func (c *webApiClient) CooperativeWithdraw(ctx context.Context, in *DepositOrWithdrawRequest, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error) {
 	out := new(DepositOrWithdrawJob)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/CooperativeWithdraw", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *webApiClient) CooperativeWithdrawNonBlocking(ctx context.Context, in *DepositOrWithdrawRequest, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error) {
+	out := new(DepositOrWithdrawJob)
+	err := c.cc.Invoke(ctx, "/webrpc.WebApi/CooperativeWithdrawNonBlocking", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2474,6 +2559,15 @@ func (c *webApiClient) GetBalance(ctx context.Context, in *TokenInfo, opts ...gr
 func (c *webApiClient) GetPeerFreeBalance(ctx context.Context, in *GetPeerFreeBalanceRequest, opts ...grpc.CallOption) (*FreeBalance, error) {
 	out := new(FreeBalance)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/GetPeerFreeBalance", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *webApiClient) SendToken(ctx context.Context, in *SendTokenRequest, opts ...grpc.CallOption) (*PaymentID, error) {
+	out := new(PaymentID)
+	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SendToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2942,11 +3036,14 @@ type WebApiServer interface {
 	SetDelegation(context.Context, *SetDelegationRequest) (*empty.Empty, error)
 	OpenPaymentChannel(context.Context, *OpenPaymentChannelRequest) (*ChannelID, error)
 	Deposit(context.Context, *DepositOrWithdrawRequest) (*DepositOrWithdrawJob, error)
+	DepositNonBlocking(context.Context, *DepositOrWithdrawRequest) (*DepositOrWithdrawJob, error)
 	MonitorDepositJob(context.Context, *DepositOrWithdrawJob) (*DepositOrWithdrawJob, error)
 	CooperativeWithdraw(context.Context, *DepositOrWithdrawRequest) (*DepositOrWithdrawJob, error)
+	CooperativeWithdrawNonBlocking(context.Context, *DepositOrWithdrawRequest) (*DepositOrWithdrawJob, error)
 	MonitorCooperativeWithdrawJob(context.Context, *DepositOrWithdrawJob) (*DepositOrWithdrawJob, error)
 	GetBalance(context.Context, *TokenInfo) (*GetBalanceResponse, error)
 	GetPeerFreeBalance(context.Context, *GetPeerFreeBalanceRequest) (*FreeBalance, error)
+	SendToken(context.Context, *SendTokenRequest) (*PaymentID, error)
 	SendConditionalPayment(context.Context, *SendConditionalPaymentRequest) (*PaymentID, error)
 	SubscribeIncomingPayments(*empty.Empty, WebApi_SubscribeIncomingPaymentsServer) error
 	// TODO(mzhou): Refine the outgoing payment API.
@@ -3070,6 +3167,24 @@ func _WebApi_Deposit_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WebApi_DepositNonBlocking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DepositOrWithdrawRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WebApiServer).DepositNonBlocking(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/webrpc.WebApi/DepositNonBlocking",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WebApiServer).DepositNonBlocking(ctx, req.(*DepositOrWithdrawRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _WebApi_MonitorDepositJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DepositOrWithdrawJob)
 	if err := dec(in); err != nil {
@@ -3124,6 +3239,24 @@ func _WebApi_MonitorCooperativeWithdrawJob_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WebApi_CooperativeWithdrawNonBlocking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DepositOrWithdrawRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WebApiServer).CooperativeWithdrawNonBlocking(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/webrpc.WebApi/CooperativeWithdrawNonBlocking",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WebApiServer).CooperativeWithdrawNonBlocking(ctx, req.(*DepositOrWithdrawRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _WebApi_GetBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TokenInfo)
 	if err := dec(in); err != nil {
@@ -3156,6 +3289,24 @@ func _WebApi_GetPeerFreeBalance_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(WebApiServer).GetPeerFreeBalance(ctx, req.(*GetPeerFreeBalanceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WebApi_SendToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WebApiServer).SendToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/webrpc.WebApi/SendToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WebApiServer).SendToken(ctx, req.(*SendTokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3964,12 +4115,20 @@ var _WebApi_serviceDesc = grpc.ServiceDesc{
 			Handler:    _WebApi_Deposit_Handler,
 		},
 		{
+			MethodName: "DepositNonBlocking",
+			Handler:    _WebApi_DepositNonBlocking_Handler,
+		},
+		{
 			MethodName: "MonitorDepositJob",
 			Handler:    _WebApi_MonitorDepositJob_Handler,
 		},
 		{
 			MethodName: "CooperativeWithdraw",
 			Handler:    _WebApi_CooperativeWithdraw_Handler,
+		},
+		{
+			MethodName: "CooperativeWithdrawNonBlocking",
+			Handler:    _WebApi_CooperativeWithdrawNonBlocking_Handler,
 		},
 		{
 			MethodName: "MonitorCooperativeWithdrawJob",
@@ -3982,6 +4141,10 @@ var _WebApi_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPeerFreeBalance",
 			Handler:    _WebApi_GetPeerFreeBalance_Handler,
+		},
+		{
+			MethodName: "SendToken",
+			Handler:    _WebApi_SendToken_Handler,
 		},
 		{
 			MethodName: "SendConditionalPayment",

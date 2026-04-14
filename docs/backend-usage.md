@@ -22,6 +22,7 @@ For the manual scripts, set:
 
 ```bash
 export AGENTPAY=$PWD
+export AGENTPAY_MANUAL_ROOT=${AGENTPAY_MANUAL_ROOT:-/tmp/celer_manual_test}
 ```
 
 Useful assets already in the repo:
@@ -110,7 +111,7 @@ This does more than just start geth. It also:
 
 - deploys the ledger, resolver, registry, wallet, and ERC20 contracts
 - funds test accounts
-- writes OSP profiles under `/tmp/celer_manual_test/profile/`
+- writes OSP profiles under `$AGENTPAY_MANUAL_ROOT/profile/`
 
 See [test/manual/setup.go](../test/manual/setup.go) and [test/manual/sample_profile.json](../test/manual/sample_profile.json).
 
@@ -119,11 +120,11 @@ See [test/manual/setup.go](../test/manual/setup.go) and [test/manual/sample_prof
 From the repo root or from `test/manual` with the built CLI available:
 
 ```bash
-./osp-cli -profile /tmp/celer_manual_test/profile/o1_profile.json \
+./osp-cli -profile $AGENTPAY_MANUAL_ROOT/profile/o1_profile.json \
   -ks $AGENTPAY/testing/env/keystore/osp1.json \
   -ethpooldeposit -amount 10000 -register -nopassword
 
-./osp-cli -profile /tmp/celer_manual_test/profile/o2_profile.json \
+./osp-cli -profile $AGENTPAY_MANUAL_ROOT/profile/o2_profile.json \
   -ks $AGENTPAY/testing/env/keystore/osp2.json \
   -ethpooldeposit -amount 10000 -register -nopassword
 ```
@@ -138,6 +139,8 @@ SQLite-backed example:
 ./run_osp.sh 1
 ./run_osp.sh 2
 ```
+
+For localhost manual runs, `test/manual/run_osp.sh` defaults `CELER_INSECURE_TLS=1` so inter-OSP dials work with the built-in self-signed localhost certificate.
 
 CockroachDB-backed example:
 
@@ -194,16 +197,18 @@ Example command from the repo root:
 
 ```bash
 go run ./server/server.go \
-  -profile /tmp/celer_manual_test/profile/o1_profile.json \
+  -profile $AGENTPAY_MANUAL_ROOT/profile/o1_profile.json \
   -ks ./testing/env/keystore/osp1.json \
   -port 10001 \
   -adminrpc localhost:11001 \
   -adminweb localhost:8190 \
   -svrname o1 \
-  -storedir /tmp/celer_manual_test/store \
+  -storedir $AGENTPAY_MANUAL_ROOT/store \
   -rtc ./test/manual/rt_config.json \
   -nopassword
 ```
+
+If this process will dial localhost peers using the built-in localhost certificate, prefix the command with `CELER_INSECURE_TLS=1` unless you are using `test/manual/run_osp.sh`, which already does that for local manual runs.
 
 For a CockroachDB-backed node, replace `-storedir` with `-storesql`:
 
@@ -317,6 +322,15 @@ The standard client flow is:
 4. Deposit, withdraw, and send payments through the SDK/client APIs.
 
 These clients still use the same backend protocol pipeline and storage model described in the implementation guide.
+
+## WebAPI Notes
+
+- `WebApi.SendToken` is the explicit alias for sending a payment without caller-specified app conditions.
+- `WebApi.SendConditionalPayment` remains the lower-level payment API when you want to attach app-level conditions, or when you want to pass an empty `conditions` list explicitly.
+- Even with empty `conditions`, the runtime may still prepend an internal hash-lock condition for non-direct pays.
+- Public `WebApi.Deposit` and `WebApi.CooperativeWithdraw` are blocking calls that return after the transaction is mined.
+- `WebApi.DepositNonBlocking` and `WebApi.CooperativeWithdrawNonBlocking` start jobs that can be tracked with `MonitorDepositJob` and `MonitorCooperativeWithdrawJob` on the public surface.
+- The matching `InternalWebApi` non-blocking variants remain available for internal callers.
 
 ## Practical Notes
 
