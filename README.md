@@ -9,6 +9,7 @@ Celer AgentPay state channel network is a generic framework of state channels wi
 Backend documentation for this repo is collected under [docs/](./docs/README.md):
 
 - [Docs index](./docs/README.md)
+- [Coding agent entry point](./AGENTS.md)
 - [Backend implementation and design](./docs/backend-implementation.md)
 - [Backend usage guide](./docs/backend-usage.md)
 - [Backend troubleshooting and operations](./docs/backend-troubleshooting.md)
