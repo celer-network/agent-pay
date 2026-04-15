@@ -154,10 +154,10 @@ func (c *CNode) multiServerForwarder(dest ctype.Addr, retry bool, msg interface{
 		Dest: ctype.Addr2Hex(dest),
 	}
 
-	switch msg.(type) {
+	switch m := msg.(type) {
 
 	case *rpc.CelerMsg:
-		req.Message = msg.(*rpc.CelerMsg)
+		req.Message = m
 
 	default:
 		err := errors.New("multiServerForwarder: invalid message type")

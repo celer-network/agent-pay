@@ -96,12 +96,16 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	chainID, err := client.NetworkID(context.Background())
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	ksFile, err := os.Open(*ks)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	auth, err := bind.NewTransactor(ksFile, *password)
+	auth, err := bind.NewTransactorWithChainID(ksFile, *password, chainID)
 	if err != nil {
 		log.Fatalln(err)
 	}

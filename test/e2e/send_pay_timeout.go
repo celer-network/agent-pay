@@ -272,8 +272,4 @@ func sendPayTimeout(t *testing.T, tokenType entity.TokenType, tokenAddr string) 
 		t.Error(err)
 		return
 	}
-	if err != nil {
-		t.Error(err)
-		return
-	}
 }

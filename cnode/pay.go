@@ -91,7 +91,7 @@ func (c *CNode) AddBooleanPay(newPay *entity.ConditionalPay, note *any.Any, dstN
 	var xnet *rpc.CrossNetPay
 	if dstNetId != 0 {
 		myNetId, err2 := c.dal.GetNetId()
-		if err != nil {
+		if err2 != nil {
 			return ctype.ZeroPayID, fmt.Errorf("GetNetId err %w", err2)
 		}
 		if myNetId != dstNetId { // cross network payment

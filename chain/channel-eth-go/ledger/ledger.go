@@ -4,6 +4,7 @@
 package ledger
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -24,22 +26,34 @@ var (
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
+	_ = abi.ConvertType
 )
 
+// CelerLedgerMetaData contains all meta data concerning the CelerLedger contract.
+var CelerLedgerMetaData = &bind.MetaData{
+	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"_ethPool\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_payRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_celerWallet\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"clearPays\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_peerFrom\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_payIdList\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"confirmSettle\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"confirmWithdraw\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"cooperativeSettle\",\"inputs\":[{\"name\":\"_settleRequest\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"cooperativeWithdraw\",\"inputs\":[{\"name\":\"_cooperativeWithdrawRequest\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"deposit\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_receiver\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_transferFromAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"payable\"},{\"type\":\"function\",\"name\":\"depositInBatch\",\"inputs\":[{\"name\":\"_channelIds\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"_receivers\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"_transferFromAmounts\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"disableBalanceLimits\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"enableBalanceLimits\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"getBalanceLimit\",\"inputs\":[{\"name\":\"_tokenAddr\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getBalanceLimitsEnabled\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getBalanceMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getCelerWallet\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getChannelMigrationArgs\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getChannelStatus\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"enumLedgerStruct.ChannelStatus\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getChannelStatusNum\",\"inputs\":[{\"name\":\"_channelStatus\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getCooperativeWithdrawSeqNum\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getDisputeTimeout\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getEthPool\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getLastPayResolveDeadlineMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getMigratedTo\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getNextPayIdListHashMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"bytes32[2]\",\"internalType\":\"bytes32[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getPayRegistry\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getPeersMigrationInfo\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getPendingPayOutMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getSettleFinalizedTime\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getStateSeqNumMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getTokenContract\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getTokenType\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"enumPbEntity.TokenType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getTotalBalance\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getTransferOutMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getWithdrawIntent\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"intendSettle\",\"inputs\":[{\"name\":\"_signedSimplexStateArray\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"intendWithdraw\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_recipientChannelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"migrateChannelFrom\",\"inputs\":[{\"name\":\"_fromLedgerAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_migrationRequest\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"migrateChannelTo\",\"inputs\":[{\"name\":\"_migrationRequest\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"openChannel\",\"inputs\":[{\"name\":\"_openRequest\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"payable\"},{\"type\":\"function\",\"name\":\"owner\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"renounceOwnership\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setBalanceLimits\",\"inputs\":[{\"name\":\"_tokenAddrs\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"_limits\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"snapshotStates\",\"inputs\":[{\"name\":\"_signedSimplexStateArray\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"transferOwnership\",\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"vetoWithdraw\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"ClearOnePay\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"payId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"peerFrom\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ConfirmSettle\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"settleBalance\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ConfirmSettleFail\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ConfirmWithdraw\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"withdrawnAmount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"receiver\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"recipientChannelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"deposits\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"},{\"name\":\"withdrawals\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"CooperativeSettle\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"settleBalance\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"CooperativeWithdraw\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"withdrawnAmount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"receiver\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"recipientChannelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"deposits\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"},{\"name\":\"withdrawals\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"},{\"name\":\"seqNum\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Deposit\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"peerAddrs\",\"type\":\"address[2]\",\"indexed\":false,\"internalType\":\"address[2]\"},{\"name\":\"deposits\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"},{\"name\":\"withdrawals\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"IntendSettle\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"seqNums\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"IntendWithdraw\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"receiver\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"MigrateChannelFrom\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"oldLedgerAddr\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"MigrateChannelTo\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"newLedgerAddr\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"OpenChannel\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"tokenType\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"tokenAddress\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"peerAddrs\",\"type\":\"address[2]\",\"indexed\":false,\"internalType\":\"address[2]\"},{\"name\":\"initialDeposits\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"inputs\":[{\"name\":\"previousOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"SnapshotStates\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"seqNums\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"VetoWithdraw\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"OwnableInvalidOwner\",\"inputs\":[{\"name\":\"owner\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"OwnableUnauthorizedAccount\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}]}]",
+	Bin: "0x608060405234801561000f575f5ffd5b506040516123df3803806123df83398101604081905261002e91610116565b338061005357604051631e4fbdf760e01b81525f600482015260240160405180910390fd5b61005c816100ac565b50600280546001600160a01b039485166001600160a01b0319918216179091556003805493851693821693909317909255600480549190931691161790556006805460ff19166001179055610156565b5f80546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80516001600160a01b0381168114610111575f5ffd5b919050565b5f5f5f60608486031215610128575f5ffd5b610131846100fb565b925061013f602085016100fb565b915061014d604085016100fb565b90509250925092565b61227c806101635f395ff3fe608060405260043610610254575f3560e01c806393b7b3ce1161013f578063d75f960e116100b3578063e5780db211610078578063e5780db21461075c578063e6322df71461077b578063ec7c637d1461079a578063f0c73d70146107b9578063f2fde38b146107d8578063fd0a1a61146107f7575f5ffd5b8063d75f960e146106e3578063d927bfc4146106f7578063d954863c14610716578063e063913c14610729578063e0a515b71461073d575f5ffd5b8063bd480cb711610104578063bd480cb7146105ff578063c38a325d1461062d578063c7ff86251461064c578063cc0b94b71461066b578063cd3a1be614610697578063d757abd2146106c4575f5ffd5b806393b7b3ce1461056e578063979a9b5e146105815780639f1fad83146105ad578063a099a39f146105cc578063a8580cab146105e0575f5ffd5b8063312ea2c6116101d657806376bff1171161019b57806376bff117146104865780637e9a7a3e146104cf57806383c8f8b8146104ee57806388f41465146105025780638942ecb2146105335780638da5cb5b14610552575f5ffd5b8063312ea2c6146104015780634102b9a814610415578063666a6d651461043457806369d5dd6714610453578063715018a614610472575f5ffd5b80632b559ecc1161021c5780632b559ecc1461031a5780632e2a5a021461033e5780632e3c517a146103755780632f0ac30414610394578063307d6f96146103e2575f5ffd5b80630165cef81461025857806309683c031461028e57806309b65d86146102af578063130d33fe146102dc578063255aab59146102fb575b5f5ffd5b348015610263575f5ffd5b5061027761027236600461193f565b610816565b6040516102859291906119a3565b60405180910390f35b348015610299575f5ffd5b506102ad6102a8366004611a03565b6108b1565b005b3480156102ba575f5ffd5b506102ce6102c936600461193f565b61091d565b604051908152602001610285565b3480156102e7575f5ffd5b506102ad6102f6366004611a03565b6109a4565b348015610306575f5ffd5b506102ad61031536600461193f565b6109e0565b348015610325575f5ffd5b5061032e610a4a565b6040519015158152602001610285565b348015610349575f5ffd5b5061035d61035836600461193f565b610ac3565b6040516001600160a01b039091168152602001610285565b348015610380575f5ffd5b506102ad61038f366004611a56565b610b43565b34801561039f575f5ffd5b506103b36103ae36600461193f565b610bb2565b604051610285949392919093845260208401929092526001600160a01b03166040830152606082015260800190565b3480156103ed575f5ffd5b506102ce6103fc36600461193f565b610c48565b34801561040c575f5ffd5b5061035d610cca565b348015610420575f5ffd5b506102ad61042f366004611a03565b610d3f565b34801561043f575f5ffd5b5061027761044e36600461193f565b610d7b565b34801561045e575f5ffd5b506102ce61046d36600461193f565b610dd1565b34801561047d575f5ffd5b506102ad610e16565b348015610491575f5ffd5b506104a56104a036600461193f565b610e29565b604080516001600160a01b0390951685526020850193909352918301526060820152608001610285565b3480156104da575f5ffd5b506102ad6104e936600461193f565b610eaf565b3480156104f9575f5ffd5b506102ad610eee565b34801561050d575f5ffd5b5061052161051c36600461193f565b610f58565b60405161028596959493929190611aa7565b34801561053e575f5ffd5b506102ad61054d366004611b04565b61101e565b34801561055d575f5ffd5b505f546001600160a01b031661035d565b6102ad61057c366004611a03565b61106b565b34801561058c575f5ffd5b506105a061059b36600461193f565b6110a7565b6040516102859190611b41565b3480156105b8575f5ffd5b506102776105c736600461193f565b611126565b3480156105d7575f5ffd5b5061035d61117c565b3480156105eb575f5ffd5b506102ad6105fa366004611b9c565b6111b6565b34801561060a575f5ffd5b5061061e61061936600461193f565b611230565b60405161028593929190611c08565b348015610638575f5ffd5b5061035d61064736600461193f565b6112d6565b348015610657575f5ffd5b506102ad61066636600461193f565b61131b565b348015610676575f5ffd5b5061068a61068536600461193f565b61135a565b6040516102859190611c38565b3480156106a2575f5ffd5b506106b66106b136600461193f565b6113d9565b604051610285929190611c4c565b3480156106cf575f5ffd5b506102ad6106de366004611a03565b611469565b3480156106ee575f5ffd5b5061035d6114a5565b348015610702575f5ffd5b5061027761071136600461193f565b6114df565b6102ad610724366004611c8a565b611535565b348015610734575f5ffd5b506102ad61158a565b348015610748575f5ffd5b506102ce610757366004611a03565b6115ca565b348015610767575f5ffd5b506102ad610776366004611cbf565b611608565b348015610786575f5ffd5b506102ce61079536600461193f565b611753565b3480156107a5575f5ffd5b506102ce6107b4366004611d5e565b611798565b3480156107c4575f5ffd5b506102ce6107d336600461193f565b6117e1565b3480156107e3575f5ffd5b506102ad6107f2366004611d5e565b611826565b348015610802575f5ffd5b506102ad610811366004611d79565b611863565b61081e611921565b610826611921565b5f8381526007602052604090819020905163bcdf4ebb60e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063bcdf4ebb906024015b608060405180830381865af4158015610883573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906108a79190611e9e565b9250925050915091565b6040516379e9008760e01b815273__$c617d6f30a3108b63ce4034547dfec5d71$__906379e90087906108ed9060019086908690600401611ef9565b5f6040518083038186803b158015610903575f5ffd5b505af4158015610915573d5f5f3e3d5ffd5b505050505050565b5f81815260076020526040808220905163418ec10160e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063418ec101906024015b602060405180830381865af4158015610979573d5f5f3e3d5ffd5b505050506040513d601f19601f8201168201806040525081019061099d9190611f1b565b9392505050565b604051630bdc541160e01b815273__$c617d6f30a3108b63ce4034547dfec5d71$__90630bdc5411906108ed9060019086908690600401611ef9565b60405163eb4de33760e01b8152600160048201526024810182905273__$c617d6f30a3108b63ce4034547dfec5d71$__9063eb4de337906044015b5f6040518083038186803b158015610a31575f5ffd5b505af4158015610a43573d5f5f3e3d5ffd5b5050505050565b604051633574ba3960e11b8152600160048201525f9073__$feb14f72d15bbe8de11f7ce8bf95c6faf6$__90636ae9747290602401602060405180830381865af4158015610a9a573d5f5f3e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610abe9190611f32565b905090565b5f818152600760205260408082209051630fea54e160e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__90631fd4a9c2906024015b602060405180830381865af4158015610b1f573d5f5f3e3d5ffd5b505050506040513d601f19601f8201168201806040525081019061099d9190611f51565b60405163415a19c560e11b815273__$2da4c1bc7831bce59d8f8d9cf5a8504e33$__906382b4338a90610b8190600190879087908790600401611f6c565b5f6040518083038186803b158015610b97575f5ffd5b505af4158015610ba9573d5f5f3e3d5ffd5b50505050505050565b5f81815260076020526040808220905163c2f8816b60e01b8152600481018290528291829182919073__$13d4168a6482a4756bee5acfadcccc5f1f$__9063c2f8816b90602401608060405180830381865af4158015610c14573d5f5f3e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610c389190611fa0565b9450945094509450509193509193565b6040516360297df360e01b815260016004820152602481018290525f9073__$c617d6f30a3108b63ce4034547dfec5d71$__906360297df3906044015b602060405180830381865af4158015610ca0573d5f5f3e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610cc49190611f1b565b92915050565b6040516344e58d5160e01b8152600160048201525f9073__$c617d6f30a3108b63ce4034547dfec5d71$__906344e58d51906024015b602060405180830381865af4158015610d1b573d5f5f3e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610abe9190611f51565b6040516372cf9b4360e11b815273__$c617d6f30a3108b63ce4034547dfec5d71$__9063e59f3686906108ed9060019086908690600401611ef9565b610d83611921565b610d8b611921565b5f8381526007602052604090819020905163640a694760e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063c814d28e90602401610868565b5f818152600760205260408082209051636b5c4f1d60e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063d6b89e3a9060240161095e565b610e1e6118a6565b610e275f6118d2565b565b5f81815260076020526040808220905163c46dd9dd60e01b8152600481018290528291829182919073__$13d4168a6482a4756bee5acfadcccc5f1f$__9063c46dd9dd90602401608060405180830381865af4158015610e8b573d5f5f3e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610c389190611fdd565b6040516383e0fef560e01b8152600160048201526024810182905273__$c617d6f30a3108b63ce4034547dfec5d71$__906383e0fef590604401610a1b565b610ef66118a6565b604051636ad1dc2d60e01b81526001600482015273__$feb14f72d15bbe8de11f7ce8bf95c6faf6$__90636ad1dc2d906024015b5f6040518083038186803b158015610f40575f5ffd5b505af4158015610f52573d5f5f3e3d5ffd5b50505050565b610f60611921565b610f68611921565b610f70611921565b610f78611921565b610f80611921565b610f88611921565b5f8781526007602052604090819020905163b325312760e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063b32531279060240161018060405180830381865af4158015610fe5573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906110099190612019565b949d939c50919a509850965090945092505050565b604051637a2654ed60e01b81526001600482015260248101849052604481018390526064810182905273__$c617d6f30a3108b63ce4034547dfec5d71$__90637a2654ed90608401610b81565b60405163594db6e360e01b815273__$c617d6f30a3108b63ce4034547dfec5d71$__9063594db6e3906108ed9060019086908690600401611ef9565b5f8181526007602052604080822090516312bb8c8160e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__906312bb8c8190602401602060405180830381865af4158015611102573d5f5f3e3d5ffd5b505050506040513d601f19601f8201168201806040525081019061099d9190612092565b61112e611921565b611136611921565b5f838152600760205260409081902090516396a3c57f60e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__906396a3c57f90602401610868565b60405163bd199ca560e01b8152600160048201525f9073__$c617d6f30a3108b63ce4034547dfec5d71$__9063bd199ca590602401610d00565b6111be6118a6565b60405163c88c626560e01b815273__$feb14f72d15bbe8de11f7ce8bf95c6faf6$__9063c88c6265906111fe9060019088908890889088906004016120b0565b5f6040518083038186803b158015611214575f5ffd5b505af4158015611226573d5f5f3e3d5ffd5b5050505050505050565b611238611921565b611240611921565b611248611921565b5f848152600760205260409081902090516364768a4f60e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063c8ed149e9060240160c060405180830381865af41580156112a4573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906112c89190612134565b935093509350509193909250565b5f818152600760205260408082209051638970f8a560e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__90638970f8a590602401610b04565b60405163bb3d0f2b60e01b8152600160048201526024810182905273__$c617d6f30a3108b63ce4034547dfec5d71$__9063bb3d0f2b90604401610a1b565b5f81815260076020526040808220905163565aebdb60e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063565aebdb90602401602060405180830381865af41580156113b5573d5f5f3e3d5ffd5b505050506040513d601f19601f8201168201806040525081019061099d9190612177565b6113e1611921565b6113e9611921565b5f83815260076020526040908190209051636bedb2e760e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063d7db65ce90602401608060405180830381865af4158015611445573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906108a79190612195565b60405163742fb50760e01b815273__$c617d6f30a3108b63ce4034547dfec5d71$__9063742fb507906108ed9060019086908690600401611ef9565b60405163c98c925160e01b8152600160048201525f9073__$c617d6f30a3108b63ce4034547dfec5d71$__9063c98c925190602401610d00565b6114e7611921565b6114ef611921565b5f8381526007602052604090819020905163c2c3f21f60e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063c2c3f21f90602401610868565b60405163bd9d315760e01b815260016004820152602481018490526001600160a01b03831660448201526064810182905273__$c617d6f30a3108b63ce4034547dfec5d71$__9063bd9d315790608401610b81565b6115926118a6565b604051635930e0e160e01b81526001600482015273__$feb14f72d15bbe8de11f7ce8bf95c6faf6$__90635930e0e190602401610f2a565b604051631e28763960e11b81525f9073__$2da4c1bc7831bce59d8f8d9cf5a8504e33$__90633c50ec729061095e9060019087908790600401611ef9565b848314801561161657508281145b61165e5760405162461bcd60e51b8152602060048201526014602482015273098cadccee8d0e640c8de40dcdee840dac2e8c6d60631b60448201526064015b60405180910390fd5b5f5b85811015610ba95773__$c617d6f30a3108b63ce4034547dfec5d71$__63bd9d3157600189898581811061169657611696612205565b905060200201358888868181106116af576116af612205565b90506020020160208101906116c49190611d5e565b8787878181106116d6576116d6612205565b905060200201356040518563ffffffff1660e01b815260040161171b949392919093845260208401929092526001600160a01b03166040830152606082015260800190565b5f6040518083038186803b158015611731575f5ffd5b505af4158015611743573d5f5f3e3d5ffd5b5050600190920191506116609050565b5f818152600760205260408082209051635c06efbf60e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063b80ddf7e9060240161095e565b60405163bdca79a760e01b8152600160048201526001600160a01b03821660248201525f9073__$feb14f72d15bbe8de11f7ce8bf95c6faf6$__9063bdca79a790604401610c85565b5f8181526007602052604080822090516377ffc62360e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__906377ffc6239060240161095e565b61182e6118a6565b6001600160a01b03811661185757604051631e4fbdf760e01b81525f6004820152602401611655565b611860816118d2565b50565b604051600162804bef60e01b0319815273__$c617d6f30a3108b63ce4034547dfec5d71$__9063ff7fb411906111fe906001908890889088908890600401612219565b5f546001600160a01b03163314610e275760405163118cdaa760e01b8152336004820152602401611655565b5f80546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b60405180604001604052806002906020820280368337509192915050565b5f6020828403121561194f575f5ffd5b5035919050565b805f5b6002811015610f525781516001600160a01b0316845260209384019390910190600101611959565b805f5b6002811015610f52578151845260209384019390910190600101611984565b608081016119b18285611956565b61099d6040830184611981565b5f5f83601f8401126119ce575f5ffd5b50813567ffffffffffffffff8111156119e5575f5ffd5b6020830191508360208285010111156119fc575f5ffd5b9250929050565b5f5f60208385031215611a14575f5ffd5b823567ffffffffffffffff811115611a2a575f5ffd5b611a36858286016119be565b90969095509350505050565b6001600160a01b0381168114611860575f5ffd5b5f5f5f60408486031215611a68575f5ffd5b8335611a7381611a42565b9250602084013567ffffffffffffffff811115611a8e575f5ffd5b611a9a868287016119be565b9497909650939450505050565b6101808101611ab68289611956565b611ac36040830188611981565b611ad06080830187611981565b611add60c0830186611981565b611aeb610100830185611981565b611af9610140830184611981565b979650505050505050565b5f5f5f60608486031215611b16575f5ffd5b505081359360208301359350604090920135919050565b634e487b7160e01b5f52602160045260245ffd5b6020810160038310611b5557611b55611b2d565b91905290565b5f5f83601f840112611b6b575f5ffd5b50813567ffffffffffffffff811115611b82575f5ffd5b6020830191508360208260051b85010111156119fc575f5ffd5b5f5f5f5f60408587031215611baf575f5ffd5b843567ffffffffffffffff811115611bc5575f5ffd5b611bd187828801611b5b565b909550935050602085013567ffffffffffffffff811115611bf0575f5ffd5b611bfc87828801611b5b565b95989497509550505050565b60c08101611c168286611956565b611c236040830185611981565b611c306080830184611981565b949350505050565b6020810160058310611b5557611b55611b2d565b60808101611c5a8285611956565b60408201835f5b6002811015611c80578151835260209283019290910190600101611c61565b5050509392505050565b5f5f5f60608486031215611c9c575f5ffd5b833592506020840135611cae81611a42565b929592945050506040919091013590565b5f5f5f5f5f5f60608789031215611cd4575f5ffd5b863567ffffffffffffffff811115611cea575f5ffd5b611cf689828a01611b5b565b909750955050602087013567ffffffffffffffff811115611d15575f5ffd5b611d2189828a01611b5b565b909550935050604087013567ffffffffffffffff811115611d40575f5ffd5b611d4c89828a01611b5b565b979a9699509497509295939492505050565b5f60208284031215611d6e575f5ffd5b813561099d81611a42565b5f5f5f5f60608587031215611d8c575f5ffd5b843593506020850135611d9e81611a42565b9250604085013567ffffffffffffffff811115611db9575f5ffd5b611bfc878288016119be565b604051601f8201601f1916810167ffffffffffffffff81118282101715611dfa57634e487b7160e01b5f52604160045260245ffd5b604052919050565b5f82601f830112611e11575f5ffd5b611e1b6040611dc5565b806040840185811115611e2c575f5ffd5b845b81811015611e4f578051611e4181611a42565b845260209384019301611e2e565b509095945050505050565b5f82601f830112611e69575f5ffd5b611e736040611dc5565b806040840185811115611e84575f5ffd5b845b81811015611e4f578051845260209384019301611e86565b5f5f60808385031215611eaf575f5ffd5b611eb98484611e02565b9150611ec88460408501611e5a565b90509250929050565b81835281816020850137505f828201602090810191909152601f909101601f19169091010190565b838152604060208201525f611f12604083018486611ed1565b95945050505050565b5f60208284031215611f2b575f5ffd5b5051919050565b5f60208284031215611f42575f5ffd5b8151801515811461099d575f5ffd5b5f60208284031215611f61575f5ffd5b815161099d81611a42565b8481526001600160a01b03841660208201526060604082018190525f90611f969083018486611ed1565b9695505050505050565b5f5f5f5f60808587031215611fb3575f5ffd5b8451602086015160408701519195509350611fcd81611a42565b6060959095015193969295505050565b5f5f5f5f60808587031215611ff0575f5ffd5b8451611ffb81611a42565b60208601516040870151606090970151919890975090945092505050565b5f5f5f5f5f5f610180878903121561202f575f5ffd5b6120398888611e02565b95506120488860408901611e5a565b94506120578860808901611e5a565b93506120668860c08901611e5a565b9250612076886101008901611e5a565b9150612086886101408901611e5a565b90509295509295509295565b5f602082840312156120a2575f5ffd5b81516003811061099d575f5ffd5b85815260606020820181905281018490525f8560808301825b878110156120f95782356120dc81611a42565b6001600160a01b03168252602092830192909101906001016120c9565b5083810360408501528481526001600160fb1b03851115612118575f5ffd5b8460051b91508186602083013701602001979650505050505050565b5f5f5f60c08486031215612146575f5ffd5b6121508585611e02565b925061215f8560408601611e5a565b915061216e8560808601611e5a565b90509250925092565b5f60208284031215612187575f5ffd5b81516005811061099d575f5ffd5b5f5f608083850312156121a6575f5ffd5b6121b08484611e02565b915083605f8401126121c0575f5ffd5b6121ca6040611dc5565b8060808501868111156121db575f5ffd5b604086015b818110156121f85780518452602093840193016121e0565b5093969095509350505050565b634e487b7160e01b5f52603260045260245ffd5b85815284602082015260018060a01b0384166040820152608060608201525f611af9608083018486611ed156fea264697066735822122083c78b816ba5de1b41667f70b89541ec9521cf806e00d0c1b5fa2c8f39d1269164736f6c634300081e0033",
+}
+
 // CelerLedgerABI is the input ABI used to generate the binding from.
-const CelerLedgerABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_ethPool\",\"type\":\"address\"},{\"name\":\"_payRegistry\",\"type\":\"address\"},{\"name\":\"_celerWallet\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"channelId\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"tokenType\",\"type\":\"uint256\"},{\"indexed\":true,\"name\":\"tokenAddress\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"peerAddrs\",\"type\":\"address[2]\"},{\"indexed\":false,\"name\":\"initialDeposits\",\"type\":\"uint256[2]\"}],\"name\":\"OpenChannel\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"channelId\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"peerAddrs\",\"type\":\"address[2]\"},{\"indexed\":false,\"name\":\"deposits\",\"type\":\"uint256[2]\"},{\"indexed\":false,\"name\":\"withdrawals\",\"type\":\"uint256[2]\"}],\"name\":\"Deposit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"channelId\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"seqNums\",\"type\":\"uint256[2]\"}],\"name\":\"SnapshotStates\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"channelId\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"seqNums\",\"type\":\"uint256[2]\"}],\"name\":\"IntendSettle\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"channelId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"payId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"peerFrom\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"ClearOnePay\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"channelId\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"settleBalance\",\"type\":\"uint256[2]\"}],\"name\":\"ConfirmSettle\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"channelId\",\"type\":\"bytes32\"}],\"name\":\"ConfirmSettleFail\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"channelId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"receiver\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"IntendWithdraw\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"channelId\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"withdrawnAmount\",\"type\":\"uint256\"},{\"indexed\":true,\"name\":\"receiver\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"recipientChannelId\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"deposits\",\"type\":\"uint256[2]\"},{\"indexed\":false,\"name\":\"withdrawals\",\"type\":\"uint256[2]\"}],\"name\":\"ConfirmWithdraw\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"channelId\",\"type\":\"bytes32\"}],\"name\":\"VetoWithdraw\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"channelId\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"withdrawnAmount\",\"type\":\"uint256\"},{\"indexed\":true,\"name\":\"receiver\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"recipientChannelId\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"deposits\",\"type\":\"uint256[2]\"},{\"indexed\":false,\"name\":\"withdrawals\",\"type\":\"uint256[2]\"},{\"indexed\":false,\"name\":\"seqNum\",\"type\":\"uint256\"}],\"name\":\"CooperativeWithdraw\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"channelId\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"settleBalance\",\"type\":\"uint256[2]\"}],\"name\":\"CooperativeSettle\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"channelId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"newLedgerAddr\",\"type\":\"address\"}],\"name\":\"MigrateChannelTo\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"channelId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"oldLedgerAddr\",\"type\":\"address\"}],\"name\":\"MigrateChannelFrom\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_tokenAddrs\",\"type\":\"address[]\"},{\"name\":\"_limits\",\"type\":\"uint256[]\"}],\"name\":\"setBalanceLimits\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"disableBalanceLimits\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"enableBalanceLimits\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_openRequest\",\"type\":\"bytes\"}],\"name\":\"openChannel\",\"outputs\":[],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"},{\"name\":\"_receiver\",\"type\":\"address\"},{\"name\":\"_transferFromAmount\",\"type\":\"uint256\"}],\"name\":\"deposit\",\"outputs\":[],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_channelIds\",\"type\":\"bytes32[]\"},{\"name\":\"_receivers\",\"type\":\"address[]\"},{\"name\":\"_transferFromAmounts\",\"type\":\"uint256[]\"}],\"name\":\"depositInBatch\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_signedSimplexStateArray\",\"type\":\"bytes\"}],\"name\":\"snapshotStates\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"},{\"name\":\"_amount\",\"type\":\"uint256\"},{\"name\":\"_recipientChannelId\",\"type\":\"bytes32\"}],\"name\":\"intendWithdraw\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"confirmWithdraw\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"vetoWithdraw\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_cooperativeWithdrawRequest\",\"type\":\"bytes\"}],\"name\":\"cooperativeWithdraw\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_signedSimplexStateArray\",\"type\":\"bytes\"}],\"name\":\"intendSettle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"},{\"name\":\"_peerFrom\",\"type\":\"address\"},{\"name\":\"_payIdList\",\"type\":\"bytes\"}],\"name\":\"clearPays\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"confirmSettle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_settleRequest\",\"type\":\"bytes\"}],\"name\":\"cooperativeSettle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_migrationRequest\",\"type\":\"bytes\"}],\"name\":\"migrateChannelTo\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_fromLedgerAddr\",\"type\":\"address\"},{\"name\":\"_migrationRequest\",\"type\":\"bytes\"}],\"name\":\"migrateChannelFrom\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getSettleFinalizedTime\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getTokenContract\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getTokenType\",\"outputs\":[{\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getChannelStatus\",\"outputs\":[{\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getCooperativeWithdrawSeqNum\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getTotalBalance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getBalanceMap\",\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getChannelMigrationArgs\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getPeersMigrationInfo\",\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getDisputeTimeout\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getMigratedTo\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getStateSeqNumMap\",\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getTransferOutMap\",\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getNextPayIdListHashMap\",\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\"},{\"name\":\"\",\"type\":\"bytes32[2]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getLastPayResolveDeadlineMap\",\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getPendingPayOutMap\",\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\"}],\"name\":\"getWithdrawIntent\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_channelStatus\",\"type\":\"uint256\"}],\"name\":\"getChannelStatusNum\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getEthPool\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getPayRegistry\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getCelerWallet\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_tokenAddr\",\"type\":\"address\"}],\"name\":\"getBalanceLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getBalanceLimitsEnabled\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+// Deprecated: Use CelerLedgerMetaData.ABI instead.
+var CelerLedgerABI = CelerLedgerMetaData.ABI
 
 // CelerLedgerBin is the compiled bytecode used for deploying new contracts.
-var CelerLedgerBin = "0x608060405234801561001057600080fd5b50604051612aa3380380612aa38339818101604052606081101561003357600080fd5b508051602082015160409283015160008054600160a060020a03191633178082559451939492939192600160a060020a0316917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908290a360028054600160a060020a03948516600160a060020a0319918216179091556003805493851693821693909317909255600480549190931691161790556006805460ff191660011790556129bf806100e46000396000f3fe60806040526004361061026b5760003560e060020a9004806393b7b3ce11610148578063d75f960e116100ba578063e5780db21161007e578063e5780db214610dd7578063e6322df714610ef8578063ec7c637d14610f22578063f0c73d7014610f55578063f2fde38b14610f7f578063fd0a1a6114610fb25761026b565b8063d75f960e14610cd4578063d927bfc414610ce9578063d954863c14610d13578063e063913c14610d45578063e0a515b714610d5a5761026b565b8063bd480cb71161010c578063bd480cb714610ae2578063c38a325d14610b9f578063c7ff862514610bc9578063cc0b94b714610bf3578063cd3a1be614610c2d578063d757abd214610c575761026b565b806393b7b3ce14610916578063979a9b5e146109865780639f1fad83146109d4578063a099a39f146109fe578063a8580cab14610a135761026b565b80634102b9a8116101e15780637e9a7a3e116101a55780637e9a7a3e1461073657806383c8f8b81461076057806388f41465146107755780638942ecb2146108b65780638da5cb5b146108ec5780638f32d59b146109015761026b565b80634102b9a8146105f6578063666a6d651461067357806369d5dd671461069d578063715018a6146106c757806376bff117146106dc5761026b565b80632b559ecc116102335780632b559ecc146104635780632e2a5a021461048c5780632e3c517a146104d25780632f0ac3041461055f578063307d6f96146105b7578063312ea2c6146105e15761026b565b80630165cef81461027057806309683c031461030157806309b65d8614610380578063130d33fe146103bc578063255aab5914610439575b600080fd5b34801561027c57600080fd5b5061029a6004803603602081101561029357600080fd5b5035611044565b6040518083600260200280838360005b838110156102c25781810151838201526020016102aa565b5050505090500182600260200280838360005b838110156102ed5781810151838201526020016102d5565b505050509050019250505060405180910390f35b34801561030d57600080fd5b5061037e6004803603602081101561032457600080fd5b81019060208101813564010000000081111561033f57600080fd5b82018360208201111561035157600080fd5b8035906020019184600183028401116401000000008311171561037357600080fd5b509092509050611117565b005b34801561038c57600080fd5b506103aa600480360360208110156103a357600080fd5b50356111d1565b60408051918252519081900360200190f35b3480156103c857600080fd5b5061037e600480360360208110156103df57600080fd5b8101906020810181356401000000008111156103fa57600080fd5b82018360208201111561040c57600080fd5b8035906020019184600183028401116401000000008311171561042e57600080fd5b50909250905061127c565b34801561044557600080fd5b5061037e6004803603602081101561045c57600080fd5b503561131a565b34801561046f57600080fd5b506104786113a7565b604080519115158252519081900360200190f35b34801561049857600080fd5b506104b6600480360360208110156104af57600080fd5b503561142f565b60408051600160a060020a039092168252519081900360200190f35b3480156104de57600080fd5b5061037e600480360360408110156104f557600080fd5b600160a060020a03823516919081019060408101602082013564010000000081111561052057600080fd5b82018360208201111561053257600080fd5b8035906020019184600183028401116401000000008311171561055457600080fd5b5090925090506114a7565b34801561056b57600080fd5b506105896004803603602081101561058257600080fd5b5035611576565b604080519485526020850193909352600160a060020a03909116838301526060830152519081900360800190f35b3480156105c357600080fd5b506103aa600480360360208110156105da57600080fd5b5035611644565b3480156105ed57600080fd5b506104b66116d5565b34801561060257600080fd5b5061037e6004803603602081101561061957600080fd5b81019060208101813564010000000081111561063457600080fd5b82018360208201111561064657600080fd5b8035906020019184600183028401116401000000008311171561066857600080fd5b50909250905061172c565b34801561067f57600080fd5b5061029a6004803603602081101561069657600080fd5b50356117ca565b3480156106a957600080fd5b506103aa600480360360208110156106c057600080fd5b5035611856565b3480156106d357600080fd5b5061037e6118ce565b3480156106e857600080fd5b50610706600480360360208110156106ff57600080fd5b5035611936565b60408051600160a060020a0390951685526020850193909352838301919091526060830152519081900360800190f35b34801561074257600080fd5b5061037e6004803603602081101561075957600080fd5b50356119b7565b34801561076c57600080fd5b5061037e611a29565b34801561078157600080fd5b5061079f6004803603602081101561079857600080fd5b5035611abf565b6040518087600260200280838360005b838110156107c75781810151838201526020016107af565b5050505090500186600260200280838360005b838110156107f25781810151838201526020016107da565b5050505090500185600260200280838360005b8381101561081d578181015183820152602001610805565b5050505090500184600260200280838360005b83811015610848578181015183820152602001610830565b5050505090500183600260200280838360005b8381101561087357818101518382015260200161085b565b5050505090500182600260200280838360005b8381101561089e578181015183820152602001610886565b50505050905001965050505050505060405180910390f35b3480156108c257600080fd5b5061037e600480360360608110156108d957600080fd5b5080359060208101359060400135611bce565b3480156108f857600080fd5b506104b6611c4e565b34801561090d57600080fd5b50610478611c5d565b61037e6004803603602081101561092c57600080fd5b81019060208101813564010000000081111561094757600080fd5b82018360208201111561095957600080fd5b8035906020019184600183028401116401000000008311171561097b57600080fd5b509092509050611c6e565b34801561099257600080fd5b506109b0600480360360208110156109a957600080fd5b5035611d0c565b604051808260028111156109c057fe5b60ff16815260200191505060405180910390f35b3480156109e057600080fd5b5061029a600480360360208110156109f757600080fd5b5035611d84565b348015610a0a57600080fd5b506104b6611e10565b348015610a1f57600080fd5b5061037e60048036036040811015610a3657600080fd5b810190602081018135640100000000811115610a5157600080fd5b820183602082011115610a6357600080fd5b80359060200191846020830284011164010000000083111715610a8557600080fd5b919390929091602081019035640100000000811115610aa357600080fd5b820183602082011115610ab557600080fd5b80359060200191846020830284011164010000000083111715610ad757600080fd5b509092509050611e67565b348015610aee57600080fd5b50610b0c60048036036020811015610b0557600080fd5b5035611f52565b6040518084600260200280838360005b83811015610b34578181015183820152602001610b1c565b5050505090500183600260200280838360005b83811015610b5f578181015183820152602001610b47565b5050505090500182600260200280838360005b83811015610b8a578181015183820152602001610b72565b50505050905001935050505060405180910390f35b348015610bab57600080fd5b506104b660048036036020811015610bc257600080fd5b5035612033565b348015610bd557600080fd5b5061037e60048036036020811015610bec57600080fd5b50356120ab565b348015610bff57600080fd5b50610c1d60048036036020811015610c1657600080fd5b503561211d565b604051808260048111156109c057fe5b348015610c3957600080fd5b5061029a60048036036020811015610c5057600080fd5b5035612195565b348015610c6357600080fd5b5061037e60048036036020811015610c7a57600080fd5b810190602081018135640100000000811115610c9557600080fd5b820183602082011115610ca757600080fd5b80359060200191846001830284011164010000000083111715610cc957600080fd5b509092509050612221565b348015610ce057600080fd5b506104b66122bf565b348015610cf557600080fd5b5061029a60048036036020811015610d0c57600080fd5b5035612316565b61037e60048036036060811015610d2957600080fd5b50803590600160a060020a0360208201351690604001356123a2565b348015610d5157600080fd5b5061037e61242a565b348015610d6657600080fd5b506103aa60048036036020811015610d7d57600080fd5b810190602081018135640100000000811115610d9857600080fd5b820183602082011115610daa57600080fd5b80359060200191846001830284011164010000000083111715610dcc57600080fd5b5090925090506124a6565b348015610de357600080fd5b5061037e60048036036060811015610dfa57600080fd5b810190602081018135640100000000811115610e1557600080fd5b820183602082011115610e2757600080fd5b80359060200191846020830284011164010000000083111715610e4957600080fd5b919390929091602081019035640100000000811115610e6757600080fd5b820183602082011115610e7957600080fd5b80359060200191846020830284011164010000000083111715610e9b57600080fd5b919390929091602081019035640100000000811115610eb957600080fd5b820183602082011115610ecb57600080fd5b80359060200191846020830284011164010000000083111715610eed57600080fd5b509092509050612546565b348015610f0457600080fd5b506103aa60048036036020811015610f1b57600080fd5b50356126aa565b348015610f2e57600080fd5b506103aa60048036036020811015610f4557600080fd5b5035600160a060020a0316612722565b348015610f6157600080fd5b506103aa60048036036020811015610f7857600080fd5b50356127a0565b348015610f8b57600080fd5b5061037e60048036036020811015610fa257600080fd5b5035600160a060020a0316612818565b348015610fbe57600080fd5b5061037e60048036036060811015610fd557600080fd5b813591600160a060020a036020820135169181019060608101604082013564010000000081111561100557600080fd5b82018360208201111561101757600080fd5b8035906020019184600183028401116401000000008311171561103957600080fd5b509092509050612835565b61104c61296c565b61105461296c565b6000838152600760205260409081902081517fbcdf4ebb000000000000000000000000000000000000000000000000000000008152600481018290529151909173__LedgerChannel_________________________9163bcdf4ebb91602480820192608092909190829003018186803b1580156110d057600080fd5b505af41580156110e4573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250608081101561110957600080fd5b509460408601945092505050565b604080517f79e90087000000000000000000000000000000000000000000000000000000008152600160048201818152602483019384526044830185905273__LedgerOperation_______________________936379e9008793879287929091606401848480828437600081840152601f19601f82011690508083019250505094505050505060006040518083038186803b1580156111b557600080fd5b505af41580156111c9573d6000803e3d6000fd5b505050505050565b600081815260076020908152604080832081517f418ec101000000000000000000000000000000000000000000000000000000008152600481018290529151909273__LedgerChannel_________________________9263418ec1019260248083019392829003018186803b15801561124957600080fd5b505af415801561125d573d6000803e3d6000fd5b505050506040513d602081101561127357600080fd5b50519392505050565b604080517f0bdc5411000000000000000000000000000000000000000000000000000000008152600160048201818152602483019384526044830185905273__LedgerOperation_______________________93630bdc541193879287929091606401848480828437600081840152601f19601f82011690508083019250505094505050505060006040518083038186803b1580156111b557600080fd5b604080517feb4de3370000000000000000000000000000000000000000000000000000000081526001600482015260248101839052905173__LedgerOperation_______________________9163eb4de337916044808301926000929190829003018186803b15801561138c57600080fd5b505af41580156113a0573d6000803e3d6000fd5b5050505050565b6000600173__LedgerBalanceLimit____________________636ae9747290916040518263ffffffff1660e060020a0281526004018082815260200191505060206040518083038186803b1580156113fe57600080fd5b505af4158015611412573d6000803e3d6000fd5b505050506040513d602081101561142857600080fd5b5051905090565b600081815260076020908152604080832081517f1fd4a9c2000000000000000000000000000000000000000000000000000000008152600481018290529151909273__LedgerChannel_________________________92631fd4a9c29260248083019392829003018186803b15801561124957600080fd5b6040517f82b4338a000000000000000000000000000000000000000000000000000000008152600160048201818152600160a060020a03861660248401526060604484019081526064840185905273__LedgerMigrate_________________________936382b4338a93928892889288929190608401848480828437600081840152601f19601f8201169050808301925050509550505050505060006040518083038186803b15801561155957600080fd5b505af415801561156d573d6000803e3d6000fd5b50505050505050565b60008181526007602052604080822081517fc2f8816b000000000000000000000000000000000000000000000000000000008152600481018290529151839283928392909173__LedgerChannel_________________________9163c2f8816b91602480820192608092909190829003018186803b1580156115f757600080fd5b505af415801561160b573d6000803e3d6000fd5b505050506040513d608081101561162157600080fd5b508051602082015160408301516060909301519199909850919650945092505050565b6000600173__LedgerOperation_______________________6360297df39091846040518363ffffffff1660e060020a028152600401808381526020018281526020019250505060206040518083038186803b1580156116a357600080fd5b505af41580156116b7573d6000803e3d6000fd5b505050506040513d60208110156116cd57600080fd5b505192915050565b6000600173__LedgerOperation_______________________6344e58d5190916040518263ffffffff1660e060020a0281526004018082815260200191505060206040518083038186803b1580156113fe57600080fd5b604080517fe59f3686000000000000000000000000000000000000000000000000000000008152600160048201818152602483019384526044830185905273__LedgerOperation_______________________9363e59f368693879287929091606401848480828437600081840152601f19601f82011690508083019250505094505050505060006040518083038186803b1580156111b557600080fd5b6117d261296c565b6117da61296c565b6000838152600760205260409081902081517fc814d28e000000000000000000000000000000000000000000000000000000008152600481018290529151909173__LedgerChannel_________________________9163c814d28e91602480820192608092909190829003018186803b1580156110d057600080fd5b600081815260076020908152604080832081517fd6b89e3a000000000000000000000000000000000000000000000000000000008152600481018290529151909273__LedgerChannel_________________________9263d6b89e3a9260248083019392829003018186803b15801561124957600080fd5b6118d6611c5d565b6118df57600080fd5b60008054604051600160a060020a03909116907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908390a36000805473ffffffffffffffffffffffffffffffffffffffff19169055565b60008181526007602052604080822081517fc46dd9dd000000000000000000000000000000000000000000000000000000008152600481018290529151839283928392909173__LedgerChannel_________________________9163c46dd9dd91602480820192608092909190829003018186803b1580156115f757600080fd5b604080517f83e0fef50000000000000000000000000000000000000000000000000000000081526001600482015260248101839052905173__LedgerOperation_______________________916383e0fef5916044808301926000929190829003018186803b15801561138c57600080fd5b611a31611c5d565b611a3a57600080fd5b604080517f6ad1dc2d00000000000000000000000000000000000000000000000000000000815260016004820152905173__LedgerBalanceLimit____________________91636ad1dc2d916024808301926000929190829003018186803b158015611aa557600080fd5b505af4158015611ab9573d6000803e3d6000fd5b50505050565b611ac761296c565b611acf61296c565b611ad761296c565b611adf61296c565b611ae761296c565b611aef61296c565b6000878152600760205260409081902081517fb3253127000000000000000000000000000000000000000000000000000000008152600481018290529151909173__LedgerChannel_________________________9163b32531279160248082019261018092909190829003018186803b158015611b6c57600080fd5b505af4158015611b80573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250610180811015611ba657600080fd5b509860408a01985060808a01975060c08a0196506101008a0195506101408a01945092505050565b604080517f7a2654ed00000000000000000000000000000000000000000000000000000000815260016004820152602481018590526044810184905260648101839052905173__LedgerOperation_______________________91637a2654ed916084808301926000929190829003018186803b15801561155957600080fd5b600054600160a060020a031690565b600054600160a060020a0316331490565b604080517f594db6e3000000000000000000000000000000000000000000000000000000008152600160048201818152602483019384526044830185905273__LedgerOperation_______________________9363594db6e393879287929091606401848480828437600081840152601f19601f82011690508083019250505094505050505060006040518083038186803b1580156111b557600080fd5b600081815260076020908152604080832081517f12bb8c81000000000000000000000000000000000000000000000000000000008152600481018290529151909273__LedgerChannel_________________________926312bb8c819260248083019392829003018186803b15801561124957600080fd5b611d8c61296c565b611d9461296c565b6000838152600760205260409081902081517f96a3c57f000000000000000000000000000000000000000000000000000000008152600481018290529151909173__LedgerChannel_________________________916396a3c57f91602480820192608092909190829003018186803b1580156110d057600080fd5b6000600173__LedgerOperation_______________________63bd199ca590916040518263ffffffff1660e060020a0281526004018082815260200191505060206040518083038186803b1580156113fe57600080fd5b611e6f611c5d565b611e7857600080fd5b600173__LedgerBalanceLimit____________________63c88c62659091868686866040518663ffffffff1660e060020a0281526004018086815260200180602001806020018381038352878782818152602001925060200280828437600083820152601f01601f19169091018481038352858152602090810191508690860280828437600081840152601f19601f82011690508083019250505097505050505050505060006040518083038186803b158015611f3457600080fd5b505af4158015611f48573d6000803e3d6000fd5b5050505050505050565b611f5a61296c565b611f6261296c565b611f6a61296c565b6000848152600760205260409081902081517fc8ed149e000000000000000000000000000000000000000000000000000000008152600481018290529151909173__LedgerChannel_________________________9163c8ed149e9160248082019260c092909190829003018186803b158015611fe657600080fd5b505af4158015611ffa573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525060c081101561201f57600080fd5b509560408701955060808701945092505050565b600081815260076020908152604080832081517f8970f8a5000000000000000000000000000000000000000000000000000000008152600481018290529151909273__LedgerChannel_________________________92638970f8a59260248083019392829003018186803b15801561124957600080fd5b604080517fbb3d0f2b0000000000000000000000000000000000000000000000000000000081526001600482015260248101839052905173__LedgerOperation_______________________9163bb3d0f2b916044808301926000929190829003018186803b15801561138c57600080fd5b600081815260076020908152604080832081517f565aebdb000000000000000000000000000000000000000000000000000000008152600481018290529151909273__LedgerChannel_________________________9263565aebdb9260248083019392829003018186803b15801561124957600080fd5b61219d61296c565b6121a561296c565b6000838152600760205260409081902081517fd7db65ce000000000000000000000000000000000000000000000000000000008152600481018290529151909173__LedgerChannel_________________________9163d7db65ce91602480820192608092909190829003018186803b1580156110d057600080fd5b604080517f742fb507000000000000000000000000000000000000000000000000000000008152600160048201818152602483019384526044830185905273__LedgerOperation_______________________9363742fb50793879287929091606401848480828437600081840152601f19601f82011690508083019250505094505050505060006040518083038186803b1580156111b557600080fd5b6000600173__LedgerOperation_______________________63c98c925190916040518263ffffffff1660e060020a0281526004018082815260200191505060206040518083038186803b1580156113fe57600080fd5b61231e61296c565b61232661296c565b6000838152600760205260409081902081517fc2c3f21f000000000000000000000000000000000000000000000000000000008152600481018290529151909173__LedgerChannel_________________________9163c2c3f21f91602480820192608092909190829003018186803b1580156110d057600080fd5b604080517fbd9d31570000000000000000000000000000000000000000000000000000000081526001600482015260248101859052600160a060020a038416604482015260648101839052905173__LedgerOperation_______________________9163bd9d3157916084808301926000929190829003018186803b15801561155957600080fd5b612432611c5d565b61243b57600080fd5b604080517f5930e0e100000000000000000000000000000000000000000000000000000000815260016004820152905173__LedgerBalanceLimit____________________91635930e0e1916024808301926000929190829003018186803b158015611aa557600080fd5b604080517f3c50ec72000000000000000000000000000000000000000000000000000000008152600160048201818152602483019384526044830185905260009373__LedgerMigrate_________________________93633c50ec72939288928892606401848480828437600083820152604051601f909101601f1916909201965060209550909350505081840390508186803b15801561124957600080fd5b848314801561255457508281145b6125bf57604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601460248201527f4c656e6774687320646f206e6f74206d61746368000000000000000000000000604482015290519081900360640190fd5b60005b8581101561156d5773__LedgerOperation_______________________63bd9d315760018989858181106125f257fe5b9050602002013588888681811061260557fe5b90506020020135600160a060020a031687878781811061262157fe5b905060200201356040518563ffffffff1660e060020a0281526004018085815260200184815260200183600160a060020a0316600160a060020a0316815260200182815260200194505050505060006040518083038186803b15801561268657600080fd5b505af415801561269a573d6000803e3d6000fd5b5050600190920191506125c29050565b600081815260076020908152604080832081517fb80ddf7e000000000000000000000000000000000000000000000000000000008152600481018290529151909273__LedgerChannel_________________________9263b80ddf7e9260248083019392829003018186803b15801561124957600080fd5b604080517fbdca79a700000000000000000000000000000000000000000000000000000000815260016004820152600160a060020a0383166024820152905160009173__LedgerBalanceLimit____________________9163bdca79a791604480820192602092909190829003018186803b1580156116a357600080fd5b600081815260076020908152604080832081517f77ffc623000000000000000000000000000000000000000000000000000000008152600481018290529151909273__LedgerChannel_________________________926377ffc6239260248083019392829003018186803b15801561124957600080fd5b612820611c5d565b61282957600080fd5b612832816128f1565b50565b6040517fff7fb41100000000000000000000000000000000000000000000000000000000815260016004820181815260248301879052600160a060020a03861660448401526080606484019081526084840185905273__LedgerOperation_______________________9363ff7fb41193928992899289928992909160a401848480828437600081840152601f19601f820116905080830192505050965050505050505060006040518083038186803b158015611f3457600080fd5b600160a060020a03811661290457600080fd5b60008054604051600160a060020a03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a36000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b6040518060400160405280600290602082028038833950919291505056fea265627a7a723058209e86a56fde4e2952e7b61d949929220918a14915506137c8524e0f576f33604964736f6c634300050a0032"
+// Deprecated: Use CelerLedgerMetaData.Bin instead.
+var CelerLedgerBin = CelerLedgerMetaData.Bin
 
 // DeployCelerLedger deploys a new Ethereum contract, binding an instance of CelerLedger to it.
 func DeployCelerLedger(auth *bind.TransactOpts, backend bind.ContractBackend, _ethPool common.Address, _payRegistry common.Address, _celerWallet common.Address) (common.Address, *types.Transaction, *CelerLedger, error) {
-	parsed, err := abi.JSON(strings.NewReader(CelerLedgerABI))
+	parsed, err := CelerLedgerMetaData.GetAbi()
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
+	if parsed == nil {
+		return common.Address{}, nil, nil, errors.New("GetABI returned nil")
+	}
 
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(CelerLedgerBin), backend, _ethPool, _payRegistry, _celerWallet)
+	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(CelerLedgerBin), backend, _ethPool, _payRegistry, _celerWallet)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -143,18 +157,18 @@ func NewCelerLedgerFilterer(address common.Address, filterer bind.ContractFilter
 
 // bindCelerLedger binds a generic wrapper to an already deployed contract.
 func bindCelerLedger(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(CelerLedgerABI))
+	parsed, err := CelerLedgerMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+	return bind.NewBoundContract(address, *parsed, caller, transactor, filterer), nil
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_CelerLedger *CelerLedgerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_CelerLedger *CelerLedgerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _CelerLedger.Contract.CelerLedgerCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -173,7 +187,7 @@ func (_CelerLedger *CelerLedgerRaw) Transact(opts *bind.TransactOpts, method str
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_CelerLedger *CelerLedgerCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_CelerLedger *CelerLedgerCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _CelerLedger.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -192,12 +206,17 @@ func (_CelerLedger *CelerLedgerTransactorRaw) Transact(opts *bind.TransactOpts, 
 //
 // Solidity: function getBalanceLimit(address _tokenAddr) view returns(uint256)
 func (_CelerLedger *CelerLedgerCaller) GetBalanceLimit(opts *bind.CallOpts, _tokenAddr common.Address) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "getBalanceLimit", _tokenAddr)
-	return *ret0, err
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getBalanceLimit", _tokenAddr)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // GetBalanceLimit is a free data retrieval call binding the contract method 0xec7c637d.
@@ -218,12 +237,17 @@ func (_CelerLedger *CelerLedgerCallerSession) GetBalanceLimit(_tokenAddr common.
 //
 // Solidity: function getBalanceLimitsEnabled() view returns(bool)
 func (_CelerLedger *CelerLedgerCaller) GetBalanceLimitsEnabled(opts *bind.CallOpts) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "getBalanceLimitsEnabled")
-	return *ret0, err
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getBalanceLimitsEnabled")
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
 }
 
 // GetBalanceLimitsEnabled is a free data retrieval call binding the contract method 0x2b559ecc.
@@ -244,18 +268,19 @@ func (_CelerLedger *CelerLedgerCallerSession) GetBalanceLimitsEnabled() (bool, e
 //
 // Solidity: function getBalanceMap(bytes32 _channelId) view returns(address[2], uint256[2], uint256[2])
 func (_CelerLedger *CelerLedgerCaller) GetBalanceMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, [2]*big.Int, error) {
-	var (
-		ret0 = new([2]common.Address)
-		ret1 = new([2]*big.Int)
-		ret2 = new([2]*big.Int)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
-		ret2,
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getBalanceMap", _channelId)
+
+	if err != nil {
+		return *new([2]common.Address), *new([2]*big.Int), *new([2]*big.Int), err
 	}
-	err := _CelerLedger.contract.Call(opts, out, "getBalanceMap", _channelId)
-	return *ret0, *ret1, *ret2, err
+
+	out0 := *abi.ConvertType(out[0], new([2]common.Address)).(*[2]common.Address)
+	out1 := *abi.ConvertType(out[1], new([2]*big.Int)).(*[2]*big.Int)
+	out2 := *abi.ConvertType(out[2], new([2]*big.Int)).(*[2]*big.Int)
+
+	return out0, out1, out2, err
+
 }
 
 // GetBalanceMap is a free data retrieval call binding the contract method 0xbd480cb7.
@@ -276,12 +301,17 @@ func (_CelerLedger *CelerLedgerCallerSession) GetBalanceMap(_channelId [32]byte)
 //
 // Solidity: function getCelerWallet() view returns(address)
 func (_CelerLedger *CelerLedgerCaller) GetCelerWallet(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "getCelerWallet")
-	return *ret0, err
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getCelerWallet")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // GetCelerWallet is a free data retrieval call binding the contract method 0xa099a39f.
@@ -302,20 +332,20 @@ func (_CelerLedger *CelerLedgerCallerSession) GetCelerWallet() (common.Address, 
 //
 // Solidity: function getChannelMigrationArgs(bytes32 _channelId) view returns(uint256, uint256, address, uint256)
 func (_CelerLedger *CelerLedgerCaller) GetChannelMigrationArgs(opts *bind.CallOpts, _channelId [32]byte) (*big.Int, *big.Int, common.Address, *big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-		ret1 = new(*big.Int)
-		ret2 = new(common.Address)
-		ret3 = new(*big.Int)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
-		ret2,
-		ret3,
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getChannelMigrationArgs", _channelId)
+
+	if err != nil {
+		return *new(*big.Int), *new(*big.Int), *new(common.Address), *new(*big.Int), err
 	}
-	err := _CelerLedger.contract.Call(opts, out, "getChannelMigrationArgs", _channelId)
-	return *ret0, *ret1, *ret2, *ret3, err
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	out1 := *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
+	out2 := *abi.ConvertType(out[2], new(common.Address)).(*common.Address)
+	out3 := *abi.ConvertType(out[3], new(*big.Int)).(**big.Int)
+
+	return out0, out1, out2, out3, err
+
 }
 
 // GetChannelMigrationArgs is a free data retrieval call binding the contract method 0x2f0ac304.
@@ -336,12 +366,17 @@ func (_CelerLedger *CelerLedgerCallerSession) GetChannelMigrationArgs(_channelId
 //
 // Solidity: function getChannelStatus(bytes32 _channelId) view returns(uint8)
 func (_CelerLedger *CelerLedgerCaller) GetChannelStatus(opts *bind.CallOpts, _channelId [32]byte) (uint8, error) {
-	var (
-		ret0 = new(uint8)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "getChannelStatus", _channelId)
-	return *ret0, err
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getChannelStatus", _channelId)
+
+	if err != nil {
+		return *new(uint8), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(uint8)).(*uint8)
+
+	return out0, err
+
 }
 
 // GetChannelStatus is a free data retrieval call binding the contract method 0xcc0b94b7.
@@ -362,12 +397,17 @@ func (_CelerLedger *CelerLedgerCallerSession) GetChannelStatus(_channelId [32]by
 //
 // Solidity: function getChannelStatusNum(uint256 _channelStatus) view returns(uint256)
 func (_CelerLedger *CelerLedgerCaller) GetChannelStatusNum(opts *bind.CallOpts, _channelStatus *big.Int) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "getChannelStatusNum", _channelStatus)
-	return *ret0, err
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getChannelStatusNum", _channelStatus)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // GetChannelStatusNum is a free data retrieval call binding the contract method 0x307d6f96.
@@ -388,12 +428,17 @@ func (_CelerLedger *CelerLedgerCallerSession) GetChannelStatusNum(_channelStatus
 //
 // Solidity: function getCooperativeWithdrawSeqNum(bytes32 _channelId) view returns(uint256)
 func (_CelerLedger *CelerLedgerCaller) GetCooperativeWithdrawSeqNum(opts *bind.CallOpts, _channelId [32]byte) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "getCooperativeWithdrawSeqNum", _channelId)
-	return *ret0, err
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getCooperativeWithdrawSeqNum", _channelId)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // GetCooperativeWithdrawSeqNum is a free data retrieval call binding the contract method 0xf0c73d70.
@@ -414,12 +459,17 @@ func (_CelerLedger *CelerLedgerCallerSession) GetCooperativeWithdrawSeqNum(_chan
 //
 // Solidity: function getDisputeTimeout(bytes32 _channelId) view returns(uint256)
 func (_CelerLedger *CelerLedgerCaller) GetDisputeTimeout(opts *bind.CallOpts, _channelId [32]byte) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "getDisputeTimeout", _channelId)
-	return *ret0, err
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getDisputeTimeout", _channelId)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // GetDisputeTimeout is a free data retrieval call binding the contract method 0xe6322df7.
@@ -440,12 +490,17 @@ func (_CelerLedger *CelerLedgerCallerSession) GetDisputeTimeout(_channelId [32]b
 //
 // Solidity: function getEthPool() view returns(address)
 func (_CelerLedger *CelerLedgerCaller) GetEthPool(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "getEthPool")
-	return *ret0, err
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getEthPool")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // GetEthPool is a free data retrieval call binding the contract method 0xd75f960e.
@@ -466,16 +521,18 @@ func (_CelerLedger *CelerLedgerCallerSession) GetEthPool() (common.Address, erro
 //
 // Solidity: function getLastPayResolveDeadlineMap(bytes32 _channelId) view returns(address[2], uint256[2])
 func (_CelerLedger *CelerLedgerCaller) GetLastPayResolveDeadlineMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
-	var (
-		ret0 = new([2]common.Address)
-		ret1 = new([2]*big.Int)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getLastPayResolveDeadlineMap", _channelId)
+
+	if err != nil {
+		return *new([2]common.Address), *new([2]*big.Int), err
 	}
-	err := _CelerLedger.contract.Call(opts, out, "getLastPayResolveDeadlineMap", _channelId)
-	return *ret0, *ret1, err
+
+	out0 := *abi.ConvertType(out[0], new([2]common.Address)).(*[2]common.Address)
+	out1 := *abi.ConvertType(out[1], new([2]*big.Int)).(*[2]*big.Int)
+
+	return out0, out1, err
+
 }
 
 // GetLastPayResolveDeadlineMap is a free data retrieval call binding the contract method 0x9f1fad83.
@@ -496,12 +553,17 @@ func (_CelerLedger *CelerLedgerCallerSession) GetLastPayResolveDeadlineMap(_chan
 //
 // Solidity: function getMigratedTo(bytes32 _channelId) view returns(address)
 func (_CelerLedger *CelerLedgerCaller) GetMigratedTo(opts *bind.CallOpts, _channelId [32]byte) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "getMigratedTo", _channelId)
-	return *ret0, err
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getMigratedTo", _channelId)
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // GetMigratedTo is a free data retrieval call binding the contract method 0xc38a325d.
@@ -522,16 +584,18 @@ func (_CelerLedger *CelerLedgerCallerSession) GetMigratedTo(_channelId [32]byte)
 //
 // Solidity: function getNextPayIdListHashMap(bytes32 _channelId) view returns(address[2], bytes32[2])
 func (_CelerLedger *CelerLedgerCaller) GetNextPayIdListHashMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2][32]byte, error) {
-	var (
-		ret0 = new([2]common.Address)
-		ret1 = new([2][32]byte)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getNextPayIdListHashMap", _channelId)
+
+	if err != nil {
+		return *new([2]common.Address), *new([2][32]byte), err
 	}
-	err := _CelerLedger.contract.Call(opts, out, "getNextPayIdListHashMap", _channelId)
-	return *ret0, *ret1, err
+
+	out0 := *abi.ConvertType(out[0], new([2]common.Address)).(*[2]common.Address)
+	out1 := *abi.ConvertType(out[1], new([2][32]byte)).(*[2][32]byte)
+
+	return out0, out1, err
+
 }
 
 // GetNextPayIdListHashMap is a free data retrieval call binding the contract method 0xcd3a1be6.
@@ -552,12 +616,17 @@ func (_CelerLedger *CelerLedgerCallerSession) GetNextPayIdListHashMap(_channelId
 //
 // Solidity: function getPayRegistry() view returns(address)
 func (_CelerLedger *CelerLedgerCaller) GetPayRegistry(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "getPayRegistry")
-	return *ret0, err
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getPayRegistry")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // GetPayRegistry is a free data retrieval call binding the contract method 0x312ea2c6.
@@ -578,24 +647,22 @@ func (_CelerLedger *CelerLedgerCallerSession) GetPayRegistry() (common.Address, 
 //
 // Solidity: function getPeersMigrationInfo(bytes32 _channelId) view returns(address[2], uint256[2], uint256[2], uint256[2], uint256[2], uint256[2])
 func (_CelerLedger *CelerLedgerCaller) GetPeersMigrationInfo(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, [2]*big.Int, [2]*big.Int, [2]*big.Int, [2]*big.Int, error) {
-	var (
-		ret0 = new([2]common.Address)
-		ret1 = new([2]*big.Int)
-		ret2 = new([2]*big.Int)
-		ret3 = new([2]*big.Int)
-		ret4 = new([2]*big.Int)
-		ret5 = new([2]*big.Int)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
-		ret2,
-		ret3,
-		ret4,
-		ret5,
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getPeersMigrationInfo", _channelId)
+
+	if err != nil {
+		return *new([2]common.Address), *new([2]*big.Int), *new([2]*big.Int), *new([2]*big.Int), *new([2]*big.Int), *new([2]*big.Int), err
 	}
-	err := _CelerLedger.contract.Call(opts, out, "getPeersMigrationInfo", _channelId)
-	return *ret0, *ret1, *ret2, *ret3, *ret4, *ret5, err
+
+	out0 := *abi.ConvertType(out[0], new([2]common.Address)).(*[2]common.Address)
+	out1 := *abi.ConvertType(out[1], new([2]*big.Int)).(*[2]*big.Int)
+	out2 := *abi.ConvertType(out[2], new([2]*big.Int)).(*[2]*big.Int)
+	out3 := *abi.ConvertType(out[3], new([2]*big.Int)).(*[2]*big.Int)
+	out4 := *abi.ConvertType(out[4], new([2]*big.Int)).(*[2]*big.Int)
+	out5 := *abi.ConvertType(out[5], new([2]*big.Int)).(*[2]*big.Int)
+
+	return out0, out1, out2, out3, out4, out5, err
+
 }
 
 // GetPeersMigrationInfo is a free data retrieval call binding the contract method 0x88f41465.
@@ -616,16 +683,18 @@ func (_CelerLedger *CelerLedgerCallerSession) GetPeersMigrationInfo(_channelId [
 //
 // Solidity: function getPendingPayOutMap(bytes32 _channelId) view returns(address[2], uint256[2])
 func (_CelerLedger *CelerLedgerCaller) GetPendingPayOutMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
-	var (
-		ret0 = new([2]common.Address)
-		ret1 = new([2]*big.Int)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getPendingPayOutMap", _channelId)
+
+	if err != nil {
+		return *new([2]common.Address), *new([2]*big.Int), err
 	}
-	err := _CelerLedger.contract.Call(opts, out, "getPendingPayOutMap", _channelId)
-	return *ret0, *ret1, err
+
+	out0 := *abi.ConvertType(out[0], new([2]common.Address)).(*[2]common.Address)
+	out1 := *abi.ConvertType(out[1], new([2]*big.Int)).(*[2]*big.Int)
+
+	return out0, out1, err
+
 }
 
 // GetPendingPayOutMap is a free data retrieval call binding the contract method 0x0165cef8.
@@ -646,12 +715,17 @@ func (_CelerLedger *CelerLedgerCallerSession) GetPendingPayOutMap(_channelId [32
 //
 // Solidity: function getSettleFinalizedTime(bytes32 _channelId) view returns(uint256)
 func (_CelerLedger *CelerLedgerCaller) GetSettleFinalizedTime(opts *bind.CallOpts, _channelId [32]byte) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "getSettleFinalizedTime", _channelId)
-	return *ret0, err
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getSettleFinalizedTime", _channelId)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // GetSettleFinalizedTime is a free data retrieval call binding the contract method 0x09b65d86.
@@ -672,16 +746,18 @@ func (_CelerLedger *CelerLedgerCallerSession) GetSettleFinalizedTime(_channelId 
 //
 // Solidity: function getStateSeqNumMap(bytes32 _channelId) view returns(address[2], uint256[2])
 func (_CelerLedger *CelerLedgerCaller) GetStateSeqNumMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
-	var (
-		ret0 = new([2]common.Address)
-		ret1 = new([2]*big.Int)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getStateSeqNumMap", _channelId)
+
+	if err != nil {
+		return *new([2]common.Address), *new([2]*big.Int), err
 	}
-	err := _CelerLedger.contract.Call(opts, out, "getStateSeqNumMap", _channelId)
-	return *ret0, *ret1, err
+
+	out0 := *abi.ConvertType(out[0], new([2]common.Address)).(*[2]common.Address)
+	out1 := *abi.ConvertType(out[1], new([2]*big.Int)).(*[2]*big.Int)
+
+	return out0, out1, err
+
 }
 
 // GetStateSeqNumMap is a free data retrieval call binding the contract method 0x666a6d65.
@@ -702,12 +778,17 @@ func (_CelerLedger *CelerLedgerCallerSession) GetStateSeqNumMap(_channelId [32]b
 //
 // Solidity: function getTokenContract(bytes32 _channelId) view returns(address)
 func (_CelerLedger *CelerLedgerCaller) GetTokenContract(opts *bind.CallOpts, _channelId [32]byte) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "getTokenContract", _channelId)
-	return *ret0, err
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getTokenContract", _channelId)
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // GetTokenContract is a free data retrieval call binding the contract method 0x2e2a5a02.
@@ -728,12 +809,17 @@ func (_CelerLedger *CelerLedgerCallerSession) GetTokenContract(_channelId [32]by
 //
 // Solidity: function getTokenType(bytes32 _channelId) view returns(uint8)
 func (_CelerLedger *CelerLedgerCaller) GetTokenType(opts *bind.CallOpts, _channelId [32]byte) (uint8, error) {
-	var (
-		ret0 = new(uint8)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "getTokenType", _channelId)
-	return *ret0, err
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getTokenType", _channelId)
+
+	if err != nil {
+		return *new(uint8), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(uint8)).(*uint8)
+
+	return out0, err
+
 }
 
 // GetTokenType is a free data retrieval call binding the contract method 0x979a9b5e.
@@ -754,12 +840,17 @@ func (_CelerLedger *CelerLedgerCallerSession) GetTokenType(_channelId [32]byte) 
 //
 // Solidity: function getTotalBalance(bytes32 _channelId) view returns(uint256)
 func (_CelerLedger *CelerLedgerCaller) GetTotalBalance(opts *bind.CallOpts, _channelId [32]byte) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "getTotalBalance", _channelId)
-	return *ret0, err
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getTotalBalance", _channelId)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // GetTotalBalance is a free data retrieval call binding the contract method 0x69d5dd67.
@@ -780,16 +871,18 @@ func (_CelerLedger *CelerLedgerCallerSession) GetTotalBalance(_channelId [32]byt
 //
 // Solidity: function getTransferOutMap(bytes32 _channelId) view returns(address[2], uint256[2])
 func (_CelerLedger *CelerLedgerCaller) GetTransferOutMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
-	var (
-		ret0 = new([2]common.Address)
-		ret1 = new([2]*big.Int)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getTransferOutMap", _channelId)
+
+	if err != nil {
+		return *new([2]common.Address), *new([2]*big.Int), err
 	}
-	err := _CelerLedger.contract.Call(opts, out, "getTransferOutMap", _channelId)
-	return *ret0, *ret1, err
+
+	out0 := *abi.ConvertType(out[0], new([2]common.Address)).(*[2]common.Address)
+	out1 := *abi.ConvertType(out[1], new([2]*big.Int)).(*[2]*big.Int)
+
+	return out0, out1, err
+
 }
 
 // GetTransferOutMap is a free data retrieval call binding the contract method 0xd927bfc4.
@@ -810,20 +903,20 @@ func (_CelerLedger *CelerLedgerCallerSession) GetTransferOutMap(_channelId [32]b
 //
 // Solidity: function getWithdrawIntent(bytes32 _channelId) view returns(address, uint256, uint256, bytes32)
 func (_CelerLedger *CelerLedgerCaller) GetWithdrawIntent(opts *bind.CallOpts, _channelId [32]byte) (common.Address, *big.Int, *big.Int, [32]byte, error) {
-	var (
-		ret0 = new(common.Address)
-		ret1 = new(*big.Int)
-		ret2 = new(*big.Int)
-		ret3 = new([32]byte)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
-		ret2,
-		ret3,
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "getWithdrawIntent", _channelId)
+
+	if err != nil {
+		return *new(common.Address), *new(*big.Int), *new(*big.Int), *new([32]byte), err
 	}
-	err := _CelerLedger.contract.Call(opts, out, "getWithdrawIntent", _channelId)
-	return *ret0, *ret1, *ret2, *ret3, err
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+	out1 := *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
+	out2 := *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
+	out3 := *abi.ConvertType(out[3], new([32]byte)).(*[32]byte)
+
+	return out0, out1, out2, out3, err
+
 }
 
 // GetWithdrawIntent is a free data retrieval call binding the contract method 0x76bff117.
@@ -840,42 +933,21 @@ func (_CelerLedger *CelerLedgerCallerSession) GetWithdrawIntent(_channelId [32]b
 	return _CelerLedger.Contract.GetWithdrawIntent(&_CelerLedger.CallOpts, _channelId)
 }
 
-// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
-//
-// Solidity: function isOwner() view returns(bool)
-func (_CelerLedger *CelerLedgerCaller) IsOwner(opts *bind.CallOpts) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "isOwner")
-	return *ret0, err
-}
-
-// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
-//
-// Solidity: function isOwner() view returns(bool)
-func (_CelerLedger *CelerLedgerSession) IsOwner() (bool, error) {
-	return _CelerLedger.Contract.IsOwner(&_CelerLedger.CallOpts)
-}
-
-// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
-//
-// Solidity: function isOwner() view returns(bool)
-func (_CelerLedger *CelerLedgerCallerSession) IsOwner() (bool, error) {
-	return _CelerLedger.Contract.IsOwner(&_CelerLedger.CallOpts)
-}
-
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() view returns(address)
 func (_CelerLedger *CelerLedgerCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _CelerLedger.contract.Call(opts, out, "owner")
-	return *ret0, err
+	var out []interface{}
+	err := _CelerLedger.contract.Call(opts, &out, "owner")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
@@ -1450,6 +1522,7 @@ func (_CelerLedger *CelerLedgerFilterer) ParseClearOnePay(log types.Log) (*Celer
 	if err := _CelerLedger.contract.UnpackLog(event, "ClearOnePay", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -1594,6 +1667,7 @@ func (_CelerLedger *CelerLedgerFilterer) ParseConfirmSettle(log types.Log) (*Cel
 	if err := _CelerLedger.contract.UnpackLog(event, "ConfirmSettle", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -1737,6 +1811,7 @@ func (_CelerLedger *CelerLedgerFilterer) ParseConfirmSettleFail(log types.Log) (
 	if err := _CelerLedger.contract.UnpackLog(event, "ConfirmSettleFail", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -1903,6 +1978,7 @@ func (_CelerLedger *CelerLedgerFilterer) ParseConfirmWithdraw(log types.Log) (*C
 	if err := _CelerLedger.contract.UnpackLog(event, "ConfirmWithdraw", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -2047,6 +2123,7 @@ func (_CelerLedger *CelerLedgerFilterer) ParseCooperativeSettle(log types.Log) (
 	if err := _CelerLedger.contract.UnpackLog(event, "CooperativeSettle", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -2214,6 +2291,7 @@ func (_CelerLedger *CelerLedgerFilterer) ParseCooperativeWithdraw(log types.Log)
 	if err := _CelerLedger.contract.UnpackLog(event, "CooperativeWithdraw", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -2360,6 +2438,7 @@ func (_CelerLedger *CelerLedgerFilterer) ParseDeposit(log types.Log) (*CelerLedg
 	if err := _CelerLedger.contract.UnpackLog(event, "Deposit", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -2504,6 +2583,7 @@ func (_CelerLedger *CelerLedgerFilterer) ParseIntendSettle(log types.Log) (*Cele
 	if err := _CelerLedger.contract.UnpackLog(event, "IntendSettle", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -2657,6 +2737,7 @@ func (_CelerLedger *CelerLedgerFilterer) ParseIntendWithdraw(log types.Log) (*Ce
 	if err := _CelerLedger.contract.UnpackLog(event, "IntendWithdraw", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -2809,6 +2890,7 @@ func (_CelerLedger *CelerLedgerFilterer) ParseMigrateChannelFrom(log types.Log) 
 	if err := _CelerLedger.contract.UnpackLog(event, "MigrateChannelFrom", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -2961,6 +3043,7 @@ func (_CelerLedger *CelerLedgerFilterer) ParseMigrateChannelTo(log types.Log) (*
 	if err := _CelerLedger.contract.UnpackLog(event, "MigrateChannelTo", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -3118,6 +3201,7 @@ func (_CelerLedger *CelerLedgerFilterer) ParseOpenChannel(log types.Log) (*Celer
 	if err := _CelerLedger.contract.UnpackLog(event, "OpenChannel", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -3270,6 +3354,7 @@ func (_CelerLedger *CelerLedgerFilterer) ParseOwnershipTransferred(log types.Log
 	if err := _CelerLedger.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -3414,6 +3499,7 @@ func (_CelerLedger *CelerLedgerFilterer) ParseSnapshotStates(log types.Log) (*Ce
 	if err := _CelerLedger.contract.UnpackLog(event, "SnapshotStates", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -3557,5 +3643,6 @@ func (_CelerLedger *CelerLedgerFilterer) ParseVetoWithdraw(log types.Log) (*Cele
 	if err := _CelerLedger.contract.UnpackLog(event, "VetoWithdraw", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }

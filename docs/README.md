@@ -8,6 +8,7 @@ Use these documents in this order:
 2. [Backend Usage](./backend-usage.md) for build, test, startup, configuration, and operator workflows.
 3. [Backend Troubleshooting](./backend-troubleshooting.md) for failure diagnosis, operational checks, and recovery steps.
 4. [Dependency Upgrade Plan](./upgrade-plan.md) for the staged modernization path for `goutils`, `go-ethereum`, and protobuf.
+5. [Contract Binding Regeneration](./contract-binding-regeneration.md) for the pinned workflow that maps `agent-pay-contracts` Foundry artifacts to the checked-in Go bindings in this repo.
 
 These docs complement the companion `agentpay-architecture` documents. They do not repeat the full protocol or contract design; instead, they show how this repo realizes those ideas.
 

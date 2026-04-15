@@ -100,9 +100,9 @@ func WaitMinedOptions() []eth.TxOption {
 
 func TransactOptions(opts ...eth.TxOption) []eth.TxOption {
 	options := []eth.TxOption{
-		eth.WithMinGasGwei(rtconfig.GetMinGasGwei()),
-		eth.WithMaxGasGwei(rtconfig.GetMaxGasGwei()),
-		eth.WithAddGasGwei(rtconfig.GetAddGasGwei()),
+		eth.WithMinGasGwei(float64(rtconfig.GetMinGasGwei())),
+		eth.WithMaxGasGwei(float64(rtconfig.GetMaxGasGwei())),
+		eth.WithAddGasGwei(float64(rtconfig.GetAddGasGwei())),
 	}
 	options = append(options, WaitMinedOptions()...)
 	return append(options, opts...)

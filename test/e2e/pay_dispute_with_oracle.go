@@ -237,6 +237,7 @@ func getOracleProofBytes(stateProofBytes []byte, players []string, updater strin
 		return nil, err
 	}
 	oracleSig, _ := oracle.SignEthMessage(serializedOracleState)
+	oracleSig = ctype.ToOnChainSig(oracleSig)
 	oracleProof := &app.OracleProof{
 		OracleState: serializedOracleState,
 		Sig:         oracleSig,

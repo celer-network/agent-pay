@@ -454,26 +454,28 @@ func (p *Processor) monitorOnAllLedgers() {
 // Continuously monitor the on-chain "Deposit" event.
 func (p *Processor) monitorEvent(ledgerContract chain.Contract) {
 	monitorCfg := &monitor.Config{
+		ChainId:       config.ChainId.Uint64(),
 		EventName:     event.Deposit,
 		Contract:      ledgerContract,
 		StartBlock:    p.monitorService.GetCurrentBlockNumber(),
 		CheckInterval: p.nodeConfig.GetCheckInterval(event.Deposit),
 	}
 	p.monitorService.Monitor(monitorCfg,
-		func(id monitor.CallbackID, eLog types.Log) {
+		func(id monitor.CallbackID, eLog types.Log) bool {
 			e := &ledger.CelerLedgerDeposit{}
 			err := ledgerContract.ParseEvent(event.Deposit, eLog, e)
 			if err != nil {
 				log.Error(err)
-				return
+				return false
 			}
 			self := p.nodeConfig.GetOnChainAddr()
 			if e.PeerAddrs[0] != self && e.PeerAddrs[1] != self {
-				return
+				return false
 			}
 			txHash := eLog.TxHash
 			log.Infoln("Caught new deposit made to channel", ctype.CidType(e.ChannelId).Hex(), "tx", txHash.Hex())
 			p.handleEvent(e, txHash)
+			return false
 		})
 }
 

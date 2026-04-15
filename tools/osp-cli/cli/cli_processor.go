@@ -61,7 +61,7 @@ func (p *Processor) Setup(db, ospkey, disputer bool) {
 			if err != nil {
 				log.Fatal(err)
 			}
-			watch := watcher.NewWatchService(ethclient, p.dal, config.BlockIntervalSec)
+			watch := watcher.NewWatchService(ethclient, p.dal, config.BlockIntervalSec, 0)
 			monitorService := monitor.NewService(watch, p.profile.BlockDelayNum, false)
 			p.disputer = dispute.NewProcessor(
 				p.nodeConfig, p.transactor, transactorPool, nil, monitorService, p.dal, false)

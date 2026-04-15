@@ -301,26 +301,27 @@ func (p *Processor) handleIntendSettleEventTx(tx *storage.DALTx, args ...interfa
 
 func (p *Processor) monitorPaymentChannelSettleEvent(ledgerContract chain.Contract) {
 	monitorCfg := &monitor.Config{
+		ChainId:       config.ChainId.Uint64(),
 		EventName:     event.IntendSettle,
 		Contract:      ledgerContract,
 		StartBlock:    p.monitorService.GetCurrentBlockNumber(),
 		CheckInterval: p.nodeConfig.GetCheckInterval(event.IntendSettle),
 	}
 	_, monErr := p.monitorService.Monitor(monitorCfg,
-		func(id monitor.CallbackID, eLog types.Log) {
+		func(id monitor.CallbackID, eLog types.Log) bool {
 			// CAVEAT!!!: suppose we have the same struct of event.
 			// If event struct changes, this monitor does not work.
 			e := &ledger.CelerLedgerIntendSettle{}
 			if err := ledgerContract.ParseEvent(event.IntendSettle, eLog, e); err != nil {
 				log.Error(err)
-				return
+				return false
 			}
 			cid := ctype.CidType(e.ChannelId)
 			log.Infof("Seeing IntendSettle event, cid %x txhash %x blknum %d ", cid, eLog.TxHash, eLog.BlockNumber)
 			needRespond := false
 			err := p.dal.Transactional(p.handleIntendSettleEventTx, cid, e.SeqNums, &needRespond)
 			if err != nil {
-				return
+				return false
 			}
 			// Update data of routing table calculation
 			if p.routeController != nil {
@@ -328,29 +329,31 @@ func (p *Processor) monitorPaymentChannelSettleEvent(ledgerContract chain.Contra
 			}
 			if !needRespond {
 				log.Debugln("No need to respond IntendSettle cid:", cid.Hex())
-				return
+				return false
 			}
 			log.Debugln("Responding IntendSettle cid:", cid.Hex())
 			p.IntendSettlePaymentChannel(cid, false) // errs logged within func
 			metrics.IncDisputeSettleEventCnt(event.IntendSettle)
+			return false
 		})
 	if monErr != nil {
 		log.Error(monErr)
 	}
 	monitorCfg2 := &monitor.Config{
+		ChainId:       config.ChainId.Uint64(),
 		EventName:     event.ConfirmSettle,
 		Contract:      ledgerContract,
 		StartBlock:    p.monitorService.GetCurrentBlockNumber(),
 		CheckInterval: p.nodeConfig.GetCheckInterval(event.ConfirmSettle),
 	}
 	_, monErr = p.monitorService.Monitor(monitorCfg2,
-		func(id monitor.CallbackID, eLog types.Log) {
+		func(id monitor.CallbackID, eLog types.Log) bool {
 			// CAVEAT!!!: suppose we have the same struct of event.
 			// If event struct changes, this monitor does not work.
 			e := &ledger.CelerLedgerConfirmSettle{}
 			if err := ledgerContract.ParseEvent(event.ConfirmSettle, eLog, e); err != nil {
 				log.Error(err)
-				return
+				return false
 			}
 			cid := ctype.CidType(e.ChannelId)
 			_, hasState, err := p.dal.GetChanState(cid)
@@ -365,6 +368,7 @@ func (p *Processor) monitorPaymentChannelSettleEvent(ledgerContract chain.Contra
 				}
 			}
 			metrics.IncDisputeSettleEventCnt(event.ConfirmSettle)
+			return false
 		})
 	if monErr != nil {
 		log.Error(monErr)

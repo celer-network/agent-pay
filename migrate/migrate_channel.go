@@ -14,6 +14,7 @@ import (
 	"github.com/celer-network/agent-pay/common/event"
 	"github.com/celer-network/agent-pay/common/intfs"
 	enums "github.com/celer-network/agent-pay/common/structs"
+	"github.com/celer-network/agent-pay/config"
 	"github.com/celer-network/agent-pay/ctype"
 	"github.com/celer-network/agent-pay/entity"
 	"github.com/celer-network/agent-pay/rpc"
@@ -202,13 +203,13 @@ func (p *MigrateChannelProcessor) ProcessMigrateChannelRequest(req *rpc.MigrateC
 	}
 
 	fromLedger := migrationInfo.GetFromLedgerAddress()
-	if bytes.Compare(currentLedger.Bytes(), fromLedger) != 0 {
+	if !bytes.Equal(currentLedger.Bytes(), fromLedger) {
 		log.Errorf("inconsistent current ledger info: want(%x), get(%x)", currentLedger, fromLedger)
 		return nil, errors.New("inconsistent current ledger info")
 	}
 
 	toLedger := migrationInfo.GetToLedgerAddress()
-	if bytes.Compare(latestLedgerAddr.Bytes(), toLedger) != 0 {
+	if !bytes.Equal(latestLedgerAddr.Bytes(), toLedger) {
 		log.Errorf("inconsistent config ledger info: want(%x), get(%x)", latestLedgerAddr, toLedger)
 		return nil, errors.New("inconsistent config ledger info")
 	}
@@ -309,19 +310,20 @@ func (p *MigrateChannelProcessor) monitorOnDeprecatedLedgers() {
 // monitorMigrateChannelEvent monitors onchain event emitted from CelerLedger
 func (p *MigrateChannelProcessor) monitorMigrateChannelEvent(contract chain.Contract) {
 	monitorCfg := &monitor.Config{
+		ChainId:       config.ChainId.Uint64(),
 		EventName:     event.MigrateChannelTo,
 		Contract:      contract,
 		StartBlock:    p.monitorService.GetCurrentBlockNumber(),
 		CheckInterval: p.nodeConfig.GetCheckInterval(event.MigrateChannelTo),
 	}
 	_, err := p.monitorService.Monitor(monitorCfg,
-		func(id monitor.CallbackID, eLog types.Log) {
+		func(id monitor.CallbackID, eLog types.Log) bool {
 			// CAVEAT!!!: suppose we have the same struct for all migration event.
 			// If migration event struct changes, this monitor does not work.
 			e := &ledger.CelerLedgerMigrateChannelTo{}
 			if err := contract.ParseEvent(event.MigrateChannelTo, eLog, e); err != nil {
 				log.Error(err)
-				return
+				return false
 			}
 
 			cid := ctype.CidType(e.ChannelId)
@@ -331,6 +333,7 @@ func (p *MigrateChannelProcessor) monitorMigrateChannelEvent(contract chain.Cont
 			if err != nil {
 				log.Error(err)
 			}
+			return false
 		},
 	)
 	if err != nil {

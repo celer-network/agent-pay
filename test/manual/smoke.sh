@@ -94,7 +94,16 @@ echo "registering inter-OSP stream"
 
 echo "opening OSP-to-OSP channel"
 "$CLI" -adminhostport localhost:8190 -openchannel -peer 00290a43e5b2b151d530845b2d5a818240bc7c70 -selfdeposit 10 -peerdeposit 10 >/tmp/agentpay_manual_openchannel.out 2>&1
-sleep 2
+if ! wait_for_log "${LOG_DIR}/o1.log" "Adding edge cid" 30; then
+	echo "OSP1 did not observe the opened channel edge" >&2
+	tail -n 80 "${LOG_DIR}/o1.log" >&2 || true
+	exit 1
+fi
+if ! wait_for_log "${LOG_DIR}/o2.log" "Adding edge cid" 30; then
+	echo "OSP2 did not observe the opened channel edge" >&2
+	tail -n 80 "${LOG_DIR}/o2.log" >&2 || true
+	exit 1
+fi
 
 echo "building routing tables"
 curl -sS -X POST -H 'Content-Type: application/json' -d '{}' http://localhost:8190/admin/route/build >/tmp/agentpay_manual_route_o1.json

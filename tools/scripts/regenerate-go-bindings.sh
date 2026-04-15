@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+REPO_ROOT=$(cd -- "$SCRIPT_DIR/../.." && pwd)
+DEFAULT_CONTRACTS_REPO="$REPO_ROOT/../agent-pay-contracts"
+
+CONTRACTS_REPO=${CONTRACTS_REPO:-$DEFAULT_CONTRACTS_REPO}
+OUTPUT_ROOT=${OUTPUT_ROOT:-$REPO_ROOT}
+ABIGEN_VERSION=${ABIGEN_VERSION:-v1.15.11}
+SKIP_FORGE_BUILD=${SKIP_FORGE_BUILD:-0}
+
+need_cmd() {
+	if ! command -v "$1" >/dev/null 2>&1; then
+		echo "missing required command: $1" >&2
+		exit 1
+	fi
+}
+
+need_cmd jq
+need_cmd go
+if [[ "$SKIP_FORGE_BUILD" != "1" ]]; then
+	need_cmd forge
+fi
+
+if [[ ! -d "$CONTRACTS_REPO" ]]; then
+	echo "contracts repo not found: $CONTRACTS_REPO" >&2
+	exit 1
+fi
+
+if [[ -n "${ABIGEN:-}" ]]; then
+	ABIGEN_CMD=("$ABIGEN")
+else
+	ABIGEN_CMD=(go run "github.com/ethereum/go-ethereum/cmd/abigen@${ABIGEN_VERSION}")
+fi
+
+if [[ "$SKIP_FORGE_BUILD" != "1" ]]; then
+	(
+		cd "$CONTRACTS_REPO"
+		forge build
+	)
+fi
+
+TMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/agent-pay-bindings.XXXXXX")
+trap 'rm -rf "$TMP_DIR"' EXIT
+
+generate_binding() {
+	local artifact_rel=$1
+	local output_rel=$2
+	local pkg=$3
+	local type_name=$4
+	local artifact="$CONTRACTS_REPO/$artifact_rel"
+	local output="$OUTPUT_ROOT/$output_rel"
+	local abi_json="$TMP_DIR/${pkg}_${type_name}.abi.json"
+	local bytecode_txt="$TMP_DIR/${pkg}_${type_name}.bin"
+
+	if [[ ! -f "$artifact" ]]; then
+		echo "artifact not found: $artifact" >&2
+		exit 1
+	fi
+
+	jq '.abi' "$artifact" > "$abi_json"
+	jq -r '.bytecode.object' "$artifact" > "$bytecode_txt"
+	mkdir -p "$(dirname "$output")"
+	"${ABIGEN_CMD[@]}" \
+		--abi "$abi_json" \
+		--bin "$bytecode_txt" \
+		--pkg "$pkg" \
+		--type "$type_name" \
+		--out "$output"
+}
+
+generate_binding out/LedgerBalanceLimit.sol/LedgerBalanceLimit.json chain/channel-eth-go/balancelimit/balancelimit.go balancelimit LedgerBalanceLimit
+generate_binding out/LedgerChannel.sol/LedgerChannel.json chain/channel-eth-go/channel/channel.go channel LedgerChannel
+generate_binding out/EthPool.sol/EthPool.json chain/channel-eth-go/ethpool/ethpool.go ethpool EthPool
+generate_binding out/CelerLedger.sol/CelerLedger.json chain/channel-eth-go/ledger/ledger.go ledger CelerLedger
+generate_binding out/LedgerStruct.sol/LedgerStruct.json chain/channel-eth-go/ledgerstruct/ledgerstruct.go ledgerstruct LedgerStruct
+generate_binding out/LedgerMigrate.sol/LedgerMigrate.json chain/channel-eth-go/migrate/migrate.go migrate LedgerMigrate
+generate_binding out/LedgerOperation.sol/LedgerOperation.json chain/channel-eth-go/operation/operation.go operation LedgerOperation
+generate_binding out/PayRegistry.sol/PayRegistry.json chain/channel-eth-go/payregistry/payregistry.go payregistry PayRegistry
+generate_binding out/PayResolver.sol/PayResolver.json chain/channel-eth-go/payresolver/payresolver.go payresolver PayResolver
+generate_binding out/RouterRegistry.sol/RouterRegistry.json chain/channel-eth-go/routerregistry/routerregistry.go routerregistry RouterRegistry
+generate_binding out/VirtContractResolver.sol/VirtContractResolver.json chain/channel-eth-go/virtresolver/virtresolver.go virtresolver VirtContractResolver
+generate_binding out/CelerWallet.sol/CelerWallet.json chain/channel-eth-go/wallet/wallet.go wallet CelerWallet
+generate_binding out/ERC20ExampleToken.sol/ERC20ExampleToken.json chain/erc20.go chain ERC20
+generate_binding out/RouterRegistry.sol/RouterRegistry.json route/routerregistry/routerregistry.go routerregistry RouterRegistry
+
+echo "generated bindings under $OUTPUT_ROOT"

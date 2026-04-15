@@ -230,7 +230,7 @@ func (p *openChannelProcessor) tcbOpenChannel(
 		openCallback.HandleOpenChannelErr(&common.E{Reason: errMsg})
 		return err
 	}
-	if bytes.Compare(cid.Bytes(), tcbResp.GetPaymentChannelId()) != 0 {
+	if !bytes.Equal(cid.Bytes(), tcbResp.GetPaymentChannelId()) {
 		errMsg := fmt.Sprintf("Wrong Channel ID in TcbResponse: %x, expected %x", tcbResp.GetPaymentChannelId(), cid.Bytes())
 		openCallback.HandleOpenChannelErr(&common.E{Reason: errMsg})
 		return errors.New(errMsg)
@@ -315,7 +315,7 @@ func (p *openChannelProcessor) openChannel(
 	if !p.keepMonitor {
 		// If the open-channel monitor (watcher) was auto-restarted after
 		// a crash, there is nothing left to do.
-		has, found, hasBitErr := p.dal.GetMonitorRestart(monitor.NewEventStr(latestLedgerAddr, event.OpenChannel))
+		has, found, hasBitErr := p.dal.GetMonitorRestart(monitor.NewEventStr(config.ChainId.Uint64(), latestLedgerAddr, event.OpenChannel))
 		if hasBitErr != nil {
 			log.Debugln("CelerOpenChannel cannot check event monitor bit:", hasBitErr)
 			p.processOpenError(openCallback, latestLedgerAddr, hasBitErr)
@@ -327,7 +327,7 @@ func (p *openChannelProcessor) openChannel(
 
 		// Before sending the request, start monitoring until config.OpenChannelTimeout
 		p.monitorSingleEvent(latestLedger, true)
-		putBitErr := p.dal.UpsertMonitorRestart(monitor.NewEventStr(latestLedgerAddr, event.OpenChannel), true)
+		putBitErr := p.dal.UpsertMonitorRestart(monitor.NewEventStr(config.ChainId.Uint64(), latestLedgerAddr, event.OpenChannel), true)
 		if putBitErr != nil {
 			log.Debugln("CelerOpenChannel cannot put event monitor bit:", putBitErr)
 			p.processOpenError(openCallback, latestLedgerAddr, putBitErr)
@@ -693,7 +693,7 @@ func (p *openChannelProcessor) processOpenChannelRequest(req *rpc.OpenChannelReq
 	if bytes.Compare(accnt0, accnt1) != -1 {
 		return errResp, status.Error(codes.InvalidArgument, "wrong distribution address order")
 	}
-	if bytes.Compare(myAddr, accnt0) != 0 && bytes.Compare(myAddr, accnt1) != 0 {
+	if !bytes.Equal(myAddr, accnt0) && !bytes.Equal(myAddr, accnt1) {
 		return errResp, status.Error(codes.InvalidArgument, "wrong channel peers")
 	}
 	ocem.OspToOsp = req.GetOspToOsp()
@@ -704,7 +704,7 @@ func (p *openChannelProcessor) processOpenChannelRequest(req *rpc.OpenChannelReq
 	}
 	requester := initializer.InitDistribution.Distribution[0].Account
 	approver := initializer.InitDistribution.Distribution[1].Account
-	if bytes.Compare(requester, myAddr) == 0 {
+	if bytes.Equal(requester, myAddr) {
 		requester, approver = approver, requester
 	}
 	ocem.Peer = ctype.Bytes2Hex(requester)
@@ -969,18 +969,20 @@ func (p *openChannelProcessor) monitorOnAllLedgers() {
 
 func (p *openChannelProcessor) monitorEvent(ledgerContract chain.Contract) {
 	monitorCfg := &monitor.Config{
+		ChainId:       config.ChainId.Uint64(),
 		EventName:     event.OpenChannel,
 		Contract:      ledgerContract,
 		StartBlock:    p.monitorService.GetCurrentBlockNumber(),
 		CheckInterval: p.nodeConfig.GetCheckInterval(event.OpenChannel),
 	}
 	_, err := p.monitorService.Monitor(monitorCfg,
-		func(id monitor.CallbackID, eLog types.Log) {
+		func(id monitor.CallbackID, eLog types.Log) bool {
 			ocem := pem.NewOcem(p.nodeConfig.GetRPCAddr())
 			ocem.Type = pem.OpenChannelEventType_CHANNEL_MINED
 			e := &ledger.CelerLedgerOpenChannel{}
 			if err := ledgerContract.ParseEvent(event.OpenChannel, eLog, e); err != nil {
 				log.Error(err)
+				return false
 			}
 			channelDescriptor := &openedChannelDescriptor{
 				cid:          ctype.CidType(e.ChannelId),
@@ -1000,6 +1002,7 @@ func (p *openChannelProcessor) monitorEvent(ledgerContract chain.Contract) {
 			}
 
 			metrics.IncCNodeOpenChanEventCnt(metrics.CNodeRegularChan, chanOpen)
+			return false
 		})
 	if err != nil {
 		log.Error(err)
@@ -1010,6 +1013,7 @@ func (p *openChannelProcessor) monitorSingleEvent(ledgerContract chain.Contract,
 	startBlock := p.monitorService.GetCurrentBlockNumber()
 	endBlock := new(big.Int).Add(startBlock, big.NewInt(int64(config.OpenChannelTimeout)))
 	monitorCfg := &monitor.Config{
+		ChainId:       config.ChainId.Uint64(),
 		EventName:     event.OpenChannel,
 		Contract:      ledgerContract,
 		StartBlock:    startBlock,
@@ -1018,12 +1022,13 @@ func (p *openChannelProcessor) monitorSingleEvent(ledgerContract chain.Contract,
 		CheckInterval: p.nodeConfig.GetCheckInterval(event.OpenChannel),
 	}
 	_, err := p.monitorService.Monitor(monitorCfg,
-		func(id monitor.CallbackID, eLog types.Log) {
+		func(id monitor.CallbackID, eLog types.Log) bool {
 			ocem := pem.NewOcem(p.nodeConfig.GetRPCAddr())
 			ocem.Type = pem.OpenChannelEventType_CHANNEL_MINED
 			e := &ledger.CelerLedgerOpenChannel{}
 			if err := ledgerContract.ParseEvent(event.OpenChannel, eLog, e); err != nil {
 				log.Error(err)
+				return false
 			}
 			channelDescriptor := &openedChannelDescriptor{
 				cid:          ctype.CidType(e.ChannelId),
@@ -1037,9 +1042,11 @@ func (p *openChannelProcessor) monitorSingleEvent(ledgerContract chain.Contract,
 					go p.routeController.AddEdge(e.PeerAddrs[0], e.PeerAddrs[1], e.ChannelId, e.TokenAddress)
 				}
 				p.monitorService.RemoveEvent(id)
-				p.dal.UpsertMonitorRestart(monitor.NewEventStr(ledgerContract.GetAddr(), event.OpenChannel), false)
+				p.dal.UpsertMonitorRestart(monitor.NewEventStr(config.ChainId.Uint64(), ledgerContract.GetAddr(), event.OpenChannel), false)
 				pem.CommitOcem(ocem)
+				return true
 			}
+			return false
 		})
 	if err != nil {
 		log.Error(err)
@@ -1050,7 +1057,7 @@ func initDistributionBreaksPolicy(initDist *entity.TokenDistribution, myAddr []b
 	// Distribution is sorted based on address. Need to figure out who's me.
 	requesterDist := initDist.Distribution[0]
 	myDist := initDist.Distribution[1]
-	if bytes.Compare(myAddr, requesterDist.Account) == 0 {
+	if bytes.Equal(myAddr, requesterDist.Account) {
 		requesterDist, myDist = myDist, requesterDist
 	}
 	requesterDeposit := big.NewInt(0)
@@ -1148,7 +1155,7 @@ func (c *CNode) InstantiateChannel(cid ctype.CidType, openCallback event.OpenCha
 }
 func (p *openChannelProcessor) processOpenError(openCallback event.OpenChannelCallback, ledgerAddr ctype.Addr, err error) {
 	if !p.keepMonitor {
-		p.dal.UpsertMonitorRestart(monitor.NewEventStr(ledgerAddr, event.OpenChannel), false)
+		p.dal.UpsertMonitorRestart(monitor.NewEventStr(config.ChainId.Uint64(), ledgerAddr, event.OpenChannel), false)
 	}
 	invokeErrorCallback(openCallback, &common.E{Reason: err.Error(), Code: 1})
 }
@@ -1187,7 +1194,7 @@ func (p *openChannelProcessor) instantiateChannel(cid ctype.CidType, openCallbac
 	}
 	ledgerAddr := ledgerContract.GetAddr()
 	p.monitorSingleEvent(ledgerContract, true)
-	err = p.dal.UpsertMonitorRestart(monitor.NewEventStr(ledgerAddr, event.OpenChannel), true)
+	err = p.dal.UpsertMonitorRestart(monitor.NewEventStr(config.ChainId.Uint64(), ledgerAddr, event.OpenChannel), true)
 	if err != nil {
 		log.Debugln("CelerOpenChannel cannot put event monitor bit:", err)
 		p.processOpenError(openCallback, ledgerAddr, err)

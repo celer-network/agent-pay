@@ -4,6 +4,7 @@
 package app
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -24,10 +26,17 @@ var (
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
+	_ = abi.ConvertType
 )
 
+// IMultiSessionMetaData contains all meta data concerning the IMultiSession contract.
+var IMultiSessionMetaData = &bind.MetaData{
+	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"session\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"seq\",\"type\":\"uint256\"}],\"name\":\"IntendSettle\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_stateProof\",\"type\":\"bytes\"}],\"name\":\"intendSettle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_session\",\"type\":\"bytes32\"}],\"name\":\"getSettleFinalizedTime\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_session\",\"type\":\"bytes32\"},{\"name\":\"_action\",\"type\":\"bytes\"}],\"name\":\"applyAction\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_session\",\"type\":\"bytes32\"}],\"name\":\"finalizeOnActionTimeout\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_session\",\"type\":\"bytes32\"}],\"name\":\"getActionDeadline\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_session\",\"type\":\"bytes32\"}],\"name\":\"getStatus\",\"outputs\":[{\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_session\",\"type\":\"bytes32\"}],\"name\":\"getSeqNum\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_session\",\"type\":\"bytes32\"},{\"name\":\"_key\",\"type\":\"uint256\"}],\"name\":\"getState\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_nonce\",\"type\":\"uint256\"},{\"name\":\"_signers\",\"type\":\"address[]\"}],\"name\":\"getSessionID\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"}]",
+}
+
 // IMultiSessionABI is the input ABI used to generate the binding from.
-const IMultiSessionABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"session\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"seq\",\"type\":\"uint256\"}],\"name\":\"IntendSettle\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_stateProof\",\"type\":\"bytes\"}],\"name\":\"intendSettle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_session\",\"type\":\"bytes32\"}],\"name\":\"getSettleFinalizedTime\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_session\",\"type\":\"bytes32\"},{\"name\":\"_action\",\"type\":\"bytes\"}],\"name\":\"applyAction\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_session\",\"type\":\"bytes32\"}],\"name\":\"finalizeOnActionTimeout\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_session\",\"type\":\"bytes32\"}],\"name\":\"getActionDeadline\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_session\",\"type\":\"bytes32\"}],\"name\":\"getStatus\",\"outputs\":[{\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_session\",\"type\":\"bytes32\"}],\"name\":\"getSeqNum\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_session\",\"type\":\"bytes32\"},{\"name\":\"_key\",\"type\":\"uint256\"}],\"name\":\"getState\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_nonce\",\"type\":\"uint256\"},{\"name\":\"_signers\",\"type\":\"address[]\"}],\"name\":\"getSessionID\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"}]"
+// Deprecated: Use IMultiSessionMetaData.ABI instead.
+var IMultiSessionABI = IMultiSessionMetaData.ABI
 
 // IMultiSession is an auto generated Go binding around an Ethereum contract.
 type IMultiSession struct {
@@ -126,18 +135,18 @@ func NewIMultiSessionFilterer(address common.Address, filterer bind.ContractFilt
 
 // bindIMultiSession binds a generic wrapper to an already deployed contract.
 func bindIMultiSession(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(IMultiSessionABI))
+	parsed, err := IMultiSessionMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+	return bind.NewBoundContract(address, *parsed, caller, transactor, filterer), nil
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_IMultiSession *IMultiSessionRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_IMultiSession *IMultiSessionRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _IMultiSession.Contract.IMultiSessionCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -156,7 +165,7 @@ func (_IMultiSession *IMultiSessionRaw) Transact(opts *bind.TransactOpts, method
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_IMultiSession *IMultiSessionCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_IMultiSession *IMultiSessionCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _IMultiSession.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -175,12 +184,17 @@ func (_IMultiSession *IMultiSessionTransactorRaw) Transact(opts *bind.TransactOp
 //
 // Solidity: function getActionDeadline(bytes32 _session) view returns(uint256)
 func (_IMultiSession *IMultiSessionCaller) GetActionDeadline(opts *bind.CallOpts, _session [32]byte) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _IMultiSession.contract.Call(opts, out, "getActionDeadline", _session)
-	return *ret0, err
+	var out []interface{}
+	err := _IMultiSession.contract.Call(opts, &out, "getActionDeadline", _session)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // GetActionDeadline is a free data retrieval call binding the contract method 0xcab92446.
@@ -201,12 +215,17 @@ func (_IMultiSession *IMultiSessionCallerSession) GetActionDeadline(_session [32
 //
 // Solidity: function getSeqNum(bytes32 _session) view returns(uint256)
 func (_IMultiSession *IMultiSessionCaller) GetSeqNum(opts *bind.CallOpts, _session [32]byte) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _IMultiSession.contract.Call(opts, out, "getSeqNum", _session)
-	return *ret0, err
+	var out []interface{}
+	err := _IMultiSession.contract.Call(opts, &out, "getSeqNum", _session)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // GetSeqNum is a free data retrieval call binding the contract method 0x3b6de66f.
@@ -227,12 +246,17 @@ func (_IMultiSession *IMultiSessionCallerSession) GetSeqNum(_session [32]byte) (
 //
 // Solidity: function getSessionID(uint256 _nonce, address[] _signers) pure returns(bytes32)
 func (_IMultiSession *IMultiSessionCaller) GetSessionID(opts *bind.CallOpts, _nonce *big.Int, _signers []common.Address) ([32]byte, error) {
-	var (
-		ret0 = new([32]byte)
-	)
-	out := ret0
-	err := _IMultiSession.contract.Call(opts, out, "getSessionID", _nonce, _signers)
-	return *ret0, err
+	var out []interface{}
+	err := _IMultiSession.contract.Call(opts, &out, "getSessionID", _nonce, _signers)
+
+	if err != nil {
+		return *new([32]byte), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
+
+	return out0, err
+
 }
 
 // GetSessionID is a free data retrieval call binding the contract method 0x4d8bedec.
@@ -253,12 +277,17 @@ func (_IMultiSession *IMultiSessionCallerSession) GetSessionID(_nonce *big.Int, 
 //
 // Solidity: function getSettleFinalizedTime(bytes32 _session) view returns(uint256)
 func (_IMultiSession *IMultiSessionCaller) GetSettleFinalizedTime(opts *bind.CallOpts, _session [32]byte) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _IMultiSession.contract.Call(opts, out, "getSettleFinalizedTime", _session)
-	return *ret0, err
+	var out []interface{}
+	err := _IMultiSession.contract.Call(opts, &out, "getSettleFinalizedTime", _session)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // GetSettleFinalizedTime is a free data retrieval call binding the contract method 0x09b65d86.
@@ -279,12 +308,17 @@ func (_IMultiSession *IMultiSessionCallerSession) GetSettleFinalizedTime(_sessio
 //
 // Solidity: function getState(bytes32 _session, uint256 _key) view returns(bytes)
 func (_IMultiSession *IMultiSessionCaller) GetState(opts *bind.CallOpts, _session [32]byte, _key *big.Int) ([]byte, error) {
-	var (
-		ret0 = new([]byte)
-	)
-	out := ret0
-	err := _IMultiSession.contract.Call(opts, out, "getState", _session, _key)
-	return *ret0, err
+	var out []interface{}
+	err := _IMultiSession.contract.Call(opts, &out, "getState", _session, _key)
+
+	if err != nil {
+		return *new([]byte), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([]byte)).(*[]byte)
+
+	return out0, err
+
 }
 
 // GetState is a free data retrieval call binding the contract method 0x29dd2f8e.
@@ -305,12 +339,17 @@ func (_IMultiSession *IMultiSessionCallerSession) GetState(_session [32]byte, _k
 //
 // Solidity: function getStatus(bytes32 _session) view returns(uint8)
 func (_IMultiSession *IMultiSessionCaller) GetStatus(opts *bind.CallOpts, _session [32]byte) (uint8, error) {
-	var (
-		ret0 = new(uint8)
-	)
-	out := ret0
-	err := _IMultiSession.contract.Call(opts, out, "getStatus", _session)
-	return *ret0, err
+	var out []interface{}
+	err := _IMultiSession.contract.Call(opts, &out, "getStatus", _session)
+
+	if err != nil {
+		return *new(uint8), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(uint8)).(*uint8)
+
+	return out0, err
+
 }
 
 // GetStatus is a free data retrieval call binding the contract method 0x5de28ae0.
@@ -531,5 +570,6 @@ func (_IMultiSession *IMultiSessionFilterer) ParseIntendSettle(log types.Log) (*
 	if err := _IMultiSession.contract.UnpackLog(event, "IntendSettle", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }

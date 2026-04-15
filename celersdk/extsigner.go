@@ -57,15 +57,7 @@ func PublishSignedResult(reqid int, result []byte) error {
 		return ErrNilExtSigner
 	}
 	if len(result) == 65 { // this should be sig for msg b/c rlp tx will be much longer
-		s := ctype.Bytes2Sig(result)
-		if s[64] == 27 || s[64] == 28 {
-			// fix v so our RecoverSigner can work
-			// note we also made RecoverSigner support both 0/1 and 27/28, but need to
-			// consider previous deployed services so fix in both places are safer
-			log.Debugf("fix v in sig, %d -> %d", s[64], s[64]-27)
-			s[64] -= 27
-		}
-		return esm.SendSignResult(reqid, s.Bytes())
+		return esm.SendSignResult(reqid, ctype.ToOnChainSig(result))
 	}
 	// signed tx case, return directly, could make a copy for extra safe
 	return esm.SendSignResult(reqid, result)

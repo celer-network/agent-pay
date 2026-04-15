@@ -170,6 +170,7 @@ func (c *AppClient) NewAppChannelOnVirtualContract(
 	}
 	c.PutAppChannel(cid, appChannel)
 	monitorCfg := &monitor.Config{
+		ChainId:    config.ChainId.Uint64(),
 		EventName:  event.Deploy,
 		Contract:   c.nodeConfig.GetVirtResolverContract(),
 		StartBlock: c.monitorService.GetCurrentBlockNumber(),
@@ -178,11 +179,12 @@ func (c *AppClient) NewAppChannelOnVirtualContract(
 		monitorCfg.BlockDelay = config.QuickCatchBlockDelay
 	}
 	_, err := c.monitorService.Monitor(monitorCfg,
-		func(id monitor.CallbackID, eLog types.Log) {
+		func(id monitor.CallbackID, eLog types.Log) bool {
 			hit, _ := appChannel.onVirtualContractDeploy(&eLog)
 			if hit {
 				c.monitorService.RemoveEvent(id)
 			}
+			return hit
 		})
 	if err != nil {
 		log.Error(err)
@@ -223,6 +225,7 @@ func (c *AppClient) NewAppChannelOnDeployedContract(
 		return cid, err
 	}
 	monitorCfg := &monitor.Config{
+		ChainId:    config.ChainId.Uint64(),
 		EventName:  event.IntendSettle,
 		Contract:   contract,
 		StartBlock: c.monitorService.GetCurrentBlockNumber(),
@@ -231,11 +234,12 @@ func (c *AppClient) NewAppChannelOnDeployedContract(
 		monitorCfg.BlockDelay = config.QuickCatchBlockDelay
 	}
 	callbackID, err := c.monitorService.Monitor(monitorCfg,
-		func(id monitor.CallbackID, eLog types.Log) {
+		func(id monitor.CallbackID, eLog types.Log) bool {
 			hit, _ := appChannel.onDeployedContractSettle(&eLog)
 			if hit {
 				c.monitorService.RemoveEvent(id)
 			}
+			return hit
 		})
 	if err != nil {
 		log.Error(err)

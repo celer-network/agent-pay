@@ -129,6 +129,7 @@ func (c *Controller) Start() {
 // backtrack from one interval before the current block
 func (c *Controller) monitorRouterUpdatedEvent() {
 	monitorCfg := &monitor.Config{
+		ChainId:       config.ChainId.Uint64(),
 		EventName:     event.RouterUpdated,
 		Contract:      c.nodeConfig.GetRouterRegistryContract(),
 		StartBlock:    c.calculateStartBlockNumber(),
@@ -136,11 +137,11 @@ func (c *Controller) monitorRouterUpdatedEvent() {
 		CheckInterval: c.nodeConfig.GetCheckInterval(event.RouterUpdated),
 	}
 	_, err := c.monitorService.Monitor(monitorCfg,
-		func(id monitor.CallbackID, eLog types.Log) {
+		func(id monitor.CallbackID, eLog types.Log) bool {
 			e := &rt.RouterRegistryRouterUpdated{} // event RouterUpdated
 			if err := c.nodeConfig.GetRouterRegistryContract().ParseEvent(event.RouterUpdated, eLog, e); err != nil {
 				log.Error(err)
-				return
+				return false
 			}
 
 			// Only used in log
@@ -149,6 +150,7 @@ func (c *Controller) monitorRouterUpdatedEvent() {
 			log.Infoln("Seeing RouterUpdated event, router addr:", routerAddr, "tx hash:", txHash, "callback id:", id, "blkNum:", eLog.BlockNumber)
 
 			c.processRouterUpdatedEvent(e, eLog.BlockNumber)
+			return false
 		},
 	)
 

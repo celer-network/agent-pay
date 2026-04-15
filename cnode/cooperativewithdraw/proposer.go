@@ -213,7 +213,7 @@ func (p *Processor) sendCooperativeWithdrawTx(
 		return fmt.Errorf("Fail to get ledger for channel: %x", cid)
 	}
 	p.monitorSingleEvent(ledgerContract, true)
-	err = p.dal.UpsertMonitorRestart(monitor.NewEventStr(ledgerContract.GetAddr(), event.CooperativeWithdraw), true)
+	err = p.dal.UpsertMonitorRestart(monitor.NewEventStr(config.ChainId.Uint64(), ledgerContract.GetAddr(), event.CooperativeWithdraw), true)
 	if err != nil {
 		return err
 	}
@@ -262,6 +262,15 @@ func (p *Processor) waitTx(job *structs.CooperativeWithdrawJob) {
 		receipt.GasUsed)
 	if receipt.Status == types.ReceiptStatusSuccessful {
 		log.Debugf("CooperativeWithdraw tx %s succeeded", txHash)
+		handled := false
+		for _, eLog := range receipt.Logs {
+			if eLog != nil && p.maybeHandleEvent(eLog) {
+				handled = true
+			}
+		}
+		if !handled {
+			p.abortJob(job, fmt.Errorf("CooperativeWithdraw tx %s succeeded without matching event", txHash))
+		}
 	} else {
 		p.abortJob(job, fmt.Errorf("CooperativeWithdraw tx %s failed", txHash))
 	}
@@ -379,7 +388,7 @@ func (p *Processor) abortJob(job *structs.CooperativeWithdrawJob, err error) {
 	job.Error = err.Error()
 	withdrawHash := job.WithdrawHash
 	delete := func(tx *storage.DALTx, args ...interface{}) error {
-		err := tx.UpsertMonitorRestart(monitor.NewEventStr(job.LedgerAddr, event.CooperativeWithdraw), false)
+		err := tx.UpsertMonitorRestart(monitor.NewEventStr(config.ChainId.Uint64(), job.LedgerAddr, event.CooperativeWithdraw), false)
 		if err != nil {
 			return err
 		}

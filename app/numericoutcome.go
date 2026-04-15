@@ -4,6 +4,7 @@
 package app
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -24,10 +26,17 @@ var (
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
+	_ = abi.ConvertType
 )
 
+// INumericOutcomeMetaData contains all meta data concerning the INumericOutcome contract.
+var INumericOutcomeMetaData = &bind.MetaData{
+	ABI: "[{\"constant\":true,\"inputs\":[{\"name\":\"_query\",\"type\":\"bytes\"}],\"name\":\"isFinalized\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_query\",\"type\":\"bytes\"}],\"name\":\"getOutcome\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]",
+}
+
 // INumericOutcomeABI is the input ABI used to generate the binding from.
-const INumericOutcomeABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"_query\",\"type\":\"bytes\"}],\"name\":\"isFinalized\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_query\",\"type\":\"bytes\"}],\"name\":\"getOutcome\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+// Deprecated: Use INumericOutcomeMetaData.ABI instead.
+var INumericOutcomeABI = INumericOutcomeMetaData.ABI
 
 // INumericOutcome is an auto generated Go binding around an Ethereum contract.
 type INumericOutcome struct {
@@ -126,18 +135,18 @@ func NewINumericOutcomeFilterer(address common.Address, filterer bind.ContractFi
 
 // bindINumericOutcome binds a generic wrapper to an already deployed contract.
 func bindINumericOutcome(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(INumericOutcomeABI))
+	parsed, err := INumericOutcomeMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+	return bind.NewBoundContract(address, *parsed, caller, transactor, filterer), nil
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_INumericOutcome *INumericOutcomeRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_INumericOutcome *INumericOutcomeRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _INumericOutcome.Contract.INumericOutcomeCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -156,7 +165,7 @@ func (_INumericOutcome *INumericOutcomeRaw) Transact(opts *bind.TransactOpts, me
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_INumericOutcome *INumericOutcomeCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_INumericOutcome *INumericOutcomeCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _INumericOutcome.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -175,12 +184,17 @@ func (_INumericOutcome *INumericOutcomeTransactorRaw) Transact(opts *bind.Transa
 //
 // Solidity: function getOutcome(bytes _query) view returns(uint256)
 func (_INumericOutcome *INumericOutcomeCaller) GetOutcome(opts *bind.CallOpts, _query []byte) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _INumericOutcome.contract.Call(opts, out, "getOutcome", _query)
-	return *ret0, err
+	var out []interface{}
+	err := _INumericOutcome.contract.Call(opts, &out, "getOutcome", _query)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // GetOutcome is a free data retrieval call binding the contract method 0xea4ba8eb.
@@ -201,12 +215,17 @@ func (_INumericOutcome *INumericOutcomeCallerSession) GetOutcome(_query []byte) 
 //
 // Solidity: function isFinalized(bytes _query) view returns(bool)
 func (_INumericOutcome *INumericOutcomeCaller) IsFinalized(opts *bind.CallOpts, _query []byte) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _INumericOutcome.contract.Call(opts, out, "isFinalized", _query)
-	return *ret0, err
+	var out []interface{}
+	err := _INumericOutcome.contract.Call(opts, &out, "isFinalized", _query)
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
 }
 
 // IsFinalized is a free data retrieval call binding the contract method 0xbcdbda94.

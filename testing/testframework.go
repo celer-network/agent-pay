@@ -101,6 +101,7 @@ func prepareEthClient() (
 	if err != nil {
 		return nil, nil, nil, common.Address{}, err
 	}
+	ctx := context.Background()
 	log.Infoln("etherBaseKs", etherBaseKs)
 	etherBaseKsBytes, err := ioutil.ReadFile(etherBaseKs)
 	if err != nil {
@@ -111,11 +112,15 @@ func prepareEthClient() (
 		return nil, nil, nil, common.Address{}, err
 	}
 	etherBaseAddr := ctype.Hex2Addr(etherBaseAddrStr)
-	auth, err := bind.NewTransactor(strings.NewReader(string(etherBaseKsBytes)), "")
+	chainID, err := conn.NetworkID(ctx)
 	if err != nil {
 		return nil, nil, nil, common.Address{}, err
 	}
-	return conn, auth, context.Background(), etherBaseAddr, nil
+	auth, err := bind.NewTransactorWithChainID(strings.NewReader(string(etherBaseKsBytes)), "", chainID)
+	if err != nil {
+		return nil, nil, nil, common.Address{}, err
+	}
+	return conn, auth, ctx, etherBaseAddr, nil
 }
 
 func fundAccount(amount string, recipients []*common.Address) error {
@@ -126,11 +131,6 @@ func fundAccount(amount string, recipients []*common.Address) error {
 	value := big.NewInt(0)
 	value.SetString(amount, 10)
 	auth.Value = value
-	// Use actual network ID to select the correct EIP-155 chain ID (geth --dev defaults to 1337)
-	chainID, err := conn.NetworkID(ctx)
-	if err != nil {
-		return err
-	}
 	var gasLimit uint64 = 21000
 	var txs []*types.Transaction
 	for _, r := range recipients {
@@ -146,7 +146,7 @@ func fundAccount(amount string, recipients []*common.Address) error {
 			return err
 		}
 		tx := types.NewTransaction(nonce, *r, auth.Value, gasLimit, gasPrice, nil)
-		tx, err = auth.Signer(types.NewEIP155Signer(chainID), senderAddr, tx)
+		tx, err = auth.Signer(senderAddr, tx)
 		if err != nil {
 			pendingNonceLock.Unlock()
 			return err
@@ -239,7 +239,16 @@ func getAuthFor(ksfile string) (*bind.TransactOpts, error) {
 	}
 	log.Infoln(ksfile, ctype.Bytes2Hex(crypto.FromECDSA(key.PrivateKey)))
 	ksStr := string(ksBytes)
-	auth, err := bind.NewTransactor(strings.NewReader(ksStr), "")
+	conn, err := ethclient.Dial(ethInstance)
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+	chainID, err := conn.NetworkID(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	auth, err := bind.NewTransactorWithChainID(strings.NewReader(ksStr), "", chainID)
 	if err != nil {
 		return nil, err
 	}

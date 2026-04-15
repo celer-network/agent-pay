@@ -4,6 +4,7 @@
 package balancelimit
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -24,22 +26,34 @@ var (
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
+	_ = abi.ConvertType
 )
 
+// LedgerBalanceLimitMetaData contains all meta data concerning the LedgerBalanceLimit contract.
+var LedgerBalanceLimitMetaData = &bind.MetaData{
+	ABI: "[]",
+	Bin: "0x610381610034600b8282823980515f1a607314602857634e487b7160e01b5f525f60045260245ffd5b305f52607381538281f3fe7300000000000000000000000000000000000000003014608060405260043610610060575f3560e01c80635930e0e1146100645780636ad1dc2d1461008d5780636ae97472146100b7578063bdca79a7146100e4578063c88c62651461011e575b5f5ffd5b81801561006f575f5ffd5b5061008b61007e3660046101fa565b600501805460ff19169055565b005b818015610098575f5ffd5b5061008b6100a73660046101fa565b600501805460ff19166001179055565b6100cf6100c53660046101fa565b6005015460ff1690565b60405190151581526020015b60405180910390f35b6101106100f236600461022c565b6001600160a01b03165f908152600491909101602052604090205490565b6040519081526020016100db565b818015610129575f5ffd5b5061008b61013836600461029e565b8281146101825760405162461bcd60e51b8152602060048201526014602482015273098cadccee8d0e640c8de40dcdee840dac2e8c6d60631b604482015260640160405180910390fd5b5f5b838110156101f25782828281811061019e5761019e610317565b90506020020135866004015f8787858181106101bc576101bc610317565b90506020020160208101906101d1919061032b565b6001600160a01b0316815260208101919091526040015f2055600101610184565b505050505050565b5f6020828403121561020a575f5ffd5b5035919050565b80356001600160a01b0381168114610227575f5ffd5b919050565b5f5f6040838503121561023d575f5ffd5b8235915061024d60208401610211565b90509250929050565b5f5f83601f840112610266575f5ffd5b50813567ffffffffffffffff81111561027d575f5ffd5b6020830191508360208260051b8501011115610297575f5ffd5b9250929050565b5f5f5f5f5f606086880312156102b2575f5ffd5b85359450602086013567ffffffffffffffff8111156102cf575f5ffd5b6102db88828901610256565b909550935050604086013567ffffffffffffffff8111156102fa575f5ffd5b61030688828901610256565b969995985093965092949392505050565b634e487b7160e01b5f52603260045260245ffd5b5f6020828403121561033b575f5ffd5b61034482610211565b939250505056fea2646970667358221220ab5ad22cd7ae35bc2fcb21395ae1394135531ebe6f347a679914b9f9e401c61464736f6c634300081d0033",
+}
+
 // LedgerBalanceLimitABI is the input ABI used to generate the binding from.
-const LedgerBalanceLimitABI = "[]"
+// Deprecated: Use LedgerBalanceLimitMetaData.ABI instead.
+var LedgerBalanceLimitABI = LedgerBalanceLimitMetaData.ABI
 
 // LedgerBalanceLimitBin is the compiled bytecode used for deploying new contracts.
-var LedgerBalanceLimitBin = "0x610390610026600b82828239805160001a60731461001957fe5b30600052607381538281f3fe730000000000000000000000000000000000000000301460806040526004361061007d577c010000000000000000000000000000000000000000000000000000000060003504635930e0e181146100825780636ad1dc2d146100ae5780636ae97472146100d8578063bdca79a714610109578063c88c626514610154575b600080fd5b81801561008e57600080fd5b506100ac600480360360208110156100a557600080fd5b503561022a565b005b8180156100ba57600080fd5b506100ac600480360360208110156100d157600080fd5b5035610237565b6100f5600480360360208110156100ee57600080fd5b5035610247565b604080519115158252519081900360200190f35b6101426004803603604081101561011f57600080fd5b508035906020013573ffffffffffffffffffffffffffffffffffffffff16610251565b60408051918252519081900360200190f35b81801561016057600080fd5b506100ac6004803603606081101561017757600080fd5b8135919081019060408101602082013564010000000081111561019957600080fd5b8201836020820111156101ab57600080fd5b803590602001918460208302840111640100000000831117156101cd57600080fd5b9193909290916020810190356401000000008111156101eb57600080fd5b8201836020820111156101fd57600080fd5b8035906020019184602083028401116401000000008311171561021f57600080fd5b50909250905061027d565b600501805460ff19169055565b600501805460ff19166001179055565b6005015460ff1690565b73ffffffffffffffffffffffffffffffffffffffff166000908152600491909101602052604090205490565b8281146102eb57604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601460248201527f4c656e6774687320646f206e6f74206d61746368000000000000000000000000604482015290519081900360640190fd5b60005b838110156103535782828281811061030257fe5b9050602002013586600401600087878581811061031b57fe5b6020908102929092013573ffffffffffffffffffffffffffffffffffffffff16835250810191909152604001600020556001016102ee565b50505050505056fea265627a7a7230582069dfaa8fe74f4bb6a0086c0f09df2f47928eaffad54d66d4db2bf3b08bbd49cd64736f6c634300050a0032"
+// Deprecated: Use LedgerBalanceLimitMetaData.Bin instead.
+var LedgerBalanceLimitBin = LedgerBalanceLimitMetaData.Bin
 
 // DeployLedgerBalanceLimit deploys a new Ethereum contract, binding an instance of LedgerBalanceLimit to it.
 func DeployLedgerBalanceLimit(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *LedgerBalanceLimit, error) {
-	parsed, err := abi.JSON(strings.NewReader(LedgerBalanceLimitABI))
+	parsed, err := LedgerBalanceLimitMetaData.GetAbi()
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
+	if parsed == nil {
+		return common.Address{}, nil, nil, errors.New("GetABI returned nil")
+	}
 
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(LedgerBalanceLimitBin), backend)
+	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(LedgerBalanceLimitBin), backend)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -143,18 +157,18 @@ func NewLedgerBalanceLimitFilterer(address common.Address, filterer bind.Contrac
 
 // bindLedgerBalanceLimit binds a generic wrapper to an already deployed contract.
 func bindLedgerBalanceLimit(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(LedgerBalanceLimitABI))
+	parsed, err := LedgerBalanceLimitMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+	return bind.NewBoundContract(address, *parsed, caller, transactor, filterer), nil
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_LedgerBalanceLimit *LedgerBalanceLimitRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_LedgerBalanceLimit *LedgerBalanceLimitRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _LedgerBalanceLimit.Contract.LedgerBalanceLimitCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -173,7 +187,7 @@ func (_LedgerBalanceLimit *LedgerBalanceLimitRaw) Transact(opts *bind.TransactOp
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_LedgerBalanceLimit *LedgerBalanceLimitCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_LedgerBalanceLimit *LedgerBalanceLimitCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _LedgerBalanceLimit.Contract.contract.Call(opts, result, method, params...)
 }
 

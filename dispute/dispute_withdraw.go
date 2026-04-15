@@ -158,19 +158,20 @@ func (p *Processor) VetoWithdraw(cid ctype.CidType) error {
 
 func (p *Processor) monitorNoncooperativeWithdrawEvent(ledgerContract chain.Contract) {
 	monitorCfg := &monitor.Config{
+		ChainId:       config.ChainId.Uint64(),
 		EventName:     event.IntendWithdraw,
 		Contract:      ledgerContract,
 		StartBlock:    p.monitorService.GetCurrentBlockNumber(),
 		CheckInterval: p.nodeConfig.GetCheckInterval(event.IntendWithdraw),
 	}
 	_, monErr := p.monitorService.Monitor(monitorCfg,
-		func(id monitor.CallbackID, eLog types.Log) {
+		func(id monitor.CallbackID, eLog types.Log) bool {
 			// CAVEAT!!!: suppose we have the same struct of event.
 			// If event struct changes, this monitor does not work.
 			e := &ledger.CelerLedgerIntendWithdraw{}
 			if err := ledgerContract.ParseEvent(event.IntendWithdraw, eLog, e); err != nil {
 				log.Error(err)
-				return
+				return false
 			}
 			cid := ctype.CidType(e.ChannelId)
 			txHash := fmt.Sprintf("%x", eLog.TxHash)
@@ -179,36 +180,38 @@ func (p *Processor) monitorNoncooperativeWithdrawEvent(ledgerContract chain.Cont
 			_, exist, err := p.dal.GetChanState(cid)
 			if err != nil {
 				log.Error(err)
-				return
+				return false
 			}
 			if exist {
 				// OSP always veto withdraw if receiver is not itself
 				if e.Receiver != p.nodeConfig.GetOnChainAddr() {
 					p.VetoWithdraw(cid)
-					return
+					return false
 				}
 			} else {
-				return
+				return false
 			}
 			metrics.IncDisputeWithdrawEventCnt(event.IntendWithdraw)
+			return false
 		})
 	if monErr != nil {
 		log.Error(monErr)
 	}
 	monitorCfg2 := &monitor.Config{
+		ChainId:       config.ChainId.Uint64(),
 		EventName:     event.ConfirmWithdraw,
 		Contract:      ledgerContract,
 		StartBlock:    p.monitorService.GetCurrentBlockNumber(),
 		CheckInterval: p.nodeConfig.GetCheckInterval(event.ConfirmWithdraw),
 	}
 	_, monErr = p.monitorService.Monitor(monitorCfg2,
-		func(id monitor.CallbackID, eLog types.Log) {
+		func(id monitor.CallbackID, eLog types.Log) bool {
 			// CAVEAT!!!: suppose we have the same struct of event.
 			// If event struct changes, this monitor does not work.
 			e := &ledger.CelerLedgerConfirmWithdraw{}
 			if err := ledgerContract.ParseEvent(event.ConfirmWithdraw, eLog, e); err != nil {
 				log.Error(err)
-				return
+				return false
 			}
 			cid := ctype.CidType(e.ChannelId)
 			txHash := fmt.Sprintf("%x", eLog.TxHash)
@@ -217,49 +220,49 @@ func (p *Processor) monitorNoncooperativeWithdrawEvent(ledgerContract chain.Cont
 			peer, exist, err := p.dal.GetChanPeer(cid)
 			if err != nil {
 				log.Error(err, cid.Hex())
-				return
+				return false
 			}
-			if exist {
-				self := p.nodeConfig.GetOnChainAddr()
-				receiver := e.Receiver
-				if receiver != self && receiver != peer {
-					return
-				}
-				if len(e.Deposits) != 2 || len(e.Withdrawals) != 2 {
-					log.Error("on chain balances length not match")
-					return
-				}
-				var myIndex int
-				if bytes.Compare(self.Bytes(), peer.Bytes()) < 0 {
-					myIndex = 0
-				} else {
-					myIndex = 1
-				}
-				onChainBalance := &structs.OnChainBalance{
-					MyDeposit:      e.Deposits[myIndex],
-					MyWithdrawal:   e.Withdrawals[myIndex],
-					PeerDeposit:    e.Deposits[1-myIndex],
-					PeerWithdrawal: e.Withdrawals[1-myIndex],
-				}
-				updateBalanceTx := func(tx *storage.DALTx, args ...interface{}) error {
-					balance, found, err2 := tx.GetOnChainBalance(cid)
-					if err2 != nil {
-						return fmt.Errorf("GetOnChainBalance err %w", err2)
-					}
-					if !found {
-						return fmt.Errorf("GetOnChainBalance err %w", common.ErrChannelNotFound)
-					}
-					onChainBalance.PendingWithdrawal = balance.PendingWithdrawal
-					return tx.UpdateOnChainBalance(cid, onChainBalance)
-				}
-				if err := p.dal.Transactional(updateBalanceTx); err != nil {
-					log.Error(err)
-					return
-				}
+			if !exist {
+				return false
+			}
+			self := p.nodeConfig.GetOnChainAddr()
+			receiver := e.Receiver
+			if receiver != self && receiver != peer {
+				return false
+			}
+			if len(e.Deposits) != 2 || len(e.Withdrawals) != 2 {
+				log.Error("on chain balances length not match")
+				return false
+			}
+			var myIndex int
+			if bytes.Compare(self.Bytes(), peer.Bytes()) < 0 {
+				myIndex = 0
 			} else {
-				return
+				myIndex = 1
+			}
+			onChainBalance := &structs.OnChainBalance{
+				MyDeposit:      e.Deposits[myIndex],
+				MyWithdrawal:   e.Withdrawals[myIndex],
+				PeerDeposit:    e.Deposits[1-myIndex],
+				PeerWithdrawal: e.Withdrawals[1-myIndex],
+			}
+			updateBalanceTx := func(tx *storage.DALTx, args ...interface{}) error {
+				balance, found, err2 := tx.GetOnChainBalance(cid)
+				if err2 != nil {
+					return fmt.Errorf("GetOnChainBalance err %w", err2)
+				}
+				if !found {
+					return fmt.Errorf("GetOnChainBalance err %w", common.ErrChannelNotFound)
+				}
+				onChainBalance.PendingWithdrawal = balance.PendingWithdrawal
+				return tx.UpdateOnChainBalance(cid, onChainBalance)
+			}
+			if err := p.dal.Transactional(updateBalanceTx); err != nil {
+				log.Error(err)
+				return false
 			}
 			metrics.IncDisputeWithdrawEventCnt(event.ConfirmWithdraw)
+			return false
 		})
 	if monErr != nil {
 		log.Error(monErr)

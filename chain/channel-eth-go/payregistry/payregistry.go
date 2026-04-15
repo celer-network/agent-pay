@@ -4,6 +4,7 @@
 package payregistry
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -24,22 +26,34 @@ var (
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
+	_ = abi.ConvertType
 )
 
+// PayRegistryMetaData contains all meta data concerning the PayRegistry contract.
+var PayRegistryMetaData = &bind.MetaData{
+	ABI: "[{\"type\":\"function\",\"name\":\"calculatePayId\",\"inputs\":[{\"name\":\"_payHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_setter\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"getPayAmounts\",\"inputs\":[{\"name\":\"_payIds\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"_lastPayResolveDeadline\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getPayInfo\",\"inputs\":[{\"name\":\"_payId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"payInfoMap\",\"inputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"resolveDeadline\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"setPayAmount\",\"inputs\":[{\"name\":\"_payHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_amt\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setPayAmounts\",\"inputs\":[{\"name\":\"_payHashes\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"_amts\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setPayDeadline\",\"inputs\":[{\"name\":\"_payHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_deadline\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setPayDeadlines\",\"inputs\":[{\"name\":\"_payHashes\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"_deadlines\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setPayInfo\",\"inputs\":[{\"name\":\"_payHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_amt\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_deadline\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setPayInfos\",\"inputs\":[{\"name\":\"_payHashes\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"_amts\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"_deadlines\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"PayInfoUpdate\",\"inputs\":[{\"name\":\"payId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"resolveDeadline\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false}]",
+	Bin: "0x6080604052348015600e575f5ffd5b50610a668061001c5f395ff3fe608060405234801561000f575f5ffd5b506004361061009b575f3560e01c80638f13b2f5116100635780638f13b2f51461013b57806396efe57314610161578063cdfa146b14610182578063e1e3549014610195578063f8fb012f146101a8575f5ffd5b80630daddd341461009f578063204a95ee146100b457806327b0e058146100c7578063414f7e0e146101085780637cac39cf1461011b575b5f5ffd5b6100b26100ad36600461078c565b6101bb565b005b6100b26100c236600461078c565b61029e565b6100ee6100d53660046107f8565b5f90815260208190526040902080546001909101549091565b604080519283526020830191909152015b60405180910390f35b6100b261011636600461080f565b610360565b61012e6101293660046108ae565b61046c565b6040516100ff91906108f6565b6100ee6101493660046107f8565b5f602081905290815260409020805460019091015482565b61017461016f366004610938565b61060d565b6040519081526020016100ff565b6100b2610190366004610971565b61065a565b6100b26101a3366004610991565b6106ac565b6100b26101b6366004610971565b6106ff565b8281146101e35760405162461bcd60e51b81526004016101da906109ba565b60405180910390fd5b5f33815b8581101561029557610211878783818110610204576102046109e8565b905060200201358361060d565b5f818152602081905260409020909350858583818110610233576102336109e8565b6020029190910135600183015550805484905f516020610a115f395f51905f5290888886818110610266576102666109e8565b90506020020135604051610284929190918252602082015260400190565b60405180910390a2506001016101e7565b50505050505050565b8281146102bd5760405162461bcd60e51b81526004016101da906109ba565b5f33815b85811015610295576102de878783818110610204576102046109e8565b5f818152602081905260409020909350858583818110610300576103006109e8565b6020029190910135825550835f516020610a115f395f51905f5287878581811061032c5761032c6109e8565b90506020020135836001015460405161034f929190918252602082015260400190565b60405180910390a2506001016102c1565b848314801561036e57508481145b61038a5760405162461bcd60e51b81526004016101da906109ba565b5f33815b87811015610461576103ab898983818110610204576102046109e8565b5f8181526020819052604090209093508787838181106103cd576103cd6109e8565b60200291909101358255508585838181106103ea576103ea6109e8565b6020029190910135600183015550835f516020610a115f395f51905f52898985818110610419576104196109e8565b90506020020135888886818110610432576104326109e8565b90506020020135604051610450929190918252602082015260400190565b60405180910390a25060010161038e565b505050505050505050565b60605f8367ffffffffffffffff811115610488576104886109fc565b6040519080825280602002602001820160405280156104b1578160200160208202803683370190505b5090505f5b84811015610604575f5f8787848181106104d2576104d26109e8565b9050602002013581526020019081526020015f20600101545f0361053f5783431161053a5760405162461bcd60e51b815260206004820152601860248201527714185e5b595b9d081a5cc81b9bdd08199a5b985b1a5e995960421b60448201526064016101da565b6105b4565b5f5f878784818110610553576105536109e8565b9050602002013581526020019081526020015f206001015443116105b45760405162461bcd60e51b815260206004820152601860248201527714185e5b595b9d081a5cc81b9bdd08199a5b985b1a5e995960421b60448201526064016101da565b5f5f8787848181106105c8576105c86109e8565b9050602002013581526020019081526020015f205f01548282815181106105f1576105f16109e8565b60209081029190910101526001016104b6565b50949350505050565b5f828260405160200161063c92919091825260601b6bffffffffffffffffffffffff1916602082015260340190565b60405160208183030381529060405280519060200120905092915050565b5f610665833361060d565b5f8181526020818152604091829020600181018690558054835190815291820186905292935083915f516020610a115f395f51905f5291015b60405180910390a250505050565b5f6106b7843361060d565b5f818152602081815260409182902086815560018101869055825187815291820186905292935083915f516020610a115f395f51905f52910160405180910390a25050505050565b5f61070a833361060d565b5f8181526020818152604091829020858155600181015483518781529283015292935083915f516020610a115f395f51905f52910161069e565b5f5f83601f840112610754575f5ffd5b50813567ffffffffffffffff81111561076b575f5ffd5b6020830191508360208260051b8501011115610785575f5ffd5b9250929050565b5f5f5f5f6040858703121561079f575f5ffd5b843567ffffffffffffffff8111156107b5575f5ffd5b6107c187828801610744565b909550935050602085013567ffffffffffffffff8111156107e0575f5ffd5b6107ec87828801610744565b95989497509550505050565b5f60208284031215610808575f5ffd5b5035919050565b5f5f5f5f5f5f60608789031215610824575f5ffd5b863567ffffffffffffffff81111561083a575f5ffd5b61084689828a01610744565b909750955050602087013567ffffffffffffffff811115610865575f5ffd5b61087189828a01610744565b909550935050604087013567ffffffffffffffff811115610890575f5ffd5b61089c89828a01610744565b979a9699509497509295939492505050565b5f5f5f604084860312156108c0575f5ffd5b833567ffffffffffffffff8111156108d6575f5ffd5b6108e286828701610744565b909790965060209590950135949350505050565b602080825282518282018190525f918401906040840190835b8181101561092d57835183526020938401939092019160010161090f565b509095945050505050565b5f5f60408385031215610949575f5ffd5b8235915060208301356001600160a01b0381168114610966575f5ffd5b809150509250929050565b5f5f60408385031215610982575f5ffd5b50508035926020909101359150565b5f5f5f606084860312156109a3575f5ffd5b505081359360208301359350604090920135919050565b602080825260149082015273098cadccee8d0e640c8de40dcdee840dac2e8c6d60631b604082015260600190565b634e487b7160e01b5f52603260045260245ffd5b634e487b7160e01b5f52604160045260245ffdfe9e9acc6d43d5d7bd6fa143ef0ee1d224cfe2bb010b7e3acf44878d6314ebc607a264697066735822122046b17ef2ec99a6ea7ec246eae9d2610fffc689044235dd5d2b95a081f594bb7f64736f6c634300081e0033",
+}
+
 // PayRegistryABI is the input ABI used to generate the binding from.
-const PayRegistryABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"payInfoMap\",\"outputs\":[{\"name\":\"amount\",\"type\":\"uint256\"},{\"name\":\"resolveDeadline\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"payId\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"resolveDeadline\",\"type\":\"uint256\"}],\"name\":\"PayInfoUpdate\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"name\":\"_payHash\",\"type\":\"bytes32\"},{\"name\":\"_setter\",\"type\":\"address\"}],\"name\":\"calculatePayId\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_payHash\",\"type\":\"bytes32\"},{\"name\":\"_amt\",\"type\":\"uint256\"}],\"name\":\"setPayAmount\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_payHash\",\"type\":\"bytes32\"},{\"name\":\"_deadline\",\"type\":\"uint256\"}],\"name\":\"setPayDeadline\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_payHash\",\"type\":\"bytes32\"},{\"name\":\"_amt\",\"type\":\"uint256\"},{\"name\":\"_deadline\",\"type\":\"uint256\"}],\"name\":\"setPayInfo\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_payHashes\",\"type\":\"bytes32[]\"},{\"name\":\"_amts\",\"type\":\"uint256[]\"}],\"name\":\"setPayAmounts\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_payHashes\",\"type\":\"bytes32[]\"},{\"name\":\"_deadlines\",\"type\":\"uint256[]\"}],\"name\":\"setPayDeadlines\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_payHashes\",\"type\":\"bytes32[]\"},{\"name\":\"_amts\",\"type\":\"uint256[]\"},{\"name\":\"_deadlines\",\"type\":\"uint256[]\"}],\"name\":\"setPayInfos\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_payIds\",\"type\":\"bytes32[]\"},{\"name\":\"_lastPayResolveDeadline\",\"type\":\"uint256\"}],\"name\":\"getPayAmounts\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_payId\",\"type\":\"bytes32\"}],\"name\":\"getPayInfo\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+// Deprecated: Use PayRegistryMetaData.ABI instead.
+var PayRegistryABI = PayRegistryMetaData.ABI
 
 // PayRegistryBin is the compiled bytecode used for deploying new contracts.
-var PayRegistryBin = "0x608060405234801561001057600080fd5b50610b96806100206000396000f3fe608060405234801561001057600080fd5b50600436106100bb576000357c0100000000000000000000000000000000000000000000000000000000900480638f13b2f5116100835780638f13b2f51461045057806396efe5731461046d578063cdfa146b146104b8578063e1e35490146104db578063f8fb012f14610504576100bb565b80630daddd34146100c0578063204a95ee1461018457806327b0e05814610246578063414f7e0e1461027c5780637cac39cf14610390575b600080fd5b610182600480360360408110156100d657600080fd5b8101906020810181356401000000008111156100f157600080fd5b82018360208201111561010357600080fd5b8035906020019184602083028401116401000000008311171561012557600080fd5b91939092909160208101903564010000000081111561014357600080fd5b82018360208201111561015557600080fd5b8035906020019184602083028401116401000000008311171561017757600080fd5b509092509050610527565b005b6101826004803603604081101561019a57600080fd5b8101906020810181356401000000008111156101b557600080fd5b8201836020820111156101c757600080fd5b803590602001918460208302840111640100000000831117156101e957600080fd5b91939092909160208101903564010000000081111561020757600080fd5b82018360208201111561021957600080fd5b8035906020019184602083028401116401000000008311171561023b57600080fd5b509092509050610623565b6102636004803603602081101561025c57600080fd5b5035610707565b6040805192835260208301919091528051918290030190f35b6101826004803603606081101561029257600080fd5b8101906020810181356401000000008111156102ad57600080fd5b8201836020820111156102bf57600080fd5b803590602001918460208302840111640100000000831117156102e157600080fd5b9193909290916020810190356401000000008111156102ff57600080fd5b82018360208201111561031157600080fd5b8035906020019184602083028401116401000000008311171561033357600080fd5b91939092909160208101903564010000000081111561035157600080fd5b82018360208201111561036357600080fd5b8035906020019184602083028401116401000000008311171561038557600080fd5b509092509050610721565b610400600480360360408110156103a657600080fd5b8101906020810181356401000000008111156103c157600080fd5b8201836020820111156103d357600080fd5b803590602001918460208302840111640100000000831117156103f557600080fd5b919350915035610843565b60408051602080825283518183015283519192839290830191858101910280838360005b8381101561043c578181015183820152602001610424565b505050509050019250505060405180910390f35b6102636004803603602081101561046657600080fd5b50356109db565b6104a66004803603604081101561048357600080fd5b508035906020013573ffffffffffffffffffffffffffffffffffffffff166109f4565b60408051918252519081900360200190f35b610182600480360360408110156104ce57600080fd5b5080359060200135610a46565b610182600480360360608110156104f157600080fd5b5080359060208101359060400135610a9a565b6101826004803603604081101561051a57600080fd5b5080359060200135610af0565b82811461057e576040805160e560020a62461bcd02815260206004820152601460248201527f4c656e6774687320646f206e6f74206d61746368000000000000000000000000604482015290519081900360640190fd5b600033815b8581101561061a576105a787878381811061059a57fe5b90506020020135836109f4565b60008181526020819052604090209093508585838181106105c457fe5b602002919091013560018301555080548490600080516020610b42833981519152908888868181106105f257fe5b604080519485526020918202939093013590840152508051918290030190a250600101610583565b50505050505050565b82811461067a576040805160e560020a62461bcd02815260206004820152601460248201527f4c656e6774687320646f206e6f74206d61746368000000000000000000000000604482015290519081900360640190fd5b600033815b8581101561061a5761069687878381811061059a57fe5b60008181526020819052604090209093508585838181106106b357fe5b602002919091013582555083600080516020610b428339815191528787858181106106da57fe5b6001860154604080516020938402959095013585529184015280519283900301919050a25060010161067f565b600090815260208190526040902080546001909101549091565b848314801561072f57508481145b610783576040805160e560020a62461bcd02815260206004820152601460248201527f4c656e6774687320646f206e6f74206d61746368000000000000000000000000604482015290519081900360640190fd5b600033815b878110156108385761079f89898381811061059a57fe5b60008181526020819052604090209093508787838181106107bc57fe5b60200291909101358255508585838181106107d357fe5b602002919091013560018301555083600080516020610b428339815191528989858181106107fd57fe5b9050602002013588888681811061081057fe5b604080519485526020918202939093013590840152508051918290030190a250600101610788565b505050505050505050565b60608084849050604051908082528060200260200182016040528015610873578160200160208202803883390190505b50905060005b848110156109d25760008087878481811061089057fe5b905060200201358152602001908152602001600020600101546000141561090d57834311610908576040805160e560020a62461bcd02815260206004820152601860248201527f5061796d656e74206973206e6f742066696e616c697a65640000000000000000604482015290519081900360640190fd5b61098b565b60008087878481811061091c57fe5b90506020020135815260200190815260200160002060010154431161098b576040805160e560020a62461bcd02815260206004820152601860248201527f5061796d656e74206973206e6f742066696e616c697a65640000000000000000604482015290519081900360640190fd5b60008087878481811061099a57fe5b905060200201358152602001908152602001600020600001548282815181106109bf57fe5b6020908102919091010152600101610879565b50949350505050565b6000602081905290815260409020805460019091015482565b6040805160208082019490945273ffffffffffffffffffffffffffffffffffffffff929092166c0100000000000000000000000002828201528051808303603401815260549092019052805191012090565b6000610a5283336109f4565b6000818152602081815260409182902060018101869055805483519081529182018690528251939450928492600080516020610b42833981519152928290030190a250505050565b6000610aa684336109f4565b600081815260208181526040918290208681556001810186905582518781529182018690528251939450928492600080516020610b42833981519152928290030190a25050505050565b6000610afc83336109f4565b6000818152602081815260409182902085815560018101548351878152928301528251939450928492600080516020610b42833981519152928290030190a25050505056fe9e9acc6d43d5d7bd6fa143ef0ee1d224cfe2bb010b7e3acf44878d6314ebc607a265627a7a723058207fb2d6e01db7df745dcc11670cc9d62a37205b7774c19a8d372e5d099e892ee164736f6c634300050a0032"
+// Deprecated: Use PayRegistryMetaData.Bin instead.
+var PayRegistryBin = PayRegistryMetaData.Bin
 
 // DeployPayRegistry deploys a new Ethereum contract, binding an instance of PayRegistry to it.
 func DeployPayRegistry(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *PayRegistry, error) {
-	parsed, err := abi.JSON(strings.NewReader(PayRegistryABI))
+	parsed, err := PayRegistryMetaData.GetAbi()
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
+	if parsed == nil {
+		return common.Address{}, nil, nil, errors.New("GetABI returned nil")
+	}
 
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(PayRegistryBin), backend)
+	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(PayRegistryBin), backend)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -143,18 +157,18 @@ func NewPayRegistryFilterer(address common.Address, filterer bind.ContractFilter
 
 // bindPayRegistry binds a generic wrapper to an already deployed contract.
 func bindPayRegistry(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(PayRegistryABI))
+	parsed, err := PayRegistryMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+	return bind.NewBoundContract(address, *parsed, caller, transactor, filterer), nil
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_PayRegistry *PayRegistryRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_PayRegistry *PayRegistryRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _PayRegistry.Contract.PayRegistryCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -173,7 +187,7 @@ func (_PayRegistry *PayRegistryRaw) Transact(opts *bind.TransactOpts, method str
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_PayRegistry *PayRegistryCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_PayRegistry *PayRegistryCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _PayRegistry.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -192,12 +206,17 @@ func (_PayRegistry *PayRegistryTransactorRaw) Transact(opts *bind.TransactOpts, 
 //
 // Solidity: function calculatePayId(bytes32 _payHash, address _setter) pure returns(bytes32)
 func (_PayRegistry *PayRegistryCaller) CalculatePayId(opts *bind.CallOpts, _payHash [32]byte, _setter common.Address) ([32]byte, error) {
-	var (
-		ret0 = new([32]byte)
-	)
-	out := ret0
-	err := _PayRegistry.contract.Call(opts, out, "calculatePayId", _payHash, _setter)
-	return *ret0, err
+	var out []interface{}
+	err := _PayRegistry.contract.Call(opts, &out, "calculatePayId", _payHash, _setter)
+
+	if err != nil {
+		return *new([32]byte), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
+
+	return out0, err
+
 }
 
 // CalculatePayId is a free data retrieval call binding the contract method 0x96efe573.
@@ -218,12 +237,17 @@ func (_PayRegistry *PayRegistryCallerSession) CalculatePayId(_payHash [32]byte, 
 //
 // Solidity: function getPayAmounts(bytes32[] _payIds, uint256 _lastPayResolveDeadline) view returns(uint256[])
 func (_PayRegistry *PayRegistryCaller) GetPayAmounts(opts *bind.CallOpts, _payIds [][32]byte, _lastPayResolveDeadline *big.Int) ([]*big.Int, error) {
-	var (
-		ret0 = new([]*big.Int)
-	)
-	out := ret0
-	err := _PayRegistry.contract.Call(opts, out, "getPayAmounts", _payIds, _lastPayResolveDeadline)
-	return *ret0, err
+	var out []interface{}
+	err := _PayRegistry.contract.Call(opts, &out, "getPayAmounts", _payIds, _lastPayResolveDeadline)
+
+	if err != nil {
+		return *new([]*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([]*big.Int)).(*[]*big.Int)
+
+	return out0, err
+
 }
 
 // GetPayAmounts is a free data retrieval call binding the contract method 0x7cac39cf.
@@ -244,16 +268,18 @@ func (_PayRegistry *PayRegistryCallerSession) GetPayAmounts(_payIds [][32]byte, 
 //
 // Solidity: function getPayInfo(bytes32 _payId) view returns(uint256, uint256)
 func (_PayRegistry *PayRegistryCaller) GetPayInfo(opts *bind.CallOpts, _payId [32]byte) (*big.Int, *big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-		ret1 = new(*big.Int)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
+	var out []interface{}
+	err := _PayRegistry.contract.Call(opts, &out, "getPayInfo", _payId)
+
+	if err != nil {
+		return *new(*big.Int), *new(*big.Int), err
 	}
-	err := _PayRegistry.contract.Call(opts, out, "getPayInfo", _payId)
-	return *ret0, *ret1, err
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	out1 := *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
+
+	return out0, out1, err
+
 }
 
 // GetPayInfo is a free data retrieval call binding the contract method 0x27b0e058.
@@ -277,13 +303,22 @@ func (_PayRegistry *PayRegistryCaller) PayInfoMap(opts *bind.CallOpts, arg0 [32]
 	Amount          *big.Int
 	ResolveDeadline *big.Int
 }, error) {
-	ret := new(struct {
+	var out []interface{}
+	err := _PayRegistry.contract.Call(opts, &out, "payInfoMap", arg0)
+
+	outstruct := new(struct {
 		Amount          *big.Int
 		ResolveDeadline *big.Int
 	})
-	out := ret
-	err := _PayRegistry.contract.Call(opts, out, "payInfoMap", arg0)
-	return *ret, err
+	if err != nil {
+		return *outstruct, err
+	}
+
+	outstruct.Amount = *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	outstruct.ResolveDeadline = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
+
+	return *outstruct, err
+
 }
 
 // PayInfoMap is a free data retrieval call binding the contract method 0x8f13b2f5.
@@ -574,5 +609,6 @@ func (_PayRegistry *PayRegistryFilterer) ParsePayInfoUpdate(log types.Log) (*Pay
 	if err := _PayRegistry.contract.UnpackLog(event, "PayInfoUpdate", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }

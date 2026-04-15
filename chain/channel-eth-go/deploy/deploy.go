@@ -2,6 +2,7 @@ package deploy
 
 import (
 	"context"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"math/big"
@@ -27,6 +28,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
@@ -58,6 +60,9 @@ func DeployRouterRegistry(
 	receipt, err := WaitMined(ctx, conn, tx, blockDelay)
 	if err != nil {
 		log.Fatalf("Failed to WaitMined RouterRegistry: %v", err)
+	}
+	if receipt.Status != types.ReceiptStatusSuccessful {
+		log.Fatalf("RouterRegistry deployment tx failed")
 	}
 	log.Infof("Transaction status: %x", receipt.Status)
 	log.Infof("Deployed RouterRegistry contract at 0x%x\n", routerRegistryAddr)
@@ -285,8 +290,27 @@ func ABILinkLibrary(bin string, libraryName string, libraryAddress common.Addres
 	cleanLibraryAddr := strings.Replace(libraryAddress.Hex(), "0x", "", -1)
 
 	modifiedBin := libraryRexp.ReplaceAllString(bin, cleanLibraryAddr)
+	for _, placeholder := range hashedLibraryPlaceholders(libraryName) {
+		modifiedBin = strings.ReplaceAll(modifiedBin, placeholder, cleanLibraryAddr)
+	}
 
 	return modifiedBin
+}
+
+func hashedLibraryPlaceholders(libraryName string) []string {
+	patterns := []string{
+		"src/lib/ledgerlib/%[1]s.sol:%[1]s",
+		"src/lib/data/%[1]s.sol:%[1]s",
+		"src/%[1]s.sol:%[1]s",
+		"%[1]s.sol:%[1]s",
+	}
+	placeholders := make([]string, 0, len(patterns))
+	for _, pattern := range patterns {
+		qualifiedName := fmt.Sprintf(pattern, libraryName)
+		hash := crypto.Keccak256([]byte(qualifiedName))
+		placeholders = append(placeholders, fmt.Sprintf("__$%s$__", hex.EncodeToString(hash[:17])))
+	}
+	return placeholders
 }
 
 // DeployContractWithLinks patches a contract bin with provided library addresses
@@ -301,6 +325,9 @@ func DeployContractWithLinks(
 
 	for libraryName, libraryAddress := range libraries {
 		bin = ABILinkLibrary(bin, libraryName, libraryAddress)
+	}
+	if strings.ContainsAny(bin, "_$") {
+		return common.Address{}, nil, nil, fmt.Errorf("unresolved library placeholders remain in bytecode")
 	}
 
 	parsed, err := abi.JSON(strings.NewReader(abiString))
