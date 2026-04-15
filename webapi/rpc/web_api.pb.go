@@ -11,9 +11,11 @@ import (
 	entity "github.com/celer-network/agent-pay/entity"
 	rpc "github.com/celer-network/agent-pay/rpc"
 	proto "github.com/golang/protobuf/proto"
-	any "github.com/golang/protobuf/ptypes/any"
-	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	anypb "google.golang.org/protobuf/types/known/anypb"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -618,16 +620,18 @@ func (m *Condition) GetGetOutcomeArgs() []byte {
 }
 
 type SendConditionalPaymentRequest struct {
-	TokenInfo            *TokenInfo                  `protobuf:"bytes,1,opt,name=token_info,json=tokenInfo,proto3" json:"token_info,omitempty"`
-	Amount               string                      `protobuf:"bytes,2,opt,name=amount,proto3" json:"amount,omitempty"`
-	Destination          string                      `protobuf:"bytes,3,opt,name=destination,proto3" json:"destination,omitempty"`
-	TransferLogicType    entity.TransferFunctionType `protobuf:"varint,4,opt,name=transfer_logic_type,json=transferLogicType,proto3,enum=entity.TransferFunctionType" json:"transfer_logic_type,omitempty"`
-	Conditions           []*Condition                `protobuf:"bytes,5,rep,name=conditions,proto3" json:"conditions,omitempty"`
-	Timeout              uint64                      `protobuf:"varint,6,opt,name=timeout,proto3" json:"timeout,omitempty"`
-	Note                 *any.Any                    `protobuf:"bytes,7,opt,name=note,proto3" json:"note,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                    `json:"-"`
-	XXX_unrecognized     []byte                      `json:"-"`
-	XXX_sizecache        int32                       `json:"-"`
+	TokenInfo         *TokenInfo                  `protobuf:"bytes,1,opt,name=token_info,json=tokenInfo,proto3" json:"token_info,omitempty"`
+	Amount            string                      `protobuf:"bytes,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	Destination       string                      `protobuf:"bytes,3,opt,name=destination,proto3" json:"destination,omitempty"`
+	TransferLogicType entity.TransferFunctionType `protobuf:"varint,4,opt,name=transfer_logic_type,json=transferLogicType,proto3,enum=entity.TransferFunctionType" json:"transfer_logic_type,omitempty"`
+	// Empty conditions means the caller is not supplying any app-level conditions.
+	// The runtime may still prepend an internal hash-lock condition for non-direct pays.
+	Conditions           []*Condition `protobuf:"bytes,5,rep,name=conditions,proto3" json:"conditions,omitempty"`
+	Timeout              uint64       `protobuf:"varint,6,opt,name=timeout,proto3" json:"timeout,omitempty"`
+	Note                 *anypb.Any   `protobuf:"bytes,7,opt,name=note,proto3" json:"note,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
 }
 
 func (m *SendConditionalPaymentRequest) Reset()         { *m = SendConditionalPaymentRequest{} }
@@ -697,7 +701,7 @@ func (m *SendConditionalPaymentRequest) GetTimeout() uint64 {
 	return 0
 }
 
-func (m *SendConditionalPaymentRequest) GetNote() *any.Any {
+func (m *SendConditionalPaymentRequest) GetNote() *anypb.Any {
 	if m != nil {
 		return m.Note
 	}
@@ -708,7 +712,7 @@ type SendTokenRequest struct {
 	TokenInfo            *TokenInfo `protobuf:"bytes,1,opt,name=token_info,json=tokenInfo,proto3" json:"token_info,omitempty"`
 	Amount               string     `protobuf:"bytes,2,opt,name=amount,proto3" json:"amount,omitempty"`
 	Destination          string     `protobuf:"bytes,3,opt,name=destination,proto3" json:"destination,omitempty"`
-	Note                 *any.Any   `protobuf:"bytes,4,opt,name=note,proto3" json:"note,omitempty"`
+	Note                 *anypb.Any `protobuf:"bytes,4,opt,name=note,proto3" json:"note,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
 	XXX_unrecognized     []byte     `json:"-"`
 	XXX_sizecache        int32      `json:"-"`
@@ -718,7 +722,7 @@ func (m *SendTokenRequest) Reset()         { *m = SendTokenRequest{} }
 func (m *SendTokenRequest) String() string { return proto.CompactTextString(m) }
 func (*SendTokenRequest) ProtoMessage()    {}
 func (*SendTokenRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{44}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{13}
 }
 
 func (m *SendTokenRequest) XXX_Unmarshal(b []byte) error {
@@ -760,7 +764,7 @@ func (m *SendTokenRequest) GetDestination() string {
 	return ""
 }
 
-func (m *SendTokenRequest) GetNote() *any.Any {
+func (m *SendTokenRequest) GetNote() *anypb.Any {
 	if m != nil {
 		return m.Note
 	}
@@ -778,7 +782,7 @@ func (m *PaymentID) Reset()         { *m = PaymentID{} }
 func (m *PaymentID) String() string { return proto.CompactTextString(m) }
 func (*PaymentID) ProtoMessage()    {}
 func (*PaymentID) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{13}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{14}
 }
 
 func (m *PaymentID) XXX_Unmarshal(b []byte) error {
@@ -823,7 +827,7 @@ func (m *PaymentInfo) Reset()         { *m = PaymentInfo{} }
 func (m *PaymentInfo) String() string { return proto.CompactTextString(m) }
 func (*PaymentInfo) ProtoMessage()    {}
 func (*PaymentInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{14}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{15}
 }
 
 func (m *PaymentInfo) XXX_Unmarshal(b []byte) error {
@@ -906,7 +910,7 @@ func (m *OutgoingPaymentInfo) Reset()         { *m = OutgoingPaymentInfo{} }
 func (m *OutgoingPaymentInfo) String() string { return proto.CompactTextString(m) }
 func (*OutgoingPaymentInfo) ProtoMessage()    {}
 func (*OutgoingPaymentInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{15}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{16}
 }
 
 func (m *OutgoingPaymentInfo) XXX_Unmarshal(b []byte) error {
@@ -960,7 +964,7 @@ func (m *OnChainPaymentInfo) Reset()         { *m = OnChainPaymentInfo{} }
 func (m *OnChainPaymentInfo) String() string { return proto.CompactTextString(m) }
 func (*OnChainPaymentInfo) ProtoMessage()    {}
 func (*OnChainPaymentInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{16}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{17}
 }
 
 func (m *OnChainPaymentInfo) XXX_Unmarshal(b []byte) error {
@@ -1006,7 +1010,7 @@ func (m *SessionID) Reset()         { *m = SessionID{} }
 func (m *SessionID) String() string { return proto.CompactTextString(m) }
 func (*SessionID) ProtoMessage()    {}
 func (*SessionID) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{17}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{18}
 }
 
 func (m *SessionID) XXX_Unmarshal(b []byte) error {
@@ -1050,7 +1054,7 @@ func (m *CreateAppSessionOnVirtualContractRequest) Reset() {
 func (m *CreateAppSessionOnVirtualContractRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateAppSessionOnVirtualContractRequest) ProtoMessage()    {}
 func (*CreateAppSessionOnVirtualContractRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{18}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{19}
 }
 
 func (m *CreateAppSessionOnVirtualContractRequest) XXX_Unmarshal(b []byte) error {
@@ -1117,7 +1121,7 @@ func (m *CreateAppSessionOnDeployedContractRequest) String() string {
 }
 func (*CreateAppSessionOnDeployedContractRequest) ProtoMessage() {}
 func (*CreateAppSessionOnDeployedContractRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{19}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{20}
 }
 
 func (m *CreateAppSessionOnDeployedContractRequest) XXX_Unmarshal(b []byte) error {
@@ -1178,7 +1182,7 @@ func (m *DisputeInfo) Reset()         { *m = DisputeInfo{} }
 func (m *DisputeInfo) String() string { return proto.CompactTextString(m) }
 func (*DisputeInfo) ProtoMessage()    {}
 func (*DisputeInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{20}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{21}
 }
 
 func (m *DisputeInfo) XXX_Unmarshal(b []byte) error {
@@ -1225,7 +1229,7 @@ func (m *SignOutgoingStateRequest) Reset()         { *m = SignOutgoingStateReque
 func (m *SignOutgoingStateRequest) String() string { return proto.CompactTextString(m) }
 func (*SignOutgoingStateRequest) ProtoMessage()    {}
 func (*SignOutgoingStateRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{21}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{22}
 }
 
 func (m *SignOutgoingStateRequest) XXX_Unmarshal(b []byte) error {
@@ -1271,7 +1275,7 @@ func (m *SignedState) Reset()         { *m = SignedState{} }
 func (m *SignedState) String() string { return proto.CompactTextString(m) }
 func (*SignedState) ProtoMessage()    {}
 func (*SignedState) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{22}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{23}
 }
 
 func (m *SignedState) XXX_Unmarshal(b []byte) error {
@@ -1310,7 +1314,7 @@ func (m *Data) Reset()         { *m = Data{} }
 func (m *Data) String() string { return proto.CompactTextString(m) }
 func (*Data) ProtoMessage()    {}
 func (*Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{23}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{24}
 }
 
 func (m *Data) XXX_Unmarshal(b []byte) error {
@@ -1349,7 +1353,7 @@ func (m *Signature) Reset()         { *m = Signature{} }
 func (m *Signature) String() string { return proto.CompactTextString(m) }
 func (*Signature) ProtoMessage()    {}
 func (*Signature) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{24}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{25}
 }
 
 func (m *Signature) XXX_Unmarshal(b []byte) error {
@@ -1389,7 +1393,7 @@ func (m *ValidateAckRequest) Reset()         { *m = ValidateAckRequest{} }
 func (m *ValidateAckRequest) String() string { return proto.CompactTextString(m) }
 func (*ValidateAckRequest) ProtoMessage()    {}
 func (*ValidateAckRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{25}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{26}
 }
 
 func (m *ValidateAckRequest) XXX_Unmarshal(b []byte) error {
@@ -1435,7 +1439,7 @@ func (m *BoolValue) Reset()         { *m = BoolValue{} }
 func (m *BoolValue) String() string { return proto.CompactTextString(m) }
 func (*BoolValue) ProtoMessage()    {}
 func (*BoolValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{26}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{27}
 }
 
 func (m *BoolValue) XXX_Unmarshal(b []byte) error {
@@ -1475,7 +1479,7 @@ func (m *ProcessReceivedStateRequest) Reset()         { *m = ProcessReceivedStat
 func (m *ProcessReceivedStateRequest) String() string { return proto.CompactTextString(m) }
 func (*ProcessReceivedStateRequest) ProtoMessage()    {}
 func (*ProcessReceivedStateRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{27}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{28}
 }
 
 func (m *ProcessReceivedStateRequest) XXX_Unmarshal(b []byte) error {
@@ -1522,7 +1526,7 @@ func (m *ProcessReceivedStateResponse) Reset()         { *m = ProcessReceivedSta
 func (m *ProcessReceivedStateResponse) String() string { return proto.CompactTextString(m) }
 func (*ProcessReceivedStateResponse) ProtoMessage()    {}
 func (*ProcessReceivedStateResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{28}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{29}
 }
 
 func (m *ProcessReceivedStateResponse) XXX_Unmarshal(b []byte) error {
@@ -1569,7 +1573,7 @@ func (m *SettleAppSessionRequest) Reset()         { *m = SettleAppSessionRequest
 func (m *SettleAppSessionRequest) String() string { return proto.CompactTextString(m) }
 func (*SettleAppSessionRequest) ProtoMessage()    {}
 func (*SettleAppSessionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{29}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{30}
 }
 
 func (m *SettleAppSessionRequest) XXX_Unmarshal(b []byte) error {
@@ -1616,7 +1620,7 @@ func (m *SettleAppSessionByTimeoutRequest) Reset()         { *m = SettleAppSessi
 func (m *SettleAppSessionByTimeoutRequest) String() string { return proto.CompactTextString(m) }
 func (*SettleAppSessionByTimeoutRequest) ProtoMessage()    {}
 func (*SettleAppSessionByTimeoutRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{30}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{31}
 }
 
 func (m *SettleAppSessionByTimeoutRequest) XXX_Unmarshal(b []byte) error {
@@ -1664,7 +1668,7 @@ func (m *SettleAppSessionByInvalidityRequest) Reset()         { *m = SettleAppSe
 func (m *SettleAppSessionByInvalidityRequest) String() string { return proto.CompactTextString(m) }
 func (*SettleAppSessionByInvalidityRequest) ProtoMessage()    {}
 func (*SettleAppSessionByInvalidityRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{31}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{32}
 }
 
 func (m *SettleAppSessionByInvalidityRequest) XXX_Unmarshal(b []byte) error {
@@ -1717,7 +1721,7 @@ func (m *Address) Reset()         { *m = Address{} }
 func (m *Address) String() string { return proto.CompactTextString(m) }
 func (*Address) ProtoMessage()    {}
 func (*Address) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{32}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{33}
 }
 
 func (m *Address) XXX_Unmarshal(b []byte) error {
@@ -1757,7 +1761,7 @@ func (m *GetBooleanOutcomeForAppSessionRequest) Reset()         { *m = GetBoolea
 func (m *GetBooleanOutcomeForAppSessionRequest) String() string { return proto.CompactTextString(m) }
 func (*GetBooleanOutcomeForAppSessionRequest) ProtoMessage()    {}
 func (*GetBooleanOutcomeForAppSessionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{33}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{34}
 }
 
 func (m *GetBooleanOutcomeForAppSessionRequest) XXX_Unmarshal(b []byte) error {
@@ -1804,7 +1808,7 @@ func (m *BooleanOutcome) Reset()         { *m = BooleanOutcome{} }
 func (m *BooleanOutcome) String() string { return proto.CompactTextString(m) }
 func (*BooleanOutcome) ProtoMessage()    {}
 func (*BooleanOutcome) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{34}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{35}
 }
 
 func (m *BooleanOutcome) XXX_Unmarshal(b []byte) error {
@@ -1851,7 +1855,7 @@ func (m *ApplyActionForAppSessionRequest) Reset()         { *m = ApplyActionForA
 func (m *ApplyActionForAppSessionRequest) String() string { return proto.CompactTextString(m) }
 func (*ApplyActionForAppSessionRequest) ProtoMessage()    {}
 func (*ApplyActionForAppSessionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{35}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{36}
 }
 
 func (m *ApplyActionForAppSessionRequest) XXX_Unmarshal(b []byte) error {
@@ -1897,7 +1901,7 @@ func (m *BlockNumber) Reset()         { *m = BlockNumber{} }
 func (m *BlockNumber) String() string { return proto.CompactTextString(m) }
 func (*BlockNumber) ProtoMessage()    {}
 func (*BlockNumber) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{36}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{37}
 }
 
 func (m *BlockNumber) XXX_Unmarshal(b []byte) error {
@@ -1936,7 +1940,7 @@ func (m *AppSessionStatus) Reset()         { *m = AppSessionStatus{} }
 func (m *AppSessionStatus) String() string { return proto.CompactTextString(m) }
 func (*AppSessionStatus) ProtoMessage()    {}
 func (*AppSessionStatus) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{37}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{38}
 }
 
 func (m *AppSessionStatus) XXX_Unmarshal(b []byte) error {
@@ -1976,7 +1980,7 @@ func (m *GetStateForAppSessionRequest) Reset()         { *m = GetStateForAppSess
 func (m *GetStateForAppSessionRequest) String() string { return proto.CompactTextString(m) }
 func (*GetStateForAppSessionRequest) ProtoMessage()    {}
 func (*GetStateForAppSessionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{38}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{39}
 }
 
 func (m *GetStateForAppSessionRequest) XXX_Unmarshal(b []byte) error {
@@ -2022,7 +2026,7 @@ func (m *AppSessionState) Reset()         { *m = AppSessionState{} }
 func (m *AppSessionState) String() string { return proto.CompactTextString(m) }
 func (*AppSessionState) ProtoMessage()    {}
 func (*AppSessionState) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{39}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{40}
 }
 
 func (m *AppSessionState) XXX_Unmarshal(b []byte) error {
@@ -2061,7 +2065,7 @@ func (m *AppSessionSeqNum) Reset()         { *m = AppSessionSeqNum{} }
 func (m *AppSessionSeqNum) String() string { return proto.CompactTextString(m) }
 func (*AppSessionSeqNum) ProtoMessage()    {}
 func (*AppSessionSeqNum) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{40}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{41}
 }
 
 func (m *AppSessionSeqNum) XXX_Unmarshal(b []byte) error {
@@ -2101,7 +2105,7 @@ func (m *SetMsgDropReq) Reset()         { *m = SetMsgDropReq{} }
 func (m *SetMsgDropReq) String() string { return proto.CompactTextString(m) }
 func (*SetMsgDropReq) ProtoMessage()    {}
 func (*SetMsgDropReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{41}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{42}
 }
 
 func (m *SetMsgDropReq) XXX_Unmarshal(b []byte) error {
@@ -2147,7 +2151,7 @@ func (m *PaymentStatus) Reset()         { *m = PaymentStatus{} }
 func (m *PaymentStatus) String() string { return proto.CompactTextString(m) }
 func (*PaymentStatus) ProtoMessage()    {}
 func (*PaymentStatus) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cedb4ba9fba0c04, []int{42}
+	return fileDescriptor_4cedb4ba9fba0c04, []int{43}
 }
 
 func (m *PaymentStatus) XXX_Unmarshal(b []byte) error {
@@ -2222,216 +2226,244 @@ func init() {
 	proto.RegisterType((*PaymentStatus)(nil), "webrpc.PaymentStatus")
 }
 
-func init() { proto.RegisterFile("web_api.proto", fileDescriptor_4cedb4ba9fba0c04) }
+func init() {
+	proto.RegisterFile("web_api.proto", fileDescriptor_4cedb4ba9fba0c04)
+}
 
 var fileDescriptor_4cedb4ba9fba0c04 = []byte{
-	// 2533 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x59, 0xd9, 0x76, 0x1b, 0xc7,
-	0xd1, 0x06, 0xcc, 0x4d, 0x28, 0x80, 0x5b, 0x8b, 0x92, 0x21, 0x88, 0x32, 0xc9, 0x91, 0xfd, 0x8b,
-	0xb2, 0x8f, 0x28, 0x59, 0xff, 0x75, 0x16, 0x8a, 0x14, 0x29, 0x2a, 0xa2, 0x40, 0x0f, 0x78, 0x2c,
-	0x3b, 0x27, 0x39, 0x38, 0x8d, 0x99, 0x22, 0x38, 0x24, 0xd0, 0x3d, 0xec, 0x69, 0x50, 0x46, 0x1e,
-	0x20, 0x77, 0x79, 0x80, 0xbc, 0x49, 0x4e, 0xae, 0xf2, 0x08, 0x79, 0x88, 0xe4, 0x3d, 0x72, 0x7a,
-	0x99, 0x05, 0xcb, 0x80, 0x8b, 0x79, 0x87, 0xae, 0xae, 0xf9, 0xaa, 0xba, 0xba, 0xab, 0xba, 0xbe,
-	0x06, 0xcc, 0x7f, 0xc6, 0x56, 0x93, 0x86, 0xc1, 0x56, 0x28, 0xb8, 0xe4, 0x64, 0xf6, 0x33, 0xb6,
-	0x44, 0xe8, 0xd5, 0x1e, 0xb5, 0x39, 0x6f, 0x77, 0xf0, 0xa5, 0x96, 0xb6, 0x7a, 0x27, 0x2f, 0x29,
-	0xeb, 0x1b, 0x95, 0xda, 0xe3, 0xe1, 0x29, 0xec, 0x86, 0x32, 0x9e, 0xac, 0x20, 0x93, 0x41, 0x32,
-	0x9a, 0xef, 0x62, 0x14, 0xd1, 0x36, 0x9a, 0xa1, 0xf3, 0x33, 0xac, 0xec, 0xa3, 0x3c, 0xa2, 0xfd,
-	0x77, 0x41, 0x24, 0xb9, 0xe8, 0xbb, 0x78, 0xd1, 0xc3, 0x48, 0x92, 0x27, 0x00, 0x27, 0x82, 0x77,
-	0x9b, 0x91, 0xa4, 0x42, 0x56, 0x8b, 0xeb, 0xc5, 0xcd, 0x7b, 0x6e, 0x49, 0x49, 0x1a, 0x4a, 0x40,
-	0x1c, 0xa8, 0x04, 0x12, 0xbb, 0xd1, 0x11, 0x8a, 0x23, 0xda, 0xc6, 0xea, 0x17, 0xeb, 0xc5, 0xcd,
-	0x19, 0x77, 0x40, 0xe6, 0x9c, 0xc1, 0x83, 0x21, 0xe8, 0x28, 0xe4, 0x2c, 0x42, 0xf2, 0x1c, 0xa6,
-	0x43, 0xda, 0x8f, 0xaa, 0xc5, 0xf5, 0xa9, 0xcd, 0xf2, 0xeb, 0x07, 0x5b, 0x22, 0xf4, 0xb6, 0xea,
-	0x0c, 0x8d, 0x5a, 0xe0, 0xd1, 0xce, 0x11, 0xed, 0xbb, 0x5a, 0x85, 0xfc, 0x1f, 0x2c, 0x9e, 0xd2,
-	0xa8, 0xd9, 0xe5, 0x02, 0x9b, 0x02, 0xa3, 0x5e, 0x47, 0x6a, 0x53, 0xf7, 0xdc, 0xf9, 0x53, 0x1a,
-	0x1d, 0x72, 0x81, 0xae, 0x16, 0x3a, 0x2d, 0x28, 0x1d, 0xf3, 0x73, 0x64, 0x07, 0xec, 0x84, 0x93,
-	0x57, 0x00, 0x52, 0x0d, 0x9a, 0xb2, 0x1f, 0xa2, 0xf6, 0x7d, 0xe1, 0xf5, 0xf2, 0x96, 0x8d, 0x82,
-	0x56, 0x3b, 0xee, 0x87, 0xe8, 0x96, 0x64, 0xfc, 0x93, 0x3c, 0x85, 0x79, 0xf3, 0x05, 0xf5, 0x7d,
-	0x81, 0x51, 0xa4, 0x8d, 0x94, 0xdc, 0x8a, 0x16, 0x6e, 0x1b, 0x99, 0x73, 0x01, 0x2b, 0x0d, 0x94,
-	0xbb, 0xd8, 0xc1, 0x36, 0x95, 0x01, 0x67, 0x71, 0xa8, 0x5e, 0x43, 0xd9, 0x7c, 0x1c, 0xb0, 0x13,
-	0x1e, 0xaf, 0x6a, 0x79, 0xcb, 0xec, 0xda, 0x56, 0xe2, 0x96, 0x6b, 0x9c, 0x52, 0x3f, 0x23, 0xf2,
-	0x0d, 0x2c, 0xb4, 0x3a, 0xdc, 0x3b, 0x6f, 0xfa, 0x3d, 0xa1, 0xc1, 0xb4, 0xc5, 0x29, 0x77, 0x5e,
-	0x4b, 0x77, 0xad, 0xd0, 0xf9, 0x6b, 0x11, 0x1e, 0xd5, 0x43, 0x64, 0x47, 0xb4, 0xdf, 0x45, 0x26,
-	0x77, 0x4e, 0x29, 0x63, 0xd8, 0x89, 0x0d, 0x27, 0xeb, 0x54, 0x86, 0xf5, 0x3a, 0xc7, 0xda, 0x2d,
-	0x25, 0x76, 0xc9, 0x43, 0x98, 0xa5, 0x5d, 0xde, 0x63, 0xd2, 0x2e, 0xd0, 0x8e, 0xc8, 0x1a, 0x94,
-	0x43, 0x44, 0xd1, 0xb4, 0x93, 0x53, 0x7a, 0x12, 0x94, 0x68, 0x5b, 0x4b, 0x9c, 0x6f, 0xa1, 0x64,
-	0x8d, 0x1f, 0xec, 0xaa, 0xb3, 0xe1, 0x99, 0x41, 0x33, 0xf0, 0xb5, 0xdd, 0x92, 0x5b, 0xb2, 0x92,
-	0x03, 0xdf, 0xf1, 0xa1, 0xba, 0x8b, 0x21, 0x8f, 0x02, 0x59, 0x17, 0x9f, 0x02, 0x79, 0xea, 0x0b,
-	0xfa, 0xf9, 0xce, 0x5d, 0x76, 0xf6, 0x60, 0x65, 0xc4, 0xca, 0x7b, 0xde, 0x22, 0x0f, 0x60, 0xf6,
-	0x8c, 0xb7, 0x52, 0xc7, 0x66, 0xce, 0x78, 0xeb, 0xc0, 0x27, 0x5f, 0xc2, 0x9c, 0xfc, 0xa5, 0x79,
-	0x4a, 0xa3, 0xd3, 0x18, 0x47, 0xfe, 0xf2, 0x8e, 0x46, 0xa7, 0xce, 0xdf, 0x8a, 0x40, 0xf6, 0x51,
-	0xbe, 0xa1, 0x1d, 0xca, 0x3c, 0x4c, 0xce, 0xe8, 0x06, 0x54, 0x4e, 0x04, 0x62, 0xb3, 0x65, 0xe4,
-	0x16, 0xac, 0xac, 0x64, 0x56, 0x55, 0xed, 0xa1, 0xda, 0x2c, 0xf4, 0x13, 0x25, 0x83, 0x3c, 0x6f,
-	0xa4, 0xb1, 0xda, 0x0b, 0x20, 0x02, 0x3d, 0x0c, 0x2e, 0x03, 0xd6, 0x6e, 0x7a, 0x34, 0xa4, 0x5e,
-	0x20, 0xfb, 0x36, 0xc4, 0xcb, 0xc9, 0xcc, 0x8e, 0x9d, 0x70, 0x42, 0x78, 0xa4, 0xb2, 0x06, 0x51,
-	0xec, 0xa5, 0xb6, 0x6e, 0x1f, 0xbe, 0x0d, 0xa8, 0x98, 0x9d, 0x1d, 0x38, 0xd8, 0x7a, 0xb7, 0xe3,
-	0x73, 0xfd, 0x03, 0x94, 0x33, 0xa6, 0xae, 0xb3, 0xf2, 0x35, 0x28, 0x9f, 0xf1, 0x80, 0xa9, 0xe2,
-	0x20, 0x7b, 0x91, 0x4d, 0x7e, 0x50, 0xa2, 0x86, 0x96, 0x38, 0xff, 0x28, 0x42, 0x69, 0x87, 0x33,
-	0x3f, 0x50, 0xa7, 0x98, 0x7c, 0x0b, 0xcb, 0x9c, 0x35, 0xbd, 0x53, 0x1a, 0xb0, 0xa6, 0x8f, 0x61,
-	0x87, 0xf7, 0xd1, 0xb7, 0x25, 0x65, 0x91, 0xb3, 0x1d, 0x25, 0xdf, 0xb5, 0x62, 0xf2, 0x1c, 0x96,
-	0x3c, 0xce, 0xa4, 0xa0, 0x9e, 0x1c, 0xf2, 0x79, 0x31, 0x96, 0x5b, 0xbf, 0x15, 0x6c, 0x10, 0x35,
-	0x4f, 0x02, 0x46, 0x3b, 0xc1, 0x5f, 0xd0, 0x6f, 0x52, 0xd1, 0x8e, 0x74, 0x5c, 0x2b, 0xee, 0x62,
-	0x10, 0xed, 0xc5, 0xf2, 0x6d, 0xd1, 0x8e, 0xc8, 0x26, 0x2c, 0xb5, 0x51, 0x36, 0x79, 0x4f, 0x7a,
-	0xbc, 0x8b, 0x46, 0x75, 0x5a, 0xab, 0x2e, 0xb4, 0x51, 0xd6, 0x8d, 0x58, 0x69, 0x3a, 0xff, 0xfe,
-	0x02, 0x9e, 0x34, 0x90, 0xf9, 0x89, 0xfb, 0xba, 0x1c, 0xa9, 0xec, 0xbb, 0xfb, 0xb4, 0x5b, 0x87,
-	0xb2, 0x8f, 0x91, 0x0c, 0x98, 0x29, 0x01, 0xe6, 0x4c, 0x64, 0x45, 0xe4, 0x03, 0xdc, 0x97, 0x82,
-	0xb2, 0xe8, 0x04, 0x45, 0xb3, 0xc3, 0xdb, 0x81, 0x67, 0x6a, 0xda, 0xb4, 0xae, 0x69, 0xab, 0x49,
-	0x4d, 0xb3, 0x2a, 0x7b, 0x3d, 0xe6, 0xa9, 0xcf, 0x74, 0x79, 0x5b, 0x8e, 0x3f, 0xfc, 0xa0, 0xbe,
-	0xd3, 0x65, 0xee, 0x7b, 0x00, 0x2f, 0x5e, 0x56, 0x54, 0x9d, 0x19, 0x2c, 0x54, 0xc9, 0x82, 0xdd,
-	0x8c, 0x12, 0xa9, 0xc2, 0x9c, 0x0c, 0xba, 0xc8, 0x7b, 0xb2, 0x3a, 0xbb, 0x5e, 0xdc, 0x9c, 0x76,
-	0xe3, 0x21, 0xd9, 0x84, 0x69, 0xc6, 0x25, 0x56, 0xe7, 0x74, 0x00, 0x56, 0xb6, 0xcc, 0x15, 0xb4,
-	0x15, 0x5f, 0x41, 0x5b, 0xdb, 0xac, 0xef, 0x6a, 0x0d, 0x55, 0x3c, 0x6c, 0x08, 0x4d, 0xf1, 0x08,
-	0xcd, 0x20, 0x53, 0x3c, 0xac, 0xe4, 0xc0, 0x77, 0xfe, 0x5b, 0x84, 0x72, 0xac, 0xac, 0x42, 0x37,
-	0x59, 0x5d, 0x45, 0x36, 0x42, 0xe6, 0xa3, 0x88, 0x23, 0x6b, 0x46, 0xa4, 0x06, 0xf7, 0x4c, 0x6a,
-	0xa1, 0xb0, 0x61, 0x4d, 0xc6, 0x43, 0xfb, 0x37, 0x7d, 0xa3, 0xfd, 0x9b, 0x19, 0xd8, 0x3f, 0x95,
-	0x5c, 0xd6, 0xb9, 0xb3, 0x88, 0x33, 0x1d, 0x21, 0x95, 0x5c, 0x46, 0xf6, 0x3e, 0xe2, 0x4c, 0x3b,
-	0x68, 0xb2, 0x44, 0xc5, 0x69, 0xde, 0xb5, 0x23, 0x55, 0xd9, 0xef, 0xd7, 0x7b, 0xb2, 0xcd, 0x03,
-	0xd6, 0xce, 0xae, 0xf7, 0x05, 0xcc, 0xd9, 0xcf, 0xed, 0xc9, 0xba, 0x1f, 0x7b, 0x96, 0xd1, 0x72,
-	0x63, 0x1d, 0xe5, 0x01, 0x0a, 0xc1, 0x45, 0x53, 0x20, 0x8d, 0xec, 0x2d, 0x52, 0x72, 0xcb, 0x5a,
-	0xe6, 0x6a, 0x91, 0x8a, 0xa0, 0x51, 0xf1, 0xb8, 0x8f, 0x3a, 0x18, 0x53, 0x6e, 0x49, 0x4b, 0x76,
-	0xb8, 0x8f, 0xce, 0x27, 0x20, 0x75, 0x93, 0x83, 0x59, 0x37, 0xd2, 0x15, 0x17, 0x07, 0x56, 0xfc,
-	0x1c, 0x96, 0x04, 0x46, 0xbc, 0x73, 0x89, 0x4d, 0x1f, 0xa9, 0xdf, 0x09, 0x98, 0xa9, 0x7a, 0xd3,
-	0xee, 0xa2, 0x95, 0xef, 0x5a, 0xb1, 0xda, 0xf5, 0x06, 0x46, 0x51, 0xc0, 0x99, 0xd9, 0xf5, 0xc8,
-	0x0c, 0x32, 0xdb, 0x68, 0x25, 0x07, 0xbe, 0xf3, 0xaf, 0x22, 0x6c, 0xee, 0x08, 0xa4, 0x12, 0xb7,
-	0xc3, 0xd0, 0x7e, 0x55, 0x67, 0x3f, 0x06, 0x42, 0xf6, 0x68, 0x67, 0xc7, 0xe6, 0x7d, 0x9c, 0x7f,
-	0x1b, 0x50, 0x49, 0x4a, 0x44, 0x2b, 0x60, 0x71, 0x81, 0x8a, 0x65, 0x6f, 0x02, 0x46, 0xbe, 0x87,
-	0x95, 0x44, 0xc5, 0xe3, 0x2c, 0x92, 0xa2, 0xe7, 0x49, 0x1e, 0x1f, 0x92, 0xfb, 0xf1, 0xdc, 0x4e,
-	0x3a, 0x45, 0x56, 0x60, 0x86, 0x71, 0x55, 0xef, 0xa6, 0xf4, 0x72, 0xcc, 0x40, 0xd5, 0x8d, 0xa4,
-	0x74, 0xc5, 0x79, 0x30, 0xad, 0x15, 0x16, 0x6c, 0xe5, 0x3a, 0x36, 0x52, 0xe7, 0x9f, 0x45, 0x78,
-	0x3e, 0xba, 0x84, 0xb8, 0xae, 0x0d, 0xaf, 0x61, 0x5c, 0x99, 0x2b, 0x8e, 0x2f, 0x73, 0x89, 0x63,
-	0x5f, 0x5c, 0xe5, 0xd8, 0xd4, 0x38, 0xc7, 0x54, 0xab, 0x16, 0x52, 0x21, 0x03, 0x2f, 0x08, 0x29,
-	0x93, 0xaa, 0xec, 0x4d, 0xa9, 0xd6, 0x26, 0x2b, 0x73, 0xde, 0x42, 0x79, 0x37, 0x88, 0xc2, 0x9e,
-	0xc4, 0x38, 0xe9, 0x26, 0xec, 0x96, 0xba, 0x4b, 0x23, 0xbc, 0x68, 0xb2, 0x5e, 0xd7, 0xfa, 0x34,
-	0x1b, 0xe1, 0xc5, 0xc7, 0x5e, 0xd7, 0xa9, 0x43, 0xb5, 0x11, 0xb4, 0x59, 0x7c, 0xae, 0xd5, 0x65,
-	0x80, 0x99, 0x86, 0x72, 0x12, 0xe6, 0x0a, 0xcc, 0xa8, 0xcc, 0x30, 0xab, 0xac, 0xb8, 0x66, 0xe0,
-	0xbc, 0x82, 0xb2, 0x02, 0x44, 0x5f, 0x43, 0xa9, 0x9d, 0x8f, 0xf4, 0xb0, 0x69, 0x74, 0x8b, 0x5a,
-	0xb7, 0x1c, 0xa5, 0x2a, 0x4e, 0x0d, 0xa6, 0x77, 0xa9, 0xa4, 0x84, 0xc0, 0xb4, 0x4f, 0x25, 0xb5,
-	0x2a, 0xfa, 0xb7, 0xf3, 0x1c, 0x4a, 0x0a, 0x8d, 0xca, 0x9e, 0x40, 0xb2, 0x0a, 0xa5, 0x28, 0x1e,
-	0x58, 0xad, 0x54, 0xe0, 0xd4, 0x81, 0xfc, 0x48, 0x3b, 0x81, 0xaf, 0xb6, 0xd3, 0x3b, 0xbf, 0xe6,
-	0x1a, 0x6a, 0x70, 0x0f, 0xd9, 0x25, 0x76, 0x78, 0x18, 0x2f, 0x23, 0x19, 0x3b, 0x1b, 0x50, 0x7a,
-	0xc3, 0x79, 0xe7, 0x47, 0xda, 0xe9, 0xa1, 0x5a, 0xec, 0xa5, 0xfa, 0x61, 0x2f, 0x41, 0x33, 0x70,
-	0x7e, 0x82, 0xc7, 0x47, 0x82, 0x7b, 0x18, 0x45, 0xae, 0x29, 0x55, 0xfe, 0x4d, 0x02, 0x38, 0xc9,
-	0xf8, 0x09, 0xac, 0x8e, 0x47, 0xb6, 0xcd, 0xce, 0x53, 0x98, 0xf7, 0x51, 0x95, 0x87, 0xc1, 0xc0,
-	0x56, 0xac, 0x30, 0x09, 0x7e, 0x28, 0x30, 0xa4, 0x42, 0x5d, 0xb5, 0xde, 0xb9, 0x35, 0x52, 0x8e,
-	0x65, 0xdb, 0xde, 0xb9, 0xf3, 0x33, 0x7c, 0xd9, 0x40, 0x29, 0x3b, 0x99, 0x14, 0xb8, 0xa6, 0xf7,
-	0x6b, 0x50, 0xd6, 0x96, 0x9b, 0xa1, 0xe0, 0xfc, 0xc4, 0x62, 0x83, 0x16, 0x1d, 0x29, 0x89, 0xe3,
-	0xc3, 0xfa, 0x30, 0xf4, 0x9b, 0xbe, 0x3d, 0xe2, 0xd7, 0xb4, 0xb1, 0x01, 0x15, 0x2e, 0xa8, 0xd7,
-	0x19, 0x34, 0x52, 0x36, 0x32, 0x63, 0xe5, 0xef, 0x45, 0x78, 0x3a, 0x6a, 0xe6, 0x80, 0x5d, 0xaa,
-	0xb3, 0x10, 0xc8, 0xfe, 0x9d, 0x59, 0x22, 0xaf, 0x54, 0x85, 0xca, 0x1e, 0x66, 0xab, 0x6a, 0xfa,
-	0x17, 0x12, 0xcf, 0x35, 0xd2, 0x08, 0x3c, 0x85, 0xb9, 0xb8, 0x24, 0x54, 0x61, 0x6e, 0xb0, 0x68,
-	0xc4, 0x43, 0xe7, 0x4f, 0xf0, 0x8d, 0x6a, 0x66, 0x39, 0xef, 0x20, 0x65, 0xb6, 0xad, 0xd9, 0xe3,
-	0xe2, 0xc6, 0xfb, 0xb1, 0x02, 0x33, 0x17, 0x3d, 0x14, 0xfd, 0x38, 0x1d, 0xf5, 0xc0, 0x79, 0x07,
-	0x0b, 0x83, 0xd0, 0x2a, 0x8b, 0x92, 0x06, 0x2c, 0x61, 0x89, 0xb1, 0x40, 0xf9, 0x69, 0x3b, 0x2e,
-	0xcb, 0xda, 0xe2, 0xa1, 0xf3, 0x13, 0xac, 0x6d, 0x87, 0x61, 0xa7, 0xbf, 0xad, 0xfb, 0x95, 0xdb,
-	0x78, 0xa8, 0x6e, 0x28, 0x2f, 0x61, 0x4e, 0x15, 0xd7, 0x8e, 0x54, 0xc9, 0x78, 0xa3, 0x1a, 0xf0,
-	0x8f, 0xbd, 0x6e, 0x0b, 0x85, 0xda, 0x0a, 0x43, 0xb4, 0x98, 0x1e, 0x6b, 0x9c, 0x69, 0xb7, 0xdc,
-	0x4a, 0x55, 0x9c, 0x6f, 0x61, 0x29, 0xb5, 0x6e, 0x1a, 0xd8, 0xcc, 0xb5, 0x5d, 0x1c, 0xb8, 0xb6,
-	0xeb, 0xb0, 0xba, 0x8f, 0x52, 0xef, 0xca, 0x6d, 0x9c, 0x5e, 0x82, 0xa9, 0x73, 0xec, 0x5b, 0xae,
-	0xa7, 0x7e, 0x3a, 0xcf, 0x60, 0x71, 0xd0, 0x38, 0xa6, 0xa5, 0xb0, 0x98, 0x2d, 0x85, 0xdf, 0x0d,
-	0x78, 0xa9, 0xeb, 0x6d, 0xb6, 0x10, 0x17, 0x07, 0x0a, 0xf1, 0x01, 0xcc, 0x37, 0x50, 0x1e, 0x46,
-	0xed, 0x5d, 0xc1, 0x43, 0x17, 0x2f, 0xc8, 0x63, 0x28, 0xf9, 0x82, 0x87, 0x4d, 0x81, 0xde, 0xa5,
-	0xdd, 0xa7, 0x7b, 0xbe, 0x9e, 0xf3, 0x2e, 0x93, 0x49, 0xd5, 0x3b, 0xd9, 0x8d, 0xd2, 0x93, 0xaa,
-	0x0d, 0x76, 0x9e, 0xc1, 0xbc, 0x6d, 0x0c, 0x26, 0x87, 0xe6, 0xf5, 0x7f, 0xd6, 0x61, 0xf6, 0x13,
-	0xb6, 0xb6, 0xc3, 0x80, 0x7c, 0x84, 0xf9, 0x01, 0xe6, 0x4f, 0x56, 0xe3, 0x26, 0x66, 0xdc, 0x5b,
-	0x43, 0xed, 0x49, 0xce, 0xac, 0xa9, 0x4e, 0x4e, 0x81, 0xec, 0xeb, 0xe5, 0xa4, 0xcc, 0x3b, 0xc5,
-	0x1b, 0x47, 0xc8, 0x6b, 0x0f, 0x47, 0x7a, 0xd1, 0xb7, 0xdd, 0x50, 0xf6, 0x9d, 0x02, 0xf9, 0x00,
-	0x64, 0x94, 0x4e, 0x93, 0x8d, 0x18, 0x2d, 0x97, 0x6a, 0xd7, 0xd2, 0x2e, 0x39, 0x66, 0xc1, 0x4e,
-	0x81, 0xfc, 0x01, 0xe6, 0x2c, 0x05, 0x25, 0xeb, 0xf1, 0x7c, 0x1e, 0xf3, 0xad, 0xad, 0xe6, 0x6a,
-	0xbc, 0xe7, 0x2d, 0xa7, 0x40, 0x7e, 0x80, 0xe5, 0x43, 0xce, 0x02, 0xc9, 0x85, 0x55, 0x50, 0x64,
-	0x76, 0xe2, 0x47, 0x57, 0x42, 0x7e, 0x82, 0xfb, 0x3b, 0x9c, 0x87, 0x28, 0xa8, 0x0c, 0x2e, 0x31,
-	0x9e, 0xbb, 0x03, 0x5f, 0xff, 0x0c, 0x4f, 0xac, 0xaf, 0x63, 0xf0, 0x7f, 0xbd, 0xdf, 0xbf, 0x01,
-	0x48, 0x19, 0x39, 0x19, 0x6d, 0xcd, 0x6b, 0xb5, 0xcc, 0x81, 0x19, 0x22, 0xee, 0x4e, 0x81, 0x7c,
-	0xd4, 0x84, 0x7e, 0x88, 0x41, 0xa7, 0x9b, 0x9c, 0xcb, 0xae, 0x6b, 0x49, 0xab, 0x9d, 0x99, 0x73,
-	0x0a, 0xe4, 0x18, 0x1e, 0x8e, 0x27, 0x84, 0xe4, 0x9b, 0xf4, 0x18, 0x4e, 0x20, 0x8c, 0xe9, 0xe1,
-	0x49, 0x58, 0x90, 0x3e, 0x8a, 0x8f, 0x1a, 0xbd, 0x56, 0xe4, 0x89, 0xa0, 0x85, 0x07, 0xcc, 0xe3,
-	0xdd, 0x94, 0x08, 0x44, 0x24, 0xe7, 0x04, 0xd7, 0xc6, 0x91, 0x01, 0xa7, 0xf0, 0xaa, 0x48, 0x8e,
-	0x33, 0x68, 0x43, 0xb4, 0x22, 0x1f, 0xed, 0x71, 0x72, 0xee, 0x47, 0x89, 0x88, 0x46, 0xdd, 0x83,
-	0xea, 0x3e, 0xca, 0x21, 0xef, 0x6c, 0x19, 0x18, 0x5d, 0x54, 0xed, 0xc1, 0x90, 0xc8, 0x3e, 0x06,
-	0x14, 0x2c, 0xce, 0x90, 0x95, 0x5b, 0xe0, 0xbc, 0x85, 0x87, 0x3b, 0x9c, 0x9d, 0x04, 0xa2, 0x3b,
-	0x84, 0x35, 0x0e, 0x25, 0xbf, 0x0a, 0xec, 0xc2, 0x03, 0x17, 0xcf, 0xd0, 0x1b, 0x5e, 0xd9, 0xcd,
-	0x50, 0x1a, 0xf0, 0xb5, 0x69, 0x15, 0x2c, 0x7d, 0x72, 0x0d, 0xff, 0xf1, 0x7f, 0x15, 0xe8, 0x07,
-	0x78, 0x62, 0x71, 0x86, 0x60, 0xac, 0x91, 0x9b, 0xa1, 0xbd, 0xd3, 0x2f, 0xb0, 0x63, 0xe8, 0xdd,
-	0x18, 0x94, 0x24, 0xa7, 0x46, 0xd5, 0x9d, 0x02, 0x39, 0x84, 0xaf, 0xe2, 0xc8, 0x0f, 0xae, 0x36,
-	0x39, 0x64, 0x63, 0xd2, 0x74, 0xe2, 0x0e, 0x98, 0xd8, 0xbd, 0xfd, 0x25, 0x0c, 0xc4, 0x6d, 0x51,
-	0x3e, 0xc0, 0xc2, 0x01, 0x93, 0xc8, 0xfc, 0x1b, 0x94, 0xb6, 0x7c, 0xb4, 0xdf, 0xc2, 0xa2, 0x5d,
-	0x62, 0x02, 0x77, 0x23, 0x6f, 0x0e, 0xa0, 0x66, 0xbc, 0x31, 0x2b, 0x1b, 0xba, 0x63, 0x6e, 0x04,
-	0xf5, 0x1e, 0x1e, 0x5b, 0x57, 0x7e, 0x3d, 0x56, 0x03, 0x9e, 0xa9, 0x8e, 0x45, 0xe3, 0x24, 0x6f,
-	0x62, 0xaa, 0x71, 0xde, 0xe3, 0xe2, 0x6a, 0xdc, 0xa4, 0xe0, 0x64, 0x7a, 0x2a, 0x5d, 0x62, 0xd7,
-	0x1a, 0x7d, 0xe6, 0x0d, 0x1e, 0x15, 0x0b, 0x33, 0x9c, 0xd7, 0xd7, 0x71, 0xf2, 0x2d, 0x2c, 0x2b,
-	0x3c, 0xdd, 0xff, 0xa8, 0xe8, 0xab, 0x02, 0x9d, 0x5b, 0xb6, 0xf2, 0x61, 0xce, 0x60, 0xe3, 0xca,
-	0x57, 0x04, 0xf2, 0x2a, 0xb9, 0xca, 0xaf, 0xf9, 0xe0, 0x90, 0xd6, 0xef, 0xe4, 0x3d, 0xc3, 0x29,
-	0x90, 0x0e, 0x38, 0x57, 0xd3, 0x7d, 0xf2, 0x7d, 0xbe, 0xb1, 0x9c, 0xa7, 0x81, 0xf1, 0xd6, 0xde,
-	0x41, 0x2d, 0xa9, 0xef, 0x29, 0x88, 0xe5, 0xec, 0x64, 0xf4, 0x93, 0x74, 0xe3, 0x32, 0xbc, 0x5e,
-	0xd7, 0xf4, 0x0f, 0xb0, 0x3c, 0xc2, 0xd1, 0xd3, 0xbc, 0xc9, 0xa3, 0xef, 0x29, 0x5e, 0x86, 0x8f,
-	0xeb, 0xa4, 0x29, 0x67, 0x78, 0x32, 0x49, 0x8a, 0xc8, 0x28, 0x79, 0x4e, 0xd7, 0x95, 0xf0, 0x60,
-	0xa7, 0x40, 0x5e, 0xc0, 0x3d, 0x05, 0xa8, 0x29, 0x7b, 0x25, 0x71, 0x99, 0x4a, 0x9a, 0x09, 0x43,
-	0x42, 0xca, 0x0b, 0xc4, 0x83, 0x95, 0x71, 0x44, 0x96, 0x3c, 0x4d, 0xea, 0x59, 0x3e, 0x81, 0xae,
-	0x7d, 0x3d, 0x59, 0x29, 0xe9, 0x1f, 0x0e, 0x61, 0x69, 0x98, 0x03, 0x92, 0xb5, 0x4c, 0xc3, 0x39,
-	0x8e, 0xdf, 0x4e, 0x38, 0x94, 0x2d, 0x58, 0x1d, 0xa5, 0x94, 0x8d, 0xa0, 0x1d, 0xbf, 0xcf, 0x6c,
-	0xe6, 0x41, 0x0f, 0xf3, 0xdb, 0x09, 0x36, 0x3c, 0x78, 0x32, 0xfa, 0xf5, 0x21, 0xbf, 0xc4, 0xbb,
-	0x34, 0x72, 0x32, 0xce, 0x88, 0xe5, 0xc6, 0xc7, 0x3d, 0xc1, 0xc8, 0x77, 0xf9, 0x46, 0x46, 0x28,
-	0xf4, 0x04, 0x3b, 0x6d, 0xf8, 0x2a, 0x17, 0xc0, 0x6c, 0xf7, 0x1d, 0x19, 0xfa, 0x1d, 0x2c, 0x29,
-	0xf2, 0x90, 0x4d, 0xcb, 0x71, 0xa9, 0x94, 0x0f, 0xb0, 0x0f, 0x6b, 0xfb, 0x8a, 0x80, 0x98, 0x44,
-	0xb6, 0xec, 0x7c, 0x80, 0x17, 0x8e, 0xc3, 0x5b, 0x8c, 0x45, 0xf1, 0x1f, 0x30, 0x05, 0x12, 0xc0,
-	0x57, 0x93, 0x69, 0x3b, 0x79, 0x91, 0x6d, 0x79, 0xaf, 0xa4, 0xf7, 0xb5, 0x87, 0xd9, 0x64, 0x4b,
-	0x75, 0x75, 0xef, 0x5e, 0xcd, 0x63, 0xde, 0xe4, 0x59, 0xe2, 0xd9, 0x64, 0x6e, 0x3e, 0xb9, 0x2b,
-	0x8a, 0x6f, 0x99, 0x3a, 0x33, 0x08, 0xf6, 0x80, 0x5d, 0x19, 0x97, 0x7c, 0xd0, 0x3a, 0x3c, 0xcd,
-	0xbd, 0xc3, 0x26, 0x63, 0xe6, 0xdc, 0x5f, 0xef, 0x75, 0xbc, 0x8d, 0x7b, 0xf1, 0x83, 0xf5, 0x6d,
-	0xb1, 0xf6, 0xe1, 0xa1, 0x7d, 0x12, 0xe8, 0x5d, 0xbd, 0xf7, 0xd5, 0x4c, 0x84, 0x07, 0x5e, 0x1c,
-	0x9c, 0x02, 0xf9, 0x49, 0x77, 0x6b, 0xa3, 0x6f, 0x0b, 0xe4, 0xeb, 0xcc, 0xde, 0xe7, 0x3e, 0x3d,
-	0xd4, 0xbe, 0x1c, 0x0f, 0x8d, 0xa9, 0x8b, 0xfa, 0x6d, 0xe0, 0x56, 0x2e, 0x9a, 0x57, 0x05, 0x95,
-	0x31, 0x0b, 0xea, 0xfc, 0x65, 0xde, 0x57, 0xae, 0x64, 0x2a, 0x83, 0xc1, 0xfa, 0x7d, 0xf6, 0x61,
-	0x22, 0x44, 0x41, 0x1e, 0x64, 0x52, 0x39, 0x7d, 0xaf, 0xc8, 0x3f, 0x0b, 0x6f, 0x5e, 0xfc, 0xf1,
-	0xbb, 0x76, 0x20, 0x4f, 0x7b, 0xad, 0x2d, 0x8f, 0x77, 0x5f, 0x7a, 0xd8, 0x41, 0xf1, 0x82, 0xa1,
-	0xfc, 0xcc, 0xc5, 0xf9, 0xcb, 0x36, 0xdf, 0x51, 0xe3, 0x97, 0x9f, 0xb1, 0x45, 0xc3, 0xe0, 0xa5,
-	0x08, 0xbd, 0xd6, 0xac, 0x06, 0xf8, 0xff, 0xff, 0x05, 0x00, 0x00, 0xff, 0xff, 0x2f, 0xf9, 0xae,
-	0xee, 0x54, 0x21, 0x00, 0x00,
+	// 2599 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x59, 0x6b, 0x72, 0x1b, 0xb9,
+	0x11, 0x26, 0x57, 0x2f, 0xb3, 0xa9, 0x27, 0x2c, 0x7b, 0x69, 0x5a, 0x5e, 0x49, 0xe3, 0xdd, 0x58,
+	0xf6, 0x96, 0x24, 0xaf, 0xf3, 0x2f, 0x55, 0x79, 0xc8, 0x92, 0x25, 0xcb, 0x91, 0x4d, 0xed, 0xd0,
+	0x65, 0xef, 0xa6, 0x92, 0x62, 0x81, 0x33, 0x2d, 0x6a, 0x24, 0x12, 0x18, 0x63, 0x40, 0x79, 0x99,
+	0x03, 0xe4, 0x5f, 0x0e, 0x90, 0x1b, 0xe4, 0x08, 0xa9, 0xfc, 0xca, 0x11, 0x72, 0x80, 0xfc, 0xcd,
+	0x3d, 0x52, 0x78, 0xcc, 0x83, 0x8f, 0xa1, 0x1e, 0xab, 0xaa, 0xfc, 0x23, 0x1a, 0x3d, 0x5f, 0x37,
+	0x1a, 0xc0, 0x87, 0xee, 0x26, 0xcc, 0x7d, 0xc6, 0x66, 0x83, 0x86, 0xc1, 0x56, 0x28, 0xb8, 0xe4,
+	0x64, 0xfa, 0x33, 0x36, 0x45, 0xe8, 0x55, 0x1f, 0xb4, 0x38, 0x6f, 0xb5, 0x71, 0x5b, 0x4b, 0x9b,
+	0xdd, 0x93, 0x6d, 0xca, 0x7a, 0x46, 0xa5, 0xfa, 0x70, 0x70, 0x0a, 0x3b, 0xa1, 0x8c, 0x27, 0x67,
+	0x91, 0xc9, 0x20, 0x19, 0xcd, 0x75, 0x30, 0x8a, 0x68, 0x0b, 0xcd, 0xd0, 0xf9, 0x11, 0x96, 0x0f,
+	0x50, 0x1e, 0xd3, 0xde, 0xeb, 0x20, 0x92, 0x5c, 0xf4, 0x5c, 0xfc, 0xd4, 0xc5, 0x48, 0x92, 0x47,
+	0x00, 0x27, 0x82, 0x77, 0x1a, 0x91, 0xa4, 0x42, 0x56, 0x8a, 0x6b, 0xc5, 0x8d, 0x3b, 0x6e, 0x49,
+	0x49, 0xea, 0x4a, 0x40, 0x1c, 0x98, 0x0d, 0x24, 0x76, 0xa2, 0x63, 0x14, 0xc7, 0xb4, 0x85, 0x95,
+	0x2f, 0xd6, 0x8a, 0x1b, 0x53, 0x6e, 0x9f, 0xcc, 0x39, 0x83, 0x7b, 0x03, 0xd0, 0x51, 0xc8, 0x59,
+	0x84, 0xe4, 0x29, 0x4c, 0x86, 0xb4, 0x17, 0x55, 0x8a, 0x6b, 0x13, 0x1b, 0xe5, 0x17, 0xf7, 0xb6,
+	0x44, 0xe8, 0x6d, 0xd5, 0x18, 0x1a, 0xb5, 0xc0, 0xa3, 0xed, 0x63, 0xda, 0x73, 0xb5, 0x0a, 0xf9,
+	0x05, 0x2c, 0x9c, 0xd2, 0xa8, 0xd1, 0xe1, 0x02, 0x1b, 0x02, 0xa3, 0x6e, 0x5b, 0x6a, 0x53, 0x77,
+	0xdc, 0xb9, 0x53, 0x1a, 0xbd, 0xe5, 0x02, 0x5d, 0x2d, 0x74, 0x9a, 0x50, 0x7a, 0xcf, 0xcf, 0x91,
+	0x1d, 0xb2, 0x13, 0x4e, 0x9e, 0x03, 0x48, 0x35, 0x68, 0xc8, 0x5e, 0x88, 0xda, 0xf7, 0xf9, 0x17,
+	0x4b, 0x5b, 0x36, 0x0a, 0x5a, 0xed, 0x7d, 0x2f, 0x44, 0xb7, 0x24, 0xe3, 0x9f, 0xe4, 0x31, 0xcc,
+	0x99, 0x2f, 0xa8, 0xef, 0x0b, 0x8c, 0x22, 0x6d, 0xa4, 0xe4, 0xce, 0x6a, 0xe1, 0x8e, 0x91, 0x39,
+	0x9f, 0x60, 0xb9, 0x8e, 0x72, 0x0f, 0xdb, 0xd8, 0xa2, 0x32, 0xe0, 0x2c, 0x0e, 0xd5, 0x0b, 0x28,
+	0x9b, 0x8f, 0x03, 0x76, 0xc2, 0xe3, 0x55, 0x2d, 0x6d, 0x99, 0x5d, 0xdb, 0x4a, 0xdc, 0x72, 0x8d,
+	0x53, 0xea, 0x67, 0x44, 0xbe, 0x81, 0xf9, 0x66, 0x9b, 0x7b, 0xe7, 0x0d, 0xbf, 0x2b, 0x34, 0x98,
+	0xb6, 0x38, 0xe1, 0xce, 0x69, 0xe9, 0x9e, 0x15, 0x3a, 0x7f, 0x29, 0xc2, 0x83, 0x5a, 0x88, 0xec,
+	0x98, 0xf6, 0x3a, 0xc8, 0xe4, 0xee, 0x29, 0x65, 0x0c, 0xdb, 0xb1, 0xe1, 0x64, 0x9d, 0xca, 0xb0,
+	0x5e, 0xe7, 0x48, 0xbb, 0xa5, 0xc4, 0x2e, 0xb9, 0x0f, 0xd3, 0xb4, 0xc3, 0xbb, 0x4c, 0xda, 0x05,
+	0xda, 0x11, 0x59, 0x85, 0x72, 0x88, 0x28, 0x1a, 0x76, 0x72, 0x42, 0x4f, 0x82, 0x12, 0xed, 0x68,
+	0x89, 0xf3, 0x0c, 0x4a, 0xd6, 0xf8, 0xe1, 0x9e, 0x3a, 0x1b, 0x9e, 0x19, 0x34, 0x02, 0x5f, 0xdb,
+	0x2d, 0xb9, 0x25, 0x2b, 0x39, 0xf4, 0x1d, 0x1f, 0x2a, 0x7b, 0x18, 0xf2, 0x28, 0x90, 0x35, 0xf1,
+	0x31, 0x90, 0xa7, 0xbe, 0xa0, 0x9f, 0x6f, 0xdd, 0x65, 0x67, 0x1f, 0x96, 0x87, 0xac, 0xbc, 0xe1,
+	0x4d, 0x72, 0x0f, 0xa6, 0xcf, 0x78, 0x33, 0x75, 0x6c, 0xea, 0x8c, 0x37, 0x0f, 0x7d, 0xf2, 0x25,
+	0xcc, 0xc8, 0x9f, 0x1a, 0xa7, 0x34, 0x3a, 0x8d, 0x71, 0xe4, 0x4f, 0xaf, 0x69, 0x74, 0xea, 0xfc,
+	0xb5, 0x08, 0xe4, 0x00, 0xe5, 0x4b, 0xda, 0xa6, 0xcc, 0xc3, 0xe4, 0x8c, 0xae, 0xc3, 0xec, 0x89,
+	0x40, 0x6c, 0x34, 0x8d, 0xdc, 0x82, 0x95, 0x95, 0xcc, 0xaa, 0xaa, 0x3d, 0x54, 0x9b, 0x85, 0x7e,
+	0xa2, 0x64, 0x90, 0xe7, 0x8c, 0x34, 0x56, 0xdb, 0x04, 0x22, 0xd0, 0xc3, 0xe0, 0x22, 0x60, 0xad,
+	0x86, 0x47, 0x43, 0xea, 0x05, 0xb2, 0x67, 0x43, 0xbc, 0x94, 0xcc, 0xec, 0xda, 0x09, 0x27, 0x84,
+	0x07, 0xea, 0xd6, 0x20, 0x8a, 0xfd, 0xd4, 0xd6, 0xcd, 0xc3, 0xb7, 0x0e, 0xb3, 0x66, 0x67, 0xfb,
+	0x0e, 0xb6, 0xde, 0xed, 0xf8, 0x5c, 0x7f, 0x0f, 0xe5, 0x8c, 0xa9, 0xab, 0xac, 0x7c, 0x15, 0xca,
+	0x67, 0x3c, 0x60, 0x8a, 0x1c, 0x64, 0x37, 0xb2, 0x97, 0x1f, 0x94, 0xa8, 0xae, 0x25, 0xce, 0x3f,
+	0x8a, 0x50, 0xda, 0xe5, 0xcc, 0x0f, 0xd4, 0x29, 0x26, 0xcf, 0x60, 0x89, 0xb3, 0x86, 0x77, 0x4a,
+	0x03, 0xd6, 0xf0, 0x31, 0x6c, 0xf3, 0x1e, 0xfa, 0x96, 0x52, 0x16, 0x38, 0xdb, 0x55, 0xf2, 0x3d,
+	0x2b, 0x26, 0x4f, 0x61, 0xd1, 0xe3, 0x4c, 0x0a, 0xea, 0xc9, 0x01, 0x9f, 0x17, 0x62, 0xb9, 0xf5,
+	0x5b, 0xc1, 0x06, 0x51, 0xe3, 0x24, 0x60, 0xb4, 0x1d, 0xfc, 0x19, 0xfd, 0x06, 0x15, 0xad, 0x48,
+	0xc7, 0x75, 0xd6, 0x5d, 0x08, 0xa2, 0xfd, 0x58, 0xbe, 0x23, 0x5a, 0x11, 0xd9, 0x80, 0xc5, 0x16,
+	0xca, 0x06, 0xef, 0x4a, 0x8f, 0x77, 0xd0, 0xa8, 0x4e, 0x6a, 0xd5, 0xf9, 0x16, 0xca, 0x9a, 0x11,
+	0x2b, 0x4d, 0xe7, 0xdf, 0x5f, 0xc0, 0xa3, 0x3a, 0x32, 0x3f, 0x71, 0x5f, 0xd3, 0x91, 0xba, 0x7d,
+	0xb7, 0x7f, 0xed, 0xd6, 0xa0, 0xec, 0x63, 0x24, 0x03, 0x66, 0x28, 0xc0, 0x9c, 0x89, 0xac, 0x88,
+	0x1c, 0xc1, 0x5d, 0x29, 0x28, 0x8b, 0x4e, 0x50, 0x34, 0xda, 0xbc, 0x15, 0x78, 0x86, 0xd3, 0x26,
+	0x35, 0xa7, 0xad, 0x24, 0x9c, 0x66, 0x55, 0xf6, 0xbb, 0xcc, 0x53, 0x9f, 0x69, 0x7a, 0x5b, 0x8a,
+	0x3f, 0x3c, 0x52, 0xdf, 0x69, 0x9a, 0xfb, 0x0e, 0xc0, 0x8b, 0x97, 0x15, 0x55, 0xa6, 0xfa, 0x89,
+	0x2a, 0x59, 0xb0, 0x9b, 0x51, 0x22, 0x15, 0x98, 0x91, 0x41, 0x07, 0x79, 0x57, 0x56, 0xa6, 0xd7,
+	0x8a, 0x1b, 0x93, 0x6e, 0x3c, 0x24, 0x1b, 0x30, 0xc9, 0xb8, 0xc4, 0xca, 0x8c, 0x0e, 0xc0, 0xf2,
+	0x96, 0x79, 0x82, 0xb6, 0xe2, 0x27, 0x68, 0x6b, 0x87, 0xf5, 0x5c, 0xad, 0xe1, 0xfc, 0xbd, 0x08,
+	0x8b, 0x2a, 0xa4, 0x3a, 0x36, 0xff, 0x8f, 0x28, 0xc6, 0xae, 0x4e, 0x5e, 0xea, 0xea, 0x33, 0x28,
+	0xd9, 0xdd, 0x36, 0x3c, 0x17, 0x9a, 0x41, 0x86, 0xe7, 0xac, 0xe4, 0xd0, 0x77, 0xfe, 0x5b, 0x84,
+	0x72, 0xac, 0xac, 0xfc, 0x1b, 0xaf, 0xae, 0xdc, 0x8f, 0x90, 0xf9, 0x28, 0x62, 0xf7, 0xcd, 0x88,
+	0x54, 0xe1, 0x8e, 0x61, 0x01, 0x14, 0xd6, 0xf7, 0x64, 0x3c, 0x10, 0xa4, 0xc9, 0x6b, 0x05, 0x69,
+	0xaa, 0x2f, 0x48, 0x8a, 0x07, 0xac, 0x73, 0x67, 0x11, 0x67, 0x7a, 0x33, 0x15, 0x0f, 0x18, 0xd9,
+	0x9b, 0x88, 0x33, 0xed, 0xa0, 0xb9, 0xd0, 0x6a, 0x4b, 0xe7, 0x5c, 0x3b, 0x52, 0x8f, 0xd0, 0xdd,
+	0x5a, 0x57, 0xb6, 0x78, 0xc0, 0x5a, 0xd9, 0xf5, 0x6e, 0xc2, 0x8c, 0xfd, 0xdc, 0x6e, 0xdf, 0xdd,
+	0xd8, 0xb3, 0x8c, 0x96, 0x1b, 0xeb, 0x28, 0x0f, 0x50, 0x08, 0x2e, 0x1a, 0x02, 0x69, 0x64, 0x1f,
+	0xbc, 0x92, 0x5b, 0xd6, 0x32, 0x57, 0x8b, 0x54, 0x04, 0x8d, 0x8a, 0xc7, 0x7d, 0xd4, 0xc1, 0x98,
+	0x70, 0x4b, 0x5a, 0xb2, 0xcb, 0x7d, 0x74, 0x3e, 0x02, 0xa9, 0x19, 0xba, 0xc8, 0xba, 0x91, 0xae,
+	0xb8, 0xd8, 0xb7, 0xe2, 0xa7, 0xb0, 0x28, 0x30, 0xe2, 0xed, 0x0b, 0x6c, 0xf8, 0x48, 0xfd, 0x76,
+	0xc0, 0x0c, 0x41, 0x4f, 0xba, 0x0b, 0x56, 0xbe, 0x67, 0xc5, 0x6a, 0xd7, 0xeb, 0x18, 0x45, 0x01,
+	0x67, 0x66, 0xd7, 0x23, 0x33, 0xc8, 0x6c, 0xa3, 0x95, 0x1c, 0xfa, 0xce, 0xbf, 0x8a, 0xb0, 0xb1,
+	0x2b, 0x90, 0x4a, 0xdc, 0x09, 0x43, 0xfb, 0x55, 0x8d, 0x7d, 0x08, 0x84, 0xec, 0xd2, 0xf6, 0xae,
+	0xa5, 0xa8, 0xf8, 0x90, 0xaf, 0xc3, 0x6c, 0xc2, 0x66, 0xcd, 0x80, 0xc5, 0x5c, 0x1a, 0xcb, 0x5e,
+	0x06, 0x8c, 0x7c, 0x07, 0xcb, 0x89, 0x8a, 0xc7, 0x59, 0x24, 0x45, 0xd7, 0x93, 0x3c, 0x3e, 0x24,
+	0x77, 0xe3, 0xb9, 0xdd, 0x74, 0x8a, 0x2c, 0xc3, 0x14, 0xe3, 0x8a, 0x9a, 0x27, 0xf4, 0x72, 0xcc,
+	0x40, 0x51, 0x5c, 0xc2, 0xb2, 0xf1, 0x95, 0x9d, 0xd4, 0x0a, 0xf3, 0x96, 0x64, 0xdf, 0x1b, 0xa9,
+	0xf3, 0xcf, 0x22, 0x3c, 0x1d, 0x5e, 0x42, 0x4c, 0xc1, 0x83, 0x6b, 0x18, 0xc5, 0xc8, 0xc5, 0xd1,
+	0x8c, 0x9c, 0x38, 0xf6, 0xc5, 0x65, 0x8e, 0x4d, 0x8c, 0x72, 0x4c, 0x65, 0x95, 0x21, 0x15, 0x32,
+	0xf0, 0x82, 0x90, 0x32, 0xa9, 0x18, 0x7a, 0x42, 0x65, 0x61, 0x59, 0x99, 0xf3, 0x0a, 0xca, 0x7b,
+	0x41, 0x14, 0x76, 0x25, 0xc6, 0x97, 0x6e, 0xcc, 0x6e, 0xa9, 0x67, 0x3f, 0xc2, 0x4f, 0x0d, 0xd6,
+	0xed, 0x58, 0x9f, 0xa6, 0x23, 0xfc, 0xf4, 0xae, 0xdb, 0x71, 0x6a, 0x50, 0xa9, 0x07, 0x2d, 0x16,
+	0x9f, 0x6b, 0xf5, 0x6e, 0x61, 0x26, 0xf7, 0x1d, 0x87, 0xb9, 0x0c, 0x53, 0xea, 0x66, 0x98, 0x55,
+	0xce, 0xba, 0x66, 0xe0, 0x3c, 0x87, 0xb2, 0x02, 0x44, 0x5f, 0x43, 0xa9, 0x9d, 0x8f, 0xf4, 0xb0,
+	0x61, 0x74, 0x8b, 0x5a, 0xb7, 0x1c, 0xa5, 0x2a, 0x4e, 0x15, 0x26, 0xf7, 0xa8, 0xa4, 0x84, 0xc0,
+	0xa4, 0x4f, 0x25, 0xb5, 0x2a, 0xfa, 0xb7, 0xf3, 0x14, 0x4a, 0x0a, 0x8d, 0xca, 0xae, 0x40, 0xb2,
+	0x02, 0xa5, 0x28, 0x1e, 0x58, 0xad, 0x54, 0xe0, 0xd4, 0x80, 0x7c, 0xa0, 0xed, 0xc0, 0x57, 0xdb,
+	0xe9, 0x9d, 0x5f, 0x71, 0x0d, 0x55, 0xb8, 0x83, 0xec, 0x02, 0xdb, 0x3c, 0x8c, 0x97, 0x91, 0x8c,
+	0x9d, 0x75, 0x28, 0xbd, 0xe4, 0xbc, 0xfd, 0x81, 0xb6, 0xbb, 0xa8, 0x16, 0x7b, 0xa1, 0x7e, 0xd8,
+	0xf7, 0xda, 0x0c, 0x9c, 0x1f, 0xe0, 0xe1, 0xb1, 0xe0, 0x1e, 0x46, 0x91, 0x6b, 0xa8, 0xca, 0xbf,
+	0x4e, 0x00, 0xc7, 0x19, 0x3f, 0x81, 0x95, 0xd1, 0xc8, 0x36, 0x2f, 0x7b, 0x0c, 0x73, 0x3e, 0x2a,
+	0x7a, 0xe8, 0x0f, 0xec, 0xac, 0x15, 0x26, 0xc1, 0x0f, 0x05, 0x86, 0x54, 0xa8, 0xac, 0xc0, 0x3b,
+	0xb7, 0x46, 0xca, 0xb1, 0x6c, 0xc7, 0x3b, 0x77, 0x7e, 0x84, 0x2f, 0xeb, 0x28, 0x65, 0x3b, 0x73,
+	0x05, 0xae, 0xe8, 0xfd, 0x2a, 0x94, 0xb5, 0xe5, 0x46, 0x28, 0x38, 0x3f, 0xb1, 0xd8, 0xa0, 0x45,
+	0xc7, 0x4a, 0xe2, 0xf8, 0xb0, 0x36, 0x08, 0xfd, 0xb2, 0x67, 0x8f, 0xf8, 0x15, 0x6d, 0xac, 0xc3,
+	0x2c, 0x17, 0xd4, 0x6b, 0xf7, 0x1b, 0x29, 0x1b, 0x99, 0xb1, 0xf2, 0xb7, 0x22, 0x3c, 0x1e, 0x36,
+	0x73, 0xc8, 0x2e, 0xd4, 0x59, 0x08, 0x64, 0xef, 0xd6, 0x2c, 0x91, 0xe7, 0x8a, 0xa1, 0xb2, 0x87,
+	0xd9, 0xaa, 0x9a, 0x54, 0x8b, 0xc4, 0x73, 0xf5, 0x34, 0x02, 0x8f, 0x61, 0x26, 0xa6, 0x84, 0x0a,
+	0xcc, 0xf4, 0x93, 0x46, 0x3c, 0x74, 0xfe, 0x08, 0xdf, 0xa8, 0xbc, 0x9b, 0xf3, 0x36, 0x52, 0x66,
+	0x33, 0xb0, 0x7d, 0x2e, 0xae, 0xbd, 0x1f, 0xcb, 0x30, 0xf5, 0xa9, 0x8b, 0xa2, 0x17, 0x5f, 0x47,
+	0x3d, 0x70, 0x5e, 0xc3, 0x7c, 0x3f, 0xb4, 0xba, 0x45, 0x49, 0xae, 0x98, 0x14, 0xb4, 0xb1, 0x40,
+	0xf9, 0x69, 0x93, 0x43, 0x5b, 0x60, 0xc6, 0x43, 0xe7, 0x07, 0x58, 0xdd, 0x09, 0xc3, 0x76, 0x6f,
+	0x47, 0xa7, 0x56, 0x37, 0xf1, 0x50, 0xbd, 0x50, 0x5e, 0x52, 0xe4, 0xcd, 0xba, 0x76, 0xa4, 0x28,
+	0xe3, 0xa5, 0xaa, 0x15, 0xde, 0x75, 0x3b, 0x4d, 0x14, 0x6a, 0x2b, 0x4c, 0x4d, 0xc8, 0xf4, 0x58,
+	0xe3, 0x4c, 0xba, 0xe5, 0x66, 0xaa, 0xe2, 0x3c, 0x83, 0xc5, 0xd4, 0xba, 0xc9, 0xb5, 0x33, 0xcf,
+	0x76, 0xb1, 0xef, 0xd9, 0xae, 0xc1, 0xca, 0x01, 0x4a, 0xbd, 0x2b, 0x37, 0x71, 0x7a, 0x11, 0x26,
+	0xce, 0xb1, 0x67, 0xcb, 0x52, 0xf5, 0xd3, 0x79, 0x02, 0x0b, 0xfd, 0xc6, 0x31, 0xa5, 0xc2, 0x62,
+	0x96, 0x0a, 0xbf, 0xed, 0xf3, 0x52, 0xf3, 0x6d, 0x96, 0x88, 0x8b, 0x7d, 0x44, 0x7c, 0x08, 0x73,
+	0x75, 0x94, 0x6f, 0xa3, 0xd6, 0x9e, 0xe0, 0xa1, 0x8b, 0x9f, 0xc8, 0x43, 0x28, 0xf9, 0x82, 0x87,
+	0x0d, 0x81, 0xde, 0x85, 0xdd, 0xa7, 0x3b, 0xbe, 0x9e, 0xf3, 0x2e, 0x92, 0x49, 0x95, 0x3b, 0xd9,
+	0x8d, 0xd2, 0x93, 0x2a, 0xbd, 0x74, 0x9e, 0xc0, 0x9c, 0x4d, 0x0c, 0xc6, 0x87, 0xe6, 0xc5, 0x7f,
+	0x1c, 0x98, 0xfe, 0x88, 0xcd, 0x9d, 0x30, 0x20, 0xef, 0x60, 0xae, 0xaf, 0x49, 0x41, 0x56, 0xe2,
+	0x24, 0x66, 0x54, 0x5b, 0xa4, 0xfa, 0x28, 0x67, 0xd6, 0xb0, 0x93, 0x53, 0x20, 0x07, 0x7a, 0x39,
+	0x69, 0x93, 0x20, 0xc5, 0x1b, 0xd5, 0x3b, 0xa8, 0xde, 0x1f, 0xca, 0x45, 0x5f, 0x75, 0x42, 0xd9,
+	0x73, 0x0a, 0xe4, 0x08, 0xc8, 0x70, 0xe5, 0x4f, 0xd6, 0x63, 0xb4, 0xdc, 0xae, 0x40, 0x35, 0x4d,
+	0xe8, 0xe3, 0x82, 0xdd, 0x29, 0x90, 0xdf, 0xc3, 0x8c, 0xad, 0x96, 0xc9, 0x5a, 0x3c, 0x9f, 0x57,
+	0xa4, 0x57, 0x57, 0x72, 0x35, 0xde, 0xf0, 0xa6, 0x53, 0x20, 0x1f, 0x80, 0xd8, 0x99, 0x77, 0x9c,
+	0xe9, 0x13, 0x1c, 0xb0, 0xd6, 0x2d, 0xe0, 0x7e, 0x0f, 0x4b, 0x6f, 0x39, 0x0b, 0x24, 0x17, 0x56,
+	0x41, 0xd5, 0xf3, 0x63, 0x3f, 0xba, 0x14, 0xf2, 0x23, 0xdc, 0xdd, 0xe5, 0x3c, 0x44, 0x41, 0x65,
+	0x70, 0x81, 0xf1, 0xdc, 0x2d, 0xf8, 0xda, 0x84, 0xaf, 0x46, 0x00, 0xdf, 0x6e, 0x3c, 0xfe, 0x04,
+	0x8f, 0x6c, 0x3c, 0x46, 0x98, 0xfa, 0xf9, 0xb1, 0xf9, 0x35, 0x40, 0xda, 0xf8, 0x20, 0xc3, 0x65,
+	0x45, 0xb5, 0x9a, 0x39, 0xec, 0x03, 0xfd, 0x11, 0xa7, 0x40, 0xde, 0xe9, 0xbe, 0xc9, 0x40, 0xa3,
+	0x22, 0x3d, 0xa0, 0xb9, 0x4d, 0x8c, 0x6a, 0x52, 0x26, 0x64, 0xe6, 0x9c, 0x02, 0xf9, 0x95, 0x4a,
+	0xc2, 0x6d, 0x91, 0x48, 0x2a, 0xe9, 0xad, 0xe9, 0xaf, 0x1b, 0xd3, 0xe3, 0x9d, 0xd4, 0x69, 0x4e,
+	0x81, 0xbc, 0x87, 0xfb, 0xa3, 0x6b, 0x76, 0xf2, 0x4d, 0x16, 0x28, 0xb7, 0xa6, 0x1f, 0x8d, 0x7a,
+	0x04, 0x0f, 0xea, 0xdd, 0x66, 0xe4, 0x89, 0xa0, 0x89, 0x87, 0xcc, 0xe3, 0x9d, 0xb4, 0x00, 0x8a,
+	0x48, 0xce, 0xcd, 0xad, 0x8e, 0x2a, 0x82, 0x9c, 0xc2, 0xf3, 0x22, 0x79, 0x9f, 0x41, 0x1b, 0x28,
+	0xa7, 0xf2, 0xd1, 0x1e, 0x26, 0xf7, 0x7d, 0xb8, 0x00, 0xd3, 0xa8, 0xfb, 0x50, 0x39, 0x40, 0x39,
+	0xe0, 0x9d, 0xa5, 0xbf, 0xe1, 0x45, 0x55, 0xef, 0x0d, 0x88, 0x6c, 0xbf, 0xa6, 0x60, 0x71, 0x06,
+	0xac, 0xdc, 0x00, 0xe7, 0x15, 0xdc, 0xdf, 0xe5, 0xec, 0x24, 0x10, 0x9d, 0x01, 0xac, 0x51, 0x28,
+	0xf9, 0xec, 0xb7, 0x07, 0xf7, 0x5c, 0x3c, 0x43, 0x6f, 0x70, 0x65, 0xd7, 0x43, 0xa9, 0xc3, 0xd7,
+	0x26, 0x45, 0xb2, 0x65, 0xa3, 0x6b, 0xea, 0x3e, 0xff, 0x67, 0x81, 0x1e, 0xc1, 0x23, 0x8b, 0x33,
+	0x00, 0x63, 0x8d, 0x5c, 0x0f, 0xed, 0xb5, 0x6e, 0x92, 0x8f, 0x28, 0x6b, 0x47, 0xa0, 0x24, 0xf7,
+	0x71, 0x58, 0xdd, 0x29, 0x90, 0xb7, 0x8a, 0x91, 0x4c, 0xe4, 0xfb, 0x57, 0x9b, 0x1c, 0xb2, 0x11,
+	0x57, 0x7c, 0xec, 0x0e, 0x98, 0xd8, 0xbd, 0xfa, 0x29, 0x0c, 0xc4, 0x4d, 0x51, 0x8e, 0x60, 0xfe,
+	0x90, 0x49, 0x64, 0xfe, 0x35, 0xa8, 0x37, 0x1f, 0xed, 0x37, 0xb0, 0x60, 0x97, 0x98, 0xc0, 0x5d,
+	0xcb, 0x9b, 0x43, 0xa8, 0x1a, 0x6f, 0xcc, 0xca, 0x06, 0xde, 0xd6, 0x6b, 0x41, 0xbd, 0x81, 0x87,
+	0xd6, 0x95, 0x9f, 0x8f, 0x55, 0x87, 0x27, 0x2a, 0x53, 0xd3, 0x38, 0x49, 0xdb, 0x52, 0x15, 0x0c,
+	0xfb, 0x5c, 0x5c, 0x8e, 0x9b, 0x10, 0x4e, 0x26, 0x97, 0xd4, 0xf4, 0xbc, 0x5a, 0xef, 0x31, 0xaf,
+	0xff, 0xa8, 0x58, 0x98, 0xc1, 0x7b, 0x7d, 0x15, 0x27, 0x5f, 0xc1, 0x92, 0xc2, 0xd3, 0x79, 0x9f,
+	0x8a, 0xbe, 0x22, 0xf7, 0x5c, 0xda, 0xca, 0x87, 0x39, 0x83, 0xf5, 0x4b, 0xbb, 0x27, 0xe4, 0x79,
+	0x92, 0xc2, 0x5c, 0xb1, 0xd1, 0x92, 0xf2, 0x77, 0xd2, 0xc7, 0x71, 0x0a, 0xa4, 0x0d, 0xce, 0xe5,
+	0x6d, 0x0e, 0xf2, 0x5d, 0xbe, 0xb1, 0x9c, 0x96, 0xc8, 0x68, 0x6b, 0xaf, 0xa1, 0x9a, 0xf0, 0x7b,
+	0x0a, 0x62, 0x7b, 0x15, 0x64, 0xf8, 0x93, 0x74, 0xe3, 0x32, 0xfd, 0x0c, 0xcd, 0xe9, 0x47, 0xb0,
+	0x34, 0xd4, 0x9b, 0x48, 0xef, 0x4d, 0x5e, 0xdb, 0x22, 0xc5, 0xcb, 0xf4, 0x21, 0xf4, 0xa5, 0x29,
+	0x67, 0xfa, 0x03, 0x24, 0x21, 0x91, 0xe1, 0xa6, 0x41, 0xba, 0xae, 0xa4, 0xfe, 0x77, 0x0a, 0x64,
+	0x13, 0xee, 0x28, 0x40, 0xdd, 0xaa, 0x98, 0x4d, 0x5c, 0xa6, 0x92, 0x66, 0xc2, 0x90, 0x34, 0x23,
+	0x0a, 0xc4, 0x83, 0xe5, 0x51, 0x05, 0x3c, 0x79, 0x9c, 0xf0, 0x59, 0x7e, 0xe3, 0xa0, 0xfa, 0xf5,
+	0x78, 0xa5, 0x24, 0xf7, 0x78, 0x0b, 0x8b, 0x83, 0xb5, 0x2f, 0x59, 0xcd, 0x24, 0xda, 0xa3, 0xea,
+	0xfa, 0x31, 0x87, 0xb2, 0x09, 0x2b, 0xc3, 0xa5, 0x74, 0x3d, 0x68, 0xc5, 0x7d, 0xa9, 0x8d, 0x3c,
+	0xe8, 0xc1, 0xba, 0x7e, 0x8c, 0x0d, 0x0f, 0x1e, 0x0d, 0x7f, 0xfd, 0x96, 0x5f, 0xe0, 0x6d, 0x1a,
+	0x39, 0x19, 0x65, 0xc4, 0xf6, 0x04, 0xde, 0x77, 0x05, 0x23, 0xdf, 0xe6, 0x1b, 0x19, 0x6a, 0x1d,
+	0x8c, 0xb1, 0xd3, 0x82, 0xaf, 0x72, 0x01, 0xcc, 0x76, 0xdf, 0x92, 0xa1, 0xdf, 0xc2, 0xa2, 0x2a,
+	0x9a, 0xb2, 0xd7, 0x72, 0xd4, 0x55, 0xca, 0x07, 0x38, 0x80, 0xd5, 0x03, 0x55, 0x78, 0x99, 0x8b,
+	0x6c, 0xbb, 0x12, 0x7d, 0xf5, 0xf0, 0x28, 0xbc, 0x85, 0x58, 0x14, 0xff, 0x47, 0x56, 0x20, 0x01,
+	0x7c, 0x35, 0xbe, 0x5d, 0x41, 0x36, 0xb3, 0xe9, 0xf2, 0xa5, 0x6d, 0x8d, 0xea, 0xfd, 0xec, 0x65,
+	0x4b, 0x75, 0x75, 0xde, 0x5f, 0xc9, 0xeb, 0x38, 0x90, 0x27, 0x89, 0x67, 0xe3, 0x7b, 0x12, 0xe3,
+	0xb3, 0xa2, 0xf8, 0x95, 0xa9, 0x31, 0x83, 0x60, 0x0f, 0xd8, 0xa5, 0x71, 0xc9, 0x07, 0xad, 0xc1,
+	0xe3, 0xdc, 0x37, 0x6c, 0x3c, 0x66, 0xce, 0xfb, 0xf5, 0x46, 0xc7, 0xdb, 0xb8, 0x17, 0x37, 0xea,
+	0x6f, 0x8a, 0x75, 0x00, 0xf7, 0x6d, 0x2b, 0xa4, 0x7b, 0xf9, 0xde, 0x57, 0x32, 0x11, 0xee, 0xeb,
+	0xb4, 0x38, 0x05, 0xf2, 0x83, 0xce, 0xd6, 0x86, 0x7b, 0x2a, 0xe4, 0xeb, 0xcc, 0xde, 0xe7, 0xb6,
+	0x5c, 0xaa, 0x5f, 0x8e, 0x86, 0xc6, 0xd4, 0x45, 0xdd, 0x13, 0xb9, 0x91, 0x8b, 0xa6, 0x9b, 0xa2,
+	0x6e, 0xcc, 0xbc, 0x3a, 0x7f, 0x99, 0xbe, 0xd2, 0xa5, 0x95, 0x4a, 0x7f, 0xb0, 0x7e, 0x97, 0x6d,
+	0xc8, 0x84, 0x28, 0xc8, 0xbd, 0xcc, 0x55, 0x4e, 0xfb, 0x34, 0xf9, 0x67, 0xe1, 0xe5, 0xf6, 0x1f,
+	0x36, 0x5b, 0x81, 0x3c, 0xed, 0x36, 0xb7, 0x3c, 0xde, 0xd9, 0xf6, 0xb0, 0x8d, 0x62, 0x93, 0xa1,
+	0xfc, 0xcc, 0xc5, 0xf9, 0x36, 0x6d, 0x21, 0x93, 0x9b, 0x21, 0xed, 0x6d, 0x7f, 0xc6, 0x26, 0x0d,
+	0x83, 0x6d, 0x11, 0x7a, 0xcd, 0x69, 0x0d, 0xf1, 0xcb, 0xff, 0x05, 0x00, 0x00, 0xff, 0xff, 0x8e,
+	0xb9, 0x32, 0x47, 0xf9, 0x22, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
-var _ grpc.ClientConn
+var _ grpc.ClientConnInterface
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion4
+const _ = grpc.SupportPackageIsVersion6
 
 // WebApiClient is the client API for WebApi service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type WebApiClient interface {
 	GetPayHistory(ctx context.Context, in *GetPayHistoryRequest, opts ...grpc.CallOption) (*GetPayHistoryResponse, error)
-	SetDelegation(ctx context.Context, in *SetDelegationRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	SetDelegation(ctx context.Context, in *SetDelegationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	OpenPaymentChannel(ctx context.Context, in *OpenPaymentChannelRequest, opts ...grpc.CallOption) (*ChannelID, error)
+	// Deposit blocks until the deposit transaction is mined and returns its tx hash.
+	// Use DepositNonBlocking for a start-and-monitor flow.
 	Deposit(ctx context.Context, in *DepositOrWithdrawRequest, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error)
+	// DepositNonBlocking starts a deposit job and returns immediately.
+	// Use MonitorDepositJob to wait for completion and fetch the tx hash.
 	DepositNonBlocking(ctx context.Context, in *DepositOrWithdrawRequest, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error)
+	// MonitorDepositJob can monitor jobs started by WebApi.DepositNonBlocking or
+	// InternalWebApi.DepositNonBlocking. Public WebApi.Deposit already waits for
+	// completion and removes the job.
 	MonitorDepositJob(ctx context.Context, in *DepositOrWithdrawJob, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error)
+	// CooperativeWithdraw blocks until the withdraw transaction is mined and returns its tx hash.
+	// Use CooperativeWithdrawNonBlocking for a start-and-monitor flow.
 	CooperativeWithdraw(ctx context.Context, in *DepositOrWithdrawRequest, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error)
+	// CooperativeWithdrawNonBlocking starts a cooperative withdraw job and
+	// returns immediately. Use MonitorCooperativeWithdrawJob to wait for
+	// completion and fetch the tx hash.
 	CooperativeWithdrawNonBlocking(ctx context.Context, in *DepositOrWithdrawRequest, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error)
+	// MonitorCooperativeWithdrawJob can monitor jobs started by
+	// WebApi.CooperativeWithdrawNonBlocking or
+	// InternalWebApi.CooperativeWithdrawNonBlocking. Public WebApi.CooperativeWithdraw
+	// already waits for completion and removes the job.
 	MonitorCooperativeWithdrawJob(ctx context.Context, in *DepositOrWithdrawJob, opts ...grpc.CallOption) (*DepositOrWithdrawJob, error)
 	GetBalance(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*GetBalanceResponse, error)
 	GetPeerFreeBalance(ctx context.Context, in *GetPeerFreeBalanceRequest, opts ...grpc.CallOption) (*FreeBalance, error)
+	// SendToken is the explicit alias for sending a payment without caller-
+	// specified app conditions. The runtime may still add an internal hash lock
+	// for non-direct pays.
 	SendToken(ctx context.Context, in *SendTokenRequest, opts ...grpc.CallOption) (*PaymentID, error)
+	// SendConditionalPayment is also the "no caller-specified app conditions" payment API on WebApi.
+	// Pass an empty conditions list when you do not want to attach app-level conditions.
+	// The runtime may still add an internal hash lock for non-direct pays.
 	SendConditionalPayment(ctx context.Context, in *SendConditionalPaymentRequest, opts ...grpc.CallOption) (*PaymentID, error)
-	SubscribeIncomingPayments(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (WebApi_SubscribeIncomingPaymentsClient, error)
+	SubscribeIncomingPayments(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (WebApi_SubscribeIncomingPaymentsClient, error)
 	// TODO(mzhou): Refine the outgoing payment API.
-	SubscribeOutgoingPayments(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (WebApi_SubscribeOutgoingPaymentsClient, error)
+	SubscribeOutgoingPayments(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (WebApi_SubscribeOutgoingPaymentsClient, error)
 	GetIncomingPaymentStatus(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*PaymentStatus, error)
 	GetOutgoingPaymentStatus(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*PaymentStatus, error)
-	ConfirmOutgoingPayment(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*empty.Empty, error)
-	RejectIncomingPayment(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*empty.Empty, error)
-	SettleOnChainResolvedIncomingPayment(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*empty.Empty, error)
-	ResolveIncomingPaymentOnChain(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*empty.Empty, error)
+	ConfirmOutgoingPayment(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	RejectIncomingPayment(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SettleOnChainResolvedIncomingPayment(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ResolveIncomingPaymentOnChain(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetOnChainPaymentInfo(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*OnChainPaymentInfo, error)
 	// TODO(mzhou): Consider removing the following two APIs
-	ConfirmOnChainResolvedPayments(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*empty.Empty, error)
-	SettleExpiredPayments(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*empty.Empty, error)
-	IntendWithdraw(ctx context.Context, in *DepositOrWithdrawRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	ConfirmWithdraw(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*empty.Empty, error)
-	IntendSettlePaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*empty.Empty, error)
-	ConfirmSettlePaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*empty.Empty, error)
+	ConfirmOnChainResolvedPayments(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SettleExpiredPayments(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	IntendWithdraw(ctx context.Context, in *DepositOrWithdrawRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ConfirmWithdraw(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	IntendSettlePaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ConfirmSettlePaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetSettleFinalizedTimeForPaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BlockNumber, error)
-	SyncOnChainPaymentChannelStatus(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*empty.Empty, error)
-	SyncStateWithPeer(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
+	SyncOnChainPaymentChannelStatus(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SyncStateWithPeer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreateAppSessionOnVirtualContract(ctx context.Context, in *CreateAppSessionOnVirtualContractRequest, opts ...grpc.CallOption) (*SessionID, error)
 	CreateAppSessionOnDeployedContract(ctx context.Context, in *CreateAppSessionOnDeployedContractRequest, opts ...grpc.CallOption) (*SessionID, error)
 	SubscribeAppSessionDispute(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (WebApi_SubscribeAppSessionDisputeClient, error)
@@ -2439,30 +2471,30 @@ type WebApiClient interface {
 	ValidateAck(ctx context.Context, in *ValidateAckRequest, opts ...grpc.CallOption) (*BoolValue, error)
 	SignData(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Signature, error)
 	ProcessReceivedState(ctx context.Context, in *ProcessReceivedStateRequest, opts ...grpc.CallOption) (*ProcessReceivedStateResponse, error)
-	SettleAppSession(ctx context.Context, in *SettleAppSessionRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	SettleAppSessionBySigTimeout(ctx context.Context, in *SettleAppSessionByTimeoutRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	SettleAppSessionByMoveTimeout(ctx context.Context, in *SettleAppSessionByTimeoutRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	SettleAppSessionByInvalidTurn(ctx context.Context, in *SettleAppSessionByInvalidityRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	SettleAppSessionByInvalidState(ctx context.Context, in *SettleAppSessionByInvalidityRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	DeleteAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*empty.Empty, error)
+	SettleAppSession(ctx context.Context, in *SettleAppSessionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SettleAppSessionBySigTimeout(ctx context.Context, in *SettleAppSessionByTimeoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SettleAppSessionByMoveTimeout(ctx context.Context, in *SettleAppSessionByTimeoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SettleAppSessionByInvalidTurn(ctx context.Context, in *SettleAppSessionByInvalidityRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SettleAppSessionByInvalidState(ctx context.Context, in *SettleAppSessionByInvalidityRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetDeployedAddressForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*Address, error)
 	GetBooleanOutcomeForAppSession(ctx context.Context, in *GetBooleanOutcomeForAppSessionRequest, opts ...grpc.CallOption) (*BooleanOutcome, error)
-	ApplyActionForAppSession(ctx context.Context, in *ApplyActionForAppSessionRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	FinalizeOnActionTimeoutForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*empty.Empty, error)
+	ApplyActionForAppSession(ctx context.Context, in *ApplyActionForAppSessionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	FinalizeOnActionTimeoutForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetSettleFinalizedTimeForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*BlockNumber, error)
 	GetActionDeadlineForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*BlockNumber, error)
 	GetStatusForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*AppSessionStatus, error)
 	GetStateForAppSession(ctx context.Context, in *GetStateForAppSessionRequest, opts ...grpc.CallOption) (*AppSessionState, error)
 	GetSeqNumForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*AppSessionSeqNum, error)
-	GetBlockNumber(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*BlockNumber, error)
-	SetMsgDropper(ctx context.Context, in *SetMsgDropReq, opts ...grpc.CallOption) (*empty.Empty, error)
+	GetBlockNumber(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BlockNumber, error)
+	SetMsgDropper(ctx context.Context, in *SetMsgDropReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type webApiClient struct {
-	cc *grpc.ClientConn
+	cc grpc.ClientConnInterface
 }
 
-func NewWebApiClient(cc *grpc.ClientConn) WebApiClient {
+func NewWebApiClient(cc grpc.ClientConnInterface) WebApiClient {
 	return &webApiClient{cc}
 }
 
@@ -2475,8 +2507,8 @@ func (c *webApiClient) GetPayHistory(ctx context.Context, in *GetPayHistoryReque
 	return out, nil
 }
 
-func (c *webApiClient) SetDelegation(ctx context.Context, in *SetDelegationRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) SetDelegation(ctx context.Context, in *SetDelegationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SetDelegation", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2583,7 +2615,7 @@ func (c *webApiClient) SendConditionalPayment(ctx context.Context, in *SendCondi
 	return out, nil
 }
 
-func (c *webApiClient) SubscribeIncomingPayments(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (WebApi_SubscribeIncomingPaymentsClient, error) {
+func (c *webApiClient) SubscribeIncomingPayments(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (WebApi_SubscribeIncomingPaymentsClient, error) {
 	stream, err := c.cc.NewStream(ctx, &_WebApi_serviceDesc.Streams[0], "/webrpc.WebApi/SubscribeIncomingPayments", opts...)
 	if err != nil {
 		return nil, err
@@ -2615,7 +2647,7 @@ func (x *webApiSubscribeIncomingPaymentsClient) Recv() (*PaymentInfo, error) {
 	return m, nil
 }
 
-func (c *webApiClient) SubscribeOutgoingPayments(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (WebApi_SubscribeOutgoingPaymentsClient, error) {
+func (c *webApiClient) SubscribeOutgoingPayments(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (WebApi_SubscribeOutgoingPaymentsClient, error) {
 	stream, err := c.cc.NewStream(ctx, &_WebApi_serviceDesc.Streams[1], "/webrpc.WebApi/SubscribeOutgoingPayments", opts...)
 	if err != nil {
 		return nil, err
@@ -2665,8 +2697,8 @@ func (c *webApiClient) GetOutgoingPaymentStatus(ctx context.Context, in *Payment
 	return out, nil
 }
 
-func (c *webApiClient) ConfirmOutgoingPayment(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) ConfirmOutgoingPayment(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/ConfirmOutgoingPayment", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2674,8 +2706,8 @@ func (c *webApiClient) ConfirmOutgoingPayment(ctx context.Context, in *PaymentID
 	return out, nil
 }
 
-func (c *webApiClient) RejectIncomingPayment(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) RejectIncomingPayment(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/RejectIncomingPayment", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2683,8 +2715,8 @@ func (c *webApiClient) RejectIncomingPayment(ctx context.Context, in *PaymentID,
 	return out, nil
 }
 
-func (c *webApiClient) SettleOnChainResolvedIncomingPayment(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) SettleOnChainResolvedIncomingPayment(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SettleOnChainResolvedIncomingPayment", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2692,8 +2724,8 @@ func (c *webApiClient) SettleOnChainResolvedIncomingPayment(ctx context.Context,
 	return out, nil
 }
 
-func (c *webApiClient) ResolveIncomingPaymentOnChain(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) ResolveIncomingPaymentOnChain(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/ResolveIncomingPaymentOnChain", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2710,8 +2742,8 @@ func (c *webApiClient) GetOnChainPaymentInfo(ctx context.Context, in *PaymentID,
 	return out, nil
 }
 
-func (c *webApiClient) ConfirmOnChainResolvedPayments(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) ConfirmOnChainResolvedPayments(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/ConfirmOnChainResolvedPayments", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2719,8 +2751,8 @@ func (c *webApiClient) ConfirmOnChainResolvedPayments(ctx context.Context, in *T
 	return out, nil
 }
 
-func (c *webApiClient) SettleExpiredPayments(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) SettleExpiredPayments(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SettleExpiredPayments", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2728,8 +2760,8 @@ func (c *webApiClient) SettleExpiredPayments(ctx context.Context, in *TokenInfo,
 	return out, nil
 }
 
-func (c *webApiClient) IntendWithdraw(ctx context.Context, in *DepositOrWithdrawRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) IntendWithdraw(ctx context.Context, in *DepositOrWithdrawRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/IntendWithdraw", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2737,8 +2769,8 @@ func (c *webApiClient) IntendWithdraw(ctx context.Context, in *DepositOrWithdraw
 	return out, nil
 }
 
-func (c *webApiClient) ConfirmWithdraw(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) ConfirmWithdraw(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/ConfirmWithdraw", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2746,8 +2778,8 @@ func (c *webApiClient) ConfirmWithdraw(ctx context.Context, in *TokenInfo, opts 
 	return out, nil
 }
 
-func (c *webApiClient) IntendSettlePaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) IntendSettlePaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/IntendSettlePaymentChannel", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2755,8 +2787,8 @@ func (c *webApiClient) IntendSettlePaymentChannel(ctx context.Context, in *Token
 	return out, nil
 }
 
-func (c *webApiClient) ConfirmSettlePaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) ConfirmSettlePaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/ConfirmSettlePaymentChannel", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2773,8 +2805,8 @@ func (c *webApiClient) GetSettleFinalizedTimeForPaymentChannel(ctx context.Conte
 	return out, nil
 }
 
-func (c *webApiClient) SyncOnChainPaymentChannelStatus(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) SyncOnChainPaymentChannelStatus(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SyncOnChainPaymentChannelStatus", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2782,8 +2814,8 @@ func (c *webApiClient) SyncOnChainPaymentChannelStatus(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *webApiClient) SyncStateWithPeer(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) SyncStateWithPeer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SyncStateWithPeer", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2877,8 +2909,8 @@ func (c *webApiClient) ProcessReceivedState(ctx context.Context, in *ProcessRece
 	return out, nil
 }
 
-func (c *webApiClient) SettleAppSession(ctx context.Context, in *SettleAppSessionRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) SettleAppSession(ctx context.Context, in *SettleAppSessionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SettleAppSession", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2886,8 +2918,8 @@ func (c *webApiClient) SettleAppSession(ctx context.Context, in *SettleAppSessio
 	return out, nil
 }
 
-func (c *webApiClient) SettleAppSessionBySigTimeout(ctx context.Context, in *SettleAppSessionByTimeoutRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) SettleAppSessionBySigTimeout(ctx context.Context, in *SettleAppSessionByTimeoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SettleAppSessionBySigTimeout", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2895,8 +2927,8 @@ func (c *webApiClient) SettleAppSessionBySigTimeout(ctx context.Context, in *Set
 	return out, nil
 }
 
-func (c *webApiClient) SettleAppSessionByMoveTimeout(ctx context.Context, in *SettleAppSessionByTimeoutRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) SettleAppSessionByMoveTimeout(ctx context.Context, in *SettleAppSessionByTimeoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SettleAppSessionByMoveTimeout", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2904,8 +2936,8 @@ func (c *webApiClient) SettleAppSessionByMoveTimeout(ctx context.Context, in *Se
 	return out, nil
 }
 
-func (c *webApiClient) SettleAppSessionByInvalidTurn(ctx context.Context, in *SettleAppSessionByInvalidityRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) SettleAppSessionByInvalidTurn(ctx context.Context, in *SettleAppSessionByInvalidityRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SettleAppSessionByInvalidTurn", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2913,8 +2945,8 @@ func (c *webApiClient) SettleAppSessionByInvalidTurn(ctx context.Context, in *Se
 	return out, nil
 }
 
-func (c *webApiClient) SettleAppSessionByInvalidState(ctx context.Context, in *SettleAppSessionByInvalidityRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) SettleAppSessionByInvalidState(ctx context.Context, in *SettleAppSessionByInvalidityRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SettleAppSessionByInvalidState", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2922,8 +2954,8 @@ func (c *webApiClient) SettleAppSessionByInvalidState(ctx context.Context, in *S
 	return out, nil
 }
 
-func (c *webApiClient) DeleteAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) DeleteAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/DeleteAppSession", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2949,8 +2981,8 @@ func (c *webApiClient) GetBooleanOutcomeForAppSession(ctx context.Context, in *G
 	return out, nil
 }
 
-func (c *webApiClient) ApplyActionForAppSession(ctx context.Context, in *ApplyActionForAppSessionRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) ApplyActionForAppSession(ctx context.Context, in *ApplyActionForAppSessionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/ApplyActionForAppSession", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2958,8 +2990,8 @@ func (c *webApiClient) ApplyActionForAppSession(ctx context.Context, in *ApplyAc
 	return out, nil
 }
 
-func (c *webApiClient) FinalizeOnActionTimeoutForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) FinalizeOnActionTimeoutForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/FinalizeOnActionTimeoutForAppSession", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -3012,7 +3044,7 @@ func (c *webApiClient) GetSeqNumForAppSession(ctx context.Context, in *SessionID
 	return out, nil
 }
 
-func (c *webApiClient) GetBlockNumber(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*BlockNumber, error) {
+func (c *webApiClient) GetBlockNumber(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BlockNumber, error) {
 	out := new(BlockNumber)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/GetBlockNumber", in, out, opts...)
 	if err != nil {
@@ -3021,8 +3053,8 @@ func (c *webApiClient) GetBlockNumber(ctx context.Context, in *empty.Empty, opts
 	return out, nil
 }
 
-func (c *webApiClient) SetMsgDropper(ctx context.Context, in *SetMsgDropReq, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *webApiClient) SetMsgDropper(ctx context.Context, in *SetMsgDropReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SetMsgDropper", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -3033,38 +3065,60 @@ func (c *webApiClient) SetMsgDropper(ctx context.Context, in *SetMsgDropReq, opt
 // WebApiServer is the server API for WebApi service.
 type WebApiServer interface {
 	GetPayHistory(context.Context, *GetPayHistoryRequest) (*GetPayHistoryResponse, error)
-	SetDelegation(context.Context, *SetDelegationRequest) (*empty.Empty, error)
+	SetDelegation(context.Context, *SetDelegationRequest) (*emptypb.Empty, error)
 	OpenPaymentChannel(context.Context, *OpenPaymentChannelRequest) (*ChannelID, error)
+	// Deposit blocks until the deposit transaction is mined and returns its tx hash.
+	// Use DepositNonBlocking for a start-and-monitor flow.
 	Deposit(context.Context, *DepositOrWithdrawRequest) (*DepositOrWithdrawJob, error)
+	// DepositNonBlocking starts a deposit job and returns immediately.
+	// Use MonitorDepositJob to wait for completion and fetch the tx hash.
 	DepositNonBlocking(context.Context, *DepositOrWithdrawRequest) (*DepositOrWithdrawJob, error)
+	// MonitorDepositJob can monitor jobs started by WebApi.DepositNonBlocking or
+	// InternalWebApi.DepositNonBlocking. Public WebApi.Deposit already waits for
+	// completion and removes the job.
 	MonitorDepositJob(context.Context, *DepositOrWithdrawJob) (*DepositOrWithdrawJob, error)
+	// CooperativeWithdraw blocks until the withdraw transaction is mined and returns its tx hash.
+	// Use CooperativeWithdrawNonBlocking for a start-and-monitor flow.
 	CooperativeWithdraw(context.Context, *DepositOrWithdrawRequest) (*DepositOrWithdrawJob, error)
+	// CooperativeWithdrawNonBlocking starts a cooperative withdraw job and
+	// returns immediately. Use MonitorCooperativeWithdrawJob to wait for
+	// completion and fetch the tx hash.
 	CooperativeWithdrawNonBlocking(context.Context, *DepositOrWithdrawRequest) (*DepositOrWithdrawJob, error)
+	// MonitorCooperativeWithdrawJob can monitor jobs started by
+	// WebApi.CooperativeWithdrawNonBlocking or
+	// InternalWebApi.CooperativeWithdrawNonBlocking. Public WebApi.CooperativeWithdraw
+	// already waits for completion and removes the job.
 	MonitorCooperativeWithdrawJob(context.Context, *DepositOrWithdrawJob) (*DepositOrWithdrawJob, error)
 	GetBalance(context.Context, *TokenInfo) (*GetBalanceResponse, error)
 	GetPeerFreeBalance(context.Context, *GetPeerFreeBalanceRequest) (*FreeBalance, error)
+	// SendToken is the explicit alias for sending a payment without caller-
+	// specified app conditions. The runtime may still add an internal hash lock
+	// for non-direct pays.
 	SendToken(context.Context, *SendTokenRequest) (*PaymentID, error)
+	// SendConditionalPayment is also the "no caller-specified app conditions" payment API on WebApi.
+	// Pass an empty conditions list when you do not want to attach app-level conditions.
+	// The runtime may still add an internal hash lock for non-direct pays.
 	SendConditionalPayment(context.Context, *SendConditionalPaymentRequest) (*PaymentID, error)
-	SubscribeIncomingPayments(*empty.Empty, WebApi_SubscribeIncomingPaymentsServer) error
+	SubscribeIncomingPayments(*emptypb.Empty, WebApi_SubscribeIncomingPaymentsServer) error
 	// TODO(mzhou): Refine the outgoing payment API.
-	SubscribeOutgoingPayments(*empty.Empty, WebApi_SubscribeOutgoingPaymentsServer) error
+	SubscribeOutgoingPayments(*emptypb.Empty, WebApi_SubscribeOutgoingPaymentsServer) error
 	GetIncomingPaymentStatus(context.Context, *PaymentID) (*PaymentStatus, error)
 	GetOutgoingPaymentStatus(context.Context, *PaymentID) (*PaymentStatus, error)
-	ConfirmOutgoingPayment(context.Context, *PaymentID) (*empty.Empty, error)
-	RejectIncomingPayment(context.Context, *PaymentID) (*empty.Empty, error)
-	SettleOnChainResolvedIncomingPayment(context.Context, *PaymentID) (*empty.Empty, error)
-	ResolveIncomingPaymentOnChain(context.Context, *PaymentID) (*empty.Empty, error)
+	ConfirmOutgoingPayment(context.Context, *PaymentID) (*emptypb.Empty, error)
+	RejectIncomingPayment(context.Context, *PaymentID) (*emptypb.Empty, error)
+	SettleOnChainResolvedIncomingPayment(context.Context, *PaymentID) (*emptypb.Empty, error)
+	ResolveIncomingPaymentOnChain(context.Context, *PaymentID) (*emptypb.Empty, error)
 	GetOnChainPaymentInfo(context.Context, *PaymentID) (*OnChainPaymentInfo, error)
 	// TODO(mzhou): Consider removing the following two APIs
-	ConfirmOnChainResolvedPayments(context.Context, *TokenInfo) (*empty.Empty, error)
-	SettleExpiredPayments(context.Context, *TokenInfo) (*empty.Empty, error)
-	IntendWithdraw(context.Context, *DepositOrWithdrawRequest) (*empty.Empty, error)
-	ConfirmWithdraw(context.Context, *TokenInfo) (*empty.Empty, error)
-	IntendSettlePaymentChannel(context.Context, *TokenInfo) (*empty.Empty, error)
-	ConfirmSettlePaymentChannel(context.Context, *TokenInfo) (*empty.Empty, error)
+	ConfirmOnChainResolvedPayments(context.Context, *TokenInfo) (*emptypb.Empty, error)
+	SettleExpiredPayments(context.Context, *TokenInfo) (*emptypb.Empty, error)
+	IntendWithdraw(context.Context, *DepositOrWithdrawRequest) (*emptypb.Empty, error)
+	ConfirmWithdraw(context.Context, *TokenInfo) (*emptypb.Empty, error)
+	IntendSettlePaymentChannel(context.Context, *TokenInfo) (*emptypb.Empty, error)
+	ConfirmSettlePaymentChannel(context.Context, *TokenInfo) (*emptypb.Empty, error)
 	GetSettleFinalizedTimeForPaymentChannel(context.Context, *TokenInfo) (*BlockNumber, error)
-	SyncOnChainPaymentChannelStatus(context.Context, *TokenInfo) (*empty.Empty, error)
-	SyncStateWithPeer(context.Context, *empty.Empty) (*empty.Empty, error)
+	SyncOnChainPaymentChannelStatus(context.Context, *TokenInfo) (*emptypb.Empty, error)
+	SyncStateWithPeer(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	CreateAppSessionOnVirtualContract(context.Context, *CreateAppSessionOnVirtualContractRequest) (*SessionID, error)
 	CreateAppSessionOnDeployedContract(context.Context, *CreateAppSessionOnDeployedContractRequest) (*SessionID, error)
 	SubscribeAppSessionDispute(*SessionID, WebApi_SubscribeAppSessionDisputeServer) error
@@ -3072,23 +3126,193 @@ type WebApiServer interface {
 	ValidateAck(context.Context, *ValidateAckRequest) (*BoolValue, error)
 	SignData(context.Context, *Data) (*Signature, error)
 	ProcessReceivedState(context.Context, *ProcessReceivedStateRequest) (*ProcessReceivedStateResponse, error)
-	SettleAppSession(context.Context, *SettleAppSessionRequest) (*empty.Empty, error)
-	SettleAppSessionBySigTimeout(context.Context, *SettleAppSessionByTimeoutRequest) (*empty.Empty, error)
-	SettleAppSessionByMoveTimeout(context.Context, *SettleAppSessionByTimeoutRequest) (*empty.Empty, error)
-	SettleAppSessionByInvalidTurn(context.Context, *SettleAppSessionByInvalidityRequest) (*empty.Empty, error)
-	SettleAppSessionByInvalidState(context.Context, *SettleAppSessionByInvalidityRequest) (*empty.Empty, error)
-	DeleteAppSession(context.Context, *SessionID) (*empty.Empty, error)
+	SettleAppSession(context.Context, *SettleAppSessionRequest) (*emptypb.Empty, error)
+	SettleAppSessionBySigTimeout(context.Context, *SettleAppSessionByTimeoutRequest) (*emptypb.Empty, error)
+	SettleAppSessionByMoveTimeout(context.Context, *SettleAppSessionByTimeoutRequest) (*emptypb.Empty, error)
+	SettleAppSessionByInvalidTurn(context.Context, *SettleAppSessionByInvalidityRequest) (*emptypb.Empty, error)
+	SettleAppSessionByInvalidState(context.Context, *SettleAppSessionByInvalidityRequest) (*emptypb.Empty, error)
+	DeleteAppSession(context.Context, *SessionID) (*emptypb.Empty, error)
 	GetDeployedAddressForAppSession(context.Context, *SessionID) (*Address, error)
 	GetBooleanOutcomeForAppSession(context.Context, *GetBooleanOutcomeForAppSessionRequest) (*BooleanOutcome, error)
-	ApplyActionForAppSession(context.Context, *ApplyActionForAppSessionRequest) (*empty.Empty, error)
-	FinalizeOnActionTimeoutForAppSession(context.Context, *SessionID) (*empty.Empty, error)
+	ApplyActionForAppSession(context.Context, *ApplyActionForAppSessionRequest) (*emptypb.Empty, error)
+	FinalizeOnActionTimeoutForAppSession(context.Context, *SessionID) (*emptypb.Empty, error)
 	GetSettleFinalizedTimeForAppSession(context.Context, *SessionID) (*BlockNumber, error)
 	GetActionDeadlineForAppSession(context.Context, *SessionID) (*BlockNumber, error)
 	GetStatusForAppSession(context.Context, *SessionID) (*AppSessionStatus, error)
 	GetStateForAppSession(context.Context, *GetStateForAppSessionRequest) (*AppSessionState, error)
 	GetSeqNumForAppSession(context.Context, *SessionID) (*AppSessionSeqNum, error)
-	GetBlockNumber(context.Context, *empty.Empty) (*BlockNumber, error)
-	SetMsgDropper(context.Context, *SetMsgDropReq) (*empty.Empty, error)
+	GetBlockNumber(context.Context, *emptypb.Empty) (*BlockNumber, error)
+	SetMsgDropper(context.Context, *SetMsgDropReq) (*emptypb.Empty, error)
+}
+
+// UnimplementedWebApiServer can be embedded to have forward compatible implementations.
+type UnimplementedWebApiServer struct {
+}
+
+func (*UnimplementedWebApiServer) GetPayHistory(ctx context.Context, req *GetPayHistoryRequest) (*GetPayHistoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPayHistory not implemented")
+}
+func (*UnimplementedWebApiServer) SetDelegation(ctx context.Context, req *SetDelegationRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetDelegation not implemented")
+}
+func (*UnimplementedWebApiServer) OpenPaymentChannel(ctx context.Context, req *OpenPaymentChannelRequest) (*ChannelID, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OpenPaymentChannel not implemented")
+}
+func (*UnimplementedWebApiServer) Deposit(ctx context.Context, req *DepositOrWithdrawRequest) (*DepositOrWithdrawJob, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Deposit not implemented")
+}
+func (*UnimplementedWebApiServer) DepositNonBlocking(ctx context.Context, req *DepositOrWithdrawRequest) (*DepositOrWithdrawJob, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DepositNonBlocking not implemented")
+}
+func (*UnimplementedWebApiServer) MonitorDepositJob(ctx context.Context, req *DepositOrWithdrawJob) (*DepositOrWithdrawJob, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MonitorDepositJob not implemented")
+}
+func (*UnimplementedWebApiServer) CooperativeWithdraw(ctx context.Context, req *DepositOrWithdrawRequest) (*DepositOrWithdrawJob, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CooperativeWithdraw not implemented")
+}
+func (*UnimplementedWebApiServer) CooperativeWithdrawNonBlocking(ctx context.Context, req *DepositOrWithdrawRequest) (*DepositOrWithdrawJob, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CooperativeWithdrawNonBlocking not implemented")
+}
+func (*UnimplementedWebApiServer) MonitorCooperativeWithdrawJob(ctx context.Context, req *DepositOrWithdrawJob) (*DepositOrWithdrawJob, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MonitorCooperativeWithdrawJob not implemented")
+}
+func (*UnimplementedWebApiServer) GetBalance(ctx context.Context, req *TokenInfo) (*GetBalanceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBalance not implemented")
+}
+func (*UnimplementedWebApiServer) GetPeerFreeBalance(ctx context.Context, req *GetPeerFreeBalanceRequest) (*FreeBalance, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPeerFreeBalance not implemented")
+}
+func (*UnimplementedWebApiServer) SendToken(ctx context.Context, req *SendTokenRequest) (*PaymentID, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendToken not implemented")
+}
+func (*UnimplementedWebApiServer) SendConditionalPayment(ctx context.Context, req *SendConditionalPaymentRequest) (*PaymentID, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendConditionalPayment not implemented")
+}
+func (*UnimplementedWebApiServer) SubscribeIncomingPayments(req *emptypb.Empty, srv WebApi_SubscribeIncomingPaymentsServer) error {
+	return status.Errorf(codes.Unimplemented, "method SubscribeIncomingPayments not implemented")
+}
+func (*UnimplementedWebApiServer) SubscribeOutgoingPayments(req *emptypb.Empty, srv WebApi_SubscribeOutgoingPaymentsServer) error {
+	return status.Errorf(codes.Unimplemented, "method SubscribeOutgoingPayments not implemented")
+}
+func (*UnimplementedWebApiServer) GetIncomingPaymentStatus(ctx context.Context, req *PaymentID) (*PaymentStatus, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetIncomingPaymentStatus not implemented")
+}
+func (*UnimplementedWebApiServer) GetOutgoingPaymentStatus(ctx context.Context, req *PaymentID) (*PaymentStatus, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOutgoingPaymentStatus not implemented")
+}
+func (*UnimplementedWebApiServer) ConfirmOutgoingPayment(ctx context.Context, req *PaymentID) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfirmOutgoingPayment not implemented")
+}
+func (*UnimplementedWebApiServer) RejectIncomingPayment(ctx context.Context, req *PaymentID) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RejectIncomingPayment not implemented")
+}
+func (*UnimplementedWebApiServer) SettleOnChainResolvedIncomingPayment(ctx context.Context, req *PaymentID) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SettleOnChainResolvedIncomingPayment not implemented")
+}
+func (*UnimplementedWebApiServer) ResolveIncomingPaymentOnChain(ctx context.Context, req *PaymentID) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResolveIncomingPaymentOnChain not implemented")
+}
+func (*UnimplementedWebApiServer) GetOnChainPaymentInfo(ctx context.Context, req *PaymentID) (*OnChainPaymentInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOnChainPaymentInfo not implemented")
+}
+func (*UnimplementedWebApiServer) ConfirmOnChainResolvedPayments(ctx context.Context, req *TokenInfo) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfirmOnChainResolvedPayments not implemented")
+}
+func (*UnimplementedWebApiServer) SettleExpiredPayments(ctx context.Context, req *TokenInfo) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SettleExpiredPayments not implemented")
+}
+func (*UnimplementedWebApiServer) IntendWithdraw(ctx context.Context, req *DepositOrWithdrawRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IntendWithdraw not implemented")
+}
+func (*UnimplementedWebApiServer) ConfirmWithdraw(ctx context.Context, req *TokenInfo) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfirmWithdraw not implemented")
+}
+func (*UnimplementedWebApiServer) IntendSettlePaymentChannel(ctx context.Context, req *TokenInfo) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IntendSettlePaymentChannel not implemented")
+}
+func (*UnimplementedWebApiServer) ConfirmSettlePaymentChannel(ctx context.Context, req *TokenInfo) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfirmSettlePaymentChannel not implemented")
+}
+func (*UnimplementedWebApiServer) GetSettleFinalizedTimeForPaymentChannel(ctx context.Context, req *TokenInfo) (*BlockNumber, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSettleFinalizedTimeForPaymentChannel not implemented")
+}
+func (*UnimplementedWebApiServer) SyncOnChainPaymentChannelStatus(ctx context.Context, req *TokenInfo) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncOnChainPaymentChannelStatus not implemented")
+}
+func (*UnimplementedWebApiServer) SyncStateWithPeer(ctx context.Context, req *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncStateWithPeer not implemented")
+}
+func (*UnimplementedWebApiServer) CreateAppSessionOnVirtualContract(ctx context.Context, req *CreateAppSessionOnVirtualContractRequest) (*SessionID, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAppSessionOnVirtualContract not implemented")
+}
+func (*UnimplementedWebApiServer) CreateAppSessionOnDeployedContract(ctx context.Context, req *CreateAppSessionOnDeployedContractRequest) (*SessionID, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAppSessionOnDeployedContract not implemented")
+}
+func (*UnimplementedWebApiServer) SubscribeAppSessionDispute(req *SessionID, srv WebApi_SubscribeAppSessionDisputeServer) error {
+	return status.Errorf(codes.Unimplemented, "method SubscribeAppSessionDispute not implemented")
+}
+func (*UnimplementedWebApiServer) SignOutgoingState(ctx context.Context, req *SignOutgoingStateRequest) (*SignedState, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignOutgoingState not implemented")
+}
+func (*UnimplementedWebApiServer) ValidateAck(ctx context.Context, req *ValidateAckRequest) (*BoolValue, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateAck not implemented")
+}
+func (*UnimplementedWebApiServer) SignData(ctx context.Context, req *Data) (*Signature, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignData not implemented")
+}
+func (*UnimplementedWebApiServer) ProcessReceivedState(ctx context.Context, req *ProcessReceivedStateRequest) (*ProcessReceivedStateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessReceivedState not implemented")
+}
+func (*UnimplementedWebApiServer) SettleAppSession(ctx context.Context, req *SettleAppSessionRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SettleAppSession not implemented")
+}
+func (*UnimplementedWebApiServer) SettleAppSessionBySigTimeout(ctx context.Context, req *SettleAppSessionByTimeoutRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SettleAppSessionBySigTimeout not implemented")
+}
+func (*UnimplementedWebApiServer) SettleAppSessionByMoveTimeout(ctx context.Context, req *SettleAppSessionByTimeoutRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SettleAppSessionByMoveTimeout not implemented")
+}
+func (*UnimplementedWebApiServer) SettleAppSessionByInvalidTurn(ctx context.Context, req *SettleAppSessionByInvalidityRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SettleAppSessionByInvalidTurn not implemented")
+}
+func (*UnimplementedWebApiServer) SettleAppSessionByInvalidState(ctx context.Context, req *SettleAppSessionByInvalidityRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SettleAppSessionByInvalidState not implemented")
+}
+func (*UnimplementedWebApiServer) DeleteAppSession(ctx context.Context, req *SessionID) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAppSession not implemented")
+}
+func (*UnimplementedWebApiServer) GetDeployedAddressForAppSession(ctx context.Context, req *SessionID) (*Address, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDeployedAddressForAppSession not implemented")
+}
+func (*UnimplementedWebApiServer) GetBooleanOutcomeForAppSession(ctx context.Context, req *GetBooleanOutcomeForAppSessionRequest) (*BooleanOutcome, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBooleanOutcomeForAppSession not implemented")
+}
+func (*UnimplementedWebApiServer) ApplyActionForAppSession(ctx context.Context, req *ApplyActionForAppSessionRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApplyActionForAppSession not implemented")
+}
+func (*UnimplementedWebApiServer) FinalizeOnActionTimeoutForAppSession(ctx context.Context, req *SessionID) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FinalizeOnActionTimeoutForAppSession not implemented")
+}
+func (*UnimplementedWebApiServer) GetSettleFinalizedTimeForAppSession(ctx context.Context, req *SessionID) (*BlockNumber, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSettleFinalizedTimeForAppSession not implemented")
+}
+func (*UnimplementedWebApiServer) GetActionDeadlineForAppSession(ctx context.Context, req *SessionID) (*BlockNumber, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetActionDeadlineForAppSession not implemented")
+}
+func (*UnimplementedWebApiServer) GetStatusForAppSession(ctx context.Context, req *SessionID) (*AppSessionStatus, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStatusForAppSession not implemented")
+}
+func (*UnimplementedWebApiServer) GetStateForAppSession(ctx context.Context, req *GetStateForAppSessionRequest) (*AppSessionState, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStateForAppSession not implemented")
+}
+func (*UnimplementedWebApiServer) GetSeqNumForAppSession(ctx context.Context, req *SessionID) (*AppSessionSeqNum, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSeqNumForAppSession not implemented")
+}
+func (*UnimplementedWebApiServer) GetBlockNumber(ctx context.Context, req *emptypb.Empty) (*BlockNumber, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBlockNumber not implemented")
+}
+func (*UnimplementedWebApiServer) SetMsgDropper(ctx context.Context, req *SetMsgDropReq) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetMsgDropper not implemented")
 }
 
 func RegisterWebApiServer(s *grpc.Server, srv WebApiServer) {
@@ -3221,24 +3445,6 @@ func _WebApi_CooperativeWithdraw_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _WebApi_MonitorCooperativeWithdrawJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DepositOrWithdrawJob)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).MonitorCooperativeWithdrawJob(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/MonitorCooperativeWithdrawJob",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).MonitorCooperativeWithdrawJob(ctx, req.(*DepositOrWithdrawJob))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _WebApi_CooperativeWithdrawNonBlocking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DepositOrWithdrawRequest)
 	if err := dec(in); err != nil {
@@ -3253,6 +3459,24 @@ func _WebApi_CooperativeWithdrawNonBlocking_Handler(srv interface{}, ctx context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(WebApiServer).CooperativeWithdrawNonBlocking(ctx, req.(*DepositOrWithdrawRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WebApi_MonitorCooperativeWithdrawJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DepositOrWithdrawJob)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WebApiServer).MonitorCooperativeWithdrawJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/webrpc.WebApi/MonitorCooperativeWithdrawJob",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WebApiServer).MonitorCooperativeWithdrawJob(ctx, req.(*DepositOrWithdrawJob))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3330,7 +3554,7 @@ func _WebApi_SendConditionalPayment_Handler(srv interface{}, ctx context.Context
 }
 
 func _WebApi_SubscribeIncomingPayments_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(empty.Empty)
+	m := new(emptypb.Empty)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
@@ -3351,7 +3575,7 @@ func (x *webApiSubscribeIncomingPaymentsServer) Send(m *PaymentInfo) error {
 }
 
 func _WebApi_SubscribeOutgoingPayments_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(empty.Empty)
+	m := new(emptypb.Empty)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
@@ -3642,7 +3866,7 @@ func _WebApi_SyncOnChainPaymentChannelStatus_Handler(srv interface{}, ctx contex
 }
 
 func _WebApi_SyncStateWithPeer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -3654,7 +3878,7 @@ func _WebApi_SyncStateWithPeer_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/webrpc.WebApi/SyncStateWithPeer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).SyncStateWithPeer(ctx, req.(*empty.Empty))
+		return srv.(WebApiServer).SyncStateWithPeer(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4059,7 +4283,7 @@ func _WebApi_GetSeqNumForAppSession_Handler(srv interface{}, ctx context.Context
 }
 
 func _WebApi_GetBlockNumber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -4071,7 +4295,7 @@ func _WebApi_GetBlockNumber_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/webrpc.WebApi/GetBlockNumber",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).GetBlockNumber(ctx, req.(*empty.Empty))
+		return srv.(WebApiServer).GetBlockNumber(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

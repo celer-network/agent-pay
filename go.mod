@@ -9,7 +9,7 @@ require (
 	github.com/celer-network/goutils v0.1.16
 	github.com/ethereum/go-ethereum v1.9.20
 	github.com/go-redis/redis v6.15.6+incompatible
-	github.com/golang/protobuf v1.3.3
+	github.com/golang/protobuf v1.5.4
 	github.com/google/uuid v1.1.1
 	github.com/grpc-ecosystem/grpc-gateway v1.11.3
 	github.com/improbable-eng/grpc-web v0.9.6
@@ -70,5 +70,6 @@ require (
 	github.com/wsddn/go-ecdh v0.0.0-20161211032359-48726bab9208 // indirect
 	golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd // indirect
 	golang.org/x/text v0.3.2 // indirect
+	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 )

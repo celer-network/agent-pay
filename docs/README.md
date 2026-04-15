@@ -7,6 +7,7 @@ Use these documents in this order:
 1. [Backend Implementation](./backend-implementation.md) for the runtime model, package map, and protocol-to-code mapping.
 2. [Backend Usage](./backend-usage.md) for build, test, startup, configuration, and operator workflows.
 3. [Backend Troubleshooting](./backend-troubleshooting.md) for failure diagnosis, operational checks, and recovery steps.
+4. [Dependency Upgrade Plan](./upgrade-plan.md) for the staged modernization path for `goutils`, `go-ethereum`, and protobuf.
 
 These docs complement the companion `agentpay-architecture` documents. They do not repeat the full protocol or contract design; instead, they show how this repo realizes those ideas.
 
