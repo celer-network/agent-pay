@@ -22,7 +22,6 @@ import (
 	"github.com/celer-network/agent-pay/entity"
 	"github.com/celer-network/agent-pay/rpc"
 	"github.com/celer-network/agent-pay/utils/bar"
-	"github.com/celer-network/goutils/jsonpbhex"
 	ethcommon "github.com/ethereum/go-ethereum/common"
 	"github.com/golang/protobuf/jsonpb"
 	proto "github.com/golang/protobuf/proto"
@@ -37,11 +36,6 @@ import (
 var jsonpbMarshaler = jsonpb.Marshaler{
 	EmitDefaults: true,
 	AnyResolver:  bar.BetterAnyResolver,
-}
-
-var jsonpbHex = jsonpbhex.Marshaler{
-	HexBytes:    true,
-	AnyResolver: bar.BetterAnyResolver,
 }
 
 // Dec2HexStr decimal string to hex
@@ -245,10 +239,12 @@ func PbToJSONString(pb proto.Message) (string, error) {
 }
 
 // PbToJSONHexBytes output hex for bytes field instead of default base64
-// WARNING: result json not compatible for unmarshal
-// only use this for logging purpose
+// WARNING: result json is only intended for logging.
+// The legacy jsonpbhex marshaler is no longer used because it can panic on
+// newer protobuf bridge types; keep this helper as a stable log-format entry
+// point and fall back to standard protobuf JSON.
 func PbToJSONHexBytes(pb proto.Message) (string, error) {
-	return jsonpbHex.MarshalToString(pb)
+	return jsonpbMarshaler.MarshalToString(pb)
 }
 
 func GetAddressFromKeystore(ksBytes []byte) (string, error) {
