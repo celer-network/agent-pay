@@ -78,6 +78,12 @@ Important files behind that workflow:
 - [test/e2e/e2e_test.go](../test/e2e/e2e_test.go)
 - [test/e2e/constants.go](../test/e2e/constants.go)
 
+The default single-network e2e flow does not provision the extra networks required by the cross-net suite. Run cross-net explicitly with:
+
+```bash
+go test ./test/e2e -run '^TestE2ECrossNet$' -args -multinet
+```
+
 Useful debugging behavior:
 
 - Successful runs delete the temp directory.
@@ -88,6 +94,39 @@ Example:
 ```bash
 go test ./test/e2e -reuse /tmp/celer_e2e_1712960000/ -run '^TestE2E$/^e2e-grp2$/^sendCondPayWithErc20$'
 ```
+
+## Broader Test Matrix
+
+For a wider validation sweep, the old CI flow maps reasonably well to the following current-package commands.
+
+Prerequisites beyond Go:
+
+- `geth` for e2e suites
+- `sqlite3` CLI for storage-related test helpers and inspection flows
+
+Legacy CI-style unit/package sweep:
+
+```bash
+go test ./storage ./celersdk ./common/cobj ./dispatchers ./lrucache ./rpc ./rtconfig ./metrics ./route ./utils/bar
+```
+
+Recommended validation tiers:
+
+- Payment-path regression check:
+
+```bash
+go test ./test/e2e -run '^TestE2E$/^e2e-grp2$/^sendCondPayWithErc20$'
+```
+
+- Cross-net routing check:
+
+```bash
+go test ./test/e2e -run '^TestE2ECrossNet$' -args -multinet
+```
+
+- Manual multi-OSP smoke flow: use [test/manual/README.md](../test/manual/README.md) or run `AGENTPAY=$PWD ./test/manual/smoke.sh`
+
+The full `go test ./test/e2e` package includes broader multi-OSP and specialized integration suites in addition to the core single-network flow. Use the targeted commands above when you want predictable validation for a specific area.
 
 ## Manual Multi-OSP Workflow
 

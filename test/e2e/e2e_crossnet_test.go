@@ -118,6 +118,10 @@ func setMultiNet() []Killable {
 }
 
 func TestE2ECrossNet(t *testing.T) {
+	if !*multinet {
+		t.Skip("cross-net e2e requires -multinet")
+	}
+
 	toKill := setMultiNet()
 	defer tearDownMultiSvr(toKill)
 

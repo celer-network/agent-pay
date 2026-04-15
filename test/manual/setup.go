@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -45,11 +46,6 @@ const (
 	SimpleAppAddr = "58712219a4bdbb0e581dcaf6f5c4c2b2d2f42158" // multi-session simple app
 	GomokuAppAddr = "4e4a0101cd72258183586a51f8254e871b9c544a" // multi-session gomoku app
 
-	osp1Keystore = "../../testing/env/keystore/osp1.json"
-	osp2Keystore = "../../testing/env/keystore/osp2.json"
-	osp3Keystore = "../../testing/env/keystore/osp3.json"
-	osp4Keystore = "../../testing/env/keystore/osp4.json"
-	osp5Keystore = "../../testing/env/keystore/osp5.json"
 )
 
 func normalizeOutRootDir(dir string) string {
@@ -74,6 +70,13 @@ func main() {
 	os.MkdirAll(profileDir, os.ModePerm)
 	os.MkdirAll(storeDir, os.ModePerm)
 	agentPayDir := os.Getenv("AGENTPAY") + "/"
+	ospKeystores := []string{
+		filepath.Join(agentPayDir, "testing/env/keystore/osp1.json"),
+		filepath.Join(agentPayDir, "testing/env/keystore/osp2.json"),
+		filepath.Join(agentPayDir, "testing/env/keystore/osp3.json"),
+		filepath.Join(agentPayDir, "testing/env/keystore/osp4.json"),
+		filepath.Join(agentPayDir, "testing/env/keystore/osp5.json"),
+	}
 	tf.SetEnvDir(agentPayDir + "testing/env/")
 	tf.SetOutRootDir(rootDir)
 	e2e.SetEnvDir(agentPayDir + "testing/env/")
@@ -86,7 +89,8 @@ func main() {
 	tf.E2eProfile, _ = e2e.SetupOnChain(make(map[string]ctype.Addr), 0, *auto)
 	if *auto {
 		// if auto fund, also register all osps on-chain as routers
-		tf.RegisterRouters([]string{osp1Keystore, osp2Keystore, osp3Keystore, osp4Keystore, osp5Keystore})
+		err = tf.RegisterRouters(ospKeystores)
+		e2e.CheckError(err, "registering routers")
 	}
 
 	profile := *tf.E2eProfile

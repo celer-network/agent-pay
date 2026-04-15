@@ -6,7 +6,9 @@ import (
 	"math/big"
 	"os"
 	"os/exec"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/celer-network/agent-pay/entity"
 	tf "github.com/celer-network/agent-pay/testing"
@@ -578,7 +580,7 @@ func settleChannelWithReopen(t *testing.T, tokenType entity.TokenType, tokenAddr
 	sleep(1)
 
 	log.Infoln("c1 reopening channel")
-	_, err = c1.OpenChannel(c1EthAddr, tokenType, tokenAddr, initialBalance, initialBalance)
+	err = reopenChannelWithRetry(c1, c1EthAddr, tokenType, tokenAddr, initialBalance, initialBalance)
 	if err != nil {
 		t.Error(err)
 		return
@@ -622,6 +624,30 @@ func settleChannelWithReopen(t *testing.T, tokenType entity.TokenType, tokenAddr
 		t.Error(err)
 		return
 	}
+}
+
+func reopenChannelWithRetry(
+	client *tf.ClientController,
+	clientAddr string,
+	tokenType entity.TokenType,
+	tokenAddr string,
+	selfDeposit string,
+	peerDeposit string,
+) error {
+	var lastErr error
+	for attempt := 0; attempt < 20; attempt++ {
+		_, err := client.OpenChannel(clientAddr, tokenType, tokenAddr, selfDeposit, peerDeposit)
+		if err == nil {
+			return nil
+		}
+		if strings.Contains(err.Error(), "AlreadyExists") {
+			lastErr = err
+			time.Sleep(time.Second)
+			continue
+		}
+		return err
+	}
+	return lastErr
 }
 
 func ospIntendSettleChannel(t *testing.T, tokenType entity.TokenType, tokenAddr string) {

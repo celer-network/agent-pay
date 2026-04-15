@@ -11,7 +11,6 @@ import (
 	"github.com/celer-network/agent-pay/entity"
 	tf "github.com/celer-network/agent-pay/testing"
 	"github.com/celer-network/agent-pay/tools/toolsetup"
-	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/goutils/log"
 )
 
@@ -22,7 +21,7 @@ func migrateChannelBetweenOsps(args ...*tf.ServerController) func(*testing.T) {
 		o1 := args[0]
 		o2 := args[1]
 		// Let osp2 initiate openning channel with osp1.
-		err := requestOpenChannel(o2AdminWeb, ospEthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrEth)
+		err := ensureOpenChannel(o2AdminWeb, ospEthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrEth)
 		if err != nil {
 			log.Warn(err)
 		}
@@ -65,7 +64,7 @@ func migrateChannelBetweenOsps(args ...*tf.ServerController) func(*testing.T) {
 		log.Infoln("================================ restart o1 with new profile ==================================")
 		o1.Kill()
 		o2.Kill()
-		sleep(1)
+		sleep(3)
 
 		oldLedger := tf.E2eProfile.Ethereum.Contracts.Ledger
 		newLedger := "6666666666666666666666666666666666666666"
@@ -110,7 +109,7 @@ func migrateChannelBetweenOsps(args ...*tf.ServerController) func(*testing.T) {
 			"-logcolor",
 			"-logprefix", "o2_"+osp2EthAddr[:4])
 		defer o2.Kill()
-		if err = utils.RequestRegisterStream(o2AdminWeb, ctype.Hex2Addr(ospEthAddr), localhost+o1Port); err != nil {
+		if err = registerStreamWithRetry(o2AdminWeb, ctype.Hex2Addr(ospEthAddr), localhost+o1Port); err != nil {
 			t.Error(err)
 			return
 		}
@@ -189,7 +188,7 @@ func migrateChannelBetweenOsps(args ...*tf.ServerController) func(*testing.T) {
 			"-logcolor",
 			"-logprefix", "o2_"+osp2EthAddr[:4])
 		defer o2.Kill()
-		if err = utils.RequestRegisterStream(o2AdminWeb, ctype.Hex2Addr(ospEthAddr), localhost+o1Port); err != nil {
+		if err = registerStreamWithRetry(o2AdminWeb, ctype.Hex2Addr(ospEthAddr), localhost+o1Port); err != nil {
 			t.Error(err)
 			return
 		}

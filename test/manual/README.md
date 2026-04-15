@@ -10,12 +10,15 @@ Follow instructions below to easily start a local testnet and play with multiple
 - Optionally set `AGENTPAY_MANUAL_ROOT` if you want the manual testnet data somewhere other than `/tmp/celer_manual_test`.
 - Run **`go build $AGENTPAY/tools/osp-cli`** to build to OSP CLI tool, read the [CLI command reference](../../tools/osp-cli/README.md).
 
+For a repeatable smoke test of the two-OSP manual path, you can also run **`AGENTPAY=$PWD ./test/manual/smoke.sh`**. That script sets up the local chain, starts OSP1 and OSP2, opens the inter-OSP channel, builds routing tables, sends a payment, verifies `COSIGNED_PAID`, checks balances, and then cleans up the temporary processes.
+
 ## 2. Start local Ethereum testnet
 
 Run **`./setup.sh`** to start a local Etherem testnet running on your machine.
 
 - Default output root: `$AGENTPAY_MANUAL_ROOT` when set, otherwise `/tmp/celer_manual_test`.
 - Override just for one run: `./setup.sh /tmp/celer_manual_test_demo1` or `./setup.sh auto /tmp/celer_manual_test_demo1`.
+- When you use `./setup.sh auto`, router registration is also handled during setup, so you can skip the manual `-register` steps below unless you want to repeat them explicitly.
 
 Take a look at the constants in [setup.go](./setup.go). In addition to start a testnet, this program would also do the following:
 
@@ -58,6 +61,15 @@ Then run **`./osp-cli -adminhostport localhost:8190 -registerstream -file peerse
 ## 6. Open CelerPay channel between two OSPs
 
 Run **`./osp-cli -adminhostport localhost:8190 -openchannel -peer 00290a43e5b2b151d530845b2d5a818240bc7c70 -selfdeposit 10 -peerdeposit 10`** to let OSP1 open an ETH CelerPay channel with OSP2. You can see new logs for channel opening in both OSP terminals.
+
+Before sending payments, build the routing table on both OSPs:
+
+```bash
+curl -X POST -H 'Content-Type: application/json' -d '{}' http://localhost:8190/admin/route/build
+curl -X POST -H 'Content-Type: application/json' -d '{}' http://localhost:8290/admin/route/build
+```
+
+This extra step is still required in the current backend after topology changes such as opening a new channel.
 
 ## 7. Make an off-chain payment
 
