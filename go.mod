@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	contrib.go.opencensus.io/exporter/prometheus v0.1.0
-	github.com/celer-network/goutils v0.3.2-0.20260415201815-335b7e78ae02
+	github.com/celer-network/goutils v0.3.2-0.20260416034816-7f8925936104
 	github.com/ethereum/go-ethereum v1.16.8
 	github.com/go-redis/redis v6.15.6+incompatible
 	github.com/golang/protobuf v1.5.4
