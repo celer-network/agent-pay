@@ -4,7 +4,7 @@ package common
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 )
 
 // Defines what new profile json looks like. Note if we need to
@@ -75,12 +75,12 @@ func (pj *ProfileJSON) ToCProfile() *CProfile {
 // ParseProfile parses file content at path and returns CProfile
 // supports both old and new schema
 func ParseProfile(path string) *CProfile {
-	raw, _ := ioutil.ReadFile(path)
+	raw, _ := os.ReadFile(path)
 	return Bytes2Profile(raw)
 }
 
 func ParseProfileJSON(path string) *ProfileJSON {
-	raw, _ := ioutil.ReadFile(path)
+	raw, _ := os.ReadFile(path)
 	pj := new(ProfileJSON)
 	json.Unmarshal(raw, pj)
 	return pj
@@ -94,12 +94,10 @@ func Bytes2Profile(data []byte) *CProfile {
 
 	// Heuristic: consider new schema valid if key fields are populated
 	newSchemaOk := false
-	if pj != nil {
-		if pj.Ethereum.Gateway != "" || pj.Ethereum.ChainId != 0 ||
-			pj.Ethereum.Contracts.Wallet != "" || pj.Ethereum.Contracts.Ledger != "" ||
-			pj.Osp.Host != "" || pj.Osp.Address != "" || pj.Version != "" {
-			newSchemaOk = true
-		}
+	if pj.Ethereum.Gateway != "" || pj.Ethereum.ChainId != 0 ||
+		pj.Ethereum.Contracts.Wallet != "" || pj.Ethereum.Contracts.Ledger != "" ||
+		pj.Osp.Host != "" || pj.Osp.Address != "" || pj.Version != "" {
+		newSchemaOk = true
 	}
 
 	if newSchemaOk {

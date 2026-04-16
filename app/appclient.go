@@ -53,6 +53,11 @@ type AppClient struct {
 	signer         eth.Signer
 	appChannels    map[string]*AppChannel
 	cLock          sync.RWMutex
+
+	virtDeployMu           sync.Mutex
+	virtDeployWatchStarted bool
+	virtDeployWatchID      monitor.CallbackID
+	virtDeployChanCount    int
 }
 
 func NewAppClient(
@@ -141,12 +146,87 @@ func (c *AppClient) GetAppChannel(cid string) *AppChannel {
 
 func (c *AppClient) DeleteAppChannel(cid string) {
 	c.cLock.Lock()
-	defer c.cLock.Unlock()
 	appChannel := c.appChannels[cid]
 	if appChannel != nil {
-		c.monitorService.RemoveEvent(appChannel.callbackID)
 		delete(c.appChannels, cid)
 	}
+	c.cLock.Unlock()
+
+	if appChannel == nil {
+		return
+	}
+
+	switch appChannel.Type {
+	case entity.ConditionType_VIRTUAL_CONTRACT:
+		c.virtDeployMu.Lock()
+		if c.virtDeployChanCount > 0 {
+			c.virtDeployChanCount--
+		}
+		watchID := c.virtDeployWatchID
+		shouldStop := c.virtDeployChanCount == 0 && c.virtDeployWatchStarted
+		if shouldStop {
+			c.virtDeployWatchStarted = false
+			c.virtDeployWatchID = 0
+		}
+		c.virtDeployMu.Unlock()
+		if shouldStop && watchID != 0 {
+			c.monitorService.RemoveEvent(watchID)
+		}
+	default:
+		if appChannel.callbackID != 0 {
+			c.monitorService.RemoveEvent(appChannel.callbackID)
+		}
+	}
+}
+
+func (c *AppClient) registerVirtResolverDeployWatch() error {
+	c.virtDeployMu.Lock()
+	defer c.virtDeployMu.Unlock()
+
+	c.virtDeployChanCount++
+
+	if c.virtDeployWatchStarted {
+		return nil
+	}
+
+	monitorCfg := &monitor.Config{
+		ChainId:    config.ChainId.Uint64(),
+		EventName:  event.Deploy,
+		Contract:   c.nodeConfig.GetVirtResolverContract(),
+		StartBlock: c.monitorService.GetCurrentBlockNumber(),
+	}
+	if config.QuickCatchBlockDelay < config.BlockDelay {
+		monitorCfg.BlockDelay = config.QuickCatchBlockDelay
+	}
+
+	watchID, err := c.monitorService.Monitor(monitorCfg, func(id monitor.CallbackID, eLog types.Log) bool {
+		e := &virtresolver.VirtContractResolverDeploy{}
+		virtResolver, ok := c.nodeConfig.GetVirtResolverContract().(*chain.BoundContract)
+		if !ok {
+			log.Error("VirtResolver contract is not a BoundContract")
+			return false
+		}
+		if err := virtResolver.ParseEvent(event.Deploy, eLog, e); err != nil {
+			log.Error(err)
+			return false
+		}
+
+		cid := ctype.Bytes2Hex(e.VirtAddr[:])
+		appChannel := c.GetAppChannel(cid)
+		if appChannel == nil || appChannel.Type != entity.ConditionType_VIRTUAL_CONTRACT || appChannel.Callback == nil {
+			return false
+		}
+		appChannel.Callback.OnDispute(0) // seqNum = 0 implies the virtual contract is deployed
+		return false
+	})
+	if err != nil {
+		c.virtDeployChanCount--
+		return err
+	}
+
+	c.virtDeployWatchStarted = true
+	c.virtDeployWatchID = watchID
+	return nil
 }
 
 func (c *AppClient) NewAppChannelOnVirtualContract(
@@ -169,27 +249,13 @@ func (c *AppClient) NewAppChannelOnVirtualContract(
 		cid:            cid,
 	}
 	c.PutAppChannel(cid, appChannel)
-	monitorCfg := &monitor.Config{
-		ChainId:    config.ChainId.Uint64(),
-		EventName:  event.Deploy,
-		Contract:   c.nodeConfig.GetVirtResolverContract(),
-		StartBlock: c.monitorService.GetCurrentBlockNumber(),
-	}
-	if config.QuickCatchBlockDelay < config.BlockDelay {
-		monitorCfg.BlockDelay = config.QuickCatchBlockDelay
-	}
-	_, err := c.monitorService.Monitor(monitorCfg,
-		func(id monitor.CallbackID, eLog types.Log) bool {
-			hit, _ := appChannel.onVirtualContractDeploy(&eLog)
-			if hit {
-				c.monitorService.RemoveEvent(id)
-			}
-			return hit
-		})
-	if err != nil {
+
+	if err := c.registerVirtResolverDeployWatch(); err != nil {
 		log.Error(err)
+		c.DeleteAppChannel(cid)
+		return cid, err
 	}
-	return cid, err
+	return cid, nil
 }
 
 func (c *AppClient) NewAppChannelOnDeployedContract(
@@ -239,7 +305,7 @@ func (c *AppClient) NewAppChannelOnDeployedContract(
 			if hit {
 				c.monitorService.RemoveEvent(id)
 			}
-			return hit
+			return false
 		})
 	if err != nil {
 		log.Error(err)
