@@ -8,6 +8,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"math/big"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -101,6 +102,7 @@ func prepareEthClient() (
 	if err != nil {
 		return nil, nil, nil, common.Address{}, err
 	}
+	ctx := context.Background()
 	log.Infoln("etherBaseKs", etherBaseKs)
 	etherBaseKsBytes, err := ioutil.ReadFile(etherBaseKs)
 	if err != nil {
@@ -111,11 +113,15 @@ func prepareEthClient() (
 		return nil, nil, nil, common.Address{}, err
 	}
 	etherBaseAddr := ctype.Hex2Addr(etherBaseAddrStr)
-	auth, err := bind.NewTransactor(strings.NewReader(string(etherBaseKsBytes)), "")
+	chainID, err := conn.NetworkID(ctx)
 	if err != nil {
 		return nil, nil, nil, common.Address{}, err
 	}
-	return conn, auth, context.Background(), etherBaseAddr, nil
+	auth, err := bind.NewTransactorWithChainID(strings.NewReader(string(etherBaseKsBytes)), "", chainID)
+	if err != nil {
+		return nil, nil, nil, common.Address{}, err
+	}
+	return conn, auth, ctx, etherBaseAddr, nil
 }
 
 func fundAccount(amount string, recipients []*common.Address) error {
@@ -126,11 +132,6 @@ func fundAccount(amount string, recipients []*common.Address) error {
 	value := big.NewInt(0)
 	value.SetString(amount, 10)
 	auth.Value = value
-	// Use actual network ID to select the correct EIP-155 chain ID (geth --dev defaults to 1337)
-	chainID, err := conn.NetworkID(ctx)
-	if err != nil {
-		return err
-	}
 	var gasLimit uint64 = 21000
 	var txs []*types.Transaction
 	for _, r := range recipients {
@@ -146,7 +147,7 @@ func fundAccount(amount string, recipients []*common.Address) error {
 			return err
 		}
 		tx := types.NewTransaction(nonce, *r, auth.Value, gasLimit, gasPrice, nil)
-		tx, err = auth.Signer(types.NewEIP155Signer(chainID), senderAddr, tx)
+		tx, err = auth.Signer(senderAddr, tx)
 		if err != nil {
 			pendingNonceLock.Unlock()
 			return err
@@ -239,7 +240,16 @@ func getAuthFor(ksfile string) (*bind.TransactOpts, error) {
 	}
 	log.Infoln(ksfile, ctype.Bytes2Hex(crypto.FromECDSA(key.PrivateKey)))
 	ksStr := string(ksBytes)
-	auth, err := bind.NewTransactor(strings.NewReader(ksStr), "")
+	conn, err := ethclient.Dial(ethInstance)
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+	chainID, err := conn.NetworkID(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	auth, err := bind.NewTransactorWithChainID(strings.NewReader(ksStr), "", chainID)
 	if err != nil {
 		return nil, err
 	}
@@ -273,6 +283,10 @@ func RegisterRouters(ksfiles []string) error {
 		}
 		tx, err2 := rrContract.RegisterRouter(auth)
 		if err2 != nil {
+			if strings.Contains(err2.Error(), "Router address already exists") {
+				log.Warnln("router already registered, skipping", ksfile)
+				continue
+			}
 			log.Errorln(err2)
 			return err2
 		}
@@ -343,10 +357,25 @@ func FundAccountsWithErc20(erc20Addr string, addrs []string, amount string) erro
 
 func GetNextClientPort() string {
 	clientPortLock.Lock()
+	defer clientPortLock.Unlock()
+
+	ln, err := net.Listen("tcp", "localhost:0")
+	if err == nil {
+		port := ln.Addr().(*net.TCPAddr).Port
+		ln.Close()
+		return strconv.Itoa(port)
+	}
+
 	ret := clientPort
-	clientPort++
-	clientPortLock.Unlock()
-	return strconv.Itoa(ret)
+	for {
+		ln, err = net.Listen("tcp", ":"+strconv.Itoa(ret))
+		if err == nil {
+			ln.Close()
+			clientPort = ret + 1
+			return strconv.Itoa(ret)
+		}
+		ret++
+	}
 }
 
 func AddAmtStr(base string, amts ...string) string {

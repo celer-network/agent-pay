@@ -15,7 +15,7 @@ import (
 	"github.com/celer-network/agent-pay/entity"
 	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // newClient creates a new Celer Client based on provided config

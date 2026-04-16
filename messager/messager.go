@@ -123,7 +123,7 @@ func (m *Messager) IsDirectPay(pay *entity.ConditionalPay, peer ctype.Addr, dstN
 		return false
 	}
 
-	if bytes.Compare(pay.GetSrc(), m.nodeConfig.GetOnChainAddr().Bytes()) != 0 {
+	if !bytes.Equal(pay.GetSrc(), m.nodeConfig.GetOnChainAddr().Bytes()) {
 		return false
 	}
 

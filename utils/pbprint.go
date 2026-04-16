@@ -11,7 +11,7 @@ import (
 	"github.com/celer-network/agent-pay/entity"
 	"github.com/celer-network/agent-pay/rpc"
 	"github.com/celer-network/goutils/eth"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 func PrintByteArrays(array [][]byte) string {

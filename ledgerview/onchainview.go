@@ -242,27 +242,32 @@ func GetOnChainTxByHash(txhash ctype.Hash, nodeConfig common.GlobalNodeConfig) (
 	}
 	txInfo.Pending = pending
 
-	msg, err := tx.AsMessage(ethtypes.NewEIP155Signer(tx.ChainId()))
-	if err != nil {
-		return nil, fmt.Errorf("AsMessage err: %w", err)
+	to := tx.To()
+	if to == nil {
+		return nil, fmt.Errorf("transaction has no recipient")
 	}
-	txInfo.To = *msg.To()
-	txInfo.From = msg.From()
+	from, err := ethtypes.Sender(ethtypes.LatestSignerForChainID(tx.ChainId()), tx)
+	if err != nil {
+		return nil, fmt.Errorf("Sender err: %w", err)
+	}
+	txInfo.To = *to
+	txInfo.From = from
 
 	ledgerABI, err := abi.JSON(strings.NewReader((nodeConfig.GetLedgerContract().GetABI())))
 	if err != nil {
 		return nil, fmt.Errorf("get ABI err: %w", err)
 	}
-	if len(msg.Data()) < 4 {
+	data := tx.Data()
+	if len(data) < 4 {
 		return nil, fmt.Errorf("invalid msg data")
 	}
-	method, err := ledgerABI.MethodById(msg.Data()[:4])
+	method, err := ledgerABI.MethodById(data[:4])
 	if err != nil {
 		return nil, fmt.Errorf("MethodById err: %w", err)
 	}
 	txInfo.FuncName = method.Name
 
-	err = method.Inputs.UnpackIntoMap(txInfo.FuncInput, msg.Data()[4:])
+	err = method.Inputs.UnpackIntoMap(txInfo.FuncInput, data[4:])
 	if err != nil {
 		return nil, fmt.Errorf("UnpackIntoMap err: %w", err)
 	}

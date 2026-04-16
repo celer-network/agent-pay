@@ -4,6 +4,7 @@
 package virtresolver
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -24,22 +26,34 @@ var (
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
+	_ = abi.ConvertType
 )
 
+// VirtContractResolverMetaData contains all meta data concerning the VirtContractResolver contract.
+var VirtContractResolverMetaData = &bind.MetaData{
+	ABI: "[{\"type\":\"function\",\"name\":\"deploy\",\"inputs\":[{\"name\":\"_code\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_nonce\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"resolve\",\"inputs\":[{\"name\":\"_virtAddr\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"event\",\"name\":\"Deploy\",\"inputs\":[{\"name\":\"virtAddr\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false}]",
+	Bin: "0x6080604052348015600e575f5ffd5b506103648061001c5f395ff3fe608060405234801561000f575f5ffd5b5060043610610034575f3560e01c80635c23bdf5146100385780639c4ae2d014610068575b5f5ffd5b61004b610046366004610293565b61008b565b6040516001600160a01b0390911681526020015b60405180910390f35b61007b6100763660046102aa565b61010e565b604051901515815260200161005f565b5f818152602081905260408120546001600160a01b03166100f35760405162461bcd60e51b815260206004820152601b60248201527f4e6f6e6578697374656e74207669727475616c2061646472657373000000000060448201526064015b60405180910390fd5b505f908152602081905260409020546001600160a01b031690565b5f5f8484846040516020016101259392919061031c565b6040516020818303038152906040528051906020012090505f85858080601f0160208091040260200160405190810160405280939291908181526020018383808284375f920182905250868152602081905260409020549394505050506001600160a01b0316156101d85760405162461bcd60e51b815260206004820152601d60248201527f43757272656e74207265616c2061646472657373206973206e6f74203000000060448201526064016100ea565b5f8151602083015ff090506001600160a01b0381166102395760405162461bcd60e51b815260206004820152601760248201527f43726561746520636f6e7472616374206661696c65642e00000000000000000060448201526064016100ea565b5f8381526020819052604080822080546001600160a01b0319166001600160a01b0385161790555184917f149208daa30a9306858cc9c171c3510e0e50ab5d59ed2027a37a728430dd02e491a25060019695505050505050565b5f602082840312156102a3575f5ffd5b5035919050565b5f5f5f604084860312156102bc575f5ffd5b833567ffffffffffffffff8111156102d2575f5ffd5b8401601f810186136102e2575f5ffd5b803567ffffffffffffffff8111156102f8575f5ffd5b866020828401011115610309575f5ffd5b6020918201979096509401359392505050565b8284823790910190815260200191905056fea2646970667358221220d118366c009e18f360fd233859f12e12a1bb98f7e30d00aa6259f13aa52a748f64736f6c634300081d0033",
+}
+
 // VirtContractResolverABI is the input ABI used to generate the binding from.
-const VirtContractResolverABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"virtAddr\",\"type\":\"bytes32\"}],\"name\":\"Deploy\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_code\",\"type\":\"bytes\"},{\"name\":\"_nonce\",\"type\":\"uint256\"}],\"name\":\"deploy\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_virtAddr\",\"type\":\"bytes32\"}],\"name\":\"resolve\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+// Deprecated: Use VirtContractResolverMetaData.ABI instead.
+var VirtContractResolverABI = VirtContractResolverMetaData.ABI
 
 // VirtContractResolverBin is the compiled bytecode used for deploying new contracts.
-var VirtContractResolverBin = "0x608060405234801561001057600080fd5b5061040e806100206000396000f3fe608060405234801561001057600080fd5b5060043610610052577c010000000000000000000000000000000000000000000000000000000060003504635c23bdf581146100575780639c4ae2d01461009d575b600080fd5b6100746004803603602081101561006d57600080fd5b5035610121565b6040805173ffffffffffffffffffffffffffffffffffffffff9092168252519081900360200190f35b61010d600480360360408110156100b357600080fd5b8101906020810181356401000000008111156100ce57600080fd5b8201836020820111156100e057600080fd5b8035906020019184600183028401116401000000008311171561010257600080fd5b9193509150356101da565b604080519115158252519081900360200190f35b60008181526020819052604081205473ffffffffffffffffffffffffffffffffffffffff166101b157604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601b60248201527f4e6f6e6578697374656e74207669727475616c20616464726573730000000000604482015290519081900360640190fd5b5060009081526020819052604090205473ffffffffffffffffffffffffffffffffffffffff1690565b600080848484604051602001808484808284379190910192835250506040805180830381526020808401808452825192820192909220601f8b0182900490910284018301835289825295506060945092508891889182910183828082843760009201829052508681526020819052604090205493945050505073ffffffffffffffffffffffffffffffffffffffff16156102d557604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601d60248201527f43757272656e74207265616c2061646472657373206973206e6f742030000000604482015290519081900360640190fd5b60008151602083016000f0905073ffffffffffffffffffffffffffffffffffffffff811661036457604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601760248201527f43726561746520636f6e7472616374206661696c65642e000000000000000000604482015290519081900360640190fd5b600083815260208190526040808220805473ffffffffffffffffffffffffffffffffffffffff191673ffffffffffffffffffffffffffffffffffffffff85161790555184917f149208daa30a9306858cc9c171c3510e0e50ab5d59ed2027a37a728430dd02e491a2506001969550505050505056fea265627a7a7230582086095bccbd167fc366930c118a12ab7e1eaee166a47c07e081e0ddf4eb420d6064736f6c634300050a0032"
+// Deprecated: Use VirtContractResolverMetaData.Bin instead.
+var VirtContractResolverBin = VirtContractResolverMetaData.Bin
 
 // DeployVirtContractResolver deploys a new Ethereum contract, binding an instance of VirtContractResolver to it.
 func DeployVirtContractResolver(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *VirtContractResolver, error) {
-	parsed, err := abi.JSON(strings.NewReader(VirtContractResolverABI))
+	parsed, err := VirtContractResolverMetaData.GetAbi()
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
+	if parsed == nil {
+		return common.Address{}, nil, nil, errors.New("GetABI returned nil")
+	}
 
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(VirtContractResolverBin), backend)
+	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(VirtContractResolverBin), backend)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -143,18 +157,18 @@ func NewVirtContractResolverFilterer(address common.Address, filterer bind.Contr
 
 // bindVirtContractResolver binds a generic wrapper to an already deployed contract.
 func bindVirtContractResolver(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(VirtContractResolverABI))
+	parsed, err := VirtContractResolverMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+	return bind.NewBoundContract(address, *parsed, caller, transactor, filterer), nil
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_VirtContractResolver *VirtContractResolverRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_VirtContractResolver *VirtContractResolverRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _VirtContractResolver.Contract.VirtContractResolverCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -173,7 +187,7 @@ func (_VirtContractResolver *VirtContractResolverRaw) Transact(opts *bind.Transa
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_VirtContractResolver *VirtContractResolverCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_VirtContractResolver *VirtContractResolverCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _VirtContractResolver.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -192,12 +206,17 @@ func (_VirtContractResolver *VirtContractResolverTransactorRaw) Transact(opts *b
 //
 // Solidity: function resolve(bytes32 _virtAddr) view returns(address)
 func (_VirtContractResolver *VirtContractResolverCaller) Resolve(opts *bind.CallOpts, _virtAddr [32]byte) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _VirtContractResolver.contract.Call(opts, out, "resolve", _virtAddr)
-	return *ret0, err
+	var out []interface{}
+	err := _VirtContractResolver.contract.Call(opts, &out, "resolve", _virtAddr)
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Resolve is a free data retrieval call binding the contract method 0x5c23bdf5.
@@ -375,5 +394,6 @@ func (_VirtContractResolver *VirtContractResolverFilterer) ParseDeploy(log types
 	if err := _VirtContractResolver.contract.UnpackLog(event, "Deploy", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }

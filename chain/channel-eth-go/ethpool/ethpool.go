@@ -4,6 +4,7 @@
 package ethpool
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -24,22 +26,34 @@ var (
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
+	_ = abi.ConvertType
 )
 
+// EthPoolMetaData contains all meta data concerning the EthPool contract.
+var EthPoolMetaData = &bind.MetaData{
+	ABI: "[{\"type\":\"function\",\"name\":\"allowance\",\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_spender\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"approve\",\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"balanceOf\",\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"decimals\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"uint8\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"decreaseAllowance\",\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_subtractedValue\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"deposit\",\"inputs\":[{\"name\":\"_receiver\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"payable\"},{\"type\":\"function\",\"name\":\"increaseAllowance\",\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_addedValue\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"name\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"string\",\"internalType\":\"string\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"symbol\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"string\",\"internalType\":\"string\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"transferFrom\",\"inputs\":[{\"name\":\"_from\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_to\",\"type\":\"address\",\"internalType\":\"addresspayable\"},{\"name\":\"_value\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"transferToCelerWallet\",\"inputs\":[{\"name\":\"_from\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_walletAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_walletId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_value\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"withdraw\",\"inputs\":[{\"name\":\"_value\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"Approval\",\"inputs\":[{\"name\":\"owner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"spender\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Deposit\",\"inputs\":[{\"name\":\"receiver\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Transfer\",\"inputs\":[{\"name\":\"from\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"to\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false}]",
+	Bin: "0x6080604052348015600e575f5ffd5b50610a418061001c5f395ff3fe6080604052600436106100a5575f3560e01c806370a082311161006257806370a08231146101a75780637e1cd431146101e957806395d89b4114610208578063a457c2d714610238578063dd62ed3e14610257578063f340fa011461029b575f5ffd5b806306fdde03146100a9578063095ea7b3146100f357806323b872dd146101225780632e1a7d4d14610141578063313ce567146101625780633950935114610188575b5f5ffd5b3480156100b4575f5ffd5b506100dd60405180604001604052806009815260200168115d1a125b941bdbdb60ba1b81525081565b6040516100ea919061081f565b60405180910390f35b3480156100fe575f5ffd5b5061011261010d366004610868565b6102ae565b60405190151581526020016100ea565b34801561012d575f5ffd5b5061011261013c366004610892565b610330565b34801561014c575f5ffd5b5061016061015b3660046108d0565b6103b9565b005b34801561016d575f5ffd5b50610176601281565b60405160ff90911681526020016100ea565b348015610193575f5ffd5b506101126101a2366004610868565b6103c7565b3480156101b2575f5ffd5b506101db6101c13660046108e7565b6001600160a01b03165f9081526020819052604090205490565b6040519081526020016100ea565b3480156101f4575f5ffd5b50610112610203366004610909565b61045f565b348015610213575f5ffd5b506100dd60405180604001604052806005815260200164045746849560dc1b81525081565b348015610243575f5ffd5b50610112610252366004610868565b6105af565b348015610262575f5ffd5b506101db61027136600461094c565b6001600160a01b039182165f90815260016020908152604080832093909416825291909152205490565b6101606102a93660046108e7565b610604565b5f6001600160a01b0383166102de5760405162461bcd60e51b81526004016102d590610983565b60405180910390fd5b335f8181526001602090815260408083206001600160a01b03881680855290835292819020869055518581529192915f5160206109ec5f395f51905f5291015b60405180910390a35060015b92915050565b6001600160a01b0383165f90815260016020908152604080832033845290915281205461035e9083906109c5565b6001600160a01b0385165f81815260016020908152604080832033808552908352928190208590555193845290925f5160206109ec5f395f51905f52910160405180910390a36103af8484846106c6565b5060019392505050565b6103c43333836106c6565b50565b5f6001600160a01b0383166103ee5760405162461bcd60e51b81526004016102d590610983565b335f9081526001602090815260408083206001600160a01b038716845290915290205461041c9083906109d8565b335f8181526001602090815260408083206001600160a01b038916808552908352928190208590555193845290925f5160206109ec5f395f51905f52910161031e565b6001600160a01b0384165f90815260016020908152604080832033845290915281205461048d9083906109c5565b6001600160a01b0386165f81815260016020908152604080832033808552908352928190208590555193845290925f5160206109ec5f395f51905f52910160405180910390a36001600160a01b0385165f908152602081905260409020546104f69083906109c5565b6001600160a01b038681165f818152602081815260409182902094909455518581529187169290917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef910160405180910390a3604051636b46cea760e11b81526004810184905284906001600160a01b0382169063d68d9d4e9085906024015f604051808303818588803b15801561058c575f5ffd5b505af115801561059e573d5f5f3e3d5ffd5b5060019a9950505050505050505050565b5f6001600160a01b0383166105d65760405162461bcd60e51b81526004016102d590610983565b335f9081526001602090815260408083206001600160a01b038716845290915290205461041c9083906109c5565b6001600160a01b0381166106525760405162461bcd60e51b8152602060048201526015602482015274052656365697665722061646472657373206973203605c1b60448201526064016102d5565b6001600160a01b0381165f908152602081905260409020546106759034906109d8565b6001600160a01b0382165f8181526020818152604091829020939093555134815290917fe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c910160405180910390a250565b6001600160a01b03821661070e5760405162461bcd60e51b815260206004820152600f60248201526e0546f2061646472657373206973203608c1b60448201526064016102d5565b6001600160a01b0383165f908152602081905260409020546107319082906109c5565b6001600160a01b038481165f818152602081815260409182902094909455518481529185169290917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef910160405180910390a35f826001600160a01b0316826040515f6040518083038185875af1925050503d805f81146107cd576040519150601f19603f3d011682016040523d82523d5f602084013e6107d2565b606091505b50509050806108195760405162461bcd60e51b8152602060048201526013602482015272115512081d1c985b9cd9995c8819985a5b1959606a1b60448201526064016102d5565b50505050565b602081525f82518060208401528060208501604085015e5f604082850101526040601f19601f83011684010191505092915050565b6001600160a01b03811681146103c4575f5ffd5b5f5f60408385031215610879575f5ffd5b823561088481610854565b946020939093013593505050565b5f5f5f606084860312156108a4575f5ffd5b83356108af81610854565b925060208401356108bf81610854565b929592945050506040919091013590565b5f602082840312156108e0575f5ffd5b5035919050565b5f602082840312156108f7575f5ffd5b813561090281610854565b9392505050565b5f5f5f5f6080858703121561091c575f5ffd5b843561092781610854565b9350602085013561093781610854565b93969395505050506040820135916060013590565b5f5f6040838503121561095d575f5ffd5b823561096881610854565b9150602083013561097881610854565b809150509250929050565b60208082526014908201527305370656e646572206164647265737320697320360641b604082015260600190565b634e487b7160e01b5f52601160045260245ffd5b8181038181111561032a5761032a6109b1565b8082018082111561032a5761032a6109b156fe8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925a2646970667358221220302e2596484806f0db3abb1d5cfff35659525a7cb8185f2c3858bb82d8ad9d4664736f6c634300081e0033",
+}
+
 // EthPoolABI is the input ABI used to generate the binding from.
-const EthPoolABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"decimals\",\"outputs\":[{\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"receiver\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Deposit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_receiver\",\"type\":\"address\"}],\"name\":\"deposit\",\"outputs\":[],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"withdraw\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_walletAddr\",\"type\":\"address\"},{\"name\":\"_walletId\",\"type\":\"bytes32\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transferToCelerWallet\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\"},{\"name\":\"_addedValue\",\"type\":\"uint256\"}],\"name\":\"increaseAllowance\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\"},{\"name\":\"_subtractedValue\",\"type\":\"uint256\"}],\"name\":\"decreaseAllowance\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+// Deprecated: Use EthPoolMetaData.ABI instead.
+var EthPoolABI = EthPoolMetaData.ABI
 
 // EthPoolBin is the compiled bytecode used for deploying new contracts.
-var EthPoolBin = "0x608060405234801561001057600080fd5b50610b3f806100206000396000f3fe6080604052600436106100c4576000357c01000000000000000000000000000000000000000000000000000000009004806370a082311161008157806370a08231146102735780637e1cd431146102b857806395d89b4114610301578063a457c2d714610316578063dd62ed3e1461034f578063f340fa011461038a576100c4565b806306fdde03146100c9578063095ea7b31461015357806323b872dd146101a05780632e1a7d4d146101e3578063313ce5671461020f578063395093511461023a575b600080fd5b3480156100d557600080fd5b506100de6103b0565b6040805160208082528351818301528351919283929083019185019080838360005b83811015610118578181015183820152602001610100565b50505050905090810190601f1680156101455780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b34801561015f57600080fd5b5061018c6004803603604081101561017657600080fd5b50600160a060020a0381351690602001356103e9565b604080519115158252519081900360200190f35b3480156101ac57600080fd5b5061018c600480360360608110156101c357600080fd5b50600160a060020a0381358116916020810135909116906040013561049e565b3480156101ef57600080fd5b5061020d6004803603602081101561020657600080fd5b5035610531565b005b34801561021b57600080fd5b5061022461053f565b6040805160ff9092168252519081900360200190f35b34801561024657600080fd5b5061018c6004803603604081101561025d57600080fd5b50600160a060020a038135169060200135610544565b34801561027f57600080fd5b506102a66004803603602081101561029657600080fd5b5035600160a060020a031661062b565b60408051918252519081900360200190f35b3480156102c457600080fd5b5061018c600480360360808110156102db57600080fd5b50600160a060020a03813581169160208101359091169060408101359060600135610646565b34801561030d57600080fd5b506100de6107d0565b34801561032257600080fd5b5061018c6004803603604081101561033957600080fd5b50600160a060020a038135169060200135610809565b34801561035b57600080fd5b506102a66004803603604081101561037257600080fd5b50600160a060020a038135811691602001351661089d565b61020d600480360360208110156103a057600080fd5b5035600160a060020a03166108c8565b6040518060400160405280600981526020017f457468496e506f6f6c000000000000000000000000000000000000000000000081525081565b6000600160a060020a038316610449576040805160e560020a62461bcd02815260206004820152601460248201527f5370656e64657220616464726573732069732030000000000000000000000000604482015290519081900360640190fd5b336000818152600160209081526040808320600160a060020a0388168085529083529281902086905580518681529051929392600080516020610aeb833981519152929181900390910190a350600192915050565b600160a060020a03831660009081526001602090815260408083203384529091528120546104d2908363ffffffff6109a216565b600160a060020a038516600081815260016020908152604080832033808552908352928190208590558051948552519193600080516020610aeb833981519152929081900390910190a36105278484846109b7565b5060019392505050565b61053c3333836109b7565b50565b601281565b6000600160a060020a0383166105a4576040805160e560020a62461bcd02815260206004820152601460248201527f5370656e64657220616464726573732069732030000000000000000000000000604482015290519081900360640190fd5b336000908152600160209081526040808320600160a060020a03871684529091529020546105d8908363ffffffff610ad116565b336000818152600160209081526040808320600160a060020a038916808552908352928190208590558051948552519193600080516020610aeb833981519152929081900390910190a350600192915050565b600160a060020a031660009081526020819052604090205490565b600160a060020a038416600090815260016020908152604080832033845290915281205461067a908363ffffffff6109a216565b600160a060020a038616600081815260016020908152604080832033808552908352928190208590558051948552519193600080516020610aeb833981519152929081900390910190a3600160a060020a0385166000908152602081905260409020546106ed908363ffffffff6109a216565b600160a060020a038087166000818152602081815260409182902094909455805186815290519288169391927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a3600084905080600160a060020a031663d68d9d4e84866040518363ffffffff167c0100000000000000000000000000000000000000000000000000000000028152600401808281526020019150506000604051808303818588803b1580156107ab57600080fd5b505af11580156107bf573d6000803e3d6000fd5b5060019a9950505050505050505050565b6040518060400160405280600581526020017f457468495000000000000000000000000000000000000000000000000000000081525081565b6000600160a060020a038316610869576040805160e560020a62461bcd02815260206004820152601460248201527f5370656e64657220616464726573732069732030000000000000000000000000604482015290519081900360640190fd5b336000908152600160209081526040808320600160a060020a03871684529091529020546105d8908363ffffffff6109a216565b600160a060020a03918216600090815260016020908152604080832093909416825291909152205490565b600160a060020a038116610926576040805160e560020a62461bcd02815260206004820152601560248201527f5265636569766572206164647265737320697320300000000000000000000000604482015290519081900360640190fd5b600160a060020a03811660009081526020819052604090205461094f903463ffffffff610ad116565b600160a060020a03821660008181526020818152604091829020939093558051348152905191927fe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c92918290030190a250565b6000828211156109b157600080fd5b50900390565b600160a060020a038216610a15576040805160e560020a62461bcd02815260206004820152600f60248201527f546f206164647265737320697320300000000000000000000000000000000000604482015290519081900360640190fd5b600160a060020a038316600090815260208190526040902054610a3e908263ffffffff6109a216565b600160a060020a038085166000818152602081815260409182902094909455805185815290519286169391927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a3604051600160a060020a0383169082156108fc029083906000818181858888f19350505050158015610acb573d6000803e3d6000fd5b50505050565b600082820183811015610ae357600080fd5b939250505056fe8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925a265627a7a72305820e51338a3c6ac672fc2d366d593d9a46aebef69c804363974cd743a137e9b05e064736f6c634300050a0032"
+// Deprecated: Use EthPoolMetaData.Bin instead.
+var EthPoolBin = EthPoolMetaData.Bin
 
 // DeployEthPool deploys a new Ethereum contract, binding an instance of EthPool to it.
 func DeployEthPool(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *EthPool, error) {
-	parsed, err := abi.JSON(strings.NewReader(EthPoolABI))
+	parsed, err := EthPoolMetaData.GetAbi()
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
+	if parsed == nil {
+		return common.Address{}, nil, nil, errors.New("GetABI returned nil")
+	}
 
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(EthPoolBin), backend)
+	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(EthPoolBin), backend)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -143,18 +157,18 @@ func NewEthPoolFilterer(address common.Address, filterer bind.ContractFilterer) 
 
 // bindEthPool binds a generic wrapper to an already deployed contract.
 func bindEthPool(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(EthPoolABI))
+	parsed, err := EthPoolMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+	return bind.NewBoundContract(address, *parsed, caller, transactor, filterer), nil
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_EthPool *EthPoolRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_EthPool *EthPoolRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _EthPool.Contract.EthPoolCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -173,7 +187,7 @@ func (_EthPool *EthPoolRaw) Transact(opts *bind.TransactOpts, method string, par
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_EthPool *EthPoolCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_EthPool *EthPoolCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _EthPool.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -192,12 +206,17 @@ func (_EthPool *EthPoolTransactorRaw) Transact(opts *bind.TransactOpts, method s
 //
 // Solidity: function allowance(address _owner, address _spender) view returns(uint256)
 func (_EthPool *EthPoolCaller) Allowance(opts *bind.CallOpts, _owner common.Address, _spender common.Address) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _EthPool.contract.Call(opts, out, "allowance", _owner, _spender)
-	return *ret0, err
+	var out []interface{}
+	err := _EthPool.contract.Call(opts, &out, "allowance", _owner, _spender)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
@@ -218,12 +237,17 @@ func (_EthPool *EthPoolCallerSession) Allowance(_owner common.Address, _spender 
 //
 // Solidity: function balanceOf(address _owner) view returns(uint256)
 func (_EthPool *EthPoolCaller) BalanceOf(opts *bind.CallOpts, _owner common.Address) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _EthPool.contract.Call(opts, out, "balanceOf", _owner)
-	return *ret0, err
+	var out []interface{}
+	err := _EthPool.contract.Call(opts, &out, "balanceOf", _owner)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
@@ -244,12 +268,17 @@ func (_EthPool *EthPoolCallerSession) BalanceOf(_owner common.Address) (*big.Int
 //
 // Solidity: function decimals() view returns(uint8)
 func (_EthPool *EthPoolCaller) Decimals(opts *bind.CallOpts) (uint8, error) {
-	var (
-		ret0 = new(uint8)
-	)
-	out := ret0
-	err := _EthPool.contract.Call(opts, out, "decimals")
-	return *ret0, err
+	var out []interface{}
+	err := _EthPool.contract.Call(opts, &out, "decimals")
+
+	if err != nil {
+		return *new(uint8), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(uint8)).(*uint8)
+
+	return out0, err
+
 }
 
 // Decimals is a free data retrieval call binding the contract method 0x313ce567.
@@ -270,12 +299,17 @@ func (_EthPool *EthPoolCallerSession) Decimals() (uint8, error) {
 //
 // Solidity: function name() view returns(string)
 func (_EthPool *EthPoolCaller) Name(opts *bind.CallOpts) (string, error) {
-	var (
-		ret0 = new(string)
-	)
-	out := ret0
-	err := _EthPool.contract.Call(opts, out, "name")
-	return *ret0, err
+	var out []interface{}
+	err := _EthPool.contract.Call(opts, &out, "name")
+
+	if err != nil {
+		return *new(string), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(string)).(*string)
+
+	return out0, err
+
 }
 
 // Name is a free data retrieval call binding the contract method 0x06fdde03.
@@ -296,12 +330,17 @@ func (_EthPool *EthPoolCallerSession) Name() (string, error) {
 //
 // Solidity: function symbol() view returns(string)
 func (_EthPool *EthPoolCaller) Symbol(opts *bind.CallOpts) (string, error) {
-	var (
-		ret0 = new(string)
-	)
-	out := ret0
-	err := _EthPool.contract.Call(opts, out, "symbol")
-	return *ret0, err
+	var out []interface{}
+	err := _EthPool.contract.Call(opts, &out, "symbol")
+
+	if err != nil {
+		return *new(string), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(string)).(*string)
+
+	return out0, err
+
 }
 
 // Symbol is a free data retrieval call binding the contract method 0x95d89b41.
@@ -615,6 +654,7 @@ func (_EthPool *EthPoolFilterer) ParseApproval(log types.Log) (*EthPoolApproval,
 	if err := _EthPool.contract.UnpackLog(event, "Approval", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -759,6 +799,7 @@ func (_EthPool *EthPoolFilterer) ParseDeposit(log types.Log) (*EthPoolDeposit, e
 	if err := _EthPool.contract.UnpackLog(event, "Deposit", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -912,5 +953,6 @@ func (_EthPool *EthPoolFilterer) ParseTransfer(log types.Log) (*EthPoolTransfer,
 	if err := _EthPool.contract.UnpackLog(event, "Transfer", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }

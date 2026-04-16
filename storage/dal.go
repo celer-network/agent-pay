@@ -19,7 +19,7 @@ import (
 	"github.com/celer-network/agent-pay/entity"
 	"github.com/celer-network/agent-pay/rpc"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/ptypes/any"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 const (
@@ -406,11 +406,11 @@ func (d *DAL) GetClosedChan(cid ctype.CidType) (ctype.Addr, *entity.TokenInfo, *
 }
 
 // The "payments" table.
-func (d *DAL) InsertPaymentWithTs(payID ctype.PayIDType, payBytes []byte, pay *entity.ConditionalPay, note *any.Any, inCid ctype.CidType, inState int, outCid ctype.CidType, outState int, createTs time.Time) error {
+func (d *DAL) InsertPaymentWithTs(payID ctype.PayIDType, payBytes []byte, pay *entity.ConditionalPay, note *anypb.Any, inCid ctype.CidType, inState int, outCid ctype.CidType, outState int, createTs time.Time) error {
 	return insertPaymentWithTs(d.st, payID, payBytes, pay, note, inCid, inState, outCid, outState, createTs)
 }
 
-func (d *DAL) InsertPayment(payID ctype.PayIDType, payBytes []byte, pay *entity.ConditionalPay, note *any.Any, inCid ctype.CidType, inState int, outCid ctype.CidType, outState int) error {
+func (d *DAL) InsertPayment(payID ctype.PayIDType, payBytes []byte, pay *entity.ConditionalPay, note *anypb.Any, inCid ctype.CidType, inState int, outCid ctype.CidType, outState int) error {
 	return insertPayment(d.st, payID, payBytes, pay, note, inCid, inState, outCid, outState)
 }
 
@@ -426,11 +426,11 @@ func (d *DAL) GetPayment(payID ctype.PayIDType) (*entity.ConditionalPay, []byte,
 	return getPayment(d.st, payID)
 }
 
-func (d *DAL) GetPaymentInfo(payID ctype.PayIDType) (*entity.ConditionalPay, *any.Any, ctype.CidType, int, ctype.CidType, int, *time.Time, bool, error) {
+func (d *DAL) GetPaymentInfo(payID ctype.PayIDType) (*entity.ConditionalPay, *anypb.Any, ctype.CidType, int, ctype.CidType, int, *time.Time, bool, error) {
 	return getPaymentInfo(d.st, payID)
 }
 
-func (d *DAL) GetAllPaymentInfoByCid(cid ctype.CidType) ([]ctype.PayIDType, []*entity.ConditionalPay, []*any.Any, []ctype.CidType, []int, []ctype.CidType, []int, []*time.Time, error) {
+func (d *DAL) GetAllPaymentInfoByCid(cid ctype.CidType) ([]ctype.PayIDType, []*entity.ConditionalPay, []*anypb.Any, []ctype.CidType, []int, []ctype.CidType, []int, []*time.Time, error) {
 	return getAllPaymentInfoByCid(d.st, cid)
 }
 
@@ -454,7 +454,7 @@ func (d *DAL) GetPayEgressChannel(payID ctype.PayIDType) (ctype.CidType, bool, e
 	return getPayEgressChannel(d.st, payID)
 }
 
-func (d *DAL) GetPayNote(payID ctype.PayIDType) (*any.Any, bool, error) {
+func (d *DAL) GetPayNote(payID ctype.PayIDType) (*anypb.Any, bool, error) {
 	return getPayNote(d.st, payID)
 }
 
@@ -489,7 +489,7 @@ func (d *DAL) CountPayments() (int, error) {
 	return countPayments(d.st)
 }
 
-func (dtx *DALTx) InsertPayment(payID ctype.PayIDType, payBytes []byte, pay *entity.ConditionalPay, note *any.Any, inCid ctype.CidType, inState int, outCid ctype.CidType, outState int) error {
+func (dtx *DALTx) InsertPayment(payID ctype.PayIDType, payBytes []byte, pay *entity.ConditionalPay, note *anypb.Any, inCid ctype.CidType, inState int, outCid ctype.CidType, outState int) error {
 	return insertPayment(dtx.stx, payID, payBytes, pay, note, inCid, inState, outCid, outState)
 }
 
@@ -525,15 +525,15 @@ func (dtx *DALTx) UpdatePayEgressState(payID ctype.PayIDType, state int) error {
 	return updatePayEgressState(dtx.stx, payID, state)
 }
 
-func (dtx *DALTx) GetPayNote(payID ctype.PayIDType) (*any.Any, bool, error) {
+func (dtx *DALTx) GetPayNote(payID ctype.PayIDType) (*anypb.Any, bool, error) {
 	return getPayNote(dtx.stx, payID)
 }
 
-func (dtx *DALTx) GetPayForRecvSettleReq(payID ctype.PayIDType) (*entity.ConditionalPay, *any.Any, ctype.CidType, int, int, bool, error) {
+func (dtx *DALTx) GetPayForRecvSettleReq(payID ctype.PayIDType) (*entity.ConditionalPay, *anypb.Any, ctype.CidType, int, int, bool, error) {
 	return getPayForRecvSettleReq(dtx.stx, payID)
 }
 
-func (dtx *DALTx) GetPayForRecvSecret(payID ctype.PayIDType) (*entity.ConditionalPay, *any.Any, int, bool, error) {
+func (dtx *DALTx) GetPayForRecvSecret(payID ctype.PayIDType) (*entity.ConditionalPay, *anypb.Any, int, bool, error) {
 	return getPayForRecvSecret(dtx.stx, payID)
 }
 

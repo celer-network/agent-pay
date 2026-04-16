@@ -10,7 +10,7 @@ import (
 	"github.com/celer-network/agent-pay/ctype"
 	"github.com/celer-network/goutils/log"
 	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 var (

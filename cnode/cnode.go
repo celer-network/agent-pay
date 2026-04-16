@@ -46,9 +46,9 @@ import (
 	"github.com/celer-network/goutils/log"
 	"github.com/ethereum/go-ethereum/ethclient"
 	ethrpc "github.com/ethereum/go-ethereum/rpc"
-	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/proto"
 )
 
 const mutexLocked = 1 << iota
@@ -144,7 +144,7 @@ func (c *CNode) RegisterStream(peerAddr ctype.Addr, peerHTTPTarget string) error
 	}
 	conn, err := grpc.Dial(peerHTTPTarget, c.dialOpts(*dropMsg)...)
 	if err != nil {
-		return fmt.Errorf("grpcDial %s failed: %w", peerHTTPTarget, err)
+		return utils.WrapLocalTLSDialError(peerHTTPTarget, fmt.Errorf("grpcDial %s failed: %w", peerHTTPTarget, err))
 	}
 	c.connManager.AddConnection(peerAddr, conn)
 	dialClient := rpc.NewRpcClient(conn)
@@ -401,11 +401,12 @@ func (c *CNode) setupTransactor(
 		c.Close()
 		return err
 	}
-	c.signer, err = eth.NewSigner(privKey, config.ChainId)
+	baseSigner, err := eth.NewSigner(privKey, config.ChainId)
 	if err != nil {
 		c.Close()
 		return err
 	}
+	c.signer = utils.NewOnChainCompatibleSigner(baseSigner)
 
 	// Create transactor pool. If the list of transactor keys isn't specified, use the signing key
 	// as the sole transactor.
@@ -443,7 +444,7 @@ func (c *CNode) setupTransactor(
 func (c *CNode) setupExternalTransactor(address ctype.Addr, signer eth.Signer) error {
 	c.EthAddress = address
 	c.signer = signer
-	c.masterTransactor = eth.NewTransactorByExternalSigner(address, signer, c.ethclient)
+	c.masterTransactor = eth.NewTransactorByExternalSigner(address, signer, c.ethclient, config.ChainId)
 	c.depositTransactor = c.masterTransactor
 	var err error
 	c.transactorPool, err = eth.NewTransactorPool([]*eth.Transactor{c.masterTransactor})
@@ -487,7 +488,7 @@ func (c *CNode) initialize(
 	c.connManager = rpc.NewConnectionManager(regClient)
 
 	// Initialize the watcher service.
-	c.watch = watcher.NewWatchService(c.ethclient, c.dal, config.BlockIntervalSec)
+	c.watch = watcher.NewWatchService(c.ethclient, c.dal, config.BlockIntervalSec, 0)
 	if c.watch == nil {
 		log.Error("Cannot setup watch service")
 		c.Close()
@@ -931,13 +932,10 @@ func (c *CNode) runOspRoutineJob() {
 		clearPayTicker.Stop()
 	}()
 
-	for {
-		select {
-		case <-clearPayTicker.C:
-			err := c.ClearPaymentsWithPeerOsps()
-			if err != nil {
-				log.Error(err)
-			}
+	for range clearPayTicker.C {
+		err := c.ClearPaymentsWithPeerOsps()
+		if err != nil {
+			log.Error(err)
 		}
 	}
 }

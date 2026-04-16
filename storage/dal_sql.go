@@ -21,8 +21,8 @@ import (
 	"github.com/celer-network/agent-pay/rpc"
 	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes/any"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 const (
@@ -1062,7 +1062,7 @@ func getClosedChan(st SqlStorage, cid ctype.CidType) (ctype.Addr, *entity.TokenI
 }
 
 // The "payments" table.
-func insertPaymentWithTs(st SqlStorage, payID ctype.PayIDType, payBytes []byte, pay *entity.ConditionalPay, note *any.Any, inCid ctype.CidType, inState int, outCid ctype.CidType, outState int, createTs time.Time) error {
+func insertPaymentWithTs(st SqlStorage, payID ctype.PayIDType, payBytes []byte, pay *entity.ConditionalPay, note *anypb.Any, inCid ctype.CidType, inState int, outCid ctype.CidType, outState int, createTs time.Time) error {
 	noteBytes, err := marshal(note)
 	if err != nil {
 		return err
@@ -1082,7 +1082,7 @@ func insertPaymentWithTs(st SqlStorage, payID ctype.PayIDType, payBytes []byte, 
 	return chkExec(res, err, 1, "insertPaymentWithTs")
 }
 
-func insertPayment(st SqlStorage, payID ctype.PayIDType, payBytes []byte, pay *entity.ConditionalPay, note *any.Any, inCid ctype.CidType, inState int, outCid ctype.CidType, outState int) error {
+func insertPayment(st SqlStorage, payID ctype.PayIDType, payBytes []byte, pay *entity.ConditionalPay, note *anypb.Any, inCid ctype.CidType, inState int, outCid ctype.CidType, outState int) error {
 	return insertPaymentWithTs(st, payID, payBytes, pay, note, inCid, inState, outCid, outState, now())
 }
 
@@ -1126,12 +1126,12 @@ func getPayment(st SqlStorage, payID ctype.PayIDType) (*entity.ConditionalPay, [
 	return &pay, payBytes, found, err
 }
 
-func getPayNote(st SqlStorage, payID ctype.PayIDType) (*any.Any, bool, error) {
+func getPayNote(st SqlStorage, payID ctype.PayIDType) (*anypb.Any, bool, error) {
 	var noteBytes []byte
 	q := `SELECT paynote FROM payments WHERE payid = $1`
 	err := st.QueryRow(q, ctype.PayID2Hex(payID)).Scan(&noteBytes)
 	found, err := chkQueryRow(err)
-	var note any.Any
+	var note anypb.Any
 	if found {
 		err = unmarshal(noteBytes, &note)
 	}
@@ -1139,7 +1139,7 @@ func getPayNote(st SqlStorage, payID ctype.PayIDType) (*any.Any, bool, error) {
 }
 
 func getPaymentInfo(st SqlStorage, payID ctype.PayIDType) (
-	*entity.ConditionalPay, *any.Any, ctype.CidType, int, ctype.CidType, int, *time.Time, bool, error) {
+	*entity.ConditionalPay, *anypb.Any, ctype.CidType, int, ctype.CidType, int, *time.Time, bool, error) {
 	var payBytes, noteBytes []byte
 	var inCid, outCid, createTsStr string
 	var inState, outState int
@@ -1149,7 +1149,7 @@ func getPaymentInfo(st SqlStorage, payID ctype.PayIDType) (
 		&payBytes, &noteBytes, &inCid, &inState, &outCid, &outState, &createTsStr)
 	found, err := chkQueryRow(err)
 	var pay entity.ConditionalPay
-	var note any.Any
+	var note anypb.Any
 	if found {
 		err = proto.Unmarshal(payBytes, &pay)
 		if err == nil {
@@ -1163,7 +1163,7 @@ func getPaymentInfo(st SqlStorage, payID ctype.PayIDType) (
 }
 
 func getAllPaymentInfoByCid(st SqlStorage, cid ctype.CidType) (
-	[]ctype.PayIDType, []*entity.ConditionalPay, []*any.Any, []ctype.CidType, []int, []ctype.CidType, []int, []*time.Time, error) {
+	[]ctype.PayIDType, []*entity.ConditionalPay, []*anypb.Any, []ctype.CidType, []int, []ctype.CidType, []int, []*time.Time, error) {
 	q := `SELECT payid, pay, paynote, incid, instate, outcid, outstate, createts FROM payments WHERE incid = $1 OR outcid = $1 ORDER BY createts DESC`
 	rows, err := st.Query(q, ctype.Cid2Hex(cid))
 	if err != nil {
@@ -1173,7 +1173,7 @@ func getAllPaymentInfoByCid(st SqlStorage, cid ctype.CidType) (
 
 	var payIDs []ctype.PayIDType
 	var pays []*entity.ConditionalPay
-	var notes []*any.Any
+	var notes []*anypb.Any
 	var incids, outcids []ctype.CidType
 	var instates, outstates []int
 	var createTses []*time.Time
@@ -1184,7 +1184,7 @@ func getAllPaymentInfoByCid(st SqlStorage, cid ctype.CidType) (
 		var inState, outState int
 		var createTs time.Time
 		var pay entity.ConditionalPay
-		var note any.Any
+		var note anypb.Any
 		err = rows.Scan(&payID, &payBytes, &noteBytes, &inCid, &inState, &outCid, &outState, &createTsStr)
 		if err != nil {
 			return nil, nil, nil, nil, nil, nil, nil, nil, err
@@ -1221,7 +1221,7 @@ func getPayStates(st SqlStorage, payID ctype.PayIDType) (int, int, bool, error) 
 	return inState, outState, found, err
 }
 
-func getPayForRecvSettleReq(st SqlStorage, payID ctype.PayIDType) (*entity.ConditionalPay, *any.Any, ctype.CidType, int, int, bool, error) {
+func getPayForRecvSettleReq(st SqlStorage, payID ctype.PayIDType) (*entity.ConditionalPay, *anypb.Any, ctype.CidType, int, int, bool, error) {
 	var payBytes, noteBytes []byte
 	var inState, outState int
 	var inCid string
@@ -1229,7 +1229,7 @@ func getPayForRecvSettleReq(st SqlStorage, payID ctype.PayIDType) (*entity.Condi
 	err := st.QueryRow(q, ctype.PayID2Hex(payID)).Scan(&payBytes, &noteBytes, &inCid, &inState, &outState)
 	found, err := chkQueryRow(err)
 	var pay entity.ConditionalPay
-	var note any.Any
+	var note anypb.Any
 	if found {
 		err = proto.Unmarshal(payBytes, &pay)
 		if err == nil {
@@ -1270,14 +1270,14 @@ func getPayIngressPeer(st SqlStorage, payID ctype.PayIDType) (ctype.Addr, bool, 
 	return ctype.Hex2Addr(peer), found, err
 }
 
-func getPayForRecvSecret(st SqlStorage, payID ctype.PayIDType) (*entity.ConditionalPay, *any.Any, int, bool, error) {
+func getPayForRecvSecret(st SqlStorage, payID ctype.PayIDType) (*entity.ConditionalPay, *anypb.Any, int, bool, error) {
 	var payBytes, noteBytes []byte
 	var state int
 	q := `SELECT pay, paynote, instate FROM payments WHERE payid = $1`
 	err := st.QueryRow(q, ctype.PayID2Hex(payID)).Scan(&payBytes, &noteBytes, &state)
 	found, err := chkQueryRow(err)
 	var pay entity.ConditionalPay
-	var note any.Any
+	var note anypb.Any
 	if found {
 		err = proto.Unmarshal(payBytes, &pay)
 		if err == nil {
@@ -1394,7 +1394,7 @@ func getPaysForAuthAck(st SqlStorage, payIDs []ctype.PayIDType, isOut bool) ([]*
 			State: state,
 		}
 		if len(payNoteByte) > 0 {
-			var note any.Any
+			var note anypb.Any
 			err = unmarshal(payNoteByte, &note)
 			if err != nil {
 				log.Warn(err)

@@ -17,7 +17,8 @@ import (
 	"github.com/celer-network/agent-pay/ctype"
 	"github.com/celer-network/agent-pay/rpc"
 	"github.com/celer-network/agent-pay/utils"
-	"github.com/golang/protobuf/ptypes/any"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 const (
@@ -679,7 +680,7 @@ func testDalSqlPay(t *testing.T, st *KVStoreSQL) {
 
 	payID := ctype.Hex2PayID("abcdef")
 	payBytes := []byte{0, 1, 2, 3, 4}
-	note := &any.Any{}
+	note := &anypb.Any{}
 	cid := ctype.Hex2Cid("abcdef")
 
 	err := dal.InsertPayment(payID, payBytes, nil, note, cid, 1, cid, 1)
@@ -966,7 +967,7 @@ func testDalSqlMessage(t *testing.T, st *KVStoreSQL) {
 		t.Errorf("failed GetChanMessage: %v", err)
 	} else if !found {
 		t.Errorf("GetChanMessage did not find entry")
-	} else if !reflect.DeepEqual(msg2, msg) {
+	} else if !proto.Equal(msg2, msg) {
 		t.Errorf("wrong msg: %v, %v", msg2, msg)
 	}
 

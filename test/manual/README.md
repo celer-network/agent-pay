@@ -7,29 +7,38 @@ Follow instructions below to easily start a local testnet and play with multiple
 - Make sure you have [geth](https://geth.ethereum.org/docs/install-and-build/installing-geth) and go (version 1.13+) installed.
 - There are two storage options: SQLite3 and CockroachDB. Install CockroachDB if you plan to use it.
 - Set environment variable `AGENTPAY` to your local agent-pay repo path.
+- Optionally set `AGENTPAY_MANUAL_ROOT` if you want the manual testnet data somewhere other than `/tmp/celer_manual_test`.
 - Run **`go build $AGENTPAY/tools/osp-cli`** to build to OSP CLI tool, read the [CLI command reference](../../tools/osp-cli/README.md).
+
+For a repeatable smoke test of the two-OSP manual path, you can also run **`AGENTPAY=$PWD ./test/manual/smoke.sh`**. That script sets up the local chain, starts OSP1 and OSP2, opens the inter-OSP channel, builds routing tables, sends a payment, verifies `COSIGNED_PAID`, checks balances, and then cleans up the temporary processes.
 
 ## 2. Start local Ethereum testnet
 
 Run **`./setup.sh`** to start a local Etherem testnet running on your machine.
 
+- Default output root: `$AGENTPAY_MANUAL_ROOT` when set, otherwise `/tmp/celer_manual_test`.
+- Override just for one run: `./setup.sh /tmp/celer_manual_test_demo1` or `./setup.sh auto /tmp/celer_manual_test_demo1`.
+- When you use `./setup.sh auto`, router registration is also handled during setup, so you can skip the manual `-register` steps below unless you want to repeat them explicitly.
+
 Take a look at the constants in [setup.go](./setup.go). In addition to start a testnet, this program would also do the following:
 
 - Deploy Celer state channel contracts, test ERC20 token contract and multi-session CelerApp contracts.
 - Create 5 test OSP ETH accounts, fund each account with 1 million test ETH and 1 billion test ERC20 tokens.
-- Create profiles for the 5 test OSPs, located at `/tmp/celer_manual_test/profile/`. This [sample_profile.json](./sample_profile.json) shows an example of well formated OSP profile.
+- Create profiles for the 5 test OSPs, located at `$AGENTPAY_MANUAL_ROOT/profile/`. This [sample_profile.json](./sample_profile.json) shows an example of well formated OSP profile.
 
 ## 3. Prepare two OSP accounts
 
-Open a new terminal for CLI commands, run **`./osp-cli -profile /tmp/celer_manual_test/profile/o1_profile.json -ks $AGENTPAY/testing/env/keystore/osp1.json -ethpooldeposit -amount 10000 -register -nopassword`** to deposit 1000 ETH of OSP1 to the EthPool contract and approve to the CelerLedger contract, then register OSP1 as a state channel network router.
+Open a new terminal for CLI commands, run **`./osp-cli -profile $AGENTPAY_MANUAL_ROOT/profile/o1_profile.json -ks $AGENTPAY/testing/env/keystore/osp1.json -ethpooldeposit -amount 10000 -register -nopassword`** to deposit 1000 ETH of OSP1 to the EthPool contract and approve to the CelerLedger contract, then register OSP1 as a state channel network router.
 
-Then do the same for OSP2, run **`./osp-cli -profile /tmp/celer_manual_test/profile/o2_profile.json -ks $AGENTPAY/testing/env/keystore/osp2.json -ethpooldeposit -amount 10000 -register -nopassword`**
+Then do the same for OSP2, run **`./osp-cli -profile $AGENTPAY_MANUAL_ROOT/profile/o2_profile.json -ks $AGENTPAY/testing/env/keystore/osp2.json -ethpooldeposit -amount 10000 -register -nopassword`**
 
 ## 4. Run two OSPs
 
 ### Option 1: use SQLite as storage backend (easier setup)
 
-Run **`./run_osp.sh 1`** and **`./run_osp.sh 2`** in two new terminals respectively to start OSP1 and OSP2. OSP data store is created at `/tmp/celer_manual_test/store/[ospAddr]`
+Run **`./run_osp.sh 1`** and **`./run_osp.sh 2`** in two new terminals respectively to start OSP1 and OSP2. OSP data store is created at `$AGENTPAY_MANUAL_ROOT/store/[ospAddr]`.
+
+For local manual runs, `run_osp.sh` defaults `CELER_INSECURE_TLS=1` so inter-OSP dials work with the built-in self-signed localhost certificate. If you start the servers directly instead of using this script, set that env var yourself.
 
 ### Option 2: use CockroachDB as storage backend (higher performance)
 
@@ -53,6 +62,15 @@ Then run **`./osp-cli -adminhostport localhost:8190 -registerstream -file peerse
 
 Run **`./osp-cli -adminhostport localhost:8190 -openchannel -peer 00290a43e5b2b151d530845b2d5a818240bc7c70 -selfdeposit 10 -peerdeposit 10`** to let OSP1 open an ETH CelerPay channel with OSP2. You can see new logs for channel opening in both OSP terminals.
 
+Before sending payments, build the routing table on both OSPs:
+
+```bash
+curl -X POST -H 'Content-Type: application/json' -d '{}' http://localhost:8190/admin/route/build
+curl -X POST -H 'Content-Type: application/json' -d '{}' http://localhost:8290/admin/route/build
+```
+
+This extra step is still required in the current backend after topology changes such as opening a new channel.
+
 ## 7. Make an off-chain payment
 
 Run **`./osp-cli -adminhostport localhost:8190 -sendtoken -receiver 00290a43e5b2b151d530845b2d5a818240bc7c70 -amount 0.01`** to let OSP1 make an off-chain payment of 0.01 ETH to OSP2. You can see the returned payment ID from the admin tool log. Payment logs are also shown in OSP terminals.
@@ -61,21 +79,21 @@ Run **`./osp-cli -adminhostport localhost:8190 -sendtoken -receiver 00290a43e5b2
 
 Run the following command to view the payment state at the local database of OSP2.
 
-- If using SQLite: **`./osp-cli -profile /tmp/celer_manual_test/profile/o2_profile.json -storedir /tmp/celer_manual_test/store/00290a43e5b2b151d530845b2d5a818240bc7c70 -dbview pay -payid [payment ID]`**
-- If using CockroachDB: **`./osp-cli -profile /tmp/celer_manual_test/profile/o2_profile.json -storesql postgresql://celer_test_o2@localhost:26257/celer_test_o2?sslmode=disable -dbview pay -payid [payment ID]`**
+- If using SQLite: **`./osp-cli -profile $AGENTPAY_MANUAL_ROOT/profile/o2_profile.json -storedir $AGENTPAY_MANUAL_ROOT/store/00290a43e5b2b151d530845b2d5a818240bc7c70 -dbview pay -payid [payment ID]`**
+- If using CockroachDB: **`./osp-cli -profile $AGENTPAY_MANUAL_ROOT/profile/o2_profile.json -storesql postgresql://celer_test_o2@localhost:26257/celer_test_o2?sslmode=disable -dbview pay -payid [payment ID]`**
 
 ## 9. View off-chain channel state
 
 Run the following command to view the channel state at the local database of OSP1.
 
-- If using SQLite: **`./osp-cli -profile /tmp/celer_manual_test/profile/o1_profile.json -storedir /tmp/celer_manual_test/store/0015f5863ddc59ab6610d7b6d73b2eacd43e6b7e -dbview channel -peer 00290a43e5b2b151d530845b2d5a818240bc7c70`** 
-- If using CockroachDB: **`./osp-cli -profile /tmp/celer_manual_test/profile/o1_profile.json -storesql postgresql://celer_test_o1@localhost:26257/celer_test_o1?sslmode=disable -dbview channel -peer 00290a43e5b2b151d530845b2d5a818240bc7c70`** 
+- If using SQLite: **`./osp-cli -profile $AGENTPAY_MANUAL_ROOT/profile/o1_profile.json -storedir $AGENTPAY_MANUAL_ROOT/store/0015f5863ddc59ab6610d7b6d73b2eacd43e6b7e -dbview channel -peer 00290a43e5b2b151d530845b2d5a818240bc7c70`**
+- If using CockroachDB: **`./osp-cli -profile $AGENTPAY_MANUAL_ROOT/profile/o1_profile.json -storesql postgresql://celer_test_o1@localhost:26257/celer_test_o1?sslmode=disable -dbview channel -peer 00290a43e5b2b151d530845b2d5a818240bc7c70`**
 
 You can see the channel information from the returned output. The simplex channel sequence number and free balances should reflect the 0.01 ETH payment just made.
 
 ## 10. View on-chain channel state
 
-Run **`./osp-cli -profile /tmp/celer_manual_test/profile/o1_profile.json -onchainview channel -cid [channel ID]`** to view the on-chain channel information stored in the smart contract. 
+Run **`./osp-cli -profile $AGENTPAY_MANUAL_ROOT/profile/o1_profile.json -onchainview channel -cid [channel ID]`** to view the on-chain channel information stored in the smart contract.
 
 ## 11. Try other CLI commands and more OSPs
 

@@ -6,6 +6,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/celer-network/agent-pay/ctype"
@@ -15,12 +17,9 @@ import (
 )
 
 var auto = flag.Bool("auto", false, "automatically add/approve fund and register osps when setup")
+var outRootDir = flag.String("outroot", "/tmp/celer_manual_test/", "output root dir for generated profiles, stores, and local chain data")
 
 const (
-	outRootDir = "/tmp/celer_manual_test/"
-	profileDir = outRootDir + "profile/"
-	storeDir   = outRootDir + "store/" // OSP SQLite store path is `storeDir/ospAddr`
-
 	osp1Addr = "0015f5863ddc59ab6610d7b6d73b2eacd43e6b7e"
 	osp2Addr = "00290a43e5b2b151d530845b2d5a818240bc7c70"
 	osp3Addr = "003ea363bccfd7d14285a34a6b1deb862df0bc84"
@@ -47,26 +46,41 @@ const (
 	SimpleAppAddr = "58712219a4bdbb0e581dcaf6f5c4c2b2d2f42158" // multi-session simple app
 	GomokuAppAddr = "4e4a0101cd72258183586a51f8254e871b9c544a" // multi-session gomoku app
 
-	osp1Keystore = "../../testing/env/keystore/osp1.json"
-	osp2Keystore = "../../testing/env/keystore/osp2.json"
-	osp3Keystore = "../../testing/env/keystore/osp3.json"
-	osp4Keystore = "../../testing/env/keystore/osp4.json"
-	osp5Keystore = "../../testing/env/keystore/osp5.json"
 )
+
+func normalizeOutRootDir(dir string) string {
+	if dir == "" {
+		dir = "/tmp/celer_manual_test/"
+	}
+	if !strings.HasSuffix(dir, "/") {
+		dir += "/"
+	}
+	return dir
+}
 
 func main() {
 	flag.Parse()
+	rootDir := normalizeOutRootDir(*outRootDir)
+	profileDir := rootDir + "profile/"
+	storeDir := rootDir + "store/"
 	// mkdir out root
-	err := os.MkdirAll(outRootDir, os.ModePerm)
+	err := os.MkdirAll(rootDir, os.ModePerm)
 	e2e.CheckError(err, "creating root dir")
-	fmt.Println("Using folder:", outRootDir)
+	fmt.Println("Using folder:", rootDir)
 	os.MkdirAll(profileDir, os.ModePerm)
 	os.MkdirAll(storeDir, os.ModePerm)
 	agentPayDir := os.Getenv("AGENTPAY") + "/"
+	ospKeystores := []string{
+		filepath.Join(agentPayDir, "testing/env/keystore/osp1.json"),
+		filepath.Join(agentPayDir, "testing/env/keystore/osp2.json"),
+		filepath.Join(agentPayDir, "testing/env/keystore/osp3.json"),
+		filepath.Join(agentPayDir, "testing/env/keystore/osp4.json"),
+		filepath.Join(agentPayDir, "testing/env/keystore/osp5.json"),
+	}
 	tf.SetEnvDir(agentPayDir + "testing/env/")
-	tf.SetOutRootDir(outRootDir)
+	tf.SetOutRootDir(rootDir)
 	e2e.SetEnvDir(agentPayDir + "testing/env/")
-	e2e.SetOutRootDir(outRootDir)
+	e2e.SetOutRootDir(rootDir)
 	ethProc, err := e2e.StartChain()
 	defer ethProc.Kill()
 	time.Sleep(3 * time.Second)
@@ -75,7 +89,8 @@ func main() {
 	tf.E2eProfile, _ = e2e.SetupOnChain(make(map[string]ctype.Addr), 0, *auto)
 	if *auto {
 		// if auto fund, also register all osps on-chain as routers
-		tf.RegisterRouters([]string{osp1Keystore, osp2Keystore, osp3Keystore, osp4Keystore, osp5Keystore})
+		err = tf.RegisterRouters(ospKeystores)
+		e2e.CheckError(err, "registering routers")
 	}
 
 	profile := *tf.E2eProfile
@@ -122,10 +137,7 @@ func advanceBlocks() {
 		ticker.Stop()
 	}()
 
-	for {
-		select {
-		case <-ticker.C:
-			tf.AdvanceBlock()
-		}
+	for range ticker.C {
+		tf.AdvanceBlock()
 	}
 }

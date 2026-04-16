@@ -22,8 +22,8 @@ import (
 	"github.com/celer-network/goutils/log"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc"
+	empty "google.golang.org/protobuf/types/known/emptypb"
 )
 
 type ClientController struct {
@@ -243,6 +243,13 @@ func (cc *ClientController) GetIncomingPaymentStatus(paymentID string) (int, err
 		return 0, err
 	}
 	return int(status.Status), nil
+}
+
+func (cc *ClientController) GetIncomingPaymentInfo(paymentID string) (*rpc.PaymentInfo, error) {
+	return cc.apiClient.GetIncomingPaymentInfo(
+		context.Background(), &rpc.PaymentID{
+			PaymentId: paymentID,
+		})
 }
 
 func (cc *ClientController) GetOutgoingPaymentStatus(paymentID string) (int, error) {

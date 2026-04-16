@@ -21,15 +21,23 @@ func (s Sig) Hex() string {
 
 // Bytes2Sig create a new Sig based on b's content
 // if len(b) isn't 65, return ZeroSig
-// Returned Sig has s[64] fixed, ie. 27/28->0/1
 func Bytes2Sig(b []byte) Sig {
 	if len(b) != sigLength {
 		return ZeroSig
 	}
 	var s Sig
 	copy(s[:], b)
-	if s[64] == 27 || s[64] == 28 {
-		s[64] -= 27
-	}
 	return s
+}
+
+// ToOnChainSig returns a copy of b with v adjusted to 27/28 for contract recovery.
+func ToOnChainSig(b []byte) []byte {
+	if len(b) == 0 {
+		return nil
+	}
+	sig := append([]byte(nil), b...)
+	if len(sig) == sigLength && (sig[64] == 0 || sig[64] == 1) {
+		sig[64] += 27
+	}
+	return sig
 }

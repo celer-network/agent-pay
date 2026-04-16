@@ -170,8 +170,8 @@ func (b *routingTableBuilder) removeEdge(cid ctype.CidType) error {
 	}
 	if !found {
 		errStr := fmt.Sprintf("cid %x doesn't exist in any token addr", cid)
-		log.Errorf(errStr)
-		return fmt.Errorf(errStr)
+		log.Error(errStr)
+		return fmt.Errorf("%s", errStr)
 	}
 	return nil
 }

@@ -13,7 +13,7 @@ import (
 	"github.com/celer-network/agent-pay/ledgerview"
 	"github.com/celer-network/goutils/log"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 func (p *Processor) ViewChannelOnChain() {

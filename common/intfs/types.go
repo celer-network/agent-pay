@@ -15,7 +15,7 @@ import (
 type MonitorService interface {
 	GetCurrentBlockNumber() *big.Int
 	RegisterDeadline(deadline monitor.Deadline) monitor.CallbackID
-	Monitor(cfg *monitor.Config, callback func(monitor.CallbackID, types.Log)) (monitor.CallbackID, error)
+	Monitor(cfg *monitor.Config, callback func(monitor.CallbackID, types.Log) bool) (monitor.CallbackID, error)
 	RemoveDeadline(id monitor.CallbackID)
 	RemoveEvent(id monitor.CallbackID)
 	Close()

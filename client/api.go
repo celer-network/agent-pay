@@ -16,7 +16,7 @@ import (
 	"github.com/celer-network/agent-pay/storage"
 	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/ptypes/any"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 // mycb implements event.OpenChannel to receive callback from cnode
@@ -126,7 +126,7 @@ func (c *CelerClient) InstantiateChannelForToken(token *entity.TokenInfo, appcb 
 // AddBooleanPay creates a condpay based on args, and call cnode to send CondPayRequest
 // returns payId or err
 func (c *CelerClient) AddBooleanPay(
-	xfer *entity.TokenTransfer, conds []*entity.Condition, resolveDeadline uint64, note *any.Any, dstNetId uint64) (ctype.PayIDType, error) {
+	xfer *entity.TokenTransfer, conds []*entity.Condition, resolveDeadline uint64, note *anypb.Any, dstNetId uint64) (ctype.PayIDType, error) {
 
 	if xfer == nil || xfer.Receiver == nil || xfer.Receiver.Account == nil {
 		return ctype.ZeroPayID, common.ErrInvalidArg

@@ -4,6 +4,7 @@
 package app
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -24,10 +26,17 @@ var (
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
+	_ = abi.ConvertType
 )
 
+// IBooleanOutcomeMetaData contains all meta data concerning the IBooleanOutcome contract.
+var IBooleanOutcomeMetaData = &bind.MetaData{
+	ABI: "[{\"constant\":true,\"inputs\":[{\"name\":\"_query\",\"type\":\"bytes\"}],\"name\":\"isFinalized\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_query\",\"type\":\"bytes\"}],\"name\":\"getOutcome\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]",
+}
+
 // IBooleanOutcomeABI is the input ABI used to generate the binding from.
-const IBooleanOutcomeABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"_query\",\"type\":\"bytes\"}],\"name\":\"isFinalized\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_query\",\"type\":\"bytes\"}],\"name\":\"getOutcome\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+// Deprecated: Use IBooleanOutcomeMetaData.ABI instead.
+var IBooleanOutcomeABI = IBooleanOutcomeMetaData.ABI
 
 // IBooleanOutcome is an auto generated Go binding around an Ethereum contract.
 type IBooleanOutcome struct {
@@ -126,18 +135,18 @@ func NewIBooleanOutcomeFilterer(address common.Address, filterer bind.ContractFi
 
 // bindIBooleanOutcome binds a generic wrapper to an already deployed contract.
 func bindIBooleanOutcome(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(IBooleanOutcomeABI))
+	parsed, err := IBooleanOutcomeMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+	return bind.NewBoundContract(address, *parsed, caller, transactor, filterer), nil
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_IBooleanOutcome *IBooleanOutcomeRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_IBooleanOutcome *IBooleanOutcomeRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _IBooleanOutcome.Contract.IBooleanOutcomeCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -156,7 +165,7 @@ func (_IBooleanOutcome *IBooleanOutcomeRaw) Transact(opts *bind.TransactOpts, me
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_IBooleanOutcome *IBooleanOutcomeCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_IBooleanOutcome *IBooleanOutcomeCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _IBooleanOutcome.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -175,12 +184,17 @@ func (_IBooleanOutcome *IBooleanOutcomeTransactorRaw) Transact(opts *bind.Transa
 //
 // Solidity: function getOutcome(bytes _query) view returns(bool)
 func (_IBooleanOutcome *IBooleanOutcomeCaller) GetOutcome(opts *bind.CallOpts, _query []byte) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _IBooleanOutcome.contract.Call(opts, out, "getOutcome", _query)
-	return *ret0, err
+	var out []interface{}
+	err := _IBooleanOutcome.contract.Call(opts, &out, "getOutcome", _query)
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
 }
 
 // GetOutcome is a free data retrieval call binding the contract method 0xea4ba8eb.
@@ -201,12 +215,17 @@ func (_IBooleanOutcome *IBooleanOutcomeCallerSession) GetOutcome(_query []byte) 
 //
 // Solidity: function isFinalized(bytes _query) view returns(bool)
 func (_IBooleanOutcome *IBooleanOutcomeCaller) IsFinalized(opts *bind.CallOpts, _query []byte) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _IBooleanOutcome.contract.Call(opts, out, "isFinalized", _query)
-	return *ret0, err
+	var out []interface{}
+	err := _IBooleanOutcome.contract.Call(opts, &out, "isFinalized", _query)
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
 }
 
 // IsFinalized is a free data retrieval call binding the contract method 0xbcdbda94.

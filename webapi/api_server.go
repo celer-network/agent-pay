@@ -24,10 +24,10 @@ import (
 	"github.com/celer-network/agent-pay/webapi/rpc"
 	"github.com/celer-network/goutils/eth"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/rs/cors"
 	"google.golang.org/grpc"
+	empty "google.golang.org/protobuf/types/known/emptypb"
 )
 
 type ApiServer struct {
@@ -208,6 +208,26 @@ func (cb *depositCallback) OnError(jobID string, err string) {
 	cb.err <- err
 }
 
+func (s *ApiServer) startDeposit(
+	request *rpc.DepositOrWithdrawRequest,
+	cb *depositCallback) (string, error) {
+	if request.GetTokenInfo() == nil {
+		return "", errors.New("Missing token info")
+	}
+	tokenInfo := request.TokenInfo
+	switch entity.TokenType(tokenInfo.TokenType) {
+	case entity.TokenType_ETH:
+		return s.apiClient.DepositETH(request.Amount, cb)
+	case entity.TokenType_ERC20:
+		return s.apiClient.DepositERC20(
+			&celersdk.Token{Erctype: "ERC20", Addr: tokenInfo.TokenAddress},
+			request.Amount,
+			cb)
+	default:
+		return "", errors.New("Unknown token type")
+	}
+}
+
 func (s *ApiServer) Deposit(
 	context context.Context, request *rpc.DepositOrWithdrawRequest) (*rpc.DepositOrWithdrawJob, error) {
 	cb := &depositCallback{
@@ -215,20 +235,7 @@ func (s *ApiServer) Deposit(
 		txHash:    make(chan string),
 		err:       make(chan string),
 	}
-	var err error
-	var jobID string
-	tokenInfo := request.TokenInfo
-	switch entity.TokenType(tokenInfo.TokenType) {
-	case entity.TokenType_ETH:
-		jobID, err = s.apiClient.DepositETH(request.Amount, cb)
-	case entity.TokenType_ERC20:
-		jobID, err = s.apiClient.DepositERC20(
-			&celersdk.Token{Erctype: "ERC20", Addr: tokenInfo.TokenAddress},
-			request.Amount,
-			cb)
-	default:
-		err = errors.New("Unknown token type")
-	}
+	jobID, err := s.startDeposit(request, cb)
 	if err != nil {
 		return nil, err
 	}
@@ -238,6 +245,20 @@ func (s *ApiServer) Deposit(
 	case errMsg := <-cb.err:
 		return nil, errors.New(errMsg)
 	}
+}
+
+func (s *ApiServer) DepositNonBlocking(
+	context context.Context, request *rpc.DepositOrWithdrawRequest) (*rpc.DepositOrWithdrawJob, error) {
+	cb := &depositCallback{
+		apiClient: s.apiClient,
+		txHash:    make(chan string),
+		err:       make(chan string),
+	}
+	jobID, err := s.startDeposit(request, cb)
+	if err != nil {
+		return nil, err
+	}
+	return &rpc.DepositOrWithdrawJob{JobId: jobID}, nil
 }
 
 func (s *ApiServer) MonitorDepositJob(
@@ -274,6 +295,26 @@ func (cb *withdrawCallback) OnError(withdrawHash string, err string) {
 	cb.err <- err
 }
 
+func (s *ApiServer) startCooperativeWithdraw(
+	request *rpc.DepositOrWithdrawRequest,
+	cb *withdrawCallback) (string, error) {
+	if request.GetTokenInfo() == nil {
+		return "", errors.New("Missing token info")
+	}
+	tokenInfo := request.TokenInfo
+	switch entity.TokenType(tokenInfo.TokenType) {
+	case entity.TokenType_ETH:
+		return s.apiClient.WithdrawETH(request.Amount, cb)
+	case entity.TokenType_ERC20:
+		return s.apiClient.WithdrawERC20(
+			&celersdk.Token{Erctype: "ERC20", Addr: tokenInfo.TokenAddress},
+			request.Amount,
+			cb)
+	default:
+		return "", errors.New("Unknown token type")
+	}
+}
+
 func (s *ApiServer) CooperativeWithdraw(
 	context context.Context, request *rpc.DepositOrWithdrawRequest) (*rpc.DepositOrWithdrawJob, error) {
 	cb := &withdrawCallback{
@@ -282,20 +323,7 @@ func (s *ApiServer) CooperativeWithdraw(
 		err:       make(chan string),
 	}
 
-	var err error
-	var jobID string
-	tokenInfo := request.TokenInfo
-	switch entity.TokenType(tokenInfo.TokenType) {
-	case entity.TokenType_ETH:
-		jobID, err = s.apiClient.WithdrawETH(request.Amount, cb)
-	case entity.TokenType_ERC20:
-		jobID, err = s.apiClient.WithdrawERC20(
-			&celersdk.Token{Erctype: "ERC20", Addr: tokenInfo.TokenAddress},
-			request.Amount,
-			cb)
-	default:
-		err = errors.New("Unknown token type")
-	}
+	jobID, err := s.startCooperativeWithdraw(request, cb)
 	if err != nil {
 		return nil, err
 	}
@@ -306,6 +334,21 @@ func (s *ApiServer) CooperativeWithdraw(
 	case errMsg := <-cb.err:
 		return nil, errors.New(errMsg)
 	}
+}
+
+func (s *ApiServer) CooperativeWithdrawNonBlocking(
+	context context.Context,
+	request *rpc.DepositOrWithdrawRequest) (*rpc.DepositOrWithdrawJob, error) {
+	cb := &withdrawCallback{
+		apiClient: s.apiClient,
+		txHash:    make(chan string),
+		err:       make(chan string),
+	}
+	jobID, err := s.startCooperativeWithdraw(request, cb)
+	if err != nil {
+		return nil, err
+	}
+	return &rpc.DepositOrWithdrawJob{JobId: jobID}, nil
 }
 
 func (s *ApiServer) MonitorCooperativeWithdrawJob(
@@ -402,6 +445,40 @@ func (s *ApiServer) SendConditionalPayment(
 	return &rpc.PaymentID{PaymentId: payID}, nil
 }
 
+func (s *ApiServer) SendToken(
+	context context.Context,
+	request *rpc.SendTokenRequest) (*rpc.PaymentID, error) {
+	if request.GetTokenInfo() == nil {
+		return nil, errors.New("Missing token info")
+	}
+	var noteTypeURL string
+	var noteValue []byte
+	if request.Note != nil {
+		noteTypeURL = request.Note.TypeUrl
+		noteValue = request.Note.Value
+	}
+	tokenInfo := request.TokenInfo
+	var payID string
+	var err error
+	switch entity.TokenType(tokenInfo.TokenType) {
+	case entity.TokenType_ETH:
+		payID, err = s.apiClient.SendETH(request.Destination, request.Amount, noteTypeURL, noteValue)
+	case entity.TokenType_ERC20:
+		payID, err = s.apiClient.SendToken(
+			&celersdk.Token{Erctype: "ERC20", Addr: tokenInfo.TokenAddress},
+			request.Destination,
+			request.Amount,
+			noteTypeURL,
+			noteValue)
+	default:
+		return nil, errors.New("Unknown token type")
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &rpc.PaymentID{PaymentId: payID}, nil
+}
+
 func (s *ApiServer) ConfirmOutgoingPayment(
 	context context.Context, request *rpc.PaymentID) (*empty.Empty, error) {
 	err := s.apiClient.ConfirmPay(request.PaymentId)
@@ -447,28 +524,32 @@ func (s *ApiServer) GetOnChainPaymentInfo(
 	return &rpc.OnChainPaymentInfo{Amount: info.Amount, ResolveDeadline: info.ResolveDeadline}, nil
 }
 
+func paymentInfoFromClientPayment(payment *celersdkintf.Payment) *rpc.PaymentInfo {
+	tokenAddr := ctype.Hex2Addr(payment.TokenAddr)
+	var tokenType entity.TokenType
+	if tokenAddr == ctype.Hex2Addr(ctype.EthTokenAddrStr) {
+		tokenType = entity.TokenType_ETH
+	} else {
+		tokenType = entity.TokenType_ERC20
+	}
+	return &rpc.PaymentInfo{
+		PaymentId: payment.UID,
+		Sender:    payment.Sender,
+		Receiver:  payment.Receiver,
+		TokenInfo: &rpc.TokenInfo{
+			TokenType:    tokenType,
+			TokenAddress: payment.TokenAddr,
+		},
+		Amount:      payment.AmtWei,
+		PaymentJson: payment.PayJSON,
+		Status:      uint32(payment.Status),
+	}
+}
+
 func (s *ApiServer) SubscribeIncomingPayments(
 	empty *empty.Empty, stream rpc.WebApi_SubscribeIncomingPaymentsServer) error {
 	writeToStream := func(payment *celersdkintf.Payment) error {
-		tokenAddr := ctype.Hex2Addr(payment.TokenAddr)
-		var tokenType entity.TokenType
-		if tokenAddr == ctype.Hex2Addr(ctype.EthTokenAddrStr) {
-			tokenType = entity.TokenType_ETH
-		} else {
-			tokenType = entity.TokenType_ERC20
-		}
-		return stream.Send(&rpc.PaymentInfo{
-			PaymentId: payment.UID,
-			Sender:    payment.Sender,
-			Receiver:  payment.Receiver,
-			TokenInfo: &rpc.TokenInfo{
-				TokenType:    tokenType,
-				TokenAddress: payment.TokenAddr,
-			},
-			Amount:      payment.AmtWei,
-			PaymentJson: payment.PayJSON,
-			Status:      uint32(payment.Status),
-		})
+		return stream.Send(paymentInfoFromClientPayment(payment))
 	}
 	callbackImpl := s.callbackImpl
 	for {
@@ -490,13 +571,6 @@ func (s *ApiServer) SubscribeIncomingPayments(
 func (s *ApiServer) SubscribeOutgoingPayments(
 	empty *empty.Empty, stream rpc.WebApi_SubscribeOutgoingPaymentsServer) error {
 	writeToStream := func(payment *celersdkintf.Payment, errInfo *celersdkintf.E) error {
-		tokenAddr := ctype.Hex2Addr(payment.TokenAddr)
-		var tokenType entity.TokenType
-		if tokenAddr == ctype.Hex2Addr(ctype.EthTokenAddrStr) {
-			tokenType = entity.TokenType_ETH
-		} else {
-			tokenType = entity.TokenType_ERC20
-		}
 		var errReason string
 		var errCode int64
 		if errInfo != nil {
@@ -504,18 +578,7 @@ func (s *ApiServer) SubscribeOutgoingPayments(
 			errCode = int64(errInfo.Code)
 		}
 		return stream.Send(&rpc.OutgoingPaymentInfo{
-			Payment: &rpc.PaymentInfo{
-				PaymentId: payment.UID,
-				Sender:    payment.Sender,
-				Receiver:  payment.Receiver,
-				TokenInfo: &rpc.TokenInfo{
-					TokenType:    tokenType,
-					TokenAddress: payment.TokenAddr,
-				},
-				Amount:      payment.AmtWei,
-				PaymentJson: payment.PayJSON,
-				Status:      uint32(payment.Status),
-			},
+			Payment:     paymentInfoFromClientPayment(payment),
 			ErrorReason: errReason,
 			ErrorCode:   errCode,
 		})
@@ -541,6 +604,15 @@ func (s *ApiServer) GetIncomingPaymentStatus(
 	context context.Context, request *rpc.PaymentID) (*rpc.PaymentStatus, error) {
 	status := s.apiClient.GetIncomingPaymentStatus(request.PaymentId)
 	return &rpc.PaymentStatus{Status: uint32(status)}, nil
+}
+
+func (s *ApiServer) GetIncomingPaymentInfo(
+	context context.Context, request *rpc.PaymentID) (*rpc.PaymentInfo, error) {
+	payment, err := s.apiClient.GetIncomingPaymentInfo(request.PaymentId)
+	if err != nil {
+		return nil, err
+	}
+	return paymentInfoFromClientPayment(payment), nil
 }
 
 func (s *ApiServer) GetOutgoingPaymentStatus(

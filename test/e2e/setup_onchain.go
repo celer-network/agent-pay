@@ -30,6 +30,7 @@ var channelAddrBundle deploy.CelerChannelAddrBundle
 var ethPoolContract *ethpool.EthPool
 var erc20Contract *chain.ERC20
 var autoFund bool
+var onchainChainID *big.Int
 
 var grpAddrs = [][]string{
 	[]string{ospEthAddr, depositorEthAddr, osp2EthAddr, osp3EthAddr, osp4EthAddr, osp5EthAddr},
@@ -56,9 +57,17 @@ func SetupOnChain(appMap map[string]ctype.Addr, groupId uint64, autofund bool) (
 	etherBaseAuth = bind.NewKeyedTransactor(ethbasePrivKey)
 	price := big.NewInt(2e9) // 2Gwei
 	etherBaseAuth.GasPrice = price
-	etherBaseAuth.GasLimit = 7000000
 
 	ctx := context.Background()
+	onchainChainID, err = conclient.NetworkID(ctx)
+	if err != nil {
+		log.Fatalf("Failed to get Ethereum network id: %v", err)
+	}
+	etherBaseAuth, err = bind.NewKeyedTransactorWithChainID(ethbasePrivKey, onchainChainID)
+	if err != nil {
+		log.Fatalf("Failed to create keyed transactor: %v", err)
+	}
+	etherBaseAuth.GasPrice = price
 	// deploy celer channel contracts
 	channelAddrBundle = deploy.DeployAll(etherBaseAuth, conclient, ctx, 0)
 	// deploy router registry
@@ -87,11 +96,9 @@ func SetupOnChain(appMap map[string]ctype.Addr, groupId uint64, autofund bool) (
 	chkTxStatus(receipt.Status, "Disable balance limit")
 
 	// Deploy sample ERC20 contract (MOON)
-	initAmt := new(big.Int)
-	initAmt.SetString("500000000000000000000000000000000000000000000", 10)
 	var erc20Addr ctype.Addr
 	var tx2 *ethtypes.Transaction
-	erc20Addr, tx2, erc20Contract, err = chain.DeployERC20(etherBaseAuth, conclient, initAmt, "Moon", 18, "MOON")
+	erc20Addr, tx2, erc20Contract, err = chain.DeployERC20(etherBaseAuth, conclient)
 	if err != nil {
 		log.Fatalf("Failed to deploy ERC20: %v", err)
 	}
@@ -298,7 +305,10 @@ func fundEthAddrStep2(addrStr, privKeyStr string) (*ethtypes.Transaction, *ethty
 	if err != nil {
 		log.Fatalln("failed to get private key", addrStr, err)
 	}
-	auth := bind.NewKeyedTransactor(privKey)
+	auth, err := bind.NewKeyedTransactorWithChainID(privKey, onchainChainID)
+	if err != nil {
+		log.Fatalln("failed to create keyed transactor", addrStr, err)
+	}
 	auth.GasPrice = etherBaseAuth.GasPrice
 	ethAmt := new(big.Int)
 	ethAmt.SetString("1000000000000000000000000", 10) // 1 million ETH

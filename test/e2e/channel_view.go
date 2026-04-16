@@ -209,7 +209,7 @@ func channelView(t *testing.T, tokenType entity.TokenType, tokenAddr string) {
 		"-list",
 		"-detail",
 		"-token", tokenAddr,
-		"-inactivesec", fmt.Sprintf("%d", int(time.Now().Sub(ts).Seconds())),
+		"-inactivesec", fmt.Sprintf("%d", int(time.Since(ts).Seconds())),
 		"-logcolor",
 		"-logprefix", "cli").Wait()
 

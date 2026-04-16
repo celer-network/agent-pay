@@ -4,6 +4,7 @@
 package ledgerstruct
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -24,22 +26,34 @@ var (
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
+	_ = abi.ConvertType
 )
 
+// LedgerStructMetaData contains all meta data concerning the LedgerStruct contract.
+var LedgerStructMetaData = &bind.MetaData{
+	ABI: "[]",
+	Bin: "0x60556032600b8282823980515f1a607314602657634e487b7160e01b5f525f60045260245ffd5b305f52607381538281f3fe730000000000000000000000000000000000000000301460806040525f5ffdfea2646970667358221220370edc75e4e65a76c28e5c17020be6685a476c1b90fb353a1cbe6755618f478a64736f6c634300081d0033",
+}
+
 // LedgerStructABI is the input ABI used to generate the binding from.
-const LedgerStructABI = "[]"
+// Deprecated: Use LedgerStructMetaData.ABI instead.
+var LedgerStructABI = LedgerStructMetaData.ABI
 
 // LedgerStructBin is the compiled bytecode used for deploying new contracts.
-var LedgerStructBin = "0x60556023600b82828239805160001a607314601657fe5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72305820528a1e514b356516bd7b025fcfaafaf6a807d68d0872a6f1d8966c046ff7457164736f6c634300050a0032"
+// Deprecated: Use LedgerStructMetaData.Bin instead.
+var LedgerStructBin = LedgerStructMetaData.Bin
 
 // DeployLedgerStruct deploys a new Ethereum contract, binding an instance of LedgerStruct to it.
 func DeployLedgerStruct(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *LedgerStruct, error) {
-	parsed, err := abi.JSON(strings.NewReader(LedgerStructABI))
+	parsed, err := LedgerStructMetaData.GetAbi()
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
+	if parsed == nil {
+		return common.Address{}, nil, nil, errors.New("GetABI returned nil")
+	}
 
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(LedgerStructBin), backend)
+	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(LedgerStructBin), backend)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -143,18 +157,18 @@ func NewLedgerStructFilterer(address common.Address, filterer bind.ContractFilte
 
 // bindLedgerStruct binds a generic wrapper to an already deployed contract.
 func bindLedgerStruct(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(LedgerStructABI))
+	parsed, err := LedgerStructMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+	return bind.NewBoundContract(address, *parsed, caller, transactor, filterer), nil
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_LedgerStruct *LedgerStructRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_LedgerStruct *LedgerStructRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _LedgerStruct.Contract.LedgerStructCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -173,7 +187,7 @@ func (_LedgerStruct *LedgerStructRaw) Transact(opts *bind.TransactOpts, method s
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_LedgerStruct *LedgerStructCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_LedgerStruct *LedgerStructCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _LedgerStruct.Contract.contract.Call(opts, result, method, params...)
 }
 

@@ -15,7 +15,7 @@ import (
 	"github.com/celer-network/agent-pay/storage"
 	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 func GetBalance(dal *storage.DAL, cid ctype.CidType, myAddr ctype.Addr, blkNum uint64) (*common.ChannelBalance, error) {

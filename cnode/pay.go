@@ -22,8 +22,8 @@ import (
 	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/goutils/log"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes/any"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 func newHashLockCond() (*entity.Condition, []byte, []byte) {
@@ -47,7 +47,7 @@ func (c *CNode) OnSendToken(sendCallback event.OnSendingTokenCallback) {
 }
 
 // Similar to EstablishCondPayOnToken. This will add hash lock condition to pay condition and set time stamp.
-func (c *CNode) AddBooleanPay(newPay *entity.ConditionalPay, note *any.Any, dstNetId uint64) (ctype.PayIDType, error) {
+func (c *CNode) AddBooleanPay(newPay *entity.ConditionalPay, note *anypb.Any, dstNetId uint64) (ctype.PayIDType, error) {
 	if utils.GetTokenAddr(newPay.TransferFunc.MaxTransfer.Token) == ctype.InvalidTokenAddr {
 		return ctype.ZeroPayID, common.ErrUnknownTokenType
 	}
@@ -91,7 +91,7 @@ func (c *CNode) AddBooleanPay(newPay *entity.ConditionalPay, note *any.Any, dstN
 	var xnet *rpc.CrossNetPay
 	if dstNetId != 0 {
 		myNetId, err2 := c.dal.GetNetId()
-		if err != nil {
+		if err2 != nil {
 			return ctype.ZeroPayID, fmt.Errorf("GetNetId err %w", err2)
 		}
 		if myNetId != dstNetId { // cross network payment
@@ -386,7 +386,7 @@ func (c *CNode) ClearPaymentsWithPeerOsps() error {
 		}
 	}
 	if len(errs) != 0 {
-		return fmt.Errorf(fmt.Sprint(errs))
+		return fmt.Errorf("%s", fmt.Sprint(errs))
 	}
 	return nil
 }

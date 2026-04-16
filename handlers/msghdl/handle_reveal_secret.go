@@ -18,7 +18,7 @@ import (
 	"github.com/celer-network/goutils/eth"
 	"github.com/celer-network/goutils/log"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/golang/protobuf/ptypes/any"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 func (h *CelerMsgHandler) HandleRevealSecret(frame *common.MsgFrame) error {
@@ -54,7 +54,7 @@ func (h *CelerMsgHandler) HandleRevealSecret(frame *common.MsgFrame) error {
 
 	secret := msg.GetSecret()
 	var pay *entity.ConditionalPay
-	var note *any.Any
+	var note *anypb.Any
 	err := h.dal.Transactional(h.recvSecretTx, payID, secret, &pay, &note)
 	if err != nil {
 		if errors.Is(err, common.ErrPayOffChainResolved) {
@@ -99,7 +99,7 @@ func (h *CelerMsgHandler) recvSecretTx(tx *storage.DALTx, args ...interface{}) e
 	payID := args[0].(ctype.PayIDType)
 	secret := args[1].([]byte)
 	retPay := args[2].(**entity.ConditionalPay)
-	retNote := args[3].(**any.Any)
+	retNote := args[3].(**anypb.Any)
 
 	pay, note, inState, found, err := tx.GetPayForRecvSecret(payID)
 	if err != nil {
@@ -131,7 +131,7 @@ func (h *CelerMsgHandler) recvSecretTx(tx *storage.DALTx, args ...interface{}) e
 	if len(pay.GetConditions()) == 0 {
 		return common.ErrZeroConditions
 	}
-	if bytes.Compare(hash, pay.Conditions[0].GetHashLock()) != 0 {
+	if !bytes.Equal(hash, pay.Conditions[0].GetHashLock()) {
 		return fmt.Errorf("hash lock verification failed")
 	}
 	log.Debugf("Saving secret(%x) of hash(%x) for pay(%x)", secret, hash, payID)

@@ -5,8 +5,8 @@
 package cnode
 
 import (
-	"github.com/golang/protobuf/proto"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/proto"
 )
 
 // DO NOT enable dropRecv/dropSend in production code!
@@ -34,7 +34,7 @@ func (s *clientStreamMsgDropper) RecvMsg(m interface{}) error {
 	}
 	// if we're here, means dropRecv is true. and as long as dropRecv is true, loop recv and not return until dropRecv becomes false
 	for s.dropRecv {
-		pb.Reset() // clear m data
+		proto.Reset(pb) // clear m data
 		err = s.ClientStream.RecvMsg(m)
 		if err != nil {
 			return err

@@ -99,8 +99,15 @@ func (p *Processor) generateWithdrawHash(cid ctype.CidType, ledgerAddr ctype.Add
 }
 
 func (p *Processor) maybeHandleEvent(eLog *types.Log) bool {
+	ledgerContract := p.nodeConfig.GetLedgerContractOn(eLog.Address)
+	if ledgerContract == nil {
+		ledgerContract = p.nodeConfig.GetLedgerContract()
+	}
+	if ledgerContract == nil {
+		return false
+	}
 	e := &ledger.CelerLedgerCooperativeWithdraw{}
-	err := p.nodeConfig.GetLedgerContract().ParseEvent(event.CooperativeWithdraw, *eLog, e)
+	err := ledgerContract.ParseEvent(event.CooperativeWithdraw, *eLog, e)
 	if err != nil {
 		log.Error(err)
 		return false
@@ -144,14 +151,16 @@ func (p *Processor) monitorOnAllLedgers() {
 
 func (p *Processor) monitorEvent(ledgerContract chain.Contract) {
 	monitorCfg := &monitor.Config{
+		ChainId:       config.ChainId.Uint64(),
 		EventName:     event.CooperativeWithdraw,
 		Contract:      ledgerContract,
 		StartBlock:    p.monitorService.GetCurrentBlockNumber(),
 		CheckInterval: p.nodeConfig.GetCheckInterval(event.CooperativeWithdraw),
 	}
 	_, err := p.monitorService.Monitor(monitorCfg,
-		func(id monitor.CallbackID, eLog types.Log) {
+		func(id monitor.CallbackID, eLog types.Log) bool {
 			p.maybeHandleEvent(&eLog)
+			return false
 		})
 	if err != nil {
 		log.Error(err)
@@ -162,6 +171,7 @@ func (p *Processor) monitorSingleEvent(ledgerContract chain.Contract, reset bool
 	startBlock := p.monitorService.GetCurrentBlockNumber()
 	endBlock := new(big.Int).Add(startBlock, big.NewInt(int64(config.CooperativeWithdrawTimeout)))
 	monitorCfg := &monitor.Config{
+		ChainId:       config.ChainId.Uint64(),
 		EventName:     event.CooperativeWithdraw,
 		Contract:      ledgerContract,
 		StartBlock:    startBlock,
@@ -170,11 +180,13 @@ func (p *Processor) monitorSingleEvent(ledgerContract chain.Contract, reset bool
 		CheckInterval: p.nodeConfig.GetCheckInterval(event.CooperativeWithdraw),
 	}
 	_, err := p.monitorService.Monitor(monitorCfg,
-		func(id monitor.CallbackID, eLog types.Log) {
+		func(id monitor.CallbackID, eLog types.Log) bool {
 			if p.maybeHandleEvent(&eLog) {
 				p.monitorService.RemoveEvent(id)
-				p.dal.UpsertMonitorRestart(monitor.NewEventStr(ledgerContract.GetAddr(), event.CooperativeWithdraw), false)
+				p.dal.UpsertMonitorRestart(monitor.NewEventStr(config.ChainId.Uint64(), ledgerContract.GetAddr(), event.CooperativeWithdraw), false)
+				return true
 			}
+			return false
 		})
 	if err != nil {
 		log.Error(err)
@@ -233,6 +245,10 @@ func (p *Processor) updateOnChainBalance(
 		return
 	}
 	job.State = structs.CooperativeWithdrawSucceeded
+	err = p.dal.UpsertMonitorRestart(monitor.NewEventStr(config.ChainId.Uint64(), chanLedger.GetAddr(), event.CooperativeWithdraw), false)
+	if err != nil {
+		log.Error(err)
+	}
 	err = p.dal.PutCooperativeWithdrawJob(withdrawHash, job)
 	if err != nil {
 		log.Error(err)

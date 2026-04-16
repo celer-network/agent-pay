@@ -1,0 +1,110 @@
+# Script Helpers
+
+This directory contains maintenance and local-development scripts that are useful when working on this repo.
+
+These scripts are not part of the runtime backend itself. They are operator and maintainer utilities.
+
+## Regenerate Go Contract Bindings
+
+Use [regenerate-go-bindings.sh](./regenerate-go-bindings.sh) to regenerate the checked-in Ethereum contract bindings from Foundry artifacts in the companion `agent-pay-contracts` repo.
+
+Generated outputs covered by this script:
+
+- `chain/channel-eth-go/balancelimit/balancelimit.go`
+- `chain/channel-eth-go/channel/channel.go`
+- `chain/channel-eth-go/ethpool/ethpool.go`
+- `chain/channel-eth-go/ledger/ledger.go`
+- `chain/channel-eth-go/ledgerstruct/ledgerstruct.go`
+- `chain/channel-eth-go/migrate/migrate.go`
+- `chain/channel-eth-go/operation/operation.go`
+- `chain/channel-eth-go/payregistry/payregistry.go`
+- `chain/channel-eth-go/payresolver/payresolver.go`
+- `chain/channel-eth-go/routerregistry/routerregistry.go`
+- `chain/channel-eth-go/virtresolver/virtresolver.go`
+- `chain/channel-eth-go/wallet/wallet.go`
+- `chain/erc20.go`
+- `route/routerregistry/routerregistry.go`
+
+Handwritten exception:
+
+- `chain/channel-eth-go/deploy/deploy.go` is maintained manually and is not regenerated.
+
+Default behavior:
+
+- looks for a sibling contracts checkout at `../agent-pay-contracts`
+- runs `forge build` in that repo unless told not to
+- runs `abigen` through `go run github.com/ethereum/go-ethereum/cmd/abigen@v1.15.11`
+- writes outputs into this repo by default
+
+Required tools:
+
+- `go`
+- `jq`
+- `forge`, unless `SKIP_FORGE_BUILD=1`
+
+Important environment variables:
+
+- `CONTRACTS_REPO`: override the contracts checkout location
+- `OUTPUT_ROOT`: write generated files somewhere other than this repo root
+- `ABIGEN_VERSION`: override the default pinned `abigen` version
+- `ABIGEN`: use an already-installed `abigen` binary instead of `go run ...`
+- `SKIP_FORGE_BUILD=1`: reuse existing Foundry artifacts instead of rebuilding first
+
+Common usage:
+
+```bash
+tools/scripts/regenerate-go-bindings.sh
+```
+
+Safe dry run:
+
+```bash
+tmp=$(mktemp -d)
+OUTPUT_ROOT="$tmp" tools/scripts/regenerate-go-bindings.sh
+find "$tmp" -type f | sort
+```
+
+## Regenerate Legacy App Bindings
+
+Use [regenerate-legacy-app-bindings.sh](./regenerate-legacy-app-bindings.sh) to regenerate the legacy ABI-based Go bindings that are checked into this repo under `app/` and `testing/testapp/`.
+
+This script extracts ABI and bytecode literals from the existing Go source files, then reruns `abigen` against them. It does not depend on the companion contracts repo.
+
+Default behavior:
+
+- runs `abigen` through `go run github.com/ethereum/go-ethereum/cmd/abigen@v1.15.11`
+- rewrites the existing checked-in files in place
+
+Required tools:
+
+- `go`
+
+Optional environment variables:
+
+- `ABIGEN_VERSION`: override the default pinned `abigen` version
+- `ABIGEN`: use an already-installed `abigen` binary instead of `go run ...`
+
+Usage:
+
+```bash
+tools/scripts/regenerate-legacy-app-bindings.sh
+```
+
+## Local CockroachDB Helper
+
+Use [cockroachdb.sh](./cockroachdb.sh) as a lightweight local helper to start or stop a CockroachDB instance for development.
+
+Current behavior:
+
+- stores data under `$HOME/celerdb` by default
+- starts CockroachDB in insecure local mode on `localhost:26257`
+- initializes the schema from `storage/schema.sql`
+
+Usage:
+
+```bash
+tools/scripts/cockroachdb.sh start
+tools/scripts/cockroachdb.sh stop
+```
+
+This script is intentionally simple and is best treated as a local convenience helper, not a production deployment tool.

@@ -7,7 +7,7 @@ import (
 	"github.com/celer-network/agent-pay/ctype"
 	"github.com/celer-network/agent-pay/entity"
 	"github.com/celer-network/agent-pay/rpc"
-	"github.com/golang/protobuf/ptypes/any"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 const (
@@ -32,19 +32,19 @@ type OnNewStreamCallback interface {
 	HandleNewCelerStream(addr ctype.Addr)
 }
 type OnReceivingTokenCallback interface {
-	HandleReceivingStart(payID ctype.PayIDType, pay *entity.ConditionalPay, note *any.Any)
+	HandleReceivingStart(payID ctype.PayIDType, pay *entity.ConditionalPay, note *anypb.Any)
 	HandleReceivingDone(
 		payID ctype.PayIDType,
 		pay *entity.ConditionalPay,
-		note *any.Any,
+		note *anypb.Any,
 		reason rpc.PaymentSettleReason)
 }
 type OnSendingTokenCallback interface {
 	HandleSendComplete(
 		payID ctype.PayIDType,
 		pay *entity.ConditionalPay,
-		note *any.Any,
+		note *anypb.Any,
 		reason rpc.PaymentSettleReason)
-	HandleDestinationUnreachable(payID ctype.PayIDType, pay *entity.ConditionalPay, note *any.Any)
-	HandleSendFail(payID ctype.PayIDType, pay *entity.ConditionalPay, note *any.Any, errMsg string)
+	HandleDestinationUnreachable(payID ctype.PayIDType, pay *entity.ConditionalPay, note *anypb.Any)
+	HandleSendFail(payID ctype.PayIDType, pay *entity.ConditionalPay, note *anypb.Any, errMsg string)
 }

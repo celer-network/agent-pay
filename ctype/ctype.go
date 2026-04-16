@@ -18,7 +18,7 @@ import (
 	"github.com/celer-network/goutils/log"
 	ec "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 const (

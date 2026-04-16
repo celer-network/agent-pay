@@ -9,12 +9,13 @@ import (
 
 	"github.com/celer-network/agent-pay/ctype"
 	tf "github.com/celer-network/agent-pay/testing"
-	"github.com/celer-network/agent-pay/utils"
 )
 
-func setMultiOSP() []*tf.ServerController {
-	// Need register all osps on-chain before starting osps.
-	tf.RegisterRouters([]string{osp1Keystore, osp2Keystore, osp3Keystore, osp4Keystore, osp5Keystore})
+func setMultiOSP() ([]*tf.ServerController, error) {
+	// osp1 is already registered in TestMain; register the additional multi-OSP routers here.
+	if err := tf.RegisterRouters([]string{osp2Keystore, osp3Keystore, osp4Keystore, osp5Keystore}); err != nil {
+		return nil, err
+	}
 	os.RemoveAll(sStoreDir)
 	// Be careful: because the limit of test set up, state between the two osps is kept during tests.
 	// Each tests need to reset state between the two osps.
@@ -85,25 +86,40 @@ func setMultiOSP() []*tf.ServerController {
 		"-logcolor",
 		"-logprefix", "o5_"+osp5EthAddr[:4])
 
-	time.Sleep(time.Second)
+	time.Sleep(3 * time.Second)
 	/* OSPs connect with each other with topology:
 	  o4---o5
 	 /  \    \
 	o3---o1---o2
 	*/
-	utils.RequestRegisterStream(o2AdminWeb, ctype.Hex2Addr(ospEthAddr), localhost+o1Port)
-	utils.RequestRegisterStream(o3AdminWeb, ctype.Hex2Addr(ospEthAddr), localhost+o1Port)
-	utils.RequestRegisterStream(o4AdminWeb, ctype.Hex2Addr(ospEthAddr), localhost+o1Port)
-	utils.RequestRegisterStream(o4AdminWeb, ctype.Hex2Addr(osp3EthAddr), localhost+o3Port)
-	utils.RequestRegisterStream(o4AdminWeb, ctype.Hex2Addr(osp5EthAddr), localhost+o5Port)
-	utils.RequestRegisterStream(o5AdminWeb, ctype.Hex2Addr(osp2EthAddr), localhost+o2Port)
-	time.Sleep(time.Second)
+	if err := registerStreamWithRetry(o2AdminWeb, ctype.Hex2Addr(ospEthAddr), localhost+o1Port); err != nil {
+		return nil, err
+	}
+	if err := registerStreamWithRetry(o3AdminWeb, ctype.Hex2Addr(ospEthAddr), localhost+o1Port); err != nil {
+		return nil, err
+	}
+	if err := registerStreamWithRetry(o4AdminWeb, ctype.Hex2Addr(ospEthAddr), localhost+o1Port); err != nil {
+		return nil, err
+	}
+	if err := registerStreamWithRetry(o4AdminWeb, ctype.Hex2Addr(osp3EthAddr), localhost+o3Port); err != nil {
+		return nil, err
+	}
+	if err := registerStreamWithRetry(o4AdminWeb, ctype.Hex2Addr(osp5EthAddr), localhost+o5Port); err != nil {
+		return nil, err
+	}
+	if err := registerStreamWithRetry(o5AdminWeb, ctype.Hex2Addr(osp2EthAddr), localhost+o2Port); err != nil {
+		return nil, err
+	}
+	time.Sleep(4 * time.Second)
 
-	return []*tf.ServerController{o1, o2, o3, o4, o5}
+	return []*tf.ServerController{o1, o2, o3, o4, o5}, nil
 }
 
 func TestE2EMultiOSP(t *testing.T) {
-	svrs := setMultiOSP()
+	svrs, err := setMultiOSP()
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer tearDownMultiSvr([]Killable{svrs[0], svrs[1], svrs[2], svrs[3], svrs[4]})
 
 	// Be careful: because the limit of test set up, state between the two osps is kept during tests.

@@ -77,9 +77,18 @@ message SendConditionalPaymentRequest {
   string amount = 2;
   string destination = 3;
   entity.TransferFunctionType transfer_logic_type = 4;
+  // Empty conditions means the caller is not supplying any app-level conditions.
+  // The runtime may still prepend an internal hash-lock condition for non-direct pays.
   repeated Condition conditions = 5;
   uint64 timeout = 6;
   google.protobuf.Any note = 7;
+}
+
+message SendTokenRequest {
+  TokenInfo token_info = 1;
+  string amount = 2;
+  string destination = 3;
+  google.protobuf.Any note = 4;
 }
 
 message PaymentID { string payment_id = 1; }
@@ -211,12 +220,38 @@ service WebApi {
   rpc GetPayHistory(GetPayHistoryRequest) returns (GetPayHistoryResponse) {}
   rpc SetDelegation(SetDelegationRequest) returns (google.protobuf.Empty) {}
   rpc OpenPaymentChannel(OpenPaymentChannelRequest) returns (ChannelID) {}
+  // Deposit blocks until the deposit transaction is mined and returns its tx hash.
+  // Use DepositNonBlocking for a start-and-monitor flow.
   rpc Deposit(DepositOrWithdrawRequest) returns (DepositOrWithdrawJob) {}
+  // DepositNonBlocking starts a deposit job and returns immediately.
+  // Use MonitorDepositJob to wait for completion and fetch the tx hash.
+  rpc DepositNonBlocking(DepositOrWithdrawRequest) returns (DepositOrWithdrawJob) {}
+  // MonitorDepositJob can monitor jobs started by WebApi.DepositNonBlocking or
+  // InternalWebApi.DepositNonBlocking. Public WebApi.Deposit already waits for
+  // completion and removes the job.
   rpc MonitorDepositJob(DepositOrWithdrawJob) returns (DepositOrWithdrawJob) {}
+  // CooperativeWithdraw blocks until the withdraw transaction is mined and returns its tx hash.
+  // Use CooperativeWithdrawNonBlocking for a start-and-monitor flow.
   rpc CooperativeWithdraw(DepositOrWithdrawRequest) returns (DepositOrWithdrawJob) {}
+  // CooperativeWithdrawNonBlocking starts a cooperative withdraw job and
+  // returns immediately. Use MonitorCooperativeWithdrawJob to wait for
+  // completion and fetch the tx hash.
+  rpc CooperativeWithdrawNonBlocking(DepositOrWithdrawRequest)
+      returns (DepositOrWithdrawJob) {}
+  // MonitorCooperativeWithdrawJob can monitor jobs started by
+  // WebApi.CooperativeWithdrawNonBlocking or
+  // InternalWebApi.CooperativeWithdrawNonBlocking. Public WebApi.CooperativeWithdraw
+  // already waits for completion and removes the job.
   rpc MonitorCooperativeWithdrawJob(DepositOrWithdrawJob) returns (DepositOrWithdrawJob) {}
   rpc GetBalance(TokenInfo) returns (GetBalanceResponse) {}
   rpc GetPeerFreeBalance(GetPeerFreeBalanceRequest) returns (FreeBalance) {}
+  // SendToken is the explicit alias for sending a payment without caller-
+  // specified app conditions. The runtime may still add an internal hash lock
+  // for non-direct pays.
+  rpc SendToken(SendTokenRequest) returns (PaymentID) {}
+  // SendConditionalPayment is also the "no caller-specified app conditions" payment API on WebApi.
+  // Pass an empty conditions list when you do not want to attach app-level conditions.
+  // The runtime may still add an internal hash lock for non-direct pays.
   rpc SendConditionalPayment(SendConditionalPaymentRequest)
       returns (PaymentID) {}
   rpc SubscribeIncomingPayments(google.protobuf.Empty)
@@ -225,6 +260,7 @@ service WebApi {
   rpc SubscribeOutgoingPayments(google.protobuf.Empty)
       returns (stream OutgoingPaymentInfo) {}
   rpc GetIncomingPaymentStatus(PaymentID) returns (PaymentStatus) {}
+  rpc GetIncomingPaymentInfo(PaymentID) returns (PaymentInfo) {}
   rpc GetOutgoingPaymentStatus(PaymentID) returns (PaymentStatus) {}
   rpc ConfirmOutgoingPayment(PaymentID) returns (google.protobuf.Empty) {}
   rpc RejectIncomingPayment(PaymentID) returns (google.protobuf.Empty) {}

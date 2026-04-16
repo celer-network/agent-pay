@@ -4,6 +4,7 @@
 package app
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -24,10 +26,17 @@ var (
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
+	_ = abi.ConvertType
 )
 
+// ISingleSessionMetaData contains all meta data concerning the ISingleSession contract.
+var ISingleSessionMetaData = &bind.MetaData{
+	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"seq\",\"type\":\"uint256\"}],\"name\":\"IntendSettle\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_stateProof\",\"type\":\"bytes\"}],\"name\":\"intendSettle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getSettleFinalizedTime\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_action\",\"type\":\"bytes\"}],\"name\":\"applyAction\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getActionDeadline\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"finalizeOnActionTimeout\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getStatus\",\"outputs\":[{\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getSeqNum\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_key\",\"type\":\"uint256\"}],\"name\":\"getState\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]",
+}
+
 // ISingleSessionABI is the input ABI used to generate the binding from.
-const ISingleSessionABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"seq\",\"type\":\"uint256\"}],\"name\":\"IntendSettle\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_stateProof\",\"type\":\"bytes\"}],\"name\":\"intendSettle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getSettleFinalizedTime\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_action\",\"type\":\"bytes\"}],\"name\":\"applyAction\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getActionDeadline\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"finalizeOnActionTimeout\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getStatus\",\"outputs\":[{\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getSeqNum\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_key\",\"type\":\"uint256\"}],\"name\":\"getState\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+// Deprecated: Use ISingleSessionMetaData.ABI instead.
+var ISingleSessionABI = ISingleSessionMetaData.ABI
 
 // ISingleSession is an auto generated Go binding around an Ethereum contract.
 type ISingleSession struct {
@@ -126,18 +135,18 @@ func NewISingleSessionFilterer(address common.Address, filterer bind.ContractFil
 
 // bindISingleSession binds a generic wrapper to an already deployed contract.
 func bindISingleSession(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(ISingleSessionABI))
+	parsed, err := ISingleSessionMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+	return bind.NewBoundContract(address, *parsed, caller, transactor, filterer), nil
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ISingleSession *ISingleSessionRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_ISingleSession *ISingleSessionRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _ISingleSession.Contract.ISingleSessionCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -156,7 +165,7 @@ func (_ISingleSession *ISingleSessionRaw) Transact(opts *bind.TransactOpts, meth
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ISingleSession *ISingleSessionCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_ISingleSession *ISingleSessionCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _ISingleSession.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -175,12 +184,17 @@ func (_ISingleSession *ISingleSessionTransactorRaw) Transact(opts *bind.Transact
 //
 // Solidity: function getActionDeadline() view returns(uint256)
 func (_ISingleSession *ISingleSessionCaller) GetActionDeadline(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _ISingleSession.contract.Call(opts, out, "getActionDeadline")
-	return *ret0, err
+	var out []interface{}
+	err := _ISingleSession.contract.Call(opts, &out, "getActionDeadline")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // GetActionDeadline is a free data retrieval call binding the contract method 0xbbc35280.
@@ -201,12 +215,17 @@ func (_ISingleSession *ISingleSessionCallerSession) GetActionDeadline() (*big.In
 //
 // Solidity: function getSeqNum() view returns(uint256)
 func (_ISingleSession *ISingleSessionCaller) GetSeqNum(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _ISingleSession.contract.Call(opts, out, "getSeqNum")
-	return *ret0, err
+	var out []interface{}
+	err := _ISingleSession.contract.Call(opts, &out, "getSeqNum")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // GetSeqNum is a free data retrieval call binding the contract method 0x6d15c457.
@@ -227,12 +246,17 @@ func (_ISingleSession *ISingleSessionCallerSession) GetSeqNum() (*big.Int, error
 //
 // Solidity: function getSettleFinalizedTime() view returns(uint256)
 func (_ISingleSession *ISingleSessionCaller) GetSettleFinalizedTime(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _ISingleSession.contract.Call(opts, out, "getSettleFinalizedTime")
-	return *ret0, err
+	var out []interface{}
+	err := _ISingleSession.contract.Call(opts, &out, "getSettleFinalizedTime")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // GetSettleFinalizedTime is a free data retrieval call binding the contract method 0xb71ca01f.
@@ -253,12 +277,17 @@ func (_ISingleSession *ISingleSessionCallerSession) GetSettleFinalizedTime() (*b
 //
 // Solidity: function getState(uint256 _key) view returns(bytes)
 func (_ISingleSession *ISingleSessionCaller) GetState(opts *bind.CallOpts, _key *big.Int) ([]byte, error) {
-	var (
-		ret0 = new([]byte)
-	)
-	out := ret0
-	err := _ISingleSession.contract.Call(opts, out, "getState", _key)
-	return *ret0, err
+	var out []interface{}
+	err := _ISingleSession.contract.Call(opts, &out, "getState", _key)
+
+	if err != nil {
+		return *new([]byte), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([]byte)).(*[]byte)
+
+	return out0, err
+
 }
 
 // GetState is a free data retrieval call binding the contract method 0x44c9af28.
@@ -279,12 +308,17 @@ func (_ISingleSession *ISingleSessionCallerSession) GetState(_key *big.Int) ([]b
 //
 // Solidity: function getStatus() view returns(uint8)
 func (_ISingleSession *ISingleSessionCaller) GetStatus(opts *bind.CallOpts) (uint8, error) {
-	var (
-		ret0 = new(uint8)
-	)
-	out := ret0
-	err := _ISingleSession.contract.Call(opts, out, "getStatus")
-	return *ret0, err
+	var out []interface{}
+	err := _ISingleSession.contract.Call(opts, &out, "getStatus")
+
+	if err != nil {
+		return *new(uint8), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(uint8)).(*uint8)
+
+	return out0, err
+
 }
 
 // GetStatus is a free data retrieval call binding the contract method 0x4e69d560.
@@ -494,5 +528,6 @@ func (_ISingleSession *ISingleSessionFilterer) ParseIntendSettle(log types.Log) 
 	if err := _ISingleSession.contract.UnpackLog(event, "IntendSettle", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }

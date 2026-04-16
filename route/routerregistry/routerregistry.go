@@ -4,6 +4,7 @@
 package routerregistry
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -24,22 +26,34 @@ var (
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
+	_ = abi.ConvertType
 )
 
+// RouterRegistryMetaData contains all meta data concerning the RouterRegistry contract.
+var RouterRegistryMetaData = &bind.MetaData{
+	ABI: "[{\"type\":\"function\",\"name\":\"deregisterRouter\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"refreshRouter\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"registerRouter\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"routerInfo\",\"inputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"event\",\"name\":\"RouterUpdated\",\"inputs\":[{\"name\":\"op\",\"type\":\"uint8\",\"indexed\":true,\"internalType\":\"enumIRouterRegistry.RouterOperation\"},{\"name\":\"routerAddress\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false}]",
+	Bin: "0x6080604052348015600e575f5ffd5b506102818061001c5f395ff3fe608060405234801561000f575f5ffd5b506004361061004a575f3560e01c806324f277d21461004e5780632ff0282b146100585780637880945614610060578063d1cf70d114610091575b5f5ffd5b610056610099565b005b610056610136565b61007f61006e36600461021e565b5f6020819052908152604090205481565b60405190815260200160405180910390f35b6100566101ab565b335f90815260208190526040902054156100fa5760405162461bcd60e51b815260206004820152601d60248201527f526f75746572206164647265737320616c72656164792065786973747300000060448201526064015b60405180910390fd5b335f8181526020819052604081204390555b6040517fed739f5df64012854c2039ba144af8e3af26211fc7f10a959c6a592ae58c4491905f90a3565b335f9081526020819052604081205490036101935760405162461bcd60e51b815260206004820152601d60248201527f526f75746572206164647265737320646f6573206e6f7420657869737400000060448201526064016100f1565b335f818152602081905260409020439055600261010c565b335f9081526020819052604081205490036102085760405162461bcd60e51b815260206004820152601d60248201527f526f75746572206164647265737320646f6573206e6f7420657869737400000060448201526064016100f1565b335f81815260208190526040812055600161010c565b5f6020828403121561022e575f5ffd5b81356001600160a01b0381168114610244575f5ffd5b939250505056fea26469706673582212204a9798eb9c34c961b1979f06aa33fe45efd06fcbefd386adb4ffc2a6910bb30d64736f6c634300081d0033",
+}
+
 // RouterRegistryABI is the input ABI used to generate the binding from.
-const RouterRegistryABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"}],\"name\":\"routerInfo\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"op\",\"type\":\"uint8\"},{\"indexed\":true,\"name\":\"routerAddress\",\"type\":\"address\"}],\"name\":\"RouterUpdated\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[],\"name\":\"registerRouter\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"deregisterRouter\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"refreshRouter\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+// Deprecated: Use RouterRegistryMetaData.ABI instead.
+var RouterRegistryABI = RouterRegistryMetaData.ABI
 
 // RouterRegistryBin is the compiled bytecode used for deploying new contracts.
-var RouterRegistryBin = "0x608060405234801561001057600080fd5b506102f3806100206000396000f3fe608060405234801561001057600080fd5b5060043610610068577c0100000000000000000000000000000000000000000000000000000000600035046324f277d2811461006d5780632ff0282b14610077578063788094561461007f578063d1cf70d1146100c4575b600080fd5b6100756100cc565b005b610075610186565b6100b26004803603602081101561009557600080fd5b503573ffffffffffffffffffffffffffffffffffffffff1661021a565b60408051918252519081900360200190f35b61007561022c565b336000908152602081905260409020541561014857604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601d60248201527f526f75746572206164647265737320616c726561647920657869737473000000604482015290519081900360640190fd5b3360008181526020819052604081204390555b6040517fed739f5df64012854c2039ba144af8e3af26211fc7f10a959c6a592ae58c449190600090a3565b3360009081526020819052604090205461020157604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601d60248201527f526f75746572206164647265737320646f6573206e6f74206578697374000000604482015290519081900360640190fd5b336000818152602081905260409020439055600261015b565b60006020819052908152604090205481565b336000908152602081905260409020546102a757604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601d60248201527f526f75746572206164647265737320646f6573206e6f74206578697374000000604482015290519081900360640190fd5b33600081815260208190526040812055600161015b56fea265627a7a72305820a6cb3406d5c8b09132b542c813a59bbd1dc3ae874cfeed6b4d800c190e6ffff164736f6c634300050a0032"
+// Deprecated: Use RouterRegistryMetaData.Bin instead.
+var RouterRegistryBin = RouterRegistryMetaData.Bin
 
 // DeployRouterRegistry deploys a new Ethereum contract, binding an instance of RouterRegistry to it.
 func DeployRouterRegistry(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *RouterRegistry, error) {
-	parsed, err := abi.JSON(strings.NewReader(RouterRegistryABI))
+	parsed, err := RouterRegistryMetaData.GetAbi()
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
+	if parsed == nil {
+		return common.Address{}, nil, nil, errors.New("GetABI returned nil")
+	}
 
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(RouterRegistryBin), backend)
+	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(RouterRegistryBin), backend)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -143,18 +157,18 @@ func NewRouterRegistryFilterer(address common.Address, filterer bind.ContractFil
 
 // bindRouterRegistry binds a generic wrapper to an already deployed contract.
 func bindRouterRegistry(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(RouterRegistryABI))
+	parsed, err := RouterRegistryMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+	return bind.NewBoundContract(address, *parsed, caller, transactor, filterer), nil
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_RouterRegistry *RouterRegistryRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_RouterRegistry *RouterRegistryRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _RouterRegistry.Contract.RouterRegistryCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -173,7 +187,7 @@ func (_RouterRegistry *RouterRegistryRaw) Transact(opts *bind.TransactOpts, meth
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_RouterRegistry *RouterRegistryCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_RouterRegistry *RouterRegistryCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _RouterRegistry.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -192,12 +206,17 @@ func (_RouterRegistry *RouterRegistryTransactorRaw) Transact(opts *bind.Transact
 //
 // Solidity: function routerInfo(address ) view returns(uint256)
 func (_RouterRegistry *RouterRegistryCaller) RouterInfo(opts *bind.CallOpts, arg0 common.Address) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _RouterRegistry.contract.Call(opts, out, "routerInfo", arg0)
-	return *ret0, err
+	var out []interface{}
+	err := _RouterRegistry.contract.Call(opts, &out, "routerInfo", arg0)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // RouterInfo is a free data retrieval call binding the contract method 0x78809456.
@@ -426,5 +445,6 @@ func (_RouterRegistry *RouterRegistryFilterer) ParseRouterUpdated(log types.Log)
 	if err := _RouterRegistry.contract.UnpackLog(event, "RouterUpdated", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }

@@ -21,8 +21,8 @@ import (
 	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/goutils/eth"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes/any"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 // WARNING: current auth implmentation will always sync the multi-login devices to the correct
@@ -459,7 +459,7 @@ func (c *CNode) getOnChainBalanceForAuth(cid ctype.CidType, chState int, chanIni
 	return nil, common.ErrInvalidChannelState
 }
 
-func insertPaymentFromAuth(tx *storage.DALTx, payBytes []byte, note *any.Any, cid ctype.CidType, state int, isIngress bool) error {
+func insertPaymentFromAuth(tx *storage.DALTx, payBytes []byte, note *anypb.Any, cid ctype.CidType, state int, isIngress bool) error {
 	pay := new(entity.ConditionalPay)
 	err := proto.Unmarshal(payBytes, pay)
 	if err != nil {

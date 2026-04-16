@@ -41,7 +41,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -96,12 +96,16 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	chainID, err := client.NetworkID(context.Background())
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	ksFile, err := os.Open(*ks)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	auth, err := bind.NewTransactor(ksFile, *password)
+	auth, err := bind.NewTransactorWithChainID(ksFile, *password, chainID)
 	if err != nil {
 		log.Fatalln(err)
 	}

@@ -4,6 +4,7 @@ package chain
 
 import (
 	"context"
+	"fmt"
 	"math/big"
 	"strings"
 	"time"
@@ -84,7 +85,11 @@ func (c *BoundContract) CallFunc(
 	params ...interface{}) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
 	defer cancel()
-	return c.Call(&bind.CallOpts{Context: ctx}, result, method, params...)
+	out, ok := result.(*[]interface{})
+	if !ok {
+		return fmt.Errorf("result must be *[]interface{}, got %T", result)
+	}
+	return c.Call(&bind.CallOpts{Context: ctx}, out, method, params...)
 }
 
 // WatchEvent subscribes to future events

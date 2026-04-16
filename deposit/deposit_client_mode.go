@@ -294,8 +294,13 @@ func (p *Processor) resumeClientJobs() error {
 
 func (p *Processor) resumeJob(jobID string) {
 	job, found, err := p.dal.GetDepositJob(jobID)
-	if err != nil || !found {
-		p.maybeFireErrCallback(jobID, fmt.Sprintf("Cannot retrieve deposit job %s: %v, exist %t", jobID, err, found))
+	if !found {
+		p.maybeFireErrCallback(jobID,
+			fmt.Sprintf("deposit job %s not found; WebApi.Deposit blocks until completion and removes the job before returning, so use WebApi.DepositNonBlocking or InternalWebApi.DepositNonBlocking when you want to start a job and later monitor it", jobID))
+		return
+	}
+	if err != nil {
+		p.maybeFireErrCallback(jobID, fmt.Sprintf("Cannot retrieve deposit job %s: %v", jobID, err))
 		return
 	}
 	p.markRunningJobAndStartDispatcher(job)

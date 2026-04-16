@@ -6,10 +6,12 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/celer-network/agent-pay/common"
+	"github.com/celer-network/agent-pay/common/structs"
 	"github.com/celer-network/agent-pay/config"
 	"github.com/celer-network/agent-pay/ctype"
 	"github.com/celer-network/agent-pay/rpc"
@@ -23,38 +25,45 @@ func multiOspOpenChannelTest(t *testing.T) {
 	log.Info("============== start test multiOspOpenChannelTest ==============")
 	defer log.Info("============== end test multiOspOpenChannelTest ==============")
 	// Let osp2 initiate openning channel with osp1.
-	err := requestOpenChannel(o2AdminWeb, osp1EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrEth)
+	err := ensureOpenChannel(o2AdminWeb, osp1EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrEth)
 	if err != nil {
+		t.Error(err)
+		return
+	}
+	if err = buildRoutingTablesForEth(o1AdminWeb, o2AdminWeb); err != nil {
 		t.Error(err)
 		return
 	}
 	log.Infoln("done open channel, waiting")
-	time.Sleep(2 * time.Second)
+	sleep(6)
 	log.Infoln("sending token")
 	// requestSvrSendToken is defined in admin.go. It will ask osp1 to send 1 token to osp2EthAddr.
-	requestSvrSendToken(osp2EthAddr, "1", "")
+	payID, err := requestSendToken(o1AdminWeb, osp2EthAddr, "1", tokenAddrEth)
+	if err != nil {
+		t.Error(err)
+		return
+	}
 	log.Infoln("done sending token, waiting")
 	time.Sleep(1 * time.Second)
-	// Ask osp1 balance
-	free, err := getEthBalance(localhost+o1Port, osp2EthAddr)
+	dal1, dal2, _, _, _ := getMultiOspDALs()
+	token := utils.GetTokenInfoFromAddress(ctype.Hex2Addr(tokenAddrEth))
+	cid12, found, err := dal1.GetCidByPeerToken(ctype.Hex2Addr(osp2EthAddr), token)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	// osp1 sends osp2 1 token. Remaining capacity is 1.
-	if free != tf.AddAmtStr(initOspToOspBalance, "-1") {
-		t.Errorf("expect %s sending capacity %s, got %s", osp1EthAddr, tf.AddAmtStr(initOspToOspBalance, "-1"), free)
+	if !found {
+		t.Error("channel cid12 not found")
 		return
 	}
-	// Ask osp2 balance
-	free, err = getEthBalance(localhost+o2Port, osp1EthAddr)
+	err = checkOspPayState(dal1, payID, ctype.ZeroCid, structs.PayState_NULL, cid12, structs.PayState_COSIGNED_PAID, 5)
 	if err != nil {
-		t.Error(err)
+		t.Errorf("pay err at o1: %s", err)
 		return
 	}
-	// osp2 got 1 token. Remaining capacity is 3.
-	if free != tf.AddAmtStr(initOspToOspBalance, "1") {
-		t.Errorf("expect %s sending capacity %s, got %s", osp2EthAddr, tf.AddAmtStr(initOspToOspBalance, "1"), free)
+	err = checkOspPayState(dal2, payID, cid12, structs.PayState_COSIGNED_PAID, ctype.ZeroCid, structs.PayState_NULL, 5)
+	if err != nil {
+		t.Errorf("pay err at o2: %s", err)
 		return
 	}
 
@@ -92,11 +101,50 @@ func multiOspOpenChannelPolicyFallbackTest(t *testing.T) {
 		return
 	}
 	// Let osp2 initiate openning channel with osp1 using erc20. Deposit meets fallback aka client-osp policy
-	err = requestOpenChannel(o2AdminWeb, osp1EthAddr, "1" /*peerDeposit*/, "1" /*selfDeposit*/, tokenAddrErc20)
+	err = ensureOpenChannel(o2AdminWeb, osp1EthAddr, "1" /*peerDeposit*/, "1" /*selfDeposit*/, tokenAddrErc20)
 	if err != nil {
 		t.Error("Unable to fallback", err)
 		return
 	}
+}
+
+func ensureOpenChannel(adminWebAddr, peerAddr, peerDeposit, selfDeposit, tokenAddr string) error {
+	var lastErr error
+	for attempt := 0; attempt < 60; attempt++ {
+		err := requestOpenChannel(adminWebAddr, peerAddr, peerDeposit, selfDeposit, tokenAddr)
+		if err == nil || strings.Contains(err.Error(), "channel already exist") {
+			return nil
+		}
+		if strings.Contains(err.Error(), "no RPC connection") || strings.Contains(err.Error(), "Deadline out of range") {
+			lastErr = err
+			time.Sleep(500 * time.Millisecond)
+			continue
+		}
+		return err
+	}
+	return lastErr
+}
+
+func registerStreamWithRetry(adminWebAddr string, peerAddr ctype.Addr, peerHostPort string) error {
+	var lastErr error
+	for attempt := 0; attempt < 40; attempt++ {
+		err := utils.RequestRegisterStream(adminWebAddr, peerAddr, peerHostPort)
+		if err == nil || strings.Contains(err.Error(), "celer stream already exists") {
+			return nil
+		}
+		lastErr = err
+		time.Sleep(250 * time.Millisecond)
+	}
+	return lastErr
+}
+
+func buildRoutingTablesForEth(adminWebAddrs ...string) error {
+	for _, adminWebAddr := range adminWebAddrs {
+		if err := utils.RequestBuildRoutingTable(adminWebAddr, ctype.EthTokenAddr); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func requestOpenChannel(adminWebAddr, peerAddr, peerDeposit, selfDeposit, tokenAddr string) error {
@@ -113,11 +161,11 @@ func requestOpenChannel(adminWebAddr, peerAddr, peerDeposit, selfDeposit, tokenA
 
 func getEthBalance(ospHTTPTarget string, osp2Addr string) (string, error) {
 	conn, err := grpc.Dial(ospHTTPTarget, utils.GetClientTlsOption(), grpc.WithBlock(),
-		grpc.WithTimeout(4*time.Second), grpc.WithKeepaliveParams(config.KeepAliveClientParams))
+		grpc.WithTimeout(8*time.Second), grpc.WithKeepaliveParams(config.KeepAliveClientParams))
 	if err != nil {
 		return "", fmt.Errorf("fail to get peer status: %s", err)
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 8*time.Second)
 	defer cancel()
 	response, err := rpc.NewRpcClient(conn).CelerGetPeerStatus(
 		ctx,
