@@ -28,6 +28,31 @@ Useful references:
 - [server/server.go](../server/server.go)
 - [tools/osp-cli/README.md](../tools/osp-cli/README.md)
 - [test/manual/README.md](../test/manual/README.md)
+- [tools/scripts/README.md](../tools/scripts/README.md)
+
+## Local Test Environment Pitfalls
+
+### Symptom: e2e setup fails before tests even start
+
+On a development machine, the most common false failure is a stale local chain process from a previous test run still listening on the default e2e ports.
+
+Representative failure:
+
+- `listen tcp 127.0.0.1:8545: bind: address already in use`
+
+Checks:
+
+1. Inspect the default local chain ports before trusting a new e2e failure.
+2. Confirm whether the listener is a stale `geth` from an earlier AgentPay run.
+3. Stop only the stale local test process, then rerun the suite.
+
+Useful command:
+
+```bash
+lsof -nP -iTCP:8545-8546 -sTCP:LISTEN
+```
+
+This matters most for [test/e2e](../test/e2e), which starts its own local chain and expects `127.0.0.1:8545` and `127.0.0.1:8546` to be free.
 
 ## Operational Surfaces
 

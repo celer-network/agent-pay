@@ -69,6 +69,12 @@ Fastest realistic payment-path validation:
 go test ./test/e2e -run '^TestE2E$/^e2e-grp2$/^sendCondPayWithErc20$'
 ```
 
+Cross-net validation is opt-in and should be run explicitly when changes may affect multi-network behavior:
+
+```bash
+go test ./test/e2e -run '^TestE2ECrossNet$' -args -multinet
+```
+
 When possible, run focused package tests for touched code first, then the focused e2e flow for protocol-path changes.
 
 ## Useful References
@@ -77,3 +83,4 @@ When possible, run focused package tests for touched code first, then the focuse
 - `test/e2e` is the best executable reference for end-to-end behavior.
 - `test/manual/README.md` documents the operator workflow for multi-OSP setups.
 - `tools/osp-cli/README.md` covers admin and inspection commands.
+- `tools/scripts/README.md` covers maintenance and code-generation helpers.
