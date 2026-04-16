@@ -152,7 +152,7 @@ func (h *CelerMsgHandler) verifyDelegationProof(
 	if len(pay.GetConditions()) != 1 || pay.GetConditions()[0].GetConditionType() != entity.ConditionType_HASH_LOCK {
 		return errors.New("delegating pay having more than HL condition")
 	}
-	if bytes.Compare(description.GetDelegatee(), proof.GetSigner()) != 0 {
+	if !bytes.Equal(description.GetDelegatee(), proof.GetSigner()) {
 		return errors.New("delegatee in description not same as signer in proof")
 	}
 	return nil

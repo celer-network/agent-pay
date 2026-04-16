@@ -169,7 +169,7 @@ func validRecvdSeqNum(stored, recvd, base uint64) bool {
 }
 
 func (h *CelerMsgHandler) payFromSelf(pay *entity.ConditionalPay) bool {
-	return bytes.Compare(pay.GetSrc(), h.nodeConfig.GetOnChainAddr().Bytes()) == 0
+	return bytes.Equal(pay.GetSrc(), h.nodeConfig.GetOnChainAddr().Bytes())
 }
 
 func (h *CelerMsgHandler) prependPayPath(payPath *rpc.PayPath, payHop *rpc.PayHop) error {

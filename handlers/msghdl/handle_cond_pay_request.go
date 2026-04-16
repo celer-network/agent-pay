@@ -61,20 +61,25 @@ func (h *CelerMsgHandler) condPayRequestInbound(frame *common.MsgFrame) error {
 
 	if request.GetCrossNet().GetCrossing() {
 		// proceed as crossnet payment
-		return h.crossNetPayInbound(frame, pay, payID, logEntry)
+		return h.crossNetPayInbound(frame, &pay, payID, logEntry)
+	}
+
+	stateOnly := request.GetStateOnlyPeerFromSig()
+	if stateOnly == nil {
+		return common.ErrInvalidMsgType
 	}
 
 	// Sign the state in advance, verify request later
-	mySig, err := h.signer.SignEthMessage(request.GetStateOnlyPeerFromSig().GetSimplexState())
+	mySig, err := h.signer.SignEthMessage(stateOnly.GetSimplexState())
 	if err != nil {
 		return fmt.Errorf("failed to sign: %w", err)
 	}
 	// Copy signed simplex state to avoid modifying request.
-	recvdState := *request.GetStateOnlyPeerFromSig()
+	recvdState := proto.Clone(stateOnly).(*rpc.SignedSimplexState)
 	recvdState.SigOfPeerTo = mySig
 
 	var recvdSimplex entity.SimplexPaymentChannel
-	err = proto.Unmarshal(recvdState.SimplexState, &recvdSimplex)
+	err = proto.Unmarshal(recvdState.GetSimplexState(), &recvdSimplex)
 	if err != nil {
 		return common.ErrSimplexParse // corrupted peer
 	}
@@ -88,7 +93,7 @@ func (h *CelerMsgHandler) condPayRequestInbound(frame *common.MsgFrame) error {
 	logEntry.SeqNums.InBase = request.GetBaseSeq()
 
 	requestErr := h.processCondPayRequest(
-		request, cid, peerFrom, payID, &pay, &recvdState, &recvdSimplex, logEntry)
+		request, cid, peerFrom, payID, &pay, recvdState, &recvdSimplex, logEntry)
 
 	var response *rpc.CondPayResponse
 	if requestErr != nil {
@@ -102,7 +107,7 @@ func (h *CelerMsgHandler) condPayRequestInbound(frame *common.MsgFrame) error {
 		if errors.Is(requestErr, common.ErrPayRouteLoop) {
 			errMsg.Code = rpc.ErrCode_PAY_ROUTE_LOOP
 			response = &rpc.CondPayResponse{
-				StateCosigned: &recvdState,
+				StateCosigned: recvdState,
 				Error:         errMsg,
 			}
 		} else {
@@ -117,7 +122,7 @@ func (h *CelerMsgHandler) condPayRequestInbound(frame *common.MsgFrame) error {
 		}
 	} else {
 		response = &rpc.CondPayResponse{
-			StateCosigned: &recvdState,
+			StateCosigned: recvdState,
 		}
 
 		if directPay {
@@ -494,7 +499,7 @@ func (h *CelerMsgHandler) condPayRequestOutbound(frame *common.MsgFrame) error {
 		log.Debugln("Reply pay receipt", payID.Hex())
 		signedPayBytes := payBytes
 		if request.GetCrossNet().GetDstNetId() != 0 {
-			err = h.verifyCrossNetPay(pay, request.GetCrossNet().GetOriginalPay(), request.GetCrossNet().GetSrcNetId())
+			err = h.verifyCrossNetPay(&pay, request.GetCrossNet().GetOriginalPay(), request.GetCrossNet().GetSrcNetId())
 			if err != nil {
 				return err
 			}
@@ -641,7 +646,7 @@ func (h *CelerMsgHandler) checkPayDelegable(
 }
 
 func (h *CelerMsgHandler) crossNetPayInbound(
-	frame *common.MsgFrame, pay entity.ConditionalPay, payID ctype.PayIDType, logEntry *pem.PayEventMessage) error {
+	frame *common.MsgFrame, pay *entity.ConditionalPay, payID ctype.PayIDType, logEntry *pem.PayEventMessage) error {
 	request := frame.Message.GetCondPayRequest()
 	xnet := request.GetCrossNet()
 	originalPayId := ctype.PayBytes2PayID(xnet.GetOriginalPay())
@@ -662,13 +667,19 @@ func (h *CelerMsgHandler) crossNetPayInbound(
 	}
 	logEntry.Xnet.FromBridgeId = bridgeNetId
 
+	if pay == nil {
+		return fmt.Errorf("nil pay")
+	}
 	if ctype.Bytes2Addr(pay.GetDest()) == h.nodeConfig.GetOnChainAddr() {
 		return fmt.Errorf("ingress bridge cannot be the dest addr")
 	}
 
-	newPay := pay
-	if pay.GetTransferFunc().GetMaxTransfer().GetToken().GetTokenType() != entity.TokenType_ETH {
-		localToken, found, err2 := h.dal.GetLocalToken(bridgeNetId, pay.GetTransferFunc().GetMaxTransfer().GetToken())
+	newPay, ok := proto.Clone(pay).(*entity.ConditionalPay)
+	if !ok {
+		return fmt.Errorf("unexpected pay type %T", pay)
+	}
+	if newPay.GetTransferFunc().GetMaxTransfer().GetToken().GetTokenType() != entity.TokenType_ETH {
+		localToken, found, err2 := h.dal.GetLocalToken(bridgeNetId, newPay.GetTransferFunc().GetMaxTransfer().GetToken())
 		if err2 != nil {
 			return fmt.Errorf("GetLocalToken err: %w", err2)
 		}
@@ -681,8 +692,8 @@ func (h *CelerMsgHandler) crossNetPayInbound(
 	newPay.ResolveDeadline = h.monitorService.GetCurrentBlockNumber().Uint64() + xnet.GetTimeout()
 	newPay.ResolveTimeout = config.PayResolveTimeout
 	newPay.PayResolver = h.nodeConfig.GetPayResolverContract().GetAddr().Bytes()
-	newPayID := ctype.Pay2PayID(&newPay)
-	newPayBytes, err := proto.Marshal(&newPay)
+	newPayID := ctype.Pay2PayID(newPay)
+	newPayBytes, err := proto.Marshal(newPay)
 	if err != nil {
 		return err
 	}
@@ -715,7 +726,16 @@ func (h *CelerMsgHandler) crossNetPayInbound(
 	return nil
 }
 
-func (h *CelerMsgHandler) verifyCrossNetPay(pay entity.ConditionalPay, originalPayBytes []byte, srcNetId uint64) error {
+func (h *CelerMsgHandler) verifyCrossNetPay(pay *entity.ConditionalPay, originalPayBytes []byte, srcNetId uint64) error {
+	if pay == nil {
+		return fmt.Errorf("nil pay")
+	}
+
+	payCopy, ok := proto.Clone(pay).(*entity.ConditionalPay)
+	if !ok {
+		return fmt.Errorf("unexpected pay type %T", pay)
+	}
+
 	var originalPay entity.ConditionalPay
 	err := proto.Unmarshal(originalPayBytes, &originalPay)
 	if err != nil {
@@ -732,24 +752,16 @@ func (h *CelerMsgHandler) verifyCrossNetPay(pay entity.ConditionalPay, originalP
 		originalPay.TransferFunc.MaxTransfer.Token = token
 	}
 
-	pay.ResolveDeadline = 0
-	pay.ResolveTimeout = 0
-	pay.PayResolver = nil
-	originalPay.ResolveDeadline = 0
-	originalPay.ResolveTimeout = 0
-	originalPay.PayResolver = nil
+	normalize := func(p *entity.ConditionalPay) {
+		p.ResolveDeadline = 0
+		p.ResolveTimeout = 0
+		p.PayResolver = nil
+	}
+	normalize(payCopy)
+	normalize(&originalPay)
 
-	b1, err := proto.Marshal(&pay)
-	if err != nil {
-		return err
-	}
-	b2, err := proto.Marshal(&originalPay)
-	if err != nil {
-		return err
-	}
-	if bytes.Compare(b1, b2) != 0 {
+	if !proto.Equal(payCopy, &originalPay) {
 		return fmt.Errorf("original pay not match")
 	}
-
 	return nil
 }

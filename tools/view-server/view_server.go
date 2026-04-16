@@ -129,7 +129,7 @@ func main() {
 		}
 		var err error
 		var out []byte
-		if argFinalize == nil || len(argFinalize) == 0 {
+		if len(argFinalize) == 0 {
 			out, err = view("-onchainview", "app", "-appaddr", appAddr[0], "-outcome", argOutcome[0])
 		} else {
 			out, err = view("-onchainview", "app", "-appaddr", appAddr[0], "-outcome", argOutcome[0], "-finalize", argFinalize[0])

@@ -389,7 +389,7 @@ func (s *adminService) OspOpenChannel(ctx context.Context, in *rpc.OspOpenChanne
 		TokenAddress: in.GetTokenAddress(),
 	}
 	existingCid, _ := s.cNode.GetChannelIdForPeer(ctype.Bytes2Addr(in.GetPeerEthAddress()), ctype.Bytes2Addr(in.GetTokenAddress()))
-	if bytes.Compare(existingCid.Bytes(), ctype.ZeroCid.Bytes()) != 0 {
+	if !bytes.Equal(existingCid.Bytes(), ctype.ZeroCid.Bytes()) {
 		log.Errorf("channel already exist: %x", existingCid)
 		return nil, status.Errorf(codes.AlreadyExists, "channel already exist: %x", existingCid)
 	}

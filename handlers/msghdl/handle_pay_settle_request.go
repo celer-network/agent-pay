@@ -114,7 +114,7 @@ func (h *CelerMsgHandler) paySettleRequestInbound(
 			payID := ctype.Bytes2PayID(pi.req.GetSettledPayId())
 			logEntry.PayId = ctype.PayID2Hex(payID)
 			logEntry.PayIds = append(logEntry.PayIds, ctype.PayID2Hex(payID))
-			if bytes.Compare(pi.pay.GetDest(), h.nodeConfig.GetOnChainAddr().Bytes()) == 0 {
+			if bytes.Equal(pi.pay.GetDest(), h.nodeConfig.GetOnChainAddr().Bytes()) {
 				// only trigger receiving done callback if I'm recipient of the pay.
 				h.tokenCallbackLock.RLock()
 				if h.onReceivingToken != nil {
@@ -430,7 +430,7 @@ func (h *CelerMsgHandler) paySettleRequestOutbound(payInfos []*settledPayInfo, l
 		pay := payInfos[0].pay
 		payID := ctype.Bytes2PayID(payInfos[0].req.GetSettledPayId())
 		delegated := payInfos[0].delegated
-		if bytes.Compare(pay.GetDest(), h.nodeConfig.GetOnChainAddr().Bytes()) != 0 && !delegated {
+		if !bytes.Equal(pay.GetDest(), h.nodeConfig.GetOnChainAddr().Bytes()) && !delegated {
 			// forward PaidMax settle request to downstream
 			settledPay := &rpc.SettledPayment{
 				SettledPayId: payID[:],

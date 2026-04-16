@@ -131,7 +131,7 @@ func (h *CelerMsgHandler) recvSecretTx(tx *storage.DALTx, args ...interface{}) e
 	if len(pay.GetConditions()) == 0 {
 		return common.ErrZeroConditions
 	}
-	if bytes.Compare(hash, pay.Conditions[0].GetHashLock()) != 0 {
+	if !bytes.Equal(hash, pay.Conditions[0].GetHashLock()) {
 		return fmt.Errorf("hash lock verification failed")
 	}
 	log.Debugf("Saving secret(%x) of hash(%x) for pay(%x)", secret, hash, payID)
