@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"strings"
 	"time"
 
 	"github.com/celer-network/agent-pay/celersdkintf"
@@ -24,9 +25,8 @@ import (
 	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/goutils/eth"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/ptypes"
-	"github.com/golang/protobuf/ptypes/any"
 	"golang.org/x/net/context"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 // subset of celersdk async.go ClientCallback so we can call app callback
@@ -52,7 +52,7 @@ type CelerClient struct {
 func condPayToPayment(
 	payID ctype.PayIDType,
 	pay *entity.ConditionalPay,
-	payNote *any.Any,
+	payNote *anypb.Any,
 	status int) *celersdkintf.Payment {
 	// doulbe check here, caller should avoid to pass nil pay
 	if pay == nil {
@@ -60,8 +60,17 @@ func condPayToPayment(
 	}
 	payJSON, _ := utils.PbToJSONString(pay)
 	payNoteJSON, _ := utils.PbToJSONString(payNote)
-	// ignore the error since if there is an error, it would return empty string
-	payNoteType, _ := ptypes.AnyMessageName(payNote)
+
+	payNoteType := ""
+	if payNote != nil {
+		typeURL := payNote.GetTypeUrl()
+		if i := strings.LastIndex(typeURL, "/"); i >= 0 && i+1 < len(typeURL) {
+			payNoteType = typeURL[i+1:]
+		} else {
+			payNoteType = typeURL
+		}
+	}
+
 	maxTransfer := pay.TransferFunc.MaxTransfer
 	payTimestamp := int64(pay.PayTimestamp / uint64(time.Millisecond))
 
@@ -84,7 +93,7 @@ func condPayToPayment(
 	return p
 }
 
-func (c *CelerClient) HandleReceivingStart(payID ctype.PayIDType, pay *entity.ConditionalPay, note *any.Any) {
+func (c *CelerClient) HandleReceivingStart(payID ctype.PayIDType, pay *entity.ConditionalPay, note *anypb.Any) {
 	if c.onClientEvent != nil {
 		c.onClientEvent.HandleRecvStart(condPayToPayment(payID, pay, note, celersdkintf.PAY_STATUS_PENDING))
 	}
@@ -112,7 +121,7 @@ func settleReasonToPayStatus(reason rpc.PaymentSettleReason) int {
 func (c *CelerClient) HandleReceivingDone(
 	payID ctype.PayIDType,
 	pay *entity.ConditionalPay,
-	note *any.Any,
+	note *anypb.Any,
 	reason rpc.PaymentSettleReason) {
 	if c.onClientEvent != nil {
 		status := settleReasonToPayStatus(reason)
@@ -123,7 +132,7 @@ func (c *CelerClient) HandleReceivingDone(
 func (r *CelerClient) HandleSendComplete(
 	payID ctype.PayIDType,
 	pay *entity.ConditionalPay,
-	note *any.Any,
+	note *anypb.Any,
 	reason rpc.PaymentSettleReason) {
 	if r.onClientEvent != nil {
 		status := settleReasonToPayStatus(reason)
@@ -131,7 +140,7 @@ func (r *CelerClient) HandleSendComplete(
 	}
 }
 
-func (r *CelerClient) HandleDestinationUnreachable(payID ctype.PayIDType, pay *entity.ConditionalPay, note *any.Any) {
+func (r *CelerClient) HandleDestinationUnreachable(payID ctype.PayIDType, pay *entity.ConditionalPay, note *anypb.Any) {
 	if r.onClientEvent != nil {
 		r.onClientEvent.HandleSendErr(
 			condPayToPayment(payID, pay, note, celersdkintf.PAY_STATUS_UNPAID_DEST_UNREACHABLE),
@@ -139,7 +148,7 @@ func (r *CelerClient) HandleDestinationUnreachable(payID ctype.PayIDType, pay *e
 	}
 }
 
-func (r *CelerClient) HandleSendFail(payID ctype.PayIDType, pay *entity.ConditionalPay, note *any.Any, errMsg string) {
+func (r *CelerClient) HandleSendFail(payID ctype.PayIDType, pay *entity.ConditionalPay, note *anypb.Any, errMsg string) {
 	if r.onClientEvent != nil {
 		r.onClientEvent.HandleSendErr(
 			condPayToPayment(payID, pay, note, celersdkintf.PAY_STATUS_UNPAID),

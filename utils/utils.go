@@ -5,6 +5,7 @@ package utils
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/binary"
 	"encoding/json"
 	"errors"
@@ -12,6 +13,7 @@ import (
 	"math/big"
 	"net"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -21,21 +23,19 @@ import (
 	"github.com/celer-network/agent-pay/ctype"
 	"github.com/celer-network/agent-pay/entity"
 	"github.com/celer-network/agent-pay/rpc"
-	"github.com/celer-network/agent-pay/utils/bar"
 	ethcommon "github.com/ethereum/go-ethereum/common"
-	"github.com/golang/protobuf/jsonpb"
-	proto "github.com/golang/protobuf/proto"
 	"github.com/shopspring/decimal"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
+	"google.golang.org/protobuf/reflect/protoregistry"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
-// set EmitDefaults so json has complete schema
-// use our own AnyResolver so unknown Any can be properly
-// marshaled to base64 string
-var jsonpbMarshaler = jsonpb.Marshaler{
-	EmitDefaults: true,
-	AnyResolver:  bar.BetterAnyResolver,
+var protojsonMarshaler = protojson.MarshalOptions{
+	EmitUnpopulated: true,
 }
 
 // Dec2HexStr decimal string to hex
@@ -228,23 +228,183 @@ func GetTsAndSig(sign func([]byte) []byte) (ts uint64, sig []byte) {
 	return ts, sig
 }
 
-// PbToJSONString marshals a protobuf msg to json string
-// Note we set EmitDefaults so json is always complete.
-// If you think you have a use case for omit default in json,
-// check w/ junda first before adding another func.
-// The marshaler also uses our own BetterAnyResolver which handles unknown Any
-// msg instead of throw error
+// PbToJSONString marshals a protobuf msg to json string.
+//
+// This is primarily used for logging/debugging; it is intentionally tolerant
+// of unknown google.protobuf.Any type URLs by falling back to an opaque
+// base64-encoded representation.
 func PbToJSONString(pb proto.Message) (string, error) {
-	return jsonpbMarshaler.MarshalToString(pb)
+	b, err := protojsonMarshaler.Marshal(pb)
+	if err == nil {
+		return string(b), nil
+	}
+	b, err2 := marshalJSONLenientAny(pb, true)
+	if err2 == nil {
+		return string(b), nil
+	}
+	return "", err
 }
 
-// PbToJSONHexBytes output hex for bytes field instead of default base64
-// WARNING: result json is only intended for logging.
-// The legacy jsonpbhex marshaler is no longer used because it can panic on
-// newer protobuf bridge types; keep this helper as a stable log-format entry
-// point and fall back to standard protobuf JSON.
+// PbToJSONHexBytes historically used a custom marshaler to render bytes in hex.
+// It is now log-only and uses the same tolerant JSON path as PbToJSONString.
 func PbToJSONHexBytes(pb proto.Message) (string, error) {
-	return jsonpbMarshaler.MarshalToString(pb)
+	return PbToJSONString(pb)
+}
+
+func marshalJSONLenientAny(pb proto.Message, emitUnpopulated bool) ([]byte, error) {
+	v, err := protoMessageToInterface(pb.ProtoReflect(), emitUnpopulated)
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(v)
+}
+
+func protoMessageToInterface(msg protoreflect.Message, emitUnpopulated bool) (any, error) {
+	if !msg.IsValid() {
+		return nil, nil
+	}
+	if msg.Descriptor().FullName() == "google.protobuf.Any" {
+		if a, ok := msg.Interface().(*anypb.Any); ok {
+			return anyToInterface(a, emitUnpopulated)
+		}
+	}
+
+	out := make(map[string]any)
+	fields := msg.Descriptor().Fields()
+	for i := 0; i < fields.Len(); i++ {
+		fd := fields.Get(i)
+
+		// For real oneofs, only emit the selected field.
+		if oneof := fd.ContainingOneof(); oneof != nil && !oneof.IsSynthetic() {
+			if !msg.Has(fd) {
+				continue
+			}
+		} else if !emitUnpopulated && !msg.Has(fd) {
+			continue
+		}
+
+		val := msg.Get(fd)
+		converted, err := protoValueToInterface(fd, val, emitUnpopulated)
+		if err != nil {
+			return nil, err
+		}
+		if converted == nil {
+			continue
+		}
+		out[fd.JSONName()] = converted
+	}
+	return out, nil
+}
+
+func anyToInterface(a *anypb.Any, emitUnpopulated bool) (any, error) {
+	if a == nil {
+		return nil, nil
+	}
+	if a.TypeUrl == "" {
+		return map[string]any{"@type": "", "value": base64.StdEncoding.EncodeToString(a.Value)}, nil
+	}
+
+	inner, err := anypb.UnmarshalNew(a, proto.UnmarshalOptions{AllowPartial: true, Resolver: protoregistry.GlobalTypes})
+	if err != nil {
+		return map[string]any{"@type": a.TypeUrl, "value": base64.StdEncoding.EncodeToString(a.Value)}, nil
+	}
+
+	innerV, err := protoMessageToInterface(inner.ProtoReflect(), emitUnpopulated)
+	if err != nil {
+		return nil, err
+	}
+	if m, ok := innerV.(map[string]any); ok {
+		m["@type"] = a.TypeUrl
+		return m, nil
+	}
+	return map[string]any{"@type": a.TypeUrl, "value": innerV}, nil
+}
+
+func protoValueToInterface(fd protoreflect.FieldDescriptor, v protoreflect.Value, emitUnpopulated bool) (any, error) {
+	if fd.IsList() {
+		list := v.List()
+		arr := make([]any, 0, list.Len())
+		for i := 0; i < list.Len(); i++ {
+			elem, err := protoScalarToInterface(fd, list.Get(i), emitUnpopulated)
+			if err != nil {
+				return nil, err
+			}
+			arr = append(arr, elem)
+		}
+		return arr, nil
+	}
+	if fd.IsMap() {
+		m := v.Map()
+		out := make(map[string]any)
+		m.Range(func(k protoreflect.MapKey, mv protoreflect.Value) bool {
+			keyStr := mapKeyToString(k)
+			val, err := protoScalarToInterface(fd.MapValue(), mv, emitUnpopulated)
+			if err != nil {
+				// Range doesn't allow returning an error; capture via closure.
+				out = nil
+				return false
+			}
+			out[keyStr] = val
+			return true
+		})
+		if out == nil {
+			return nil, errors.New("failed to marshal protobuf map field")
+		}
+		return out, nil
+	}
+	return protoScalarToInterface(fd, v, emitUnpopulated)
+}
+
+func mapKeyToString(k protoreflect.MapKey) string {
+	switch k.Interface().(type) {
+	case string:
+		return k.String()
+	case bool:
+		if k.Bool() {
+			return "true"
+		}
+		return "false"
+	case int32, int64:
+		return strconv.FormatInt(k.Int(), 10)
+	case uint32, uint64:
+		return strconv.FormatUint(k.Uint(), 10)
+	default:
+		return k.String()
+	}
+}
+
+func protoScalarToInterface(fd protoreflect.FieldDescriptor, v protoreflect.Value, emitUnpopulated bool) (any, error) {
+	switch fd.Kind() {
+	case protoreflect.BoolKind:
+		return v.Bool(), nil
+	case protoreflect.Int32Kind, protoreflect.Sint32Kind, protoreflect.Sfixed32Kind:
+		return int32(v.Int()), nil
+	case protoreflect.Int64Kind, protoreflect.Sint64Kind, protoreflect.Sfixed64Kind:
+		// JSON mapping uses strings for 64-bit integers.
+		return strconv.FormatInt(v.Int(), 10), nil
+	case protoreflect.Uint32Kind, protoreflect.Fixed32Kind:
+		return uint32(v.Uint()), nil
+	case protoreflect.Uint64Kind, protoreflect.Fixed64Kind:
+		return strconv.FormatUint(v.Uint(), 10), nil
+	case protoreflect.FloatKind:
+		return float32(v.Float()), nil
+	case protoreflect.DoubleKind:
+		return v.Float(), nil
+	case protoreflect.StringKind:
+		return v.String(), nil
+	case protoreflect.BytesKind:
+		return base64.StdEncoding.EncodeToString(v.Bytes()), nil
+	case protoreflect.EnumKind:
+		ed := fd.Enum().Values().ByNumber(v.Enum())
+		if ed != nil {
+			return string(ed.Name()), nil
+		}
+		return int32(v.Enum()), nil
+	case protoreflect.MessageKind, protoreflect.GroupKind:
+		return protoMessageToInterface(v.Message(), emitUnpopulated)
+	default:
+		return nil, nil
+	}
 }
 
 func GetAddressFromKeystore(ksBytes []byte) (string, error) {

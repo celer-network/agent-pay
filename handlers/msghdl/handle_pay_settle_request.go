@@ -22,14 +22,14 @@ import (
 	"github.com/celer-network/agent-pay/utils/hashlist"
 	"github.com/celer-network/goutils/eth"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes/any"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 type settledPayInfo struct {
 	req       *rpc.SettledPayment
 	pay       *entity.ConditionalPay
-	note      *any.Any
+	note      *anypb.Any
 	igcid     ctype.CidType
 	igstate   int
 	egstate   int

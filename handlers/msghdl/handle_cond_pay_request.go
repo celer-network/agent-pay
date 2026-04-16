@@ -23,7 +23,7 @@ import (
 	"github.com/celer-network/agent-pay/utils/hashlist"
 	"github.com/celer-network/goutils/eth"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 const onchainCheckInterval = 5
@@ -519,7 +519,7 @@ func (h *CelerMsgHandler) condPayRequestOutbound(frame *common.MsgFrame) error {
 		}
 		err2 = h.streamWriter.WriteCelerMsg(peerFrom, celerMsg)
 		if err2 != nil {
-			return fmt.Errorf(err2.Error() + ", FAIL_SEND_RECEIPT")
+			return fmt.Errorf("FAIL_SEND_RECEIPT: %w", err2)
 		}
 		return nil
 	}

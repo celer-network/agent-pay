@@ -13,12 +13,12 @@ import (
 	"github.com/celer-network/agent-pay/storage"
 	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/ptypes"
-	"github.com/golang/protobuf/ptypes/any"
+	"google.golang.org/protobuf/protoadapt"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 type delegateProcess interface {
-	AddBooleanPay(pay *entity.ConditionalPay, note *any.Any, dstNetId uint64) (ctype.PayIDType, error)
+	AddBooleanPay(pay *entity.ConditionalPay, note *anypb.Any, dstNetId uint64) (ctype.PayIDType, error)
 	GetCurrentBlockNumber() *big.Int
 }
 
@@ -31,7 +31,7 @@ type DelegateManager struct {
 type DelegateEvent struct {
 	PayID       ctype.PayIDType
 	Pay         *entity.ConditionalPay
-	Note        *any.Any
+	Note        *anypb.Any
 	SendSuccess bool
 }
 
@@ -100,8 +100,9 @@ func (m *DelegateManager) NotifyPaySendFinalize(in *DelegateEvent) error {
 	log.Debugln("PaySendComplete:", ctype.PayID2Hex(in.PayID),
 		utils.PrintConditionalPay(in.Pay), "note:", in.Note, "success:", in.SendSuccess)
 	note := &PayOriginNote{}
-	if ptypes.Is(in.Note, note) {
-		err := ptypes.UnmarshalAny(in.Note, note)
+	noteV2 := protoadapt.MessageV2Of(note)
+	if in.Note != nil && in.Note.MessageIs(noteV2) {
+		err := in.Note.UnmarshalTo(noteV2)
 		if err != nil {
 			log.Errorln("unmarshal agent note:", err)
 			return err
@@ -138,7 +139,7 @@ func (m *DelegateManager) sendToken(dst ctype.Addr, lumpsum *lumpSum) error {
 			Amt:     lumpsum.amt.Bytes(),
 		},
 	}
-	note, err := ptypes.MarshalAny(lumpsum.note)
+	note, err := anypb.New(protoadapt.MessageV2Of(lumpsum.note))
 	if err != nil {
 		log.Errorln(err, note)
 		return err

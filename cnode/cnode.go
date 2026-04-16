@@ -46,9 +46,9 @@ import (
 	"github.com/celer-network/goutils/log"
 	"github.com/ethereum/go-ethereum/ethclient"
 	ethrpc "github.com/ethereum/go-ethereum/rpc"
-	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/proto"
 )
 
 const mutexLocked = 1 << iota

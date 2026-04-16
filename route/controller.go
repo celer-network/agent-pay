@@ -25,7 +25,7 @@ import (
 	"github.com/celer-network/goutils/log"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 type BcastSendCallback func(info *rpc.RoutingRequest, ospAddrs []string)

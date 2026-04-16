@@ -9,7 +9,7 @@ import (
 	"github.com/celer-network/agent-pay/ctype"
 	"github.com/celer-network/goutils/eth"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 func EncodeAppState(nonce uint64, seqNum uint64, state []byte, disputeTimeout uint64) ([]byte, error) {

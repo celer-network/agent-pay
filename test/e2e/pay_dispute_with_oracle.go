@@ -18,7 +18,8 @@ import (
 	"github.com/celer-network/goutils/log"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/protoadapt"
 )
 
 const oracleKeyStore = "../../testing/env/keystore/etherbase.json"
@@ -224,7 +225,7 @@ func getOracleProofBytes(stateProofBytes []byte, players []string, updater strin
 		CurrentTime: 4,
 		Players:     getSortedPlayers(players),
 	}
-	serializedOracleState, err := proto.Marshal(oracleState)
+	serializedOracleState, err := proto.Marshal(protoadapt.MessageV2Of(oracleState))
 	if err != nil {
 		return nil, err
 	}
@@ -242,7 +243,7 @@ func getOracleProofBytes(stateProofBytes []byte, players []string, updater strin
 		OracleState: serializedOracleState,
 		Sig:         oracleSig,
 	}
-	serializedOracleProof, err := proto.Marshal(oracleProof)
+	serializedOracleProof, err := proto.Marshal(protoadapt.MessageV2Of(oracleProof))
 	if err != nil {
 		return nil, err
 	}

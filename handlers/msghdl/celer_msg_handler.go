@@ -21,7 +21,7 @@ import (
 	"github.com/celer-network/agent-pay/storage"
 	"github.com/celer-network/goutils/eth"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 type CooperativeWithdraw interface {

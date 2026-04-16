@@ -17,7 +17,7 @@ import (
 	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/goutils/eth"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 func (h *CelerMsgHandler) HandleHopAckState(frame *common.MsgFrame) error {

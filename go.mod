@@ -22,9 +22,9 @@ require (
 	go.uber.org/atomic v1.4.0
 	golang.org/x/crypto v0.45.0
 	golang.org/x/net v0.47.0
-	google.golang.org/genproto v0.0.0-20200218151345-dad8c97a84f5
-	google.golang.org/grpc v1.27.1
-	google.golang.org/protobuf v1.34.2
+	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013
+	google.golang.org/grpc v1.34.0
+	google.golang.org/protobuf v1.36.6
 )
 
 require (

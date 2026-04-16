@@ -43,10 +43,6 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/redis"
-	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes"
-	"github.com/golang/protobuf/ptypes/any"
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/google/uuid"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"golang.org/x/crypto/ssh/terminal"
@@ -55,6 +51,10 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/protoadapt"
+	"google.golang.org/protobuf/types/known/anypb"
+	empty "google.golang.org/protobuf/types/known/emptypb"
 )
 
 var (
@@ -561,7 +561,7 @@ func (s *adminService) RegisterStream(ctx context.Context, in *rpc.RegisterStrea
 	s.ospEthToRPCLock.Lock()
 	defer s.ospEthToRPCLock.Unlock()
 	if peerRPC := s.ospEthToRPC[ctype.Bytes2Addr(in.PeerEthAddress)]; peerRPC == in.PeerRpcAddress {
-		return &empty.Empty{}, status.Errorf(codes.AlreadyExists, common.ErrStreamAleadyExists.Error())
+		return &empty.Empty{}, status.Error(codes.AlreadyExists, common.ErrStreamAleadyExists.Error())
 	}
 	err := s.cNode.RegisterStream(ctype.Bytes2Addr(in.PeerEthAddress), in.PeerRpcAddress)
 	if err != nil {
@@ -633,7 +633,15 @@ func (s *adminService) SendToken(ctx context.Context, in *rpc.SendTokenRequest) 
 		ResolveTimeout:  config.PayResolveTimeout,
 	}
 
-	noteType, _ := ptypes.AnyMessageName(in.Note)
+	noteType := ""
+	if in.Note != nil {
+		typeURL := in.Note.GetTypeUrl()
+		if i := strings.LastIndex(typeURL, "/"); i >= 0 && i+1 < len(typeURL) {
+			noteType = typeURL[i+1:]
+		} else {
+			noteType = typeURL
+		}
+	}
 	if noteType == "" {
 		noteType = "reward" // TODO: upgrade reward svr to also use note
 	}
@@ -757,7 +765,7 @@ func (s *server) publishPayEvent(category string, payEvent *celerx_fee_interface
 func (s *server) handlePaySendFinalize(
 	payID ctype.PayIDType,
 	pay *entity.ConditionalPay,
-	note *any.Any,
+	note *anypb.Any,
 	reason rpc.PaymentSettleReason) {
 	paid := false
 	if reason == rpc.PaymentSettleReason_PAY_PAID_MAX || reason == rpc.PaymentSettleReason_PAY_RESOLVED_ONCHAIN {
@@ -773,7 +781,8 @@ func (s *server) handlePaySendFinalize(
 			PayId:        payID.Bytes(),
 		}
 		// No need to notify delegate for send finalization. Delegate is built inside osp, use function call below instead.
-		if !ptypes.Is(note, &delegate.PayOriginNote{}) {
+		originNote := &delegate.PayOriginNote{}
+		if !note.MessageIs(protoadapt.MessageV2Of(originNote)) {
 			go s.publishPayEvent("paysendfinalized", event, note.GetTypeUrl())
 		} else {
 			delegateEvent := &delegate.DelegateEvent{
@@ -795,17 +804,17 @@ func (s *server) handlePaySendFinalize(
 func (s *server) HandleSendComplete(
 	payID ctype.PayIDType,
 	pay *entity.ConditionalPay,
-	note *any.Any,
+	note *anypb.Any,
 	reason rpc.PaymentSettleReason) {
 	s.handlePaySendFinalize(payID, pay, note, reason)
 }
 
-func (s *server) HandleDestinationUnreachable(payID ctype.PayIDType, pay *entity.ConditionalPay, note *any.Any) {
+func (s *server) HandleDestinationUnreachable(payID ctype.PayIDType, pay *entity.ConditionalPay, note *anypb.Any) {
 	log.Errorln(payID.String(), "unreachable")
 	s.handlePaySendFinalize(payID, pay, note, rpc.PaymentSettleReason_PAY_DEST_UNREACHABLE)
 }
 
-func (s *server) HandleSendFail(payID ctype.PayIDType, pay *entity.ConditionalPay, note *any.Any, errMsg string) {
+func (s *server) HandleSendFail(payID ctype.PayIDType, pay *entity.ConditionalPay, note *anypb.Any, errMsg string) {
 	log.Errorln(payID.String(), "failed", errMsg)
 	s.handlePaySendFinalize(payID, pay, note, rpc.PaymentSettleReason_PAY_REJECTED)
 }
@@ -865,22 +874,28 @@ func (s *server) Initialize(
 	s.cNode.OnNewStream(s)
 }
 
-func (s *server) HandleReceivingStart(payID ctype.PayIDType, pay *entity.ConditionalPay, note *any.Any) {
+func (s *server) HandleReceivingStart(payID ctype.PayIDType, pay *entity.ConditionalPay, note *anypb.Any) {
 }
 
 func (s *server) HandleReceivingDone(
 	payID ctype.PayIDType,
 	pay *entity.ConditionalPay,
-	note *any.Any,
+	note *anypb.Any,
 	reason rpc.PaymentSettleReason) {
+	noteStr := ""
+	typeURL := ""
+	if note != nil {
+		noteStr = note.String()
+		typeURL = note.GetTypeUrl()
+	}
 	event := &celerx_fee_interface.FeeEvent{
 		PayId:        payID.Bytes(),
 		Pay:          pay,
 		Note:         note,
-		NotePbString: note.String(),
+		NotePbString: noteStr,
 	}
 	if note != nil {
-		go s.publishPayEvent("receivedone", event, note.GetTypeUrl())
+		go s.publishPayEvent("receivedone", event, typeURL)
 	}
 }
 

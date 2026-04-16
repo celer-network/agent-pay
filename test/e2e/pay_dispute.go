@@ -14,7 +14,7 @@ import (
 	tf "github.com/celer-network/agent-pay/testing"
 	"github.com/celer-network/agent-pay/testing/testapp"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 func disputeEthPayWithVirtualContract(t *testing.T) {

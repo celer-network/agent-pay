@@ -13,7 +13,7 @@ import (
 	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/goutils/log"
 	ethcommon "github.com/ethereum/go-ethereum/common"
-	"github.com/golang/protobuf/ptypes/any"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 const cPayTimeout = 50 // timeout in blocknum for cpay ie. no app channel condition
@@ -28,7 +28,7 @@ func (mc *Client) SendETH(receiver string, amtWei string, noteTypeUrl string, no
 func (mc *Client) SendToken(tk *Token, receiver string, amtWei string, noteTypeUrl string, noteValueByte []byte) (string, error) {
 
 	xfer := createXfer(tk, receiver, amtWei)
-	note := &any.Any{
+	note := &anypb.Any{
 		TypeUrl: noteTypeUrl,
 		Value:   noteValueByte,
 	}
@@ -134,7 +134,7 @@ func (mc *Client) SendConditionalPayment(
 	transferLogicType TransferLogicType,
 	conditions []*Condition,
 	timeout int64,
-	note *any.Any) (string, error) {
+	note *anypb.Any) (string, error) {
 	if transferLogicType != transferLogicTypeBooleanAnd {
 		return "", errors.New("Unsupported transfer logic type")
 	}

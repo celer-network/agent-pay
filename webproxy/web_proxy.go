@@ -15,12 +15,12 @@ import (
 	"github.com/celer-network/agent-pay/utils"
 	proxyrpc "github.com/celer-network/agent-pay/webproxy/rpc"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/google/uuid"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/rs/cors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
+	empty "google.golang.org/protobuf/types/known/emptypb"
 )
 
 type WebProxy struct {

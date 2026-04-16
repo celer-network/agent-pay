@@ -45,7 +45,7 @@ func main() {
 		if err != nil {
 			fmt.Fprintf(w, "cmd.Run() failed with %s\n", err)
 		}
-		fmt.Fprintf(w, string(out))
+		fmt.Fprint(w, string(out))
 	})
 	http.HandleFunc("/db/channel-cid", func(w http.ResponseWriter, r *http.Request) {
 		cid := r.URL.Query()["cid"]
@@ -57,7 +57,7 @@ func main() {
 		if err != nil {
 			fmt.Fprintf(w, "cmd.Run() failed with %s\n", err)
 		}
-		fmt.Fprintf(w, string(out))
+		fmt.Fprint(w, string(out))
 	})
 	http.HandleFunc("/db/pay", func(w http.ResponseWriter, r *http.Request) {
 		payid := r.URL.Query()["payid"]
@@ -69,7 +69,7 @@ func main() {
 		if err != nil {
 			fmt.Fprintf(w, "cmd.Run() failed with %s\n", err)
 		}
-		fmt.Fprintf(w, string(out))
+		fmt.Fprint(w, string(out))
 	})
 	http.HandleFunc("/db/deposit-id", func(w http.ResponseWriter, r *http.Request) {
 		depositid := r.URL.Query()["depositid"]
@@ -81,7 +81,7 @@ func main() {
 		if err != nil {
 			fmt.Fprintf(w, "cmd.Run() failed with %s\n", err)
 		}
-		fmt.Fprintf(w, string(out))
+		fmt.Fprint(w, string(out))
 	})
 	http.HandleFunc("/db/deposits-cid", func(w http.ResponseWriter, r *http.Request) {
 		cid := r.URL.Query()["cid"]
@@ -93,7 +93,7 @@ func main() {
 		if err != nil {
 			fmt.Fprintf(w, "cmd.Run() failed with %s\n", err)
 		}
-		fmt.Fprintf(w, string(out))
+		fmt.Fprint(w, string(out))
 	})
 	http.HandleFunc("/onchain/channel", func(w http.ResponseWriter, r *http.Request) {
 		cid := r.URL.Query()["cid"]
@@ -105,7 +105,7 @@ func main() {
 		if err != nil {
 			fmt.Fprintf(w, "cmd.Run() failed with %s\n", err)
 		}
-		fmt.Fprintf(w, string(out))
+		fmt.Fprint(w, string(out))
 	})
 	http.HandleFunc("/onchain/pay", func(w http.ResponseWriter, r *http.Request) {
 		payid := r.URL.Query()["payid"]
@@ -117,7 +117,7 @@ func main() {
 		if err != nil {
 			fmt.Fprintf(w, "cmd.Run() failed with %s\n", err)
 		}
-		fmt.Fprintf(w, string(out))
+		fmt.Fprint(w, string(out))
 	})
 	http.HandleFunc("/onchain/app", func(w http.ResponseWriter, r *http.Request) {
 		appAddr := r.URL.Query()["app_addr"]
@@ -137,7 +137,7 @@ func main() {
 		if err != nil {
 			fmt.Fprintf(w, "cmd.Run() failed with %s\n", err)
 		}
-		fmt.Fprintf(w, string(out))
+		fmt.Fprint(w, string(out))
 	})
 	fs := http.FileServer(FileSystem{http.Dir(*staticFileDir)})
 	http.Handle("/", fs)

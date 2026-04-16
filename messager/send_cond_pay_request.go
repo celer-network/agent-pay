@@ -21,12 +21,12 @@ import (
 	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/agent-pay/utils/hashlist"
 	"github.com/celer-network/goutils/log"
-	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes"
-	"github.com/golang/protobuf/ptypes/any"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/protoadapt"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
-func (m *Messager) SendCondPayRequest(payBytes []byte, note *any.Any, xnet *rpc.CrossNetPay, logEntry *pem.PayEventMessage) error {
+func (m *Messager) SendCondPayRequest(payBytes []byte, note *anypb.Any, xnet *rpc.CrossNetPay, logEntry *pem.PayEventMessage) error {
 	pay, cid, peer, celerMsg, directPay, err := m.getPayNextHopAndCelerMsg(payBytes, note, xnet, logEntry)
 	if err != nil {
 		return err
@@ -47,7 +47,7 @@ func (m *Messager) SendCondPayRequest(payBytes []byte, note *any.Any, xnet *rpc.
 }
 
 func (m *Messager) ForwardCondPayRequest(
-	payBytes []byte, note *any.Any, delegable bool, xnet *rpc.CrossNetPay, logEntry *pem.PayEventMessage) (ctype.Addr, error) {
+	payBytes []byte, note *anypb.Any, delegable bool, xnet *rpc.CrossNetPay, logEntry *pem.PayEventMessage) (ctype.Addr, error) {
 	pay, cid, peer, celerMsg, _, err := m.getPayNextHopAndCelerMsg(payBytes, note, xnet, logEntry)
 	if err != nil {
 		return peer, err
@@ -141,7 +141,7 @@ func (m *Messager) getPayNextHop(payBytes []byte, xnet *rpc.CrossNetPay, logEntr
 	return &pay, cid, peer, directPay, nil
 }
 
-func (m *Messager) getPayNextHopAndCelerMsg(payBytes []byte, note *any.Any, xnet *rpc.CrossNetPay, logEntry *pem.PayEventMessage) (
+func (m *Messager) getPayNextHopAndCelerMsg(payBytes []byte, note *anypb.Any, xnet *rpc.CrossNetPay, logEntry *pem.PayEventMessage) (
 	*entity.ConditionalPay, ctype.CidType, ctype.Addr, *rpc.CelerMsg, bool, error) {
 	pay, cid, peer, directPay, err := m.getPayNextHop(payBytes, xnet, logEntry)
 	if err != nil {
@@ -161,7 +161,7 @@ func (m *Messager) getPayNextHopAndCelerMsg(payBytes []byte, note *any.Any, xnet
 }
 
 func (m *Messager) sendCondPayRequest(
-	payBytes []byte, pay *entity.ConditionalPay, note *any.Any,
+	payBytes []byte, pay *entity.ConditionalPay, note *anypb.Any,
 	cid ctype.CidType, peerTo ctype.Addr,
 	xnet *rpc.CrossNetPay, logEntry *pem.PayEventMessage) error {
 
@@ -214,7 +214,7 @@ func (m *Messager) runCondPayTx(tx *storage.DALTx, args ...interface{}) error {
 	payID := args[1].(ctype.PayIDType)
 	pay := args[2].(*entity.ConditionalPay)
 	payBytes := args[3].([]byte)
-	note := args[4].(*any.Any)
+	note := args[4].(*anypb.Any)
 	directPay := args[5].(bool)
 	xnet := args[6].(*rpc.CrossNetPay)
 	retSeqNum := args[7].(*uint64)
@@ -346,29 +346,35 @@ func (m *Messager) runCondPayTx(tx *storage.DALTx, args ...interface{}) error {
 	return nil
 }
 
-func (m *Messager) updateDelegatedPay(tx *storage.DALTx, payID ctype.PayIDType, pay *entity.ConditionalPay, note *any.Any) error {
+func (m *Messager) updateDelegatedPay(tx *storage.DALTx, payID ctype.PayIDType, pay *entity.ConditionalPay, note *anypb.Any) error {
+	if note == nil || ctype.Bytes2Addr(pay.GetSrc()) != m.nodeConfig.GetOnChainAddr() {
+		return nil
+	}
+
 	dnote := &delegate.PayOriginNote{}
-	if ptypes.Is(note, dnote) && ctype.Bytes2Addr(pay.GetSrc()) == m.nodeConfig.GetOnChainAddr() {
-		err := ptypes.UnmarshalAny(note, dnote)
-		if err != nil {
-			return fmt.Errorf("UnmarshalAny err %w", err)
-		}
-		if !dnote.GetIsRefund() {
-			// TODO: make this API take an array of payIDs and update all in a single SQL statement (batch)
-			for _, op := range dnote.GetOriginalPays() {
-				pid := ctype.Bytes2PayID(op.GetPayId())
-				err = tx.UpdateSendingDelegatedPay(pid, payID)
-				if err != nil {
-					return fmt.Errorf("sending delegated pay error %x: %w", pid, err)
-				}
-			}
+	dnoteV2 := protoadapt.MessageV2Of(dnote)
+	if !note.MessageIs(dnoteV2) {
+		return nil
+	}
+	if err := note.UnmarshalTo(dnoteV2); err != nil {
+		return fmt.Errorf("UnmarshalAny err %w", err)
+	}
+
+	if dnote.GetIsRefund() {
+		return nil
+	}
+	// TODO: make this API take an array of payIDs and update all in a single SQL statement (batch)
+	for _, op := range dnote.GetOriginalPays() {
+		pid := ctype.Bytes2PayID(op.GetPayId())
+		if err := tx.UpdateSendingDelegatedPay(pid, payID); err != nil {
+			return fmt.Errorf("sending delegated pay error %x: %w", pid, err)
 		}
 	}
 	return nil
 }
 
 func (m *Messager) sendCrossNetPay(
-	payID ctype.PayIDType, payBytes []byte, pay *entity.ConditionalPay, note *any.Any,
+	payID ctype.PayIDType, payBytes []byte, pay *entity.ConditionalPay, note *anypb.Any,
 	peerTo ctype.Addr, xnet *rpc.CrossNetPay, logEntry *pem.PayEventMessage) error {
 	if !xnet.GetCrossing() {
 		return fmt.Errorf("not crossing net payment")

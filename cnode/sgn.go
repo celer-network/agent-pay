@@ -11,8 +11,8 @@ import (
 	"github.com/celer-network/agent-pay/common"
 	"github.com/celer-network/agent-pay/ctype"
 	"github.com/celer-network/agent-pay/dispute"
-	"github.com/golang/protobuf/proto"
 	"github.com/levigross/grequests"
+	"google.golang.org/protobuf/proto"
 )
 
 type SgnResponseWithHeight struct {
