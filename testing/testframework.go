@@ -8,6 +8,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"math/big"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -356,10 +357,25 @@ func FundAccountsWithErc20(erc20Addr string, addrs []string, amount string) erro
 
 func GetNextClientPort() string {
 	clientPortLock.Lock()
+	defer clientPortLock.Unlock()
+
+	ln, err := net.Listen("tcp", "localhost:0")
+	if err == nil {
+		port := ln.Addr().(*net.TCPAddr).Port
+		ln.Close()
+		return strconv.Itoa(port)
+	}
+
 	ret := clientPort
-	clientPort++
-	clientPortLock.Unlock()
-	return strconv.Itoa(ret)
+	for {
+		ln, err = net.Listen("tcp", ":"+strconv.Itoa(ret))
+		if err == nil {
+			ln.Close()
+			clientPort = ret + 1
+			return strconv.Itoa(ret)
+		}
+		ret++
+	}
 }
 
 func AddAmtStr(base string, amts ...string) string {
