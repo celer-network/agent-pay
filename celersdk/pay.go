@@ -8,6 +8,7 @@ import (
 	"errors"
 
 	"github.com/celer-network/agent-pay/celersdkintf"
+	"github.com/celer-network/agent-pay/common"
 	"github.com/celer-network/agent-pay/ctype"
 	"github.com/celer-network/agent-pay/entity"
 	"github.com/celer-network/agent-pay/utils"
@@ -104,6 +105,19 @@ func (mc *Client) ConfirmOnChainResolvedPays(tk *Token) error {
 // Get incoming payment status code
 func (mc *Client) GetIncomingPaymentStatus(payId string) int {
 	return mc.c.GetIncomingPaymentStatus(ctype.Hex2PayID(payId))
+}
+
+// GetIncomingPaymentInfo returns the related payment info for an incoming payment ID.
+// It returns ErrPayNotFound if the payment does not belong to this client as receiver.
+func (mc *Client) GetIncomingPaymentInfo(paymentID string) (*celersdkintf.Payment, error) {
+	payment, err := mc.c.GetPayment(ethcommon.HexToHash(paymentID))
+	if err != nil {
+		return nil, err
+	}
+	if ctype.Hex2Addr(payment.Receiver) != mc.c.GetMyEthAddr() {
+		return nil, common.ErrPayNotFound
+	}
+	return payment, nil
 }
 
 // Get outgoing payment status code

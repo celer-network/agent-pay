@@ -2565,7 +2565,7 @@ const file_web_api_proto_rawDesc = "" +
 	"\tdrop_recv\x18\x01 \x01(\bR\bdropRecv\x12\x1b\n" +
 	"\tdrop_send\x18\x02 \x01(\bR\bdropSend\"'\n" +
 	"\rPaymentStatus\x12\x16\n" +
-	"\x06status\x18\x01 \x01(\rR\x06status2\xdc\"\n" +
+	"\x06status\x18\x01 \x01(\rR\x06status2\xa0#\n" +
 	"\x06WebApi\x12N\n" +
 	"\rGetPayHistory\x12\x1c.webrpc.GetPayHistoryRequest\x1a\x1d.webrpc.GetPayHistoryResponse\"\x00\x12G\n" +
 	"\rSetDelegation\x12\x1c.webrpc.SetDelegationRequest\x1a\x16.google.protobuf.Empty\"\x00\x12L\n" +
@@ -2583,7 +2583,8 @@ const file_web_api_proto_rawDesc = "" +
 	"\x16SendConditionalPayment\x12%.webrpc.SendConditionalPaymentRequest\x1a\x11.webrpc.PaymentID\"\x00\x12L\n" +
 	"\x19SubscribeIncomingPayments\x12\x16.google.protobuf.Empty\x1a\x13.webrpc.PaymentInfo\"\x000\x01\x12T\n" +
 	"\x19SubscribeOutgoingPayments\x12\x16.google.protobuf.Empty\x1a\x1b.webrpc.OutgoingPaymentInfo\"\x000\x01\x12F\n" +
-	"\x18GetIncomingPaymentStatus\x12\x11.webrpc.PaymentID\x1a\x15.webrpc.PaymentStatus\"\x00\x12F\n" +
+	"\x18GetIncomingPaymentStatus\x12\x11.webrpc.PaymentID\x1a\x15.webrpc.PaymentStatus\"\x00\x12B\n" +
+	"\x16GetIncomingPaymentInfo\x12\x11.webrpc.PaymentID\x1a\x13.webrpc.PaymentInfo\"\x00\x12F\n" +
 	"\x18GetOutgoingPaymentStatus\x12\x11.webrpc.PaymentID\x1a\x15.webrpc.PaymentStatus\"\x00\x12E\n" +
 	"\x16ConfirmOutgoingPayment\x12\x11.webrpc.PaymentID\x1a\x16.google.protobuf.Empty\"\x00\x12D\n" +
 	"\x15RejectIncomingPayment\x12\x11.webrpc.PaymentID\x1a\x16.google.protobuf.Empty\"\x00\x12S\n" +
@@ -2719,102 +2720,104 @@ var file_web_api_proto_depIdxs = []int32{
 	48, // 27: webrpc.WebApi.SubscribeIncomingPayments:input_type -> google.protobuf.Empty
 	48, // 28: webrpc.WebApi.SubscribeOutgoingPayments:input_type -> google.protobuf.Empty
 	14, // 29: webrpc.WebApi.GetIncomingPaymentStatus:input_type -> webrpc.PaymentID
-	14, // 30: webrpc.WebApi.GetOutgoingPaymentStatus:input_type -> webrpc.PaymentID
-	14, // 31: webrpc.WebApi.ConfirmOutgoingPayment:input_type -> webrpc.PaymentID
-	14, // 32: webrpc.WebApi.RejectIncomingPayment:input_type -> webrpc.PaymentID
-	14, // 33: webrpc.WebApi.SettleOnChainResolvedIncomingPayment:input_type -> webrpc.PaymentID
-	14, // 34: webrpc.WebApi.ResolveIncomingPaymentOnChain:input_type -> webrpc.PaymentID
-	14, // 35: webrpc.WebApi.GetOnChainPaymentInfo:input_type -> webrpc.PaymentID
-	2,  // 36: webrpc.WebApi.ConfirmOnChainResolvedPayments:input_type -> webrpc.TokenInfo
-	2,  // 37: webrpc.WebApi.SettleExpiredPayments:input_type -> webrpc.TokenInfo
-	6,  // 38: webrpc.WebApi.IntendWithdraw:input_type -> webrpc.DepositOrWithdrawRequest
-	2,  // 39: webrpc.WebApi.ConfirmWithdraw:input_type -> webrpc.TokenInfo
-	2,  // 40: webrpc.WebApi.IntendSettlePaymentChannel:input_type -> webrpc.TokenInfo
-	2,  // 41: webrpc.WebApi.ConfirmSettlePaymentChannel:input_type -> webrpc.TokenInfo
-	2,  // 42: webrpc.WebApi.GetSettleFinalizedTimeForPaymentChannel:input_type -> webrpc.TokenInfo
-	2,  // 43: webrpc.WebApi.SyncOnChainPaymentChannelStatus:input_type -> webrpc.TokenInfo
-	48, // 44: webrpc.WebApi.SyncStateWithPeer:input_type -> google.protobuf.Empty
-	19, // 45: webrpc.WebApi.CreateAppSessionOnVirtualContract:input_type -> webrpc.CreateAppSessionOnVirtualContractRequest
-	20, // 46: webrpc.WebApi.CreateAppSessionOnDeployedContract:input_type -> webrpc.CreateAppSessionOnDeployedContractRequest
-	18, // 47: webrpc.WebApi.SubscribeAppSessionDispute:input_type -> webrpc.SessionID
-	22, // 48: webrpc.WebApi.SignOutgoingState:input_type -> webrpc.SignOutgoingStateRequest
-	26, // 49: webrpc.WebApi.ValidateAck:input_type -> webrpc.ValidateAckRequest
-	24, // 50: webrpc.WebApi.SignData:input_type -> webrpc.Data
-	28, // 51: webrpc.WebApi.ProcessReceivedState:input_type -> webrpc.ProcessReceivedStateRequest
-	30, // 52: webrpc.WebApi.SettleAppSession:input_type -> webrpc.SettleAppSessionRequest
-	31, // 53: webrpc.WebApi.SettleAppSessionBySigTimeout:input_type -> webrpc.SettleAppSessionByTimeoutRequest
-	31, // 54: webrpc.WebApi.SettleAppSessionByMoveTimeout:input_type -> webrpc.SettleAppSessionByTimeoutRequest
-	32, // 55: webrpc.WebApi.SettleAppSessionByInvalidTurn:input_type -> webrpc.SettleAppSessionByInvalidityRequest
-	32, // 56: webrpc.WebApi.SettleAppSessionByInvalidState:input_type -> webrpc.SettleAppSessionByInvalidityRequest
-	18, // 57: webrpc.WebApi.DeleteAppSession:input_type -> webrpc.SessionID
-	18, // 58: webrpc.WebApi.GetDeployedAddressForAppSession:input_type -> webrpc.SessionID
-	34, // 59: webrpc.WebApi.GetBooleanOutcomeForAppSession:input_type -> webrpc.GetBooleanOutcomeForAppSessionRequest
-	36, // 60: webrpc.WebApi.ApplyActionForAppSession:input_type -> webrpc.ApplyActionForAppSessionRequest
-	18, // 61: webrpc.WebApi.FinalizeOnActionTimeoutForAppSession:input_type -> webrpc.SessionID
-	18, // 62: webrpc.WebApi.GetSettleFinalizedTimeForAppSession:input_type -> webrpc.SessionID
-	18, // 63: webrpc.WebApi.GetActionDeadlineForAppSession:input_type -> webrpc.SessionID
-	18, // 64: webrpc.WebApi.GetStatusForAppSession:input_type -> webrpc.SessionID
-	39, // 65: webrpc.WebApi.GetStateForAppSession:input_type -> webrpc.GetStateForAppSessionRequest
-	18, // 66: webrpc.WebApi.GetSeqNumForAppSession:input_type -> webrpc.SessionID
-	48, // 67: webrpc.WebApi.GetBlockNumber:input_type -> google.protobuf.Empty
-	42, // 68: webrpc.WebApi.SetMsgDropper:input_type -> webrpc.SetMsgDropReq
-	1,  // 69: webrpc.WebApi.GetPayHistory:output_type -> webrpc.GetPayHistoryResponse
-	48, // 70: webrpc.WebApi.SetDelegation:output_type -> google.protobuf.Empty
-	5,  // 71: webrpc.WebApi.OpenPaymentChannel:output_type -> webrpc.ChannelID
-	7,  // 72: webrpc.WebApi.Deposit:output_type -> webrpc.DepositOrWithdrawJob
-	7,  // 73: webrpc.WebApi.DepositNonBlocking:output_type -> webrpc.DepositOrWithdrawJob
-	7,  // 74: webrpc.WebApi.MonitorDepositJob:output_type -> webrpc.DepositOrWithdrawJob
-	7,  // 75: webrpc.WebApi.CooperativeWithdraw:output_type -> webrpc.DepositOrWithdrawJob
-	7,  // 76: webrpc.WebApi.CooperativeWithdrawNonBlocking:output_type -> webrpc.DepositOrWithdrawJob
-	7,  // 77: webrpc.WebApi.MonitorCooperativeWithdrawJob:output_type -> webrpc.DepositOrWithdrawJob
-	8,  // 78: webrpc.WebApi.GetBalance:output_type -> webrpc.GetBalanceResponse
-	10, // 79: webrpc.WebApi.GetPeerFreeBalance:output_type -> webrpc.FreeBalance
-	14, // 80: webrpc.WebApi.SendToken:output_type -> webrpc.PaymentID
-	14, // 81: webrpc.WebApi.SendConditionalPayment:output_type -> webrpc.PaymentID
-	15, // 82: webrpc.WebApi.SubscribeIncomingPayments:output_type -> webrpc.PaymentInfo
-	16, // 83: webrpc.WebApi.SubscribeOutgoingPayments:output_type -> webrpc.OutgoingPaymentInfo
-	43, // 84: webrpc.WebApi.GetIncomingPaymentStatus:output_type -> webrpc.PaymentStatus
-	43, // 85: webrpc.WebApi.GetOutgoingPaymentStatus:output_type -> webrpc.PaymentStatus
-	48, // 86: webrpc.WebApi.ConfirmOutgoingPayment:output_type -> google.protobuf.Empty
-	48, // 87: webrpc.WebApi.RejectIncomingPayment:output_type -> google.protobuf.Empty
-	48, // 88: webrpc.WebApi.SettleOnChainResolvedIncomingPayment:output_type -> google.protobuf.Empty
-	48, // 89: webrpc.WebApi.ResolveIncomingPaymentOnChain:output_type -> google.protobuf.Empty
-	17, // 90: webrpc.WebApi.GetOnChainPaymentInfo:output_type -> webrpc.OnChainPaymentInfo
-	48, // 91: webrpc.WebApi.ConfirmOnChainResolvedPayments:output_type -> google.protobuf.Empty
-	48, // 92: webrpc.WebApi.SettleExpiredPayments:output_type -> google.protobuf.Empty
-	48, // 93: webrpc.WebApi.IntendWithdraw:output_type -> google.protobuf.Empty
-	48, // 94: webrpc.WebApi.ConfirmWithdraw:output_type -> google.protobuf.Empty
-	48, // 95: webrpc.WebApi.IntendSettlePaymentChannel:output_type -> google.protobuf.Empty
-	48, // 96: webrpc.WebApi.ConfirmSettlePaymentChannel:output_type -> google.protobuf.Empty
-	37, // 97: webrpc.WebApi.GetSettleFinalizedTimeForPaymentChannel:output_type -> webrpc.BlockNumber
-	48, // 98: webrpc.WebApi.SyncOnChainPaymentChannelStatus:output_type -> google.protobuf.Empty
-	48, // 99: webrpc.WebApi.SyncStateWithPeer:output_type -> google.protobuf.Empty
-	18, // 100: webrpc.WebApi.CreateAppSessionOnVirtualContract:output_type -> webrpc.SessionID
-	18, // 101: webrpc.WebApi.CreateAppSessionOnDeployedContract:output_type -> webrpc.SessionID
-	21, // 102: webrpc.WebApi.SubscribeAppSessionDispute:output_type -> webrpc.DisputeInfo
-	23, // 103: webrpc.WebApi.SignOutgoingState:output_type -> webrpc.SignedState
-	27, // 104: webrpc.WebApi.ValidateAck:output_type -> webrpc.BoolValue
-	25, // 105: webrpc.WebApi.SignData:output_type -> webrpc.Signature
-	29, // 106: webrpc.WebApi.ProcessReceivedState:output_type -> webrpc.ProcessReceivedStateResponse
-	48, // 107: webrpc.WebApi.SettleAppSession:output_type -> google.protobuf.Empty
-	48, // 108: webrpc.WebApi.SettleAppSessionBySigTimeout:output_type -> google.protobuf.Empty
-	48, // 109: webrpc.WebApi.SettleAppSessionByMoveTimeout:output_type -> google.protobuf.Empty
-	48, // 110: webrpc.WebApi.SettleAppSessionByInvalidTurn:output_type -> google.protobuf.Empty
-	48, // 111: webrpc.WebApi.SettleAppSessionByInvalidState:output_type -> google.protobuf.Empty
-	48, // 112: webrpc.WebApi.DeleteAppSession:output_type -> google.protobuf.Empty
-	33, // 113: webrpc.WebApi.GetDeployedAddressForAppSession:output_type -> webrpc.Address
-	35, // 114: webrpc.WebApi.GetBooleanOutcomeForAppSession:output_type -> webrpc.BooleanOutcome
-	48, // 115: webrpc.WebApi.ApplyActionForAppSession:output_type -> google.protobuf.Empty
-	48, // 116: webrpc.WebApi.FinalizeOnActionTimeoutForAppSession:output_type -> google.protobuf.Empty
-	37, // 117: webrpc.WebApi.GetSettleFinalizedTimeForAppSession:output_type -> webrpc.BlockNumber
-	37, // 118: webrpc.WebApi.GetActionDeadlineForAppSession:output_type -> webrpc.BlockNumber
-	38, // 119: webrpc.WebApi.GetStatusForAppSession:output_type -> webrpc.AppSessionStatus
-	40, // 120: webrpc.WebApi.GetStateForAppSession:output_type -> webrpc.AppSessionState
-	41, // 121: webrpc.WebApi.GetSeqNumForAppSession:output_type -> webrpc.AppSessionSeqNum
-	37, // 122: webrpc.WebApi.GetBlockNumber:output_type -> webrpc.BlockNumber
-	48, // 123: webrpc.WebApi.SetMsgDropper:output_type -> google.protobuf.Empty
-	69, // [69:124] is the sub-list for method output_type
-	14, // [14:69] is the sub-list for method input_type
+	14, // 30: webrpc.WebApi.GetIncomingPaymentInfo:input_type -> webrpc.PaymentID
+	14, // 31: webrpc.WebApi.GetOutgoingPaymentStatus:input_type -> webrpc.PaymentID
+	14, // 32: webrpc.WebApi.ConfirmOutgoingPayment:input_type -> webrpc.PaymentID
+	14, // 33: webrpc.WebApi.RejectIncomingPayment:input_type -> webrpc.PaymentID
+	14, // 34: webrpc.WebApi.SettleOnChainResolvedIncomingPayment:input_type -> webrpc.PaymentID
+	14, // 35: webrpc.WebApi.ResolveIncomingPaymentOnChain:input_type -> webrpc.PaymentID
+	14, // 36: webrpc.WebApi.GetOnChainPaymentInfo:input_type -> webrpc.PaymentID
+	2,  // 37: webrpc.WebApi.ConfirmOnChainResolvedPayments:input_type -> webrpc.TokenInfo
+	2,  // 38: webrpc.WebApi.SettleExpiredPayments:input_type -> webrpc.TokenInfo
+	6,  // 39: webrpc.WebApi.IntendWithdraw:input_type -> webrpc.DepositOrWithdrawRequest
+	2,  // 40: webrpc.WebApi.ConfirmWithdraw:input_type -> webrpc.TokenInfo
+	2,  // 41: webrpc.WebApi.IntendSettlePaymentChannel:input_type -> webrpc.TokenInfo
+	2,  // 42: webrpc.WebApi.ConfirmSettlePaymentChannel:input_type -> webrpc.TokenInfo
+	2,  // 43: webrpc.WebApi.GetSettleFinalizedTimeForPaymentChannel:input_type -> webrpc.TokenInfo
+	2,  // 44: webrpc.WebApi.SyncOnChainPaymentChannelStatus:input_type -> webrpc.TokenInfo
+	48, // 45: webrpc.WebApi.SyncStateWithPeer:input_type -> google.protobuf.Empty
+	19, // 46: webrpc.WebApi.CreateAppSessionOnVirtualContract:input_type -> webrpc.CreateAppSessionOnVirtualContractRequest
+	20, // 47: webrpc.WebApi.CreateAppSessionOnDeployedContract:input_type -> webrpc.CreateAppSessionOnDeployedContractRequest
+	18, // 48: webrpc.WebApi.SubscribeAppSessionDispute:input_type -> webrpc.SessionID
+	22, // 49: webrpc.WebApi.SignOutgoingState:input_type -> webrpc.SignOutgoingStateRequest
+	26, // 50: webrpc.WebApi.ValidateAck:input_type -> webrpc.ValidateAckRequest
+	24, // 51: webrpc.WebApi.SignData:input_type -> webrpc.Data
+	28, // 52: webrpc.WebApi.ProcessReceivedState:input_type -> webrpc.ProcessReceivedStateRequest
+	30, // 53: webrpc.WebApi.SettleAppSession:input_type -> webrpc.SettleAppSessionRequest
+	31, // 54: webrpc.WebApi.SettleAppSessionBySigTimeout:input_type -> webrpc.SettleAppSessionByTimeoutRequest
+	31, // 55: webrpc.WebApi.SettleAppSessionByMoveTimeout:input_type -> webrpc.SettleAppSessionByTimeoutRequest
+	32, // 56: webrpc.WebApi.SettleAppSessionByInvalidTurn:input_type -> webrpc.SettleAppSessionByInvalidityRequest
+	32, // 57: webrpc.WebApi.SettleAppSessionByInvalidState:input_type -> webrpc.SettleAppSessionByInvalidityRequest
+	18, // 58: webrpc.WebApi.DeleteAppSession:input_type -> webrpc.SessionID
+	18, // 59: webrpc.WebApi.GetDeployedAddressForAppSession:input_type -> webrpc.SessionID
+	34, // 60: webrpc.WebApi.GetBooleanOutcomeForAppSession:input_type -> webrpc.GetBooleanOutcomeForAppSessionRequest
+	36, // 61: webrpc.WebApi.ApplyActionForAppSession:input_type -> webrpc.ApplyActionForAppSessionRequest
+	18, // 62: webrpc.WebApi.FinalizeOnActionTimeoutForAppSession:input_type -> webrpc.SessionID
+	18, // 63: webrpc.WebApi.GetSettleFinalizedTimeForAppSession:input_type -> webrpc.SessionID
+	18, // 64: webrpc.WebApi.GetActionDeadlineForAppSession:input_type -> webrpc.SessionID
+	18, // 65: webrpc.WebApi.GetStatusForAppSession:input_type -> webrpc.SessionID
+	39, // 66: webrpc.WebApi.GetStateForAppSession:input_type -> webrpc.GetStateForAppSessionRequest
+	18, // 67: webrpc.WebApi.GetSeqNumForAppSession:input_type -> webrpc.SessionID
+	48, // 68: webrpc.WebApi.GetBlockNumber:input_type -> google.protobuf.Empty
+	42, // 69: webrpc.WebApi.SetMsgDropper:input_type -> webrpc.SetMsgDropReq
+	1,  // 70: webrpc.WebApi.GetPayHistory:output_type -> webrpc.GetPayHistoryResponse
+	48, // 71: webrpc.WebApi.SetDelegation:output_type -> google.protobuf.Empty
+	5,  // 72: webrpc.WebApi.OpenPaymentChannel:output_type -> webrpc.ChannelID
+	7,  // 73: webrpc.WebApi.Deposit:output_type -> webrpc.DepositOrWithdrawJob
+	7,  // 74: webrpc.WebApi.DepositNonBlocking:output_type -> webrpc.DepositOrWithdrawJob
+	7,  // 75: webrpc.WebApi.MonitorDepositJob:output_type -> webrpc.DepositOrWithdrawJob
+	7,  // 76: webrpc.WebApi.CooperativeWithdraw:output_type -> webrpc.DepositOrWithdrawJob
+	7,  // 77: webrpc.WebApi.CooperativeWithdrawNonBlocking:output_type -> webrpc.DepositOrWithdrawJob
+	7,  // 78: webrpc.WebApi.MonitorCooperativeWithdrawJob:output_type -> webrpc.DepositOrWithdrawJob
+	8,  // 79: webrpc.WebApi.GetBalance:output_type -> webrpc.GetBalanceResponse
+	10, // 80: webrpc.WebApi.GetPeerFreeBalance:output_type -> webrpc.FreeBalance
+	14, // 81: webrpc.WebApi.SendToken:output_type -> webrpc.PaymentID
+	14, // 82: webrpc.WebApi.SendConditionalPayment:output_type -> webrpc.PaymentID
+	15, // 83: webrpc.WebApi.SubscribeIncomingPayments:output_type -> webrpc.PaymentInfo
+	16, // 84: webrpc.WebApi.SubscribeOutgoingPayments:output_type -> webrpc.OutgoingPaymentInfo
+	43, // 85: webrpc.WebApi.GetIncomingPaymentStatus:output_type -> webrpc.PaymentStatus
+	15, // 86: webrpc.WebApi.GetIncomingPaymentInfo:output_type -> webrpc.PaymentInfo
+	43, // 87: webrpc.WebApi.GetOutgoingPaymentStatus:output_type -> webrpc.PaymentStatus
+	48, // 88: webrpc.WebApi.ConfirmOutgoingPayment:output_type -> google.protobuf.Empty
+	48, // 89: webrpc.WebApi.RejectIncomingPayment:output_type -> google.protobuf.Empty
+	48, // 90: webrpc.WebApi.SettleOnChainResolvedIncomingPayment:output_type -> google.protobuf.Empty
+	48, // 91: webrpc.WebApi.ResolveIncomingPaymentOnChain:output_type -> google.protobuf.Empty
+	17, // 92: webrpc.WebApi.GetOnChainPaymentInfo:output_type -> webrpc.OnChainPaymentInfo
+	48, // 93: webrpc.WebApi.ConfirmOnChainResolvedPayments:output_type -> google.protobuf.Empty
+	48, // 94: webrpc.WebApi.SettleExpiredPayments:output_type -> google.protobuf.Empty
+	48, // 95: webrpc.WebApi.IntendWithdraw:output_type -> google.protobuf.Empty
+	48, // 96: webrpc.WebApi.ConfirmWithdraw:output_type -> google.protobuf.Empty
+	48, // 97: webrpc.WebApi.IntendSettlePaymentChannel:output_type -> google.protobuf.Empty
+	48, // 98: webrpc.WebApi.ConfirmSettlePaymentChannel:output_type -> google.protobuf.Empty
+	37, // 99: webrpc.WebApi.GetSettleFinalizedTimeForPaymentChannel:output_type -> webrpc.BlockNumber
+	48, // 100: webrpc.WebApi.SyncOnChainPaymentChannelStatus:output_type -> google.protobuf.Empty
+	48, // 101: webrpc.WebApi.SyncStateWithPeer:output_type -> google.protobuf.Empty
+	18, // 102: webrpc.WebApi.CreateAppSessionOnVirtualContract:output_type -> webrpc.SessionID
+	18, // 103: webrpc.WebApi.CreateAppSessionOnDeployedContract:output_type -> webrpc.SessionID
+	21, // 104: webrpc.WebApi.SubscribeAppSessionDispute:output_type -> webrpc.DisputeInfo
+	23, // 105: webrpc.WebApi.SignOutgoingState:output_type -> webrpc.SignedState
+	27, // 106: webrpc.WebApi.ValidateAck:output_type -> webrpc.BoolValue
+	25, // 107: webrpc.WebApi.SignData:output_type -> webrpc.Signature
+	29, // 108: webrpc.WebApi.ProcessReceivedState:output_type -> webrpc.ProcessReceivedStateResponse
+	48, // 109: webrpc.WebApi.SettleAppSession:output_type -> google.protobuf.Empty
+	48, // 110: webrpc.WebApi.SettleAppSessionBySigTimeout:output_type -> google.protobuf.Empty
+	48, // 111: webrpc.WebApi.SettleAppSessionByMoveTimeout:output_type -> google.protobuf.Empty
+	48, // 112: webrpc.WebApi.SettleAppSessionByInvalidTurn:output_type -> google.protobuf.Empty
+	48, // 113: webrpc.WebApi.SettleAppSessionByInvalidState:output_type -> google.protobuf.Empty
+	48, // 114: webrpc.WebApi.DeleteAppSession:output_type -> google.protobuf.Empty
+	33, // 115: webrpc.WebApi.GetDeployedAddressForAppSession:output_type -> webrpc.Address
+	35, // 116: webrpc.WebApi.GetBooleanOutcomeForAppSession:output_type -> webrpc.BooleanOutcome
+	48, // 117: webrpc.WebApi.ApplyActionForAppSession:output_type -> google.protobuf.Empty
+	48, // 118: webrpc.WebApi.FinalizeOnActionTimeoutForAppSession:output_type -> google.protobuf.Empty
+	37, // 119: webrpc.WebApi.GetSettleFinalizedTimeForAppSession:output_type -> webrpc.BlockNumber
+	37, // 120: webrpc.WebApi.GetActionDeadlineForAppSession:output_type -> webrpc.BlockNumber
+	38, // 121: webrpc.WebApi.GetStatusForAppSession:output_type -> webrpc.AppSessionStatus
+	40, // 122: webrpc.WebApi.GetStateForAppSession:output_type -> webrpc.AppSessionState
+	41, // 123: webrpc.WebApi.GetSeqNumForAppSession:output_type -> webrpc.AppSessionSeqNum
+	37, // 124: webrpc.WebApi.GetBlockNumber:output_type -> webrpc.BlockNumber
+	48, // 125: webrpc.WebApi.SetMsgDropper:output_type -> google.protobuf.Empty
+	70, // [70:126] is the sub-list for method output_type
+	14, // [14:70] is the sub-list for method input_type
 	14, // [14:14] is the sub-list for extension type_name
 	14, // [14:14] is the sub-list for extension extendee
 	0,  // [0:14] is the sub-list for field type_name

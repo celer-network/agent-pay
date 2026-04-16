@@ -260,6 +260,7 @@ service WebApi {
   rpc SubscribeOutgoingPayments(google.protobuf.Empty)
       returns (stream OutgoingPaymentInfo) {}
   rpc GetIncomingPaymentStatus(PaymentID) returns (PaymentStatus) {}
+  rpc GetIncomingPaymentInfo(PaymentID) returns (PaymentInfo) {}
   rpc GetOutgoingPaymentStatus(PaymentID) returns (PaymentStatus) {}
   rpc ConfirmOutgoingPayment(PaymentID) returns (google.protobuf.Empty) {}
   rpc RejectIncomingPayment(PaymentID) returns (google.protobuf.Empty) {}

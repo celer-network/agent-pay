@@ -4,6 +4,7 @@ package rpc
 
 import (
 	context "context"
+
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -57,6 +58,7 @@ type WebApiClient interface {
 	// TODO(mzhou): Refine the outgoing payment API.
 	SubscribeOutgoingPayments(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (WebApi_SubscribeOutgoingPaymentsClient, error)
 	GetIncomingPaymentStatus(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*PaymentStatus, error)
+	GetIncomingPaymentInfo(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*PaymentInfo, error)
 	GetOutgoingPaymentStatus(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*PaymentStatus, error)
 	ConfirmOutgoingPayment(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	RejectIncomingPayment(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -291,6 +293,15 @@ func (x *webApiSubscribeOutgoingPaymentsClient) Recv() (*OutgoingPaymentInfo, er
 func (c *webApiClient) GetIncomingPaymentStatus(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*PaymentStatus, error) {
 	out := new(PaymentStatus)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/GetIncomingPaymentStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *webApiClient) GetIncomingPaymentInfo(ctx context.Context, in *PaymentID, opts ...grpc.CallOption) (*PaymentInfo, error) {
+	out := new(PaymentInfo)
+	err := c.cc.Invoke(ctx, "/webrpc.WebApi/GetIncomingPaymentInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -714,6 +725,7 @@ type WebApiServer interface {
 	// TODO(mzhou): Refine the outgoing payment API.
 	SubscribeOutgoingPayments(*emptypb.Empty, WebApi_SubscribeOutgoingPaymentsServer) error
 	GetIncomingPaymentStatus(context.Context, *PaymentID) (*PaymentStatus, error)
+	GetIncomingPaymentInfo(context.Context, *PaymentID) (*PaymentInfo, error)
 	GetOutgoingPaymentStatus(context.Context, *PaymentID) (*PaymentStatus, error)
 	ConfirmOutgoingPayment(context.Context, *PaymentID) (*emptypb.Empty, error)
 	RejectIncomingPayment(context.Context, *PaymentID) (*emptypb.Empty, error)
@@ -807,6 +819,9 @@ func (UnimplementedWebApiServer) SubscribeOutgoingPayments(*emptypb.Empty, WebAp
 }
 func (UnimplementedWebApiServer) GetIncomingPaymentStatus(context.Context, *PaymentID) (*PaymentStatus, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetIncomingPaymentStatus not implemented")
+}
+func (UnimplementedWebApiServer) GetIncomingPaymentInfo(context.Context, *PaymentID) (*PaymentInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetIncomingPaymentInfo not implemented")
 }
 func (UnimplementedWebApiServer) GetOutgoingPaymentStatus(context.Context, *PaymentID) (*PaymentStatus, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOutgoingPaymentStatus not implemented")
@@ -1227,6 +1242,24 @@ func _WebApi_GetIncomingPaymentStatus_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(WebApiServer).GetIncomingPaymentStatus(ctx, req.(*PaymentID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WebApi_GetIncomingPaymentInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PaymentID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WebApiServer).GetIncomingPaymentInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/webrpc.WebApi/GetIncomingPaymentInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WebApiServer).GetIncomingPaymentInfo(ctx, req.(*PaymentID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1995,6 +2028,10 @@ var _WebApi_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetIncomingPaymentStatus",
 			Handler:    _WebApi_GetIncomingPaymentStatus_Handler,
+		},
+		{
+			MethodName: "GetIncomingPaymentInfo",
+			Handler:    _WebApi_GetIncomingPaymentInfo_Handler,
 		},
 		{
 			MethodName: "GetOutgoingPaymentStatus",

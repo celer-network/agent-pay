@@ -245,6 +245,13 @@ func (cc *ClientController) GetIncomingPaymentStatus(paymentID string) (int, err
 	return int(status.Status), nil
 }
 
+func (cc *ClientController) GetIncomingPaymentInfo(paymentID string) (*rpc.PaymentInfo, error) {
+	return cc.apiClient.GetIncomingPaymentInfo(
+		context.Background(), &rpc.PaymentID{
+			PaymentId: paymentID,
+		})
+}
+
 func (cc *ClientController) GetOutgoingPaymentStatus(paymentID string) (int, error) {
 	status, err := cc.apiClient.GetOutgoingPaymentStatus(
 		context.Background(), &rpc.PaymentID{

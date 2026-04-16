@@ -524,28 +524,32 @@ func (s *ApiServer) GetOnChainPaymentInfo(
 	return &rpc.OnChainPaymentInfo{Amount: info.Amount, ResolveDeadline: info.ResolveDeadline}, nil
 }
 
+func paymentInfoFromClientPayment(payment *celersdkintf.Payment) *rpc.PaymentInfo {
+	tokenAddr := ctype.Hex2Addr(payment.TokenAddr)
+	var tokenType entity.TokenType
+	if tokenAddr == ctype.Hex2Addr(ctype.EthTokenAddrStr) {
+		tokenType = entity.TokenType_ETH
+	} else {
+		tokenType = entity.TokenType_ERC20
+	}
+	return &rpc.PaymentInfo{
+		PaymentId: payment.UID,
+		Sender:    payment.Sender,
+		Receiver:  payment.Receiver,
+		TokenInfo: &rpc.TokenInfo{
+			TokenType:    tokenType,
+			TokenAddress: payment.TokenAddr,
+		},
+		Amount:      payment.AmtWei,
+		PaymentJson: payment.PayJSON,
+		Status:      uint32(payment.Status),
+	}
+}
+
 func (s *ApiServer) SubscribeIncomingPayments(
 	empty *empty.Empty, stream rpc.WebApi_SubscribeIncomingPaymentsServer) error {
 	writeToStream := func(payment *celersdkintf.Payment) error {
-		tokenAddr := ctype.Hex2Addr(payment.TokenAddr)
-		var tokenType entity.TokenType
-		if tokenAddr == ctype.Hex2Addr(ctype.EthTokenAddrStr) {
-			tokenType = entity.TokenType_ETH
-		} else {
-			tokenType = entity.TokenType_ERC20
-		}
-		return stream.Send(&rpc.PaymentInfo{
-			PaymentId: payment.UID,
-			Sender:    payment.Sender,
-			Receiver:  payment.Receiver,
-			TokenInfo: &rpc.TokenInfo{
-				TokenType:    tokenType,
-				TokenAddress: payment.TokenAddr,
-			},
-			Amount:      payment.AmtWei,
-			PaymentJson: payment.PayJSON,
-			Status:      uint32(payment.Status),
-		})
+		return stream.Send(paymentInfoFromClientPayment(payment))
 	}
 	callbackImpl := s.callbackImpl
 	for {
@@ -567,13 +571,6 @@ func (s *ApiServer) SubscribeIncomingPayments(
 func (s *ApiServer) SubscribeOutgoingPayments(
 	empty *empty.Empty, stream rpc.WebApi_SubscribeOutgoingPaymentsServer) error {
 	writeToStream := func(payment *celersdkintf.Payment, errInfo *celersdkintf.E) error {
-		tokenAddr := ctype.Hex2Addr(payment.TokenAddr)
-		var tokenType entity.TokenType
-		if tokenAddr == ctype.Hex2Addr(ctype.EthTokenAddrStr) {
-			tokenType = entity.TokenType_ETH
-		} else {
-			tokenType = entity.TokenType_ERC20
-		}
 		var errReason string
 		var errCode int64
 		if errInfo != nil {
@@ -581,18 +578,7 @@ func (s *ApiServer) SubscribeOutgoingPayments(
 			errCode = int64(errInfo.Code)
 		}
 		return stream.Send(&rpc.OutgoingPaymentInfo{
-			Payment: &rpc.PaymentInfo{
-				PaymentId: payment.UID,
-				Sender:    payment.Sender,
-				Receiver:  payment.Receiver,
-				TokenInfo: &rpc.TokenInfo{
-					TokenType:    tokenType,
-					TokenAddress: payment.TokenAddr,
-				},
-				Amount:      payment.AmtWei,
-				PaymentJson: payment.PayJSON,
-				Status:      uint32(payment.Status),
-			},
+			Payment:     paymentInfoFromClientPayment(payment),
 			ErrorReason: errReason,
 			ErrorCode:   errCode,
 		})
@@ -618,6 +604,15 @@ func (s *ApiServer) GetIncomingPaymentStatus(
 	context context.Context, request *rpc.PaymentID) (*rpc.PaymentStatus, error) {
 	status := s.apiClient.GetIncomingPaymentStatus(request.PaymentId)
 	return &rpc.PaymentStatus{Status: uint32(status)}, nil
+}
+
+func (s *ApiServer) GetIncomingPaymentInfo(
+	context context.Context, request *rpc.PaymentID) (*rpc.PaymentInfo, error) {
+	payment, err := s.apiClient.GetIncomingPaymentInfo(request.PaymentId)
+	if err != nil {
+		return nil, err
+	}
+	return paymentInfoFromClientPayment(payment), nil
 }
 
 func (s *ApiServer) GetOutgoingPaymentStatus(

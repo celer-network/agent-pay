@@ -7,7 +7,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/celer-network/agent-pay/celersdkintf"
 	"github.com/celer-network/agent-pay/common/structs"
+	"github.com/celer-network/agent-pay/ctype"
 	"github.com/celer-network/agent-pay/entity"
 	tf "github.com/celer-network/agent-pay/testing"
 	"github.com/celer-network/goutils/log"
@@ -602,6 +604,32 @@ func sendCondPay(t *testing.T, tokenType entity.TokenType, tokenAddr string) {
 	err = waitForPaymentCompletion(p1, c1, c2)
 	if err != nil {
 		t.Error(err)
+		return
+	}
+
+	incomingInfo, err := c2.GetIncomingPaymentInfo(p1)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if incomingInfo.GetPaymentId() != p1 ||
+		ctype.Hex2Addr(incomingInfo.GetSender()) != ctype.Hex2Addr(c1EthAddr) ||
+		ctype.Hex2Addr(incomingInfo.GetReceiver()) != ctype.Hex2Addr(c2EthAddr) ||
+		incomingInfo.GetAmount() != sendAmt ||
+		int(incomingInfo.GetStatus()) != celersdkintf.PAY_STATUS_PAID {
+		t.Errorf("wrong incoming payment info: %+v", incomingInfo)
+		return
+	}
+	if incomingInfo.GetTokenInfo() == nil || incomingInfo.GetTokenInfo().GetTokenType() != tokenType {
+		t.Errorf("wrong incoming payment token info: %+v", incomingInfo.GetTokenInfo())
+		return
+	}
+	if tokenType == entity.TokenType_ERC20 && !strings.EqualFold(incomingInfo.GetTokenInfo().GetTokenAddress(), tokenAddr) {
+		t.Errorf("wrong incoming payment token address: %s", incomingInfo.GetTokenInfo().GetTokenAddress())
+		return
+	}
+	if _, err = c1.GetIncomingPaymentInfo(p1); err == nil {
+		t.Error("sender unexpectedly fetched incoming payment info")
 		return
 	}
 
