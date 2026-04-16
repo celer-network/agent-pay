@@ -18,4 +18,5 @@ Operational references already in the repo:
 
 - [Manual multi-OSP walkthrough](./test/manual/README.md)
 - [OSP CLI command reference](./tools/osp-cli/README.md)
+- [Maintenance and generation scripts](./tools/scripts/README.md)
 - [Runtime config notes](./rtconfig/README.md)
