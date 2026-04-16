@@ -998,7 +998,19 @@ func (p *openChannelProcessor) monitorEvent(ledgerContract chain.Contract) {
 				pem.CommitOcem(ocem)
 			}
 			if len(e.PeerAddrs) == 2 && p.routeController != nil {
-				go p.routeController.AddEdge(e.PeerAddrs[0], e.PeerAddrs[1], e.ChannelId, e.TokenAddress)
+				p1 := e.PeerAddrs[0]
+				p2 := e.PeerAddrs[1]
+				cid := e.ChannelId
+				tokenAddr := e.TokenAddress
+				go func() {
+					if err := p.routeController.AddEdge(p1, p2, cid, tokenAddr); err != nil {
+						log.Warnln("route add edge error:", err)
+						return
+					}
+					if _, err := p.routeController.BuildTable(tokenAddr); err != nil {
+						log.Warnln("route build table error:", err)
+					}
+				}()
 			}
 
 			metrics.IncCNodeOpenChanEventCnt(metrics.CNodeRegularChan, chanOpen)
@@ -1039,7 +1051,19 @@ func (p *openChannelProcessor) monitorSingleEvent(ledgerContract chain.Contract,
 			}
 			if p.maybeHandleEvent(channelDescriptor, structs.ChanState_OPENED, ocem) {
 				if len(e.PeerAddrs) == 2 && p.routeController != nil {
-					go p.routeController.AddEdge(e.PeerAddrs[0], e.PeerAddrs[1], e.ChannelId, e.TokenAddress)
+					p1 := e.PeerAddrs[0]
+					p2 := e.PeerAddrs[1]
+					cid := e.ChannelId
+					tokenAddr := e.TokenAddress
+					go func() {
+						if err := p.routeController.AddEdge(p1, p2, cid, tokenAddr); err != nil {
+							log.Warnln("route add edge error:", err)
+							return
+						}
+						if _, err := p.routeController.BuildTable(tokenAddr); err != nil {
+							log.Warnln("route build table error:", err)
+						}
+					}()
 				}
 				p.monitorService.RemoveEvent(id)
 				p.dal.UpsertMonitorRestart(monitor.NewEventStr(config.ChainId.Uint64(), ledgerContract.GetAddr(), event.OpenChannel), false)
