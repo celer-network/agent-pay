@@ -130,6 +130,27 @@ func StartClientController(
 	}, nil
 }
 
+func DialWebApiClient(target string) (*grpc.ClientConn, rpc.WebApiClient, error) {
+	deadline := time.Now().Add(30 * time.Second)
+	for {
+		if time.Now().After(deadline) {
+			return nil, nil, fmt.Errorf("grpcDial %s failed: startup timeout", target)
+		}
+		dctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		conn, err := grpc.DialContext(
+			dctx,
+			target,
+			grpc.WithInsecure(),
+			grpc.WithBlock(),
+		)
+		cancel()
+		if err == nil {
+			return conn, rpc.NewWebApiClient(conn), nil
+		}
+		time.Sleep(200 * time.Millisecond)
+	}
+}
+
 // KillAndRemoveDB kill process and delete the dataPath/xxxx folder
 // keystore is kept so we can test same eth start from scratch case
 // Note this depends on cnode/kvstore init logic that creates eth address folder

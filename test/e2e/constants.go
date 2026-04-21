@@ -47,6 +47,7 @@ const (
 	sSelfRPC  = "localhost:30000"
 	sAdminRPC = "localhost:11000"
 	sAdminWeb = "localhost:8090"
+	sWebApiRPC = "127.0.0.1:12000"
 
 	// below are ports/addrs for multi-osp tests
 	// o1 is the server for osp1, it is mapped to the default server above

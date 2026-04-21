@@ -38,6 +38,8 @@ import (
 	"github.com/celer-network/agent-pay/rpc"
 	"github.com/celer-network/agent-pay/rtconfig"
 	"github.com/celer-network/agent-pay/utils"
+	"github.com/celer-network/agent-pay/webapi"
+	webrpc "github.com/celer-network/agent-pay/webapi/rpc"
 	"github.com/celer-network/goutils/eth"
 	"github.com/celer-network/goutils/log"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
@@ -64,6 +66,7 @@ var (
 	selfrpc              = flag.String("selfrpc", "", "Internal server host:port for inter-server communication")
 	adminrpc             = flag.String("adminrpc", "localhost:11000", "The server admin endpoint")
 	adminweb             = flag.String("adminweb", "localhost:8090", "The server admin http endpoint")
+	webapiGrpc           = flag.String("webapigrpc", "", "Optional host:port for OSP WebAPI gRPC listener without TLS transport credentials")
 	listenerweb          = flag.String("listenerweb", "", "The event listener admin http endpoint")
 	ks                   = flag.String("ks", "", "Path to keystore json file")
 	depositks            = flag.String("depositks", "", "Path to depositor keystore json file")
@@ -110,6 +113,7 @@ type server struct {
 	delegate     *delegate.DelegateManager
 	config       *common.CProfile
 	redisClient  *redis.Client
+	payCallbacks paymentCallbackSink
 	rpc.UnimplementedRpcServer
 }
 type serverInterOSP struct {
@@ -869,8 +873,11 @@ func (s *server) Initialize(
 		log.Fatalln("Server init error:", err)
 	}
 	s.delegate = delegate.NewDelegateManager(s.cNode.EthAddress, s.cNode.GetDAL(), s.cNode)
-	s.cNode.OnReceivingToken(s)
-	s.cNode.OnSendToken(s)
+	if s.payCallbacks == nil {
+		s.payCallbacks = newPaymentCallbacksMux(s, nil)
+	}
+	s.cNode.OnReceivingToken(s.payCallbacks)
+	s.cNode.OnSendToken(s.payCallbacks)
 	s.cNode.OnNewStream(s)
 }
 
@@ -1142,6 +1149,10 @@ func main() {
 	}
 	var rpcServer server
 	rpcServer.netClient = &http.Client{Timeout: 3 * time.Second}
+	payEventFeed := webapi.NewPaymentEventFeed()
+	// Keep callback topology identical with or without the optional WebAPI listener.
+	// The feed remains inert until a subscriber attaches, but the mux stays in the path.
+	rpcServer.payCallbacks = newPaymentCallbacksMux(&rpcServer, payEventFeed)
 	if *redisAddr != "" {
 		rpcServer.redisClient = redis.NewClient(&redis.Options{Addr: *redisAddr})
 	}
@@ -1155,6 +1166,9 @@ func main() {
 	rpc.RegisterRpcServer(s, &rpcServer)
 
 	adminS := setUpAdminService(&rpcServer)
+	if *webapiGrpc != "" {
+		setUpOspWebApiService(&rpcServer, payEventFeed)
+	}
 	// If inter-server communication is needed, start in a goroutine the
 	// second server on the second port.
 	if selfHostPort != "" {
@@ -1221,6 +1235,27 @@ func setUpAdminService(osp *server) *adminService {
 		}
 	}()
 	return adminS
+}
+
+func setUpOspWebApiService(osp *server, payEventFeed *webapi.PaymentEventFeed) {
+	log.Infoln("Celer server has OSP WebAPI grpc:", *webapiGrpc)
+	lis, err := net.Listen("tcp", *webapiGrpc)
+	if err != nil {
+		log.Fatalf("failed to listen on OSP WebAPI grpc: %v", err)
+		os.Exit(2)
+	}
+	s := grpc.NewServer()
+	if *dbg {
+		reflection.Register(s)
+	}
+	backend := newOspWebapiBackend(osp.cNode)
+	webrpc.RegisterWebApiServer(s, webapi.NewOspPayApiServer(backend, payEventFeed))
+	go func() {
+		err := s.Serve(lis)
+		if err != nil {
+			log.Errorln(err)
+		}
+	}()
 }
 
 func getServerTlsOption() grpc.ServerOption {

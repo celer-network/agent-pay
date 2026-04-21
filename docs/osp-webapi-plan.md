@@ -10,7 +10,12 @@ The plan is intentionally phased.
 
 Audience: agent-pay maintainers implementing the change in this repo, and agent-pay-x402 maintainers reviewing the contract needed for seller-OSP topologies.
 
-Status legend: `[x]` means reviewed and locked by current design review. `[ ]` means pending implementation or validation in this repo.
+Status legend: `[x]` means reviewed or landed and validated, depending on the item. `[ ]` means pending implementation, validation, or follow-up in this repo.
+
+Current repo status:
+
+- [x] The repo-local phase-1 OSP WebAPI implementation and validation gate are complete.
+- [x] The remaining unchecked items below are intentional future-phase work or cross-repo `agent-pay-x402` coordination, not blockers for reviewing the landed phase-1 repo changes.
 
 ## Rollout Model
 
@@ -22,14 +27,14 @@ Status legend: `[x]` means reviewed and locked by current design review. `[ ]` m
 
 ## Phase 1 Acceptance Criteria
 
-- [ ] `bin/server` accepts a new optional `-webapigrpc <host:port>` flag.
-- [ ] When `-webapigrpc` is unset, OSP startup and behavior are unchanged.
-- [ ] When `-webapigrpc` is set, OSP starts a separate gRPC listener without TLS transport credentials (plaintext gRPC) dedicated to `rpc.WebApiServer`.
-- [ ] The OSP WebAPI listener uses the existing OSP runtime and does not initialize a second SDK client or second cnode lifecycle.
-- [ ] Existing OSP fee/delegate send and receive side effects still fire after the listener is enabled.
-- [ ] The phase-1 pay-centric RPC subset works through a normal `rpc.WebApiClient`.
-- [ ] All deferred channel-scoped WebAPI RPCs return `codes.Unimplemented`.
-- [ ] Focused unit and e2e validation cover the callback mux, the new listener, and one unsupported RPC, with the focused listener path covered by the proposed `test/e2e/osp_webapi.go` test.
+- [x] `bin/server` accepts a new optional `-webapigrpc <host:port>` flag.
+- [x] When `-webapigrpc` is unset, OSP startup and behavior are unchanged.
+- [x] When `-webapigrpc` is set, OSP starts a separate gRPC listener without TLS transport credentials (plaintext gRPC) dedicated to `rpc.WebApiServer`.
+- [x] The OSP WebAPI listener uses the existing OSP runtime and does not initialize a second SDK client or second cnode lifecycle.
+- [x] Existing OSP fee/delegate send and receive side effects still fire after the listener is enabled.
+- [x] The phase-1 pay-centric RPC subset works through a normal `rpc.WebApiClient`.
+- [x] All deferred channel-scoped WebAPI RPCs return `codes.Unimplemented`.
+- [x] Focused unit and e2e validation cover the callback mux, the new listener, and one unsupported RPC, with the focused listener path covered by `test/e2e/osp_webapi_test.go`.
 
 ## Locked Scope Decisions
 
@@ -74,86 +79,86 @@ Status legend: `[x]` means reviewed and locked by current design review. `[ ]` m
 
 ## Phase 1 RPC Scope
 
-- [ ] Implement `SendToken` on OSP WebAPI.
-- [ ] Implement `SendConditionalPayment` on OSP WebAPI.
-- [ ] Implement `GetIncomingPaymentStatus` on OSP WebAPI.
-- [ ] Implement `GetIncomingPaymentInfo` on OSP WebAPI.
-- [ ] Implement `GetOutgoingPaymentStatus` on OSP WebAPI.
-- [ ] Implement `ConfirmOutgoingPayment` on OSP WebAPI.
-- [ ] Implement `RejectIncomingPayment` on OSP WebAPI.
-- [ ] Implement `SubscribeIncomingPayments` on OSP WebAPI.
-- [ ] Implement `SubscribeOutgoingPayments` on OSP WebAPI.
+- [x] Implement `SendToken` on OSP WebAPI.
+- [x] Implement `SendConditionalPayment` on OSP WebAPI.
+- [x] Implement `GetIncomingPaymentStatus` on OSP WebAPI.
+- [x] Implement `GetIncomingPaymentInfo` on OSP WebAPI.
+- [x] Implement `GetOutgoingPaymentStatus` on OSP WebAPI.
+- [x] Implement `ConfirmOutgoingPayment` on OSP WebAPI.
+- [x] Implement `RejectIncomingPayment` on OSP WebAPI.
+- [x] Implement `SubscribeIncomingPayments` on OSP WebAPI.
+- [x] Implement `SubscribeOutgoingPayments` on OSP WebAPI.
 - [x] Do not add `GetOutgoingPaymentInfo` in phase 1, because there is no existing `WebApi` RPC with that name. Adding it would require a proto change and is explicitly out of scope for this cut.
-- [ ] Return `codes.Unimplemented` for every other `WebApi` RPC on the OSP listener.
+- [x] Return `codes.Unimplemented` for every other `WebApi` RPC on the OSP listener.
 
 ## Proposed Code Changes
 
 ### 1. OSP WebAPI server type
 
-- [ ] Add `webapi/osp_pay_api_server.go`.
-- [ ] Define a narrow `OspPayBackend` interface for the phase-1 RPC subset.
-- [ ] Define `OspPayApiServer` embedding `rpc.UnimplementedWebApiServer`.
-- [ ] Keep `OspPayApiServer` additive; do not refactor the existing client-node `ApiServer` into a generic shared abstraction in phase 1.
-- [ ] Keep `PaymentInfo` mapping behavior consistent with the existing `paymentInfoFromClientPayment(...)` logic.
-- [ ] If direct helper reuse is awkward, move the minimum shared `PaymentInfo` mapping logic into `webapi/payment_convert.go` rather than maintaining two divergent mappings.
+- [x] Add `webapi/osp_pay_api_server.go`.
+- [x] Define a narrow `OspPayBackend` interface for the phase-1 RPC subset.
+- [x] Define `OspPayApiServer` embedding `rpc.UnimplementedWebApiServer`.
+- [x] Keep `OspPayApiServer` additive; do not refactor the existing client-node `ApiServer` into a generic shared abstraction in phase 1.
+- [x] Keep `PaymentInfo` mapping behavior consistent with the existing `paymentInfoFromClientPayment(...)` logic.
+- [x] If direct helper reuse is awkward, move the minimum shared `PaymentInfo` mapping logic into `webapi/payment_convert.go` rather than maintaining two divergent mappings.
 
 ### 2. OSP backend wrapper in package main
 
-- [ ] Add `server/osp_webapi_backend.go` in `package main`.
-- [ ] Keep the backend in `package main` so it can wrap the already-running OSP state without import-cycle churn around `server.server`.
-- [ ] Back the implementation with the existing `*cnode.CNode`, `*storage.DAL`, and local OSP address.
-- [ ] Implement `GetIncomingPaymentStatus` and `GetOutgoingPaymentStatus` by reusing the existing payment-state-to-SDK-status mapping logic.
-- [ ] Implement `GetIncomingPaymentInfo` as incoming-only: DAL lookup plus `payment.Receiver == myAddr`, otherwise `common.ErrPayNotFound`.
-- [ ] Implement `ConfirmOutgoingPayment` and `RejectIncomingPayment` by calling the existing payment confirmation/rejection paths, not by adding new protocol behavior.
-- [ ] Implement `SendToken` and `SendConditionalPayment` by building `entity.ConditionalPay` and calling `cnode.AddBooleanPay(...)`.
-- [ ] Do not manufacture a synthetic `celersdk.Client` or `client.CelerClient` around the OSP's cnode just to reuse client wrappers.
+- [x] Add `server/osp_webapi_backend.go` in `package main`.
+- [x] Keep the backend in `package main` so it can wrap the already-running OSP state without import-cycle churn around `server.server`.
+- [x] Back the implementation with the existing `*cnode.CNode`, `*storage.DAL`, and local OSP address.
+- [x] Implement `GetIncomingPaymentStatus` and `GetOutgoingPaymentStatus` by reusing the existing payment-state-to-SDK-status mapping logic.
+- [x] Implement `GetIncomingPaymentInfo` as incoming-only: DAL lookup plus `payment.Receiver == myAddr`, otherwise `common.ErrPayNotFound`.
+- [x] Implement `ConfirmOutgoingPayment` and `RejectIncomingPayment` by calling the existing payment confirmation/rejection paths, not by adding new protocol behavior.
+- [x] Implement `SendToken` and `SendConditionalPayment` by building `entity.ConditionalPay` and calling `cnode.AddBooleanPay(...)`.
+- [x] Do not manufacture a synthetic `celersdk.Client` or `client.CelerClient` around the OSP's cnode just to reuse client wrappers.
 
 ### 3. Callback fanout
 
-- [ ] Add `server/payment_callbacks_mux.go`.
-- [ ] Add `server/payment_callbacks_mux_test.go`.
-- [ ] Implement both `event.OnReceivingTokenCallback` and `event.OnSendingTokenCallback` from [common/event/event.go](../common/event/event.go).
-- [ ] Fan out to exactly two logical sinks in phase 1: the existing OSP `server` callback handler and the OSP WebAPI payment event feed.
-- [ ] Install the callback mux unconditionally, even when `-webapigrpc` is unset, so the cnode callback topology is identical in both startup modes.
-- [ ] When `-webapigrpc` is unset, keep the WebAPI-side sink as a no-op feed target rather than removing the mux from the callback chain.
-- [ ] Add an implementation comment explaining this tradeoff so a future cleanup does not "optimize away" the unconditional mux installation and accidentally break the fanout invariant.
-- [ ] Replace direct registrations in [server/server.go](../server/server.go) with registrations of the mux object.
-- [ ] Prove by unit test that `HandleReceivingStart`, `HandleReceivingDone`, `HandleSendComplete`, `HandleDestinationUnreachable`, and `HandleSendFail` each reach both sinks.
+- [x] Add `server/payment_callbacks_mux.go`.
+- [x] Add `server/payment_callbacks_mux_test.go`.
+- [x] Implement both `event.OnReceivingTokenCallback` and `event.OnSendingTokenCallback` from [common/event/event.go](../common/event/event.go).
+- [x] Fan out to exactly two logical sinks in phase 1: the existing OSP `server` callback handler and the OSP WebAPI payment event feed.
+- [x] Install the callback mux unconditionally, even when `-webapigrpc` is unset, so the cnode callback topology is identical in both startup modes.
+- [x] When `-webapigrpc` is unset, keep the WebAPI-side sink as a no-op feed target rather than removing the mux from the callback chain.
+- [x] Add an implementation comment explaining this tradeoff so a future cleanup does not "optimize away" the unconditional mux installation and accidentally break the fanout invariant.
+- [x] Replace direct registrations in [server/server.go](../server/server.go) with registrations of the mux object.
+- [x] Prove by unit test that `HandleReceivingStart`, `HandleReceivingDone`, `HandleSendComplete`, `HandleDestinationUnreachable`, and `HandleSendFail` each reach both sinks.
 
 ### 4. OSP payment event feed
 
-- [ ] Add `webapi/payment_event_feed.go`.
-- [ ] Do not reuse `callbackImpl` for OSP subscriptions.
-- [ ] Implement single active subscriber per direction in phase 1: one incoming-payments subscriber and one outgoing-payments subscriber.
-- [ ] If a second subscriber for the same direction appears, return `codes.FailedPrecondition` rather than replacing the first subscriber silently.
-- [ ] Use bounded buffering and best-effort non-blocking publish semantics.
-- [ ] Document in code comments and docs that a slow subscriber may drop events.
-- [ ] Treat polling RPCs like `GetIncomingPaymentStatus` and `GetIncomingPaymentInfo` as the source of truth in tests; subscriptions are observability, not correctness authority.
+- [x] Add `webapi/payment_event_feed.go`.
+- [x] Do not reuse `callbackImpl` for OSP subscriptions.
+- [x] Implement single active subscriber per direction in phase 1: one incoming-payments subscriber and one outgoing-payments subscriber.
+- [x] If a second subscriber for the same direction appears, return `codes.FailedPrecondition` rather than replacing the first subscriber silently.
+- [x] Use bounded buffering and best-effort non-blocking publish semantics.
+- [x] Document in code comments and docs that a slow subscriber may drop events.
+- [x] Treat polling RPCs like `GetIncomingPaymentStatus` and `GetIncomingPaymentInfo` as the source of truth in tests; subscriptions are observability, not correctness authority.
 
 ### 5. Payment conversion helpers
 
-- [ ] Add `webapi/payment_convert.go`.
-- [ ] Move or duplicate only the minimum conversion logic needed for OSP pay backend and event feed.
-- [ ] Convert `ConditionalPay + note + payment state/reason` into `celersdkintf.Payment` with the same field formatting used by the current client WebAPI path.
-- [ ] Keep these helpers local to `webapi` rather than widening exported surfaces in `client` or `celersdk` during phase 1.
-- [ ] Document in code comments or commit notes whether `paymentInfoFromClientPayment(...)` was moved, wrapped, or duplicated, so future refactors know the chosen source of truth.
+- [x] Add `webapi/payment_convert.go`.
+- [x] Move or duplicate only the minimum conversion logic needed for OSP pay backend and event feed.
+- [x] Convert `ConditionalPay + note + payment state/reason` into `celersdkintf.Payment` with the same field formatting used by the current client WebAPI path.
+- [x] Keep these helpers local to `webapi` rather than widening exported surfaces in `client` or `celersdk` during phase 1.
+- [x] Document in code comments or commit notes whether `paymentInfoFromClientPayment(...)` was moved, wrapped, or duplicated, so future refactors know the chosen source of truth.
 
 ### 6. OSP startup wiring
 
-- [ ] Add `-webapigrpc <host:port>` to [server/server.go](../server/server.go).
-- [ ] Add a `setUpOspWebApiService(...)` helper near `setUpAdminService(...)`.
-- [ ] Construct the OSP pay backend, callback mux, event feed, and `webapi.OspPayApiServer` during startup.
-- [ ] Register only `rpc.RegisterWebApiServer(...)` on the new listener.
-- [ ] Do not register `rpc.RegisterInternalWebApiServer(...)` on the OSP listener.
-- [ ] Fail startup if `-webapigrpc` is set and the listener cannot bind.
-- [ ] Leave startup unchanged when `-webapigrpc` is unset.
+- [x] Add `-webapigrpc <host:port>` to [server/server.go](../server/server.go).
+- [x] Add a `setUpOspWebApiService(...)` helper near `setUpAdminService(...)`.
+- [x] Construct the OSP pay backend, callback mux, event feed, and `webapi.OspPayApiServer` during startup.
+- [x] Register only `rpc.RegisterWebApiServer(...)` on the new listener.
+- [x] Do not register `rpc.RegisterInternalWebApiServer(...)` on the OSP listener.
+- [x] Fail startup if `-webapigrpc` is set and the listener cannot bind.
+- [x] Leave startup unchanged when `-webapigrpc` is unset.
 
 ## Routing-Behavior Verification Gate
 
-- [ ] Verify that the OSP send path through `cnode.AddBooleanPay(...)` still prepends the hash-lock condition automatically for multi-hop routing when the destination is not a direct peer.
-- [ ] Verify that the OSP send path still uses the `direct_pay` fast path where applicable for direct peers.
-- [ ] Treat this verification as a required gate before calling phase 1 complete.
-- [ ] Until item 13 lands, accept that `direct_pay` verification may rely on `pem` log inspection or other targeted debug instrumentation, because WebAPI does not currently expose `direct_pay` state.
+- [x] Verify that the OSP send path through `cnode.AddBooleanPay(...)` still prepends the hash-lock condition automatically for multi-hop routing when the destination is not a direct peer.
+- [x] Verify that the OSP send path still uses the `direct_pay` fast path where applicable for direct peers.
+- [x] Treat this verification as a required gate before calling phase 1 complete.
+- [x] Until item 13 lands, accept that `direct_pay` verification uses targeted OSP store inspection rather than a WebAPI-visible flag. `test/e2e/osp_webapi_test.go` now closes this gate by asserting that OSP WebAPI `SendToken` persists no prepended conditions for a direct OSP1 client and persists a prepended hash-lock plus stored secret for a routed OSP2 client.
 
 ## Deferred Methods
 
@@ -189,31 +194,34 @@ Status legend: `[x]` means reviewed and locked by current design review. `[ ]` m
 
 ### Unit tests
 
-- [ ] Add `server/payment_callbacks_mux_test.go`.
-- [ ] Test that receive-start hits both OSP sink and WebAPI sink.
-- [ ] Test that receive-done hits both sinks.
-- [ ] Test that send-complete hits both sinks.
-- [ ] Test that destination-unreachable hits both sinks.
-- [ ] Test that send-fail hits both sinks.
+- [x] Add `server/payment_callbacks_mux_test.go`.
+- [x] Test that receive-start hits both OSP sink and WebAPI sink.
+- [x] Test that receive-done hits both sinks.
+- [x] Test that send-complete hits both sinks.
+- [x] Test that destination-unreachable hits both sinks.
+- [x] Test that send-fail hits both sinks.
 
 ### Focused OSP WebAPI e2e
 
-- [ ] Add a focused OSP WebAPI test file, proposed path: `test/e2e/osp_webapi.go`.
-- [ ] Add a small dial helper in [testing/clientcontroller.go](../testing/clientcontroller.go) so tests can connect to an arbitrary WebAPI gRPC address without spawning `testing/testclient`.
-- [ ] Start an OSP with `-webapigrpc 127.0.0.1:<test-port>`.
-- [ ] Dial that port with a normal `rpc.WebApiClient`.
-- [ ] Send a pay involving the OSP as the local sender or receiver.
-- [ ] Assert `GetIncomingPaymentStatus` works.
-- [ ] Assert `GetIncomingPaymentInfo` works and preserves current incoming-only semantics.
-- [ ] Assert `RejectIncomingPayment` or `ConfirmOutgoingPayment` works on the OSP listener.
-- [ ] Assert `SubscribeIncomingPayments` or `SubscribeOutgoingPayments` can observe the corresponding event.
-- [ ] Assert one deferred channel-scoped RPC such as `GetBalance` returns `codes.Unimplemented`.
-- [ ] Do not make the subscription event the only correctness signal in tests; polling state must remain the source of truth because slow subscribers may drop events.
+- [x] Add a focused OSP WebAPI test file at `test/e2e/osp_webapi_test.go`.
+- [x] Add a small dial helper in [testing/clientcontroller.go](../testing/clientcontroller.go) so tests can connect to an arbitrary WebAPI gRPC address without spawning `testing/testclient`.
+- [x] Start an OSP with `-webapigrpc 127.0.0.1:<test-port>`.
+- [x] Dial that port with a normal `rpc.WebApiClient`.
+- [x] Send a pay involving the OSP as the local sender or receiver.
+- [x] Assert `GetIncomingPaymentStatus` works.
+- [x] Assert `GetIncomingPaymentInfo` works and preserves current incoming-only semantics.
+- [x] Assert `RejectIncomingPayment` or `ConfirmOutgoingPayment` works on the OSP listener.
+- [x] Assert `SubscribeIncomingPayments` or `SubscribeOutgoingPayments` can observe the corresponding event.
+- [x] Assert one deferred channel-scoped RPC such as `GetBalance` returns `codes.Unimplemented`.
+- [x] Do not make the subscription event the only correctness signal in tests; polling state must remain the source of truth because slow subscribers may drop events.
 
 ### Suggested validation commands after code lands
 
-- [ ] `go test ./server/... ./webapi/... ./testing/... -count=1`
-- [ ] `go test ./test/e2e -run '^TestE2E$/^e2e-grp2$/^ospWebApiPaySubset$' -count=1`
+- [x] `go test ./server -count=1`
+- [x] `go test ./webapi -count=1`
+- [x] `go test ./test/e2e -run '^TestOSPWebApi$/^ospWebApiPaySubset$' -count=1`
+- [x] `go test ./test/e2e -run '^TestOSPWebApiRoutingBehavior$' -count=1`
+- [x] `go test ./test/e2e -run '^TestE2E$/^e2e-grp2$/^sendCondPayWithErc20$' -count=1`
 
 ## agent-pay-x402 Coordination After Branch Is Ready
 
@@ -226,23 +234,23 @@ Status legend: `[x]` means reviewed and locked by current design review. `[ ]` m
 
 ## Rollout Order
 
-- [ ] Add the `-webapigrpc` flag and empty listener scaffolding.
-- [ ] Land the callback mux and its unit test.
-- [ ] Land the payment event feed and OSP pay API server.
-- [ ] Land the OSP pay backend in `server/`.
-- [ ] Wire the listener into startup.
-- [ ] Add the focused e2e path.
-- [ ] Update operator docs.
-- [ ] Re-run focused validation after each non-trivial checkpoint.
+- [x] Add the `-webapigrpc` flag and empty listener scaffolding.
+- [x] Land the callback mux and its unit test.
+- [x] Land the payment event feed and OSP pay API server.
+- [x] Land the OSP pay backend in `server/`.
+- [x] Wire the listener into startup.
+- [x] Add the focused e2e path.
+- [x] Update operator docs.
+- [x] Re-run focused validation after each non-trivial checkpoint.
 
 ## Docs To Update After Landing
 
-- [ ] Update [docs/backend-implementation.md](./backend-implementation.md) with the new optional OSP WebAPI gRPC listener.
-- [ ] Update [docs/backend-usage.md](./backend-usage.md) with the `-webapigrpc` flag and example startup command.
-- [ ] Update [docs/backend-usage.md](./backend-usage.md) to state explicitly that phase-1 OSP WebAPI is intended for localhost/private same-host callers and is not a public network-facing API.
-- [ ] Update [docs/backend-usage.md](./backend-usage.md) to state explicitly that OSP WebAPI `GetBalance` is unsupported in phase 1 and balance observation remains available through Admin.
-- [ ] Update [docs/backend-troubleshooting.md](./backend-troubleshooting.md) with guidance on binding the listener to loopback/private addresses only.
-- [ ] Update [docs/backend-troubleshooting.md](./backend-troubleshooting.md) with a note that slow OSP WebAPI subscribers may drop events and polling status/info RPCs should be used for correctness checks.
+- [x] Update [docs/backend-implementation.md](./backend-implementation.md) with the new optional OSP WebAPI gRPC listener.
+- [x] Update [docs/backend-usage.md](./backend-usage.md) with the `-webapigrpc` flag and example startup command.
+- [x] Update [docs/backend-usage.md](./backend-usage.md) to state explicitly that phase-1 OSP WebAPI is intended for localhost/private same-host callers and is not a public network-facing API.
+- [x] Update [docs/backend-usage.md](./backend-usage.md) to state explicitly that OSP WebAPI `GetBalance` is unsupported in phase 1 and balance observation remains available through Admin.
+- [x] Update [docs/backend-troubleshooting.md](./backend-troubleshooting.md) with guidance on binding the listener to loopback/private addresses only.
+- [x] Update [docs/backend-troubleshooting.md](./backend-troubleshooting.md) with a note that slow OSP WebAPI subscribers may drop events and polling status/info RPCs should be used for correctness checks.
 
 ## Review Decisions Closed By Current Feedback
 
@@ -253,4 +261,4 @@ Status legend: `[x]` means reviewed and locked by current design review. `[ ]` m
 - [x] The x402 side is ready to use Admin RPC as the fallback path for seller-OSP `CooperativeWithdraw`.
 - [x] The x402 side is willing to run seller-OSP integration acceptance against the branch once the phase-1 listener is ready.
 
-If every unchecked item in this document is complete, phase 1 is complete and implementation can proceed to review.
+Phase 1 repo work is complete when the phase-1 implementation, routing-verification gate, focused tests, and docs updates above are all checked. The remaining unchecked items in `Future Production Work Beyond Phase 1` and `agent-pay-x402 Coordination After Branch Is Ready` are follow-up work, not blockers for reviewing the landed repo changes.

@@ -524,26 +524,10 @@ func (s *ApiServer) GetOnChainPaymentInfo(
 	return &rpc.OnChainPaymentInfo{Amount: info.Amount, ResolveDeadline: info.ResolveDeadline}, nil
 }
 
+// Keep the legacy helper name as a thin wrapper so the client WebAPI path and
+// the OSP WebAPI path share one PaymentInfo mapping implementation.
 func paymentInfoFromClientPayment(payment *celersdkintf.Payment) *rpc.PaymentInfo {
-	tokenAddr := ctype.Hex2Addr(payment.TokenAddr)
-	var tokenType entity.TokenType
-	if tokenAddr == ctype.Hex2Addr(ctype.EthTokenAddrStr) {
-		tokenType = entity.TokenType_ETH
-	} else {
-		tokenType = entity.TokenType_ERC20
-	}
-	return &rpc.PaymentInfo{
-		PaymentId: payment.UID,
-		Sender:    payment.Sender,
-		Receiver:  payment.Receiver,
-		TokenInfo: &rpc.TokenInfo{
-			TokenType:    tokenType,
-			TokenAddress: payment.TokenAddr,
-		},
-		Amount:      payment.AmtWei,
-		PaymentJson: payment.PayJSON,
-		Status:      uint32(payment.Status),
-	}
+	return paymentInfoFromPayment(payment)
 }
 
 func (s *ApiServer) SubscribeIncomingPayments(
@@ -571,17 +555,7 @@ func (s *ApiServer) SubscribeIncomingPayments(
 func (s *ApiServer) SubscribeOutgoingPayments(
 	empty *empty.Empty, stream rpc.WebApi_SubscribeOutgoingPaymentsServer) error {
 	writeToStream := func(payment *celersdkintf.Payment, errInfo *celersdkintf.E) error {
-		var errReason string
-		var errCode int64
-		if errInfo != nil {
-			errReason = errInfo.Reason
-			errCode = int64(errInfo.Code)
-		}
-		return stream.Send(&rpc.OutgoingPaymentInfo{
-			Payment:     paymentInfoFromClientPayment(payment),
-			ErrorReason: errReason,
-			ErrorCode:   errCode,
-		})
+		return stream.Send(outgoingPaymentInfoFromPayment(payment, errInfo))
 	}
 	callbackImpl := s.callbackImpl
 	for {
