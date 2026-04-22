@@ -3,12 +3,18 @@
 package e2e
 
 import (
+	"context"
 	"fmt"
 	"testing"
+	"time"
 
+	"github.com/celer-network/agent-pay/config"
 	"github.com/celer-network/agent-pay/entity"
+	adminrpc "github.com/celer-network/agent-pay/rpc"
 	tf "github.com/celer-network/agent-pay/testing"
 	"github.com/celer-network/goutils/log"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func cooperativeWithdrawEth(t *testing.T) {
@@ -30,6 +36,13 @@ func cooperativeWithdrawEthWithRestart(t *testing.T) {
 	defer log.Info("============== end test cooperativeWithdrawEthWithRestart ==============")
 	t.Parallel()
 	cooperativeWithdrawWithRestart(t, entity.TokenType_ETH, tokenAddrEth)
+}
+
+func ospAdminCooperativeWithdrawEth(t *testing.T) {
+	log.Info("============== start test ospAdminCooperativeWithdrawEth ==============")
+	defer log.Info("============== end test ospAdminCooperativeWithdrawEth ==============")
+	t.Parallel()
+	ospAdminCooperativeWithdraw(t, entity.TokenType_ETH, tokenAddrEth)
 }
 
 func cooperativeWithdraw(t *testing.T, tokenType entity.TokenType, tokenAddr string) {
@@ -80,6 +93,84 @@ func cooperativeWithdraw(t *testing.T, tokenType entity.TokenType, tokenAddr str
 	err = c.AssertBalance(
 		tokenAddr, tf.AddAmtStr(initialBalance, "-123"), "0", initialBalance)
 	if err != nil {
+		t.Error(err)
+		return
+	}
+}
+
+func dialAdminClient(target string) (*grpc.ClientConn, adminrpc.AdminClient, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 8*time.Second)
+	defer cancel()
+	conn, err := grpc.DialContext(
+		ctx,
+		target,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithBlock(),
+		grpc.WithKeepaliveParams(config.KeepAliveClientParams),
+	)
+	if err != nil {
+		return nil, nil, err
+	}
+	return conn, adminrpc.NewAdminClient(conn), nil
+}
+
+func ospAdminCooperativeWithdraw(t *testing.T, tokenType entity.TokenType, tokenAddr string) {
+	ks, addrs, err := tf.CreateAccountsWithBalance(1, accountBalance)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	log.Infoln("create accounts for ospAdminCooperativeWithdraw token", tokenAddr, addrs)
+	cKeyStore := ks[0]
+	cEthAddr := addrs[0]
+
+	if tokenAddr != tokenAddrEth {
+		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+	}
+
+	c, err := tf.StartC1WithoutProxy(cKeyStore)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	defer c.Kill()
+
+	channel, err := c.OpenChannel(cEthAddr, tokenType, tokenAddr, initialBalance, initialBalance)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if err = c.AssertBalance(tokenAddr, initialBalance, "0", initialBalance); err != nil {
+		t.Error(err)
+		return
+	}
+
+	conn, adminClient, err := dialAdminClient(sAdminRPC)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	defer conn.Close()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	resp, err := adminClient.CooperativeWithdraw(ctx, &adminrpc.ChannelOpRequest{
+		Cid: channel.GetChannelId(),
+		Wei: "123",
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if resp.GetStatus() != 0 {
+		t.Errorf("CooperativeWithdraw status = %d err = %s", resp.GetStatus(), resp.GetError())
+		return
+	}
+	if err = c.AssertBalance(tokenAddr, initialBalance, "0", tf.AddAmtStr(initialBalance, "-123")); err != nil {
 		t.Error(err)
 		return
 	}

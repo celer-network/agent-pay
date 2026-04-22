@@ -26,6 +26,7 @@ import (
 	"time"
 
 	"github.com/celer-network/agent-pay/cnode"
+	"github.com/celer-network/agent-pay/cnode/cooperativewithdraw"
 	"github.com/celer-network/agent-pay/common"
 	"github.com/celer-network/agent-pay/common/structs"
 	"github.com/celer-network/agent-pay/config"
@@ -123,17 +124,23 @@ type serverInterOSP struct {
 }
 type adminService struct {
 	// Note: adminService doesn't own cNode.
-	cNode                        *cnode.CNode
-	ospEthToRPC                  map[ctype.Addr]string
-	ospEthToRPCLock              sync.Mutex
-	streamRetryCb                rpc.ErrCallbackFunc
-	rpc.UnimplementedAdminServer // so new rpc won't break build due to missing interface func
+	cNode                           *cnode.CNode
+	ospEthToRPC                     map[ctype.Addr]string
+	ospEthToRPCLock                 sync.Mutex
+	streamRetryCb                   rpc.ErrCallbackFunc
+	cooperativeWithdrawWithCallback func(ctype.CidType, *big.Int, cooperativewithdraw.Callback) (string, error)
+	getChannelBalance               func(ctype.CidType) (*common.ChannelBalance, error)
+	removeCooperativeWithdrawJob    func(string)
+	rpc.UnimplementedAdminServer    // so new rpc won't break build due to missing interface func
 }
 
 func newAdminService(cNode *cnode.CNode) *adminService {
 	adminS := &adminService{
-		cNode:       cNode,
-		ospEthToRPC: make(map[ctype.Addr]string),
+		cNode:                           cNode,
+		ospEthToRPC:                     make(map[ctype.Addr]string),
+		cooperativeWithdrawWithCallback: cNode.CooperativeWithdraw,
+		getChannelBalance:               cNode.GetBalance,
+		removeCooperativeWithdrawJob:    cNode.RemoveCooperativeWithdrawJob,
 	}
 	adminS.streamRetryCb = func(addr ctype.Addr, streamErr error) {
 		// Register the callback to handle stream errors and try to reconnect.
@@ -183,6 +190,74 @@ func newAdminService(cNode *cnode.CNode) *adminService {
 		log.Errorf("failed to re-register stream to %x", addr)
 	}
 	return adminS
+}
+
+type adminWithdrawCallback struct {
+	removeJob func(string)
+	txHash    chan string
+	err       chan string
+}
+
+func (cb *adminWithdrawCallback) OnWithdraw(withdrawHash string, txHash string) {
+	log.Infoln("admin cooperative withdraw succeeded:", withdrawHash, txHash)
+	if cb.removeJob != nil {
+		cb.removeJob(withdrawHash)
+	}
+	cb.txHash <- txHash
+}
+
+func (cb *adminWithdrawCallback) OnError(withdrawHash string, err string) {
+	log.Errorln("admin cooperative withdraw failed:", withdrawHash, err)
+	if cb.removeJob != nil {
+		cb.removeJob(withdrawHash)
+	}
+	cb.err <- err
+}
+
+func parseAdminChannelOpCid(cidHex string) (ctype.CidType, error) {
+	trimmed := strings.TrimPrefix(strings.TrimPrefix(cidHex, "0x"), "0X")
+	if trimmed == "" {
+		return ctype.ZeroCid, errors.New("missing channel id")
+	}
+	if len(trimmed)%2 == 1 {
+		trimmed = "0" + trimmed
+	}
+	decoded, err := hex.DecodeString(trimmed)
+	if err != nil {
+		return ctype.ZeroCid, errors.New("can't parse channel id")
+	}
+	if len(decoded) > len(ctype.ZeroCid) {
+		return ctype.ZeroCid, errors.New("invalid channel id length")
+	}
+	return ctype.Bytes2Cid(decoded), nil
+}
+
+func parseAdminCooperativeWithdrawRequest(
+	in *rpc.ChannelOpRequest,
+	getBalance func(ctype.CidType) (*common.ChannelBalance, error),
+) (ctype.CidType, *big.Int, error) {
+	if in == nil {
+		return ctype.ZeroCid, nil, common.ErrInvalidArg
+	}
+	cid, err := parseAdminChannelOpCid(in.GetCid())
+	if err != nil {
+		return ctype.ZeroCid, nil, err
+	}
+	if in.GetWei() != "" {
+		amount := utils.Wei2BigInt(in.GetWei())
+		if amount == nil {
+			return ctype.ZeroCid, nil, errors.New("can't parse amount")
+		}
+		return cid, amount, nil
+	}
+	balance, err := getBalance(cid)
+	if err != nil {
+		return ctype.ZeroCid, nil, err
+	}
+	if balance == nil || balance.MyFree == nil {
+		return ctype.ZeroCid, nil, errors.New("can't resolve channel free balance")
+	}
+	return cid, new(big.Int).Set(balance.MyFree), nil
 }
 
 func (s *server) RequestDelegation(ctx context.Context, in *rpc.DelegationRequest) (*rpc.DelegationResponse, error) {
@@ -595,6 +670,33 @@ func (s *adminService) GetPeerOsps(ctx context.Context, in *empty.Empty) (*rpc.P
 		resp.PeerOsps = append(resp.PeerOsps, peerOsp)
 	}
 	return resp, nil
+}
+
+func (s *adminService) CooperativeWithdraw(ctx context.Context, in *rpc.ChannelOpRequest) (*rpc.ChannelOpResponse, error) {
+	cid, amount, err := parseAdminCooperativeWithdrawRequest(in, s.getChannelBalance)
+	if err != nil {
+		return &rpc.ChannelOpResponse{Status: 1, Error: err.Error()}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	cb := &adminWithdrawCallback{
+		removeJob: s.removeCooperativeWithdrawJob,
+		txHash:    make(chan string, 1),
+		err:       make(chan string, 1),
+	}
+	_, err = s.cooperativeWithdrawWithCallback(cid, amount, cb)
+	if err != nil {
+		return &rpc.ChannelOpResponse{Status: 1, Error: err.Error()}, status.Error(codes.Unavailable, err.Error())
+	}
+
+	select {
+	case <-cb.txHash:
+		return &rpc.ChannelOpResponse{Status: 0}, nil
+	case errMsg := <-cb.err:
+		return &rpc.ChannelOpResponse{Status: 1, Error: errMsg}, status.Error(codes.Unavailable, errMsg)
+	case <-ctx.Done():
+		ctxErr := ctx.Err()
+		return &rpc.ChannelOpResponse{Status: 1, Error: ctxErr.Error()}, status.FromContextError(ctxErr).Err()
+	}
 }
 
 func (s *adminService) SendToken(ctx context.Context, in *rpc.SendTokenRequest) (*rpc.SendTokenResponse, error) {

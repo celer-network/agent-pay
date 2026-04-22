@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"strings"
 	"sync"
 
 	"github.com/celer-network/agent-pay/chain"
@@ -44,6 +45,7 @@ type Processor struct {
 	initLock          sync.Mutex
 	runningJobs       map[string]bool
 	runningJobsLock   sync.Mutex
+	keepMonitor       bool
 	enableJobs        bool
 }
 
@@ -69,6 +71,7 @@ func StartProcessor(
 		streamWriter:      streamWriter,
 		callbacks:         make(map[string]Callback),
 		runningJobs:       make(map[string]bool),
+		keepMonitor:       keepMonitor,
 		enableJobs:        enableJobs,
 	}
 	if keepMonitor {
@@ -109,6 +112,9 @@ func (p *Processor) maybeHandleEvent(eLog *types.Log) bool {
 	e := &ledger.CelerLedgerCooperativeWithdraw{}
 	err := ledgerContract.ParseEvent(event.CooperativeWithdraw, *eLog, e)
 	if err != nil {
+		if strings.Contains(err.Error(), "event signature mismatch") {
+			return false
+		}
 		log.Error(err)
 		return false
 	}
@@ -220,10 +226,6 @@ func (p *Processor) updateOnChainBalance(
 		log.Error(err)
 	}
 
-	if !p.enableJobs {
-		return
-	}
-
 	chanLedger := p.nodeConfig.GetLedgerContractOf(cid)
 	if chanLedger == nil {
 		log.Errorf("Fail to get ledger for channel: %x", cid)
@@ -237,6 +239,9 @@ func (p *Processor) updateOnChainBalance(
 	} else if !has {
 		return
 	}
+	// Persisted withdraw jobs must advance on the mined event regardless of node role.
+	// OSPs keep a global cooperative-withdraw watcher, so they do not need per-job
+	// monitor registration, but they still rely on this state transition to fire callbacks.
 	job, err := p.dal.GetCooperativeWithdrawJob(withdrawHash)
 	if err != nil {
 		errMsg := fmt.Sprintf("Cannot retrieve cooperative withdraw job %s: %s", withdrawHash, err)
