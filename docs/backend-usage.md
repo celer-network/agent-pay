@@ -46,6 +46,8 @@ Useful assets already in the repo:
 
 If your host is affected by the macOS amd64 `go1.25.5` cgo linker issue noted above, export `GOTOOLCHAIN=go1.24.9` first and then run the commands below unchanged.
 
+SQLite-backed local builds also require cgo. If you build with `CGO_ENABLED=0`, the binary may still compile, but local `-storedir` startup now fails immediately with a clear `sqlite3 requires cgo` error instead of dying later during store setup. Keep cgo enabled unless you are intentionally using `-storesql` only.
+
 From the repo root:
 
 ```bash

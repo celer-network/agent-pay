@@ -7,6 +7,8 @@ import (
 
 	"github.com/celer-network/agent-pay/ctype"
 	"github.com/celer-network/agent-pay/webapi/rpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -31,6 +33,14 @@ func NewOspPayApiServer(backend OspPayBackend, eventFeed *PaymentEventFeed) *Osp
 		eventFeed = NewPaymentEventFeed()
 	}
 	return &OspPayApiServer{backend: backend, eventFeed: eventFeed}
+}
+
+func ospAdminBalanceGuidance(method string, ambiguous bool) error {
+	msg := method + " is not supported on OSP WebAPI in phase 1; use Admin gRPC CelerGetPeerStatus(peer, token) or osp-cli -dbview channel"
+	if ambiguous {
+		msg = method + " is not supported on OSP WebAPI in phase 1: peer/channel selection is ambiguous on an OSP; use Admin gRPC CelerGetPeerStatus(peer, token) or osp-cli -dbview channel"
+	}
+	return status.Error(codes.Unimplemented, msg)
 }
 
 func (s *OspPayApiServer) SendToken(
@@ -81,6 +91,14 @@ func (s *OspPayApiServer) GetOutgoingPaymentStatus(
 		return nil, err
 	}
 	return &rpc.PaymentStatus{Status: uint32(payStateToSdkStatus(state))}, nil
+}
+
+func (s *OspPayApiServer) GetBalance(context.Context, *rpc.TokenInfo) (*rpc.GetBalanceResponse, error) {
+	return nil, ospAdminBalanceGuidance("GetBalance", true)
+}
+
+func (s *OspPayApiServer) GetPeerFreeBalance(context.Context, *rpc.GetPeerFreeBalanceRequest) (*rpc.FreeBalance, error) {
+	return nil, ospAdminBalanceGuidance("GetPeerFreeBalance", false)
 }
 
 func (s *OspPayApiServer) ConfirmOutgoingPayment(
