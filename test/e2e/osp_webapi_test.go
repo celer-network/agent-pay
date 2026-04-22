@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -28,6 +29,7 @@ func TestOSPWebApi(t *testing.T) {
 	toKill := setUpWithServerArgs("-webapigrpc", sWebApiRPC)
 	defer tearDownMultiSvr(toKill)
 
+	t.Run("ospWebApiAppSessionSubset", ospWebApiAppSessionSubset)
 	t.Run("ospWebApiPaySubset", ospWebApiPaySubset)
 }
 
@@ -234,6 +236,102 @@ func ospWebApiPaySubset(t *testing.T) {
 	}
 }
 
+func ospWebApiAppSessionSubset(t *testing.T) {
+	log.Info("============== start test ospWebApiAppSessionSubset ==============")
+	defer log.Info("============== end test ospWebApiAppSessionSubset ==============")
+
+	ks, addrs, err := tf.CreateAccountsWithBalance(1, accountBalance)
+	if err != nil {
+		t.Fatal(err)
+	}
+	c1KeyStore := ks[0]
+	c1EthAddr := addrs[0]
+
+	c1, err := tf.StartC1WithoutProxy(c1KeyStore)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer c1.Kill()
+
+	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	conn, ospClient, err := tf.DialWebApiClient(sWebApiRPC)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close()
+
+	constructor := testapp.GetSingleSessionConstructor(
+		[]ctype.Addr{ctype.Hex2Addr(c1EthAddr), ctype.Hex2Addr(ospEthAddr)})
+	sessionResp, err := ospClient.CreateAppSessionOnVirtualContract(context.Background(), &webrpc.CreateAppSessionOnVirtualContractRequest{
+		ContractBin:         ctype.Bytes2Hex(testapp.AppCode),
+		ContractConstructor: ctype.Bytes2Hex(constructor),
+		Nonce:               testapp.Nonce.Uint64(),
+		OnChainTimeout:      testapp.Timeout.Uint64(),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	sessionID := sessionResp.GetSessionId()
+	if sessionID == "" {
+		t.Fatal("CreateAppSessionOnVirtualContract returned empty session id")
+	}
+
+	_, err = ospClient.GetStatusForAppSession(context.Background(), &webrpc.SessionID{SessionId: sessionID})
+	if status.Code(err) == codes.Unimplemented {
+		t.Fatalf("GetStatusForAppSession still unimplemented: %v", err)
+	}
+	if err == nil || !strings.Contains(status.Convert(err).Message(), "app channel not deployed") {
+		t.Fatalf("GetStatusForAppSession error = %v, want app channel not deployed", err)
+	}
+
+	payResp, err := ospClient.SendConditionalPayment(context.Background(), &webrpc.SendConditionalPaymentRequest{
+		TokenInfo:          &webrpc.TokenInfo{TokenType: entity.TokenType_ETH, TokenAddress: tokenAddrEth},
+		Destination:        c1EthAddr,
+		Amount:             sendAmt,
+		TransferLogicType:  entity.TransferFunctionType_BOOLEAN_AND,
+		Conditions:         []*webrpc.Condition{{OnChainDeployed: false, ContractAddress: sessionID, IsFinalizedArgs: []byte{}, GetOutcomeArgs: []byte{2}}},
+		Timeout:            100,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if payResp.GetPaymentId() == "" {
+		t.Fatal("SendConditionalPayment returned empty payment id")
+	}
+
+	err = waitForOspOutgoingPaymentPending(payResp.GetPaymentId(), ospClient, c1)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = c1.RejectBooleanPay(payResp.GetPaymentId())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = waitForOspOutgoingPaymentCompletion(payResp.GetPaymentId(), ospClient, c1)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = ospClient.DeleteAppSession(context.Background(), &webrpc.SessionID{SessionId: sessionID})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = ospClient.GetStatusForAppSession(context.Background(), &webrpc.SessionID{SessionId: sessionID})
+	if status.Code(err) == codes.Unimplemented {
+		t.Fatalf("GetStatusForAppSession after delete still unimplemented: %v", err)
+	}
+	if err == nil || !strings.Contains(status.Convert(err).Message(), "app channel not found") {
+		t.Fatalf("GetStatusForAppSession after delete error = %v, want app channel not found", err)
+	}
+}
+
 func waitForOspOutgoingPaymentCompletion(payID string, ospClient webrpc.WebApiClient, receiver *tf.ClientController) error {
 	time.Sleep(200 * time.Millisecond)
 	const retryLimit = 20
@@ -266,6 +364,26 @@ func waitForOspOutgoingPaymentCompletion(payID string, ospClient webrpc.WebApiCl
 		time.Sleep(400 * time.Millisecond)
 	}
 	return fmt.Errorf("receiver payment not finalized, payID %s", payID)
+}
+
+func waitForOspOutgoingPaymentPending(payID string, ospClient webrpc.WebApiClient, receiver *tf.ClientController) error {
+	time.Sleep(200 * time.Millisecond)
+	const retryLimit = 20
+	for retry := 0; retry < retryLimit; retry++ {
+		statusResp, err := ospClient.GetOutgoingPaymentStatus(context.Background(), &webrpc.PaymentID{PaymentId: payID})
+		if err != nil {
+			return err
+		}
+		recvStatus, err := receiver.GetIncomingPaymentStatus(payID)
+		if err != nil {
+			return err
+		}
+		if int(statusResp.GetStatus()) == celersdkintf.PAY_STATUS_PENDING && recvStatus == celersdkintf.PAY_STATUS_PENDING {
+			return nil
+		}
+		time.Sleep(400 * time.Millisecond)
+	}
+	return fmt.Errorf("OSP outgoing payment did not reach pending state, payID %s", payID)
 }
 
 func waitForOspIncomingPaymentPending(payID string, sender *tf.ClientController, ospClient webrpc.WebApiClient) error {

@@ -15,6 +15,9 @@ import (
 type OspPayBackend interface {
 	SendToken(*rpc.SendTokenRequest) (ctype.PayIDType, error)
 	SendConditionalPayment(*rpc.SendConditionalPaymentRequest) (ctype.PayIDType, error)
+	CreateAppSessionOnVirtualContract(*rpc.CreateAppSessionOnVirtualContractRequest) (string, error)
+	DeleteAppSession(string) error
+	GetStatusForAppSession(string) (uint8, error)
 	GetIncomingPaymentState(ctype.PayIDType) (int, error)
 	GetIncomingPaymentRecord(ctype.PayIDType) (*PaymentRecord, error)
 	GetOutgoingPaymentState(ctype.PayIDType) (int, error)
@@ -61,6 +64,36 @@ func (s *OspPayApiServer) SendConditionalPayment(
 		return nil, err
 	}
 	return &rpc.PaymentID{PaymentId: ctype.PayID2Hex(payID)}, nil
+}
+
+func (s *OspPayApiServer) CreateAppSessionOnVirtualContract(
+	context context.Context,
+	request *rpc.CreateAppSessionOnVirtualContractRequest) (*rpc.SessionID, error) {
+	sessionID, err := s.backend.CreateAppSessionOnVirtualContract(request)
+	if err != nil {
+		return nil, err
+	}
+	return &rpc.SessionID{SessionId: sessionID}, nil
+}
+
+func (s *OspPayApiServer) DeleteAppSession(
+	context context.Context,
+	request *rpc.SessionID) (*emptypb.Empty, error) {
+	err := s.backend.DeleteAppSession(request.GetSessionId())
+	if err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
+}
+
+func (s *OspPayApiServer) GetStatusForAppSession(
+	context context.Context,
+	request *rpc.SessionID) (*rpc.AppSessionStatus, error) {
+	statusValue, err := s.backend.GetStatusForAppSession(request.GetSessionId())
+	if err != nil {
+		return nil, err
+	}
+	return &rpc.AppSessionStatus{Status: uint32(statusValue)}, nil
 }
 
 func (s *OspPayApiServer) GetIncomingPaymentStatus(

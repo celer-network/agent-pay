@@ -62,6 +62,25 @@ func (b *ospWebapiBackend) SendConditionalPayment(request *webrpc.SendConditiona
 		request.GetNote())
 }
 
+func (b *ospWebapiBackend) CreateAppSessionOnVirtualContract(request *webrpc.CreateAppSessionOnVirtualContractRequest) (string, error) {
+	return b.cNode.AppClient.NewAppChannelOnVirtualContract(
+		ctype.Hex2Bytes(request.GetContractBin()),
+		ctype.Hex2Bytes(request.GetContractConstructor()),
+		request.GetNonce(),
+		request.GetOnChainTimeout(),
+		nil,
+	)
+}
+
+func (b *ospWebapiBackend) DeleteAppSession(sessionID string) error {
+	b.cNode.AppClient.DeleteAppChannel(sessionID)
+	return nil
+}
+
+func (b *ospWebapiBackend) GetStatusForAppSession(sessionID string) (uint8, error) {
+	return b.cNode.AppClient.GetAppChannelStatus(sessionID)
+}
+
 func (b *ospWebapiBackend) GetIncomingPaymentState(payID ctype.PayIDType) (int, error) {
 	inState, _, _, err := b.cNode.GetDAL().GetPayStates(payID)
 	return inState, err
