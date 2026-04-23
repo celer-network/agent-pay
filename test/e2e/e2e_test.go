@@ -15,9 +15,13 @@ type Killable interface {
 }
 
 func setUp() []Killable {
+	return setUpWithServerArgs()
+}
+
+func setUpWithServerArgs(extraArgs ...string) []Killable {
 	os.RemoveAll(sStoreDir)
 	// use default 11000 and 8090 for adminrpc/web port
-	s1 := tf.StartServerController(outRootDir+toBuild["server"],
+	args := []string{
 		"-profile", noProxyProfile,
 		"-port", sPort,
 		"-selfrpc", sSelfRPC,
@@ -27,8 +31,11 @@ func setUp() []Killable {
 		"-nopassword",
 		"-rtc", rtConfig,
 		"-svrname", "s1",
-		"-logprefix", "s1_"+ospEthAddr[:4],
-		"-logcolor")
+		"-logprefix", "s1_" + ospEthAddr[:4],
+		"-logcolor",
+	}
+	args = append(args, extraArgs...)
+	s1 := tf.StartServerController(outRootDir+toBuild["server"], args...)
 
 	return []Killable{s1}
 }
@@ -53,11 +60,14 @@ func TestE2E(t *testing.T) {
 		t.Run("clientRecovery", clientRecovery)
 		t.Run("concurrentOpenChannel", concurrentOpenChannel)
 		t.Run("coldBootstrap", coldBootstrap)
+		t.Run("cooperativeWithdrawEth", cooperativeWithdrawEth)
 		t.Run("cooperativeWithdrawErc20", cooperativeWithdrawErc20)
+		t.Run("ospAdminCooperativeWithdrawEth", ospAdminCooperativeWithdrawEth)
 		t.Run("cooperativeWithdrawEthWithRestart", cooperativeWithdrawEthWithRestart)
 		t.Run("cooperativeWithdrawAfterSendPay", cooperativeWithdrawAfterSendPay)
 		t.Run("cooperativeWithdrawAndSendInvalidPay", cooperativeWithdrawAndSendInvalidPay)
 		t.Run("cooperativeWithdrawInsufficient", cooperativeWithdrawInsufficient)
+		t.Run("cooperativeWithdrawOwedDeposit", cooperativeWithdrawOwedDeposit)
 		t.Run("clientIntendWithdrawErc20", clientIntendWithdrawErc20)
 		t.Run("ospIntendWithdrawErc20", ospIntendWithdrawErc20)
 	})

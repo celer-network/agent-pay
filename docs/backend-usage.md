@@ -18,6 +18,16 @@ You need the following on a development machine:
 - `geth` for local Ethereum-based tests
 - CockroachDB only if you want the shared-SQL mode used in the manual examples
 
+Toolchain note:
+
+- The module target in [go.mod](../go.mod) is Go 1.24.
+- On some macOS amd64 hosts, the local `go1.25.5` toolchain fails cgo linking for this repo and even trivial `import "C"` programs with duplicate `runtime/cgo` symbols.
+- If you hit that linker signature, set a known-good toolchain for the current shell before building or testing:
+
+```bash
+export GOTOOLCHAIN=go1.24.9
+```
+
 For the manual scripts, set:
 
 ```bash
@@ -33,6 +43,10 @@ Useful assets already in the repo:
 - Operational troubleshooting guide: [docs/backend-troubleshooting.md](./backend-troubleshooting.md)
 
 ## Build the Binaries
+
+If your host is affected by the macOS amd64 `go1.25.5` cgo linker issue noted above, export `GOTOOLCHAIN=go1.24.9` first and then run the commands below unchanged.
+
+SQLite-backed local builds also require cgo. If you build with `CGO_ENABLED=0`, the binary may still compile, but local `-storedir` startup now fails immediately with a clear `sqlite3 requires cgo` error instead of dying later during store setup. Keep cgo enabled unless you are intentionally using `-storesql` only.
 
 From the repo root:
 
@@ -50,6 +64,8 @@ Optional entry points you may also care about:
 ## Fastest Validation: Focused E2E Test
 
 If you are changing the backend and want the shortest realistic validation loop, start with the end-to-end tests in [test/e2e](../test/e2e).
+
+On an affected macOS amd64 host, export `GOTOOLCHAIN=go1.24.9` in the same shell before running the `go test` commands in this section.
 
 From the repo root:
 
@@ -95,9 +111,17 @@ Example:
 go test ./test/e2e -reuse /tmp/celer_e2e_1712960000/ -run '^TestE2E$/^e2e-grp2$/^sendCondPayWithErc20$'
 ```
 
+If you are specifically changing the pay-centric OSP WebAPI listener, use the focused listener test:
+
+```bash
+go test ./test/e2e -run '^TestOSPWebApi$/^ospWebApiPaySubset$' -count=1
+```
+
 ## Broader Test Matrix
 
 For a wider validation sweep, the old CI flow maps reasonably well to the following current-package commands.
+
+As above, on an affected macOS amd64 host, export `GOTOOLCHAIN=go1.24.9` before running these commands.
 
 Prerequisites beyond Go:
 
@@ -232,6 +256,8 @@ Inspect state:
 
 You do not need the helper scripts if you already have a profile and keys.
 
+On an affected macOS amd64 host, export `GOTOOLCHAIN=go1.24.9` before running the server binary or `go run` commands in this section.
+
 Example command from the repo root:
 
 ```bash
@@ -245,6 +271,12 @@ go run ./server/server.go \
   -storedir $AGENTPAY_MANUAL_ROOT/store \
   -rtc ./test/manual/rt_config.json \
   -nopassword
+```
+
+Optional phase-1 seller-OSP WebAPI listener for a same-host caller:
+
+```bash
+-webapigrpc 127.0.0.1:12000
 ```
 
 If this process will dial localhost peers using the built-in localhost certificate, prefix the command with `CELER_INSECURE_TLS=1` unless you are using `test/manual/run_osp.sh`, which already does that for local manual runs.
@@ -294,6 +326,7 @@ Examples:
 | `-port` | Main gRPC endpoint for clients and peers |
 | `-adminrpc` | Admin gRPC endpoint |
 | `-adminweb` | Admin HTTP endpoint that serves `/admin/` and `/metrics` |
+| `-webapigrpc` | Optional pay-centric OSP WebAPI gRPC endpoint for localhost/private same-host callers |
 | `-selfrpc` | Second gRPC endpoint used in multi-server mode |
 | `-rtc` | Runtime config file |
 | `-isosp` | Whether to run with OSP/service-node behavior |
@@ -301,6 +334,10 @@ Examples:
 | `-tlscert`, `-tlskey`, `-tlsclient` | TLS customization |
 
 Only one of `-storedir` and `-storesql` should be set.
+
+The phase-1 OSP WebAPI listener intentionally runs without TLS transport credentials, so bind it only to `127.0.0.1:<port>` or another private interface used by a colocated same-host caller. It is not intended as a public network-facing API in this cut.
+
+The OSP WebAPI listener is pay-centric only in phase 1. Channel-scoped methods such as `GetBalance`, `Deposit`, and `CooperativeWithdraw` still belong on the admin surface and return `codes.Unimplemented` on the OSP WebAPI listener.
 
 ## Deployment Modes
 
@@ -333,6 +370,8 @@ In practice, most operational control happens through the admin surface exposed 
 - admin gRPC server on `-adminrpc`
 - HTTP gateway on `-adminweb`, mounted under `/admin/`
 - Prometheus metrics on `/metrics`
+
+If you also enable `-webapigrpc`, treat that as a local integration surface rather than an operator surface. It is useful for seller-OSP workflows that already speak `rpc.WebApiClient`, but Admin remains the control plane for channel-scoped operations in phase 1.
 
 The normal operator tool for that surface is [tools/osp-cli](../tools/osp-cli).
 

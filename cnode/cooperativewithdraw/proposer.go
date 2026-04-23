@@ -212,10 +212,12 @@ func (p *Processor) sendCooperativeWithdrawTx(
 	if ledgerContract == nil {
 		return fmt.Errorf("Fail to get ledger for channel: %x", cid)
 	}
-	p.monitorSingleEvent(ledgerContract, true)
-	err = p.dal.UpsertMonitorRestart(monitor.NewEventStr(config.ChainId.Uint64(), ledgerContract.GetAddr(), event.CooperativeWithdraw), true)
-	if err != nil {
-		return err
+	if !p.keepMonitor {
+		p.monitorSingleEvent(ledgerContract, true)
+		err = p.dal.UpsertMonitorRestart(monitor.NewEventStr(config.ChainId.Uint64(), ledgerContract.GetAddr(), event.CooperativeWithdraw), true)
+		if err != nil {
+			return err
+		}
 	}
 
 	tx, err := p.transactorPool.Submit(

@@ -21,6 +21,7 @@ flowchart TD
     Server[server/server.go] --> CNode[cnode.CNode]
     Server --> Rpc[gRPC RpcServer]
     Server --> Admin[Admin gRPC + HTTP gateway]
+    Server --> OspWebApi[Optional OSP WebAPI gRPC]
     Server --> Multi[Optional MultiServer]
 
     CNode --> Conn[rpc.ConnectionManager]
@@ -39,7 +40,7 @@ The most important architectural choice is that `server/server.go` does very lit
 
 - Loads config and keys
 - Creates the `CNode`
-- Exposes RPC and admin services
+- Exposes RPC, admin, and optional OSP WebAPI services
 - Hooks callbacks for send/receive/new-stream events
 
 Most of the protocol behavior lives below that layer.
@@ -58,6 +59,7 @@ Important startup flags include:
 - `-storedir` or `-storesql`: storage backend
 - `-port`: main gRPC port
 - `-adminrpc` and `-adminweb`: operator/admin endpoints
+- `-webapigrpc`: optional pay-centric OSP WebAPI gRPC endpoint for localhost/private same-host callers
 - `-selfrpc`: optional second gRPC port for multi-server mode
 - `-rtc`: runtime config file
 
@@ -88,13 +90,16 @@ See [server/server.go](../server/server.go) and [common/profile.go](../common/pr
 
 ### 4. External servers
 
-After `CNode` is ready, [server/server.go](../server/server.go) exposes three surfaces:
+After `CNode` is ready, [server/server.go](../server/server.go) exposes three always-on or optional surfaces:
 
 - Main `RpcServer` for clients and peers
 - `AdminServer` for operational actions such as stream registration, channel opening, deposits, and token sending
 - HTTP gateway under `/admin/` plus `/metrics`
+- Optional OSP `WebApiServer` on `-webapigrpc` for pay-centric seller-OSP integrations that need a normal `rpc.WebApiClient` against the existing OSP runtime
 
 If `-selfrpc` is set, the process also starts the `MultiServer` gRPC service used in shared-database, multi-server deployments.
+
+The optional OSP WebAPI listener is intentionally narrower than the client-node WebAPI server in [webapi/api_server.go](../webapi/api_server.go): it reuses the already-running `CNode`, installs a callback fanout layer so existing OSP fee/delegate side effects are preserved, and leaves ambiguous channel-scoped calls such as `GetBalance` unimplemented.
 
 ## Core Packages
 

@@ -54,6 +54,30 @@ lsof -nP -iTCP:8545-8546 -sTCP:LISTEN
 
 This matters most for [test/e2e](../test/e2e), which starts its own local chain and expects `127.0.0.1:8545` and `127.0.0.1:8546` to be free.
 
+### Symptom: `go build` or `go test` fails at link time with duplicate `runtime/cgo` symbols
+
+Representative failure:
+
+- `duplicate symbol '__cgo_set_stacklo'`
+- `duplicate symbol '_x_cgo_init'`
+- `ld: 19 duplicate symbols`
+- `clang: error: linker command failed with exit code 1`
+
+What this usually means:
+
+- This is a local toolchain problem, not necessarily a repo regression.
+- We reproduced it on macOS amd64 with the local `go1.25.5` toolchain.
+- In that environment, even a trivial Go program containing `import "C"` fails to link with the same duplicate-symbol error.
+
+Checks:
+
+1. Confirm the local toolchain with `go version`.
+2. If the host is macOS amd64 and the default toolchain is `go1.25.5`, rerun the build or test with `GOTOOLCHAIN=go1.24.9`.
+3. If you want the workaround for the whole shell session, run `export GOTOOLCHAIN=go1.24.9` first.
+4. After switching toolchains, rerun a narrow check such as `go build ./server` or `go test ./test/e2e -run '^TestE2E$/^e2e-grp2$/^sendCondPayWithErc20$'`.
+
+If the duplicate-symbol failure is gone and the next error changes, continue with the normal repo-specific troubleshooting flow.
+
 ## Operational Surfaces
 
 The backend exposes three main operator surfaces:
@@ -61,6 +85,8 @@ The backend exposes three main operator surfaces:
 - Main gRPC server on `-port`
 - Admin gRPC server on `-adminrpc`
 - Admin HTTP gateway and Prometheus metrics on `-adminweb`
+
+An OSP may also expose an optional pay-centric WebAPI gRPC listener on `-webapigrpc`. In phase 1 that listener intentionally runs without TLS transport credentials, so it should be bound only to `127.0.0.1:<port>` or another private interface used by a colocated same-host caller.
 
 The normal operator tool is [tools/osp-cli](../tools/osp-cli). Prefer it over ad hoc RPC calls because the repo already documents the stable command patterns there.
 
@@ -86,6 +112,7 @@ Common causes:
 
 - both `-storedir` and `-storesql` were set
 - `-selfrpc` is malformed
+- `-webapigrpc` is already in use or bound to the wrong interface
 - keystore cannot be read or decrypted
 - chain RPC endpoint is unreachable
 - storage backend cannot be opened
@@ -94,6 +121,7 @@ Representative log messages from the code:
 
 - `specify only one of -storedir, -storesql`
 - `invalid self-RPC`
+- `failed to listen on OSP WebAPI grpc`
 - `Cannot setup SQL store`
 - `Cannot setup local store`
 - `DialETH failed`
@@ -104,6 +132,7 @@ Checks:
 2. Confirm the profile file is valid against the schema in [common/profile.go](../common/profile.go).
 3. Verify the keystore path and password handling. For local tests, `-nopassword` is commonly used.
 4. Verify the chain RPC endpoint in the profile's `Ethereum.Gateway` field.
+5. If `-webapigrpc` is set, verify the bind target is loopback/private and the port is free.
 
 Known-good local example:
 
@@ -118,6 +147,20 @@ CELER_INSECURE_TLS=1 go run ./server/server.go \
   -rtc ./test/manual/rt_config.json \
   -nopassword
 ```
+
+If you enable `-webapigrpc`, prefer a loopback bind such as `-webapigrpc 127.0.0.1:12000`. That listener is designed for a same-host client process and should not be treated as a public ingress.
+
+### Symptom: OSP WebAPI subscription missed an event
+
+Phase-1 OSP WebAPI subscriptions are intentionally single-subscriber and best-effort.
+
+What this means operationally:
+
+1. Only one active `SubscribeIncomingPayments` subscriber and one active `SubscribeOutgoingPayments` subscriber are supported at a time.
+2. A slow subscriber may miss events because the listener uses bounded non-blocking buffering.
+3. Polling RPCs such as `GetIncomingPaymentStatus`, `GetIncomingPaymentInfo`, and `GetOutgoingPaymentStatus` remain the source of truth for correctness checks.
+
+If an integration cares about final state rather than observability, re-read payment status or info instead of assuming the stream is lossless.
 
 ### Symptom: server starts, but storage state is missing or unexpected
 

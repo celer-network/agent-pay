@@ -30,6 +30,7 @@ const (
 
 var (
 	ErrNilValue = errors.New("Value cannot be nil")
+	ErrSQLiteRequiresCgo = errors.New("sqlite3 requires cgo; rebuild with CGO_ENABLED=1 or use -storesql")
 )
 
 type KVStoreSQL struct {
@@ -77,6 +78,9 @@ func NewKVStoreSQL(driver, info string) (*KVStoreSQL, error) {
 	// Note: in the "sqlite3" case "info" is the file path.
 	initSchema := false
 	if driver == "sqlite3" {
+		if !sqliteSupported() {
+			return nil, ErrSQLiteRequiresCgo
+		}
 		s.crdb = false
 		if ok, err := exists(info); err != nil {
 			log.Debugln("NewKVStoreSQL: cannot Stat() file:", info, err)
