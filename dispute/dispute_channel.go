@@ -4,10 +4,8 @@ package dispute
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"fmt"
 	"math/big"
-	"strings"
 	"time"
 
 	"github.com/celer-network/agent-pay/chain"
@@ -98,30 +96,28 @@ func (p *Processor) IntendSettlePaymentChannel(cid ctype.CidType, waitMined bool
 }
 
 func (p *Processor) intendSettleAndWaitMined(cid ctype.CidType, stateArrayBytes []byte, logCtx settleLogContext) error {
-	stateArrayHash := hashBytesShort(stateArrayBytes)
 	receipt, err := p.transactorPool.SubmitWaitMined(
 		fmt.Sprintf("intend settle payment channel %x", cid),
 		p.intendSettleTxMethod(cid, stateArrayBytes),
 		config.TransactOptions()...)
 	if err != nil {
-		log.Errorf("intend settle payment channel error %s, cid %x, state_array_hash %s, state_count %d, self %s, peer %s", err, cid, stateArrayHash, logCtx.stateCount, logCtx.selfSummary, logCtx.peerSummary)
+		log.Errorf("intend settle payment channel error %s, cid %x, state_count %d, self %s, peer %s", err, cid, logCtx.stateCount, logCtx.selfSummary, logCtx.peerSummary)
 		return err
 	}
 	if receipt.Status != types.ReceiptStatusSuccessful {
-		log.Errorf("intend settle receipt failed, cid %x, tx %x, block %d, gas_used %d, state_array_hash %s, state_count %d, self %s, peer %s", cid, receipt.TxHash, receipt.BlockNumber.Uint64(), receipt.GasUsed, stateArrayHash, logCtx.stateCount, logCtx.selfSummary, logCtx.peerSummary)
+		log.Errorf("intend settle receipt failed, cid %x, tx %x, block %d, gas_used %d, state_count %d, self %s, peer %s", cid, receipt.TxHash, receipt.BlockNumber.Uint64(), receipt.GasUsed, logCtx.stateCount, logCtx.selfSummary, logCtx.peerSummary)
 		return fmt.Errorf("intend settle transaction %x failed", receipt.TxHash)
 	}
 	return nil
 }
 
 func (p *Processor) intendSettle(cid ctype.CidType, stateArrayBytes []byte, logCtx settleLogContext) error {
-	stateArrayHash := hashBytesShort(stateArrayBytes)
 	_, err := p.transactorPool.Submit(
 		newGenericTransactionHandler("intend settle", cid),
 		p.intendSettleTxMethod(cid, stateArrayBytes),
 		config.TransactOptions()...)
 	if err != nil {
-		log.Errorf("intend settle payment channel error %s, cid %x, state_array_hash %s, state_count %d, self %s, peer %s", err, cid, stateArrayHash, logCtx.stateCount, logCtx.selfSummary, logCtx.peerSummary)
+		log.Errorf("intend settle payment channel error %s, cid %x, state_count %d, self %s, peer %s", err, cid, logCtx.stateCount, logCtx.selfSummary, logCtx.peerSummary)
 		return err
 	}
 	return nil
@@ -156,42 +152,18 @@ func formatSimplexSummary(simplex *entity.SimplexPaymentChannel, signedSimplex *
 		transferAmt = new(big.Int).SetBytes(simplex.GetTransferToPeer().GetReceiver().GetAmt()).String()
 	}
 	totalPendingAmt := new(big.Int).SetBytes(simplex.GetTotalPendingAmount()).String()
-	pendingPayIDs := summarizePayIDs(simplex.GetPendingPayIds().GetPayIds())
 
 	return fmt.Sprintf(
-		"{peer_from:%x seq:%d transfer_amt:%s total_pending:%s pending_pay_count:%d pending_pay_ids:%s last_pay_deadline:%d sigs:%t/%t}",
+		"{peer_from:%x seq:%d transfer_amt:%s total_pending:%s pending_pay_count:%d last_pay_deadline:%d sigs:%t/%t}",
 		simplex.GetPeerFrom(),
 		simplex.GetSeqNum(),
 		transferAmt,
 		totalPendingAmt,
 		len(simplex.GetPendingPayIds().GetPayIds()),
-		pendingPayIDs,
 		simplex.GetLastPayResolveDeadline(),
 		signedSimplex != nil && len(signedSimplex.GetSigOfPeerFrom()) > 0,
 		signedSimplex != nil && len(signedSimplex.GetSigOfPeerTo()) > 0,
 	)
-}
-
-func summarizePayIDs(payIDs [][]byte) string {
-	if len(payIDs) == 0 {
-		return "[]"
-	}
-
-	const maxShown = 3
-	parts := make([]string, 0, maxShown+1)
-	for index, payID := range payIDs {
-		if index == maxShown {
-			parts = append(parts, fmt.Sprintf("...+%d more", len(payIDs)-maxShown))
-			break
-		}
-		parts = append(parts, fmt.Sprintf("%x", payID))
-	}
-	return "[" + strings.Join(parts, ",") + "]"
-}
-
-func hashBytesShort(payload []byte) string {
-	hash := sha256.Sum256(payload)
-	return fmt.Sprintf("%x", hash[:8])
 }
 
 func (p *Processor) ConfirmSettlePaymentChannel(cid ctype.CidType, waitMined bool) error {
