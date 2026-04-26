@@ -4,8 +4,10 @@ package dispute
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"fmt"
 	"math/big"
+	"strings"
 	"time"
 
 	"github.com/celer-network/agent-pay/chain"
@@ -15,9 +17,11 @@ import (
 	enums "github.com/celer-network/agent-pay/common/structs"
 	"github.com/celer-network/agent-pay/config"
 	"github.com/celer-network/agent-pay/ctype"
+	"github.com/celer-network/agent-pay/entity"
 	"github.com/celer-network/agent-pay/fsm"
 	"github.com/celer-network/agent-pay/ledgerview"
 	"github.com/celer-network/agent-pay/metrics"
+	"github.com/celer-network/agent-pay/rpc"
 	"github.com/celer-network/agent-pay/storage"
 	"github.com/celer-network/goutils/eth"
 	"github.com/celer-network/goutils/eth/monitor"
@@ -35,7 +39,7 @@ func (p *Processor) IntendSettlePaymentChannel(cid ctype.CidType, waitMined bool
 		return err
 	}
 
-	_, selfSimplex, _, peerSimplex, found, err := p.dal.GetDuplexChannel(cid)
+	selfSimplex, selfSignedSimplex, peerSimplex, peerSignedSimplex, found, err := p.dal.GetDuplexChannel(cid)
 	if err != nil {
 		log.Errorln("GetDuplexChannel failed:", err, cid.Hex())
 		return err
@@ -45,9 +49,17 @@ func (p *Processor) IntendSettlePaymentChannel(cid ctype.CidType, waitMined bool
 		return common.ErrChannelNotFound
 	}
 
+	baseSeq, lastUsedSeq, lastAckedSeq, lastNackedSeq, found, err := p.dal.GetChanSeqNums(cid)
+	if err != nil {
+		log.Warnf("GetChanSeqNums failed for intend settle diagnostics, cid %x: %v", cid, err)
+	}
+	if !found {
+		log.Warnf("GetChanSeqNums not found for intend settle diagnostics, cid %x", cid)
+	}
+
 	var stateArray chain.SignedSimplexStateArray
-	if len(selfSimplex.SigOfPeerFrom) > 0 && len(selfSimplex.SigOfPeerTo) > 0 {
-		sigSortedStateSelf, err2 := SigSortedSimplexState(selfSimplex)
+	if len(selfSignedSimplex.SigOfPeerFrom) > 0 && len(selfSignedSimplex.SigOfPeerTo) > 0 {
+		sigSortedStateSelf, err2 := SigSortedSimplexState(selfSignedSimplex)
 		if err2 == nil {
 			stateArray.SignedSimplexStates = append(stateArray.SignedSimplexStates, sigSortedStateSelf)
 		} else {
@@ -55,8 +67,8 @@ func (p *Processor) IntendSettlePaymentChannel(cid ctype.CidType, waitMined bool
 			return err2
 		}
 	}
-	if len(peerSimplex.SigOfPeerFrom) > 0 && len(peerSimplex.SigOfPeerTo) > 0 {
-		sigSortedStatePeer, err2 := SigSortedSimplexState(peerSimplex)
+	if len(peerSignedSimplex.SigOfPeerFrom) > 0 && len(peerSignedSimplex.SigOfPeerTo) > 0 {
+		sigSortedStatePeer, err2 := SigSortedSimplexState(peerSignedSimplex)
 		if err2 == nil {
 			stateArray.SignedSimplexStates = append(stateArray.SignedSimplexStates, sigSortedStatePeer)
 		} else {
@@ -68,9 +80,9 @@ func (p *Processor) IntendSettlePaymentChannel(cid ctype.CidType, waitMined bool
 	// handle empty channel state
 	if len(stateArray.SignedSimplexStates) == 0 {
 		simplexState := &chain.SignedSimplexState{
-			SimplexState: selfSimplex.GetSimplexState(),
+			SimplexState: selfSignedSimplex.GetSimplexState(),
 		}
-		simplexState.Sigs = append(simplexState.Sigs, selfSimplex.SigOfPeerFrom)
+		simplexState.Sigs = append(simplexState.Sigs, selfSignedSimplex.SigOfPeerFrom)
 		stateArray.SignedSimplexStates = append(stateArray.SignedSimplexStates, simplexState)
 	}
 
@@ -79,6 +91,20 @@ func (p *Processor) IntendSettlePaymentChannel(cid ctype.CidType, waitMined bool
 		log.Error(err, "cid", cid.Hex())
 		return err
 	}
+
+	logIntendSettleDiagnostics(
+		cid,
+		p.monitorService.GetCurrentBlockNumber().Uint64(),
+		baseSeq,
+		lastUsedSeq,
+		lastAckedSeq,
+		lastNackedSeq,
+		selfSimplex,
+		selfSignedSimplex,
+		peerSimplex,
+		peerSignedSimplex,
+		stateArrayBytes,
+		len(stateArray.SignedSimplexStates))
 	if waitMined {
 		return p.intendSettleAndWaitMined(cid, stateArrayBytes)
 	}
@@ -86,31 +112,110 @@ func (p *Processor) IntendSettlePaymentChannel(cid ctype.CidType, waitMined bool
 }
 
 func (p *Processor) intendSettleAndWaitMined(cid ctype.CidType, stateArrayBytes []byte) error {
+	stateArrayHash := hashBytesShort(stateArrayBytes)
 	receipt, err := p.transactorPool.SubmitWaitMined(
 		fmt.Sprintf("intend settle payment channel %x", cid),
 		p.intendSettleTxMethod(cid, stateArrayBytes),
 		config.TransactOptions()...)
 	if err != nil {
-		log.Errorf("intend settle payment channel error %s, cid %x", err, cid)
+		log.Errorf("intend settle payment channel error %s, cid %x, state_array_hash %s", err, cid, stateArrayHash)
 		return err
 	}
 	if receipt.Status != types.ReceiptStatusSuccessful {
+		log.Errorf("intend settle receipt failed, cid %x, tx %x, block %d, gas_used %d, state_array_hash %s", cid, receipt.TxHash, receipt.BlockNumber.Uint64(), receipt.GasUsed, stateArrayHash)
 		return fmt.Errorf("intend settle transaction %x failed", receipt.TxHash)
 	}
 	return nil
 }
 
 func (p *Processor) intendSettle(cid ctype.CidType, stateArrayBytes []byte) error {
+	stateArrayHash := hashBytesShort(stateArrayBytes)
 	tx, err := p.transactorPool.Submit(
 		newGenericTransactionHandler("intend settle", cid),
 		p.intendSettleTxMethod(cid, stateArrayBytes),
 		config.TransactOptions()...)
 	if err != nil {
-		log.Errorf("intend settle payment channel error %s, cid %x", err, cid)
+		log.Errorf("intend settle payment channel error %s, cid %x, state_array_hash %s", err, cid, stateArrayHash)
 		return err
 	}
-	log.Infof("sent intend settle tx %x for cid %x", tx.Hash(), cid)
+	log.Infof("sent intend settle tx %x for cid %x, state_array_hash %s", tx.Hash(), cid, stateArrayHash)
 	return nil
+}
+
+func logIntendSettleDiagnostics(
+	cid ctype.CidType,
+	curBlock uint64,
+	baseSeq uint64,
+	lastUsedSeq uint64,
+	lastAckedSeq uint64,
+	lastNackedSeq uint64,
+	selfSimplex *entity.SimplexPaymentChannel,
+	selfSignedSimplex *rpc.SignedSimplexState,
+	peerSimplex *entity.SimplexPaymentChannel,
+	peerSignedSimplex *rpc.SignedSimplexState,
+	stateArrayBytes []byte,
+	stateCount int) {
+	log.Infof(
+		"intend settle diagnostics cid %x, block %d, chan_seq{base:%d used:%d acked:%d nacked:%d}, state_count %d, state_array_hash %s, self %s, peer %s",
+		cid,
+		curBlock,
+		baseSeq,
+		lastUsedSeq,
+		lastAckedSeq,
+		lastNackedSeq,
+		stateCount,
+		hashBytesShort(stateArrayBytes),
+		formatSimplexSummary(selfSimplex, selfSignedSimplex),
+		formatSimplexSummary(peerSimplex, peerSignedSimplex),
+	)
+}
+
+func formatSimplexSummary(simplex *entity.SimplexPaymentChannel, signedSimplex *rpc.SignedSimplexState) string {
+	if simplex == nil {
+		return "<nil>"
+	}
+
+	transferAmt := "0"
+	if simplex.GetTransferToPeer() != nil && simplex.GetTransferToPeer().GetReceiver() != nil {
+		transferAmt = new(big.Int).SetBytes(simplex.GetTransferToPeer().GetReceiver().GetAmt()).String()
+	}
+	totalPendingAmt := new(big.Int).SetBytes(simplex.GetTotalPendingAmount()).String()
+	pendingPayIDs := summarizePayIDs(simplex.GetPendingPayIds().GetPayIds())
+
+	return fmt.Sprintf(
+		"{peer_from:%x seq:%d transfer_amt:%s total_pending:%s pending_pay_count:%d pending_pay_ids:%s last_pay_deadline:%d sigs:%t/%t}",
+		simplex.GetPeerFrom(),
+		simplex.GetSeqNum(),
+		transferAmt,
+		totalPendingAmt,
+		len(simplex.GetPendingPayIds().GetPayIds()),
+		pendingPayIDs,
+		simplex.GetLastPayResolveDeadline(),
+		signedSimplex != nil && len(signedSimplex.GetSigOfPeerFrom()) > 0,
+		signedSimplex != nil && len(signedSimplex.GetSigOfPeerTo()) > 0,
+	)
+}
+
+func summarizePayIDs(payIDs [][]byte) string {
+	if len(payIDs) == 0 {
+		return "[]"
+	}
+
+	const maxShown = 3
+	parts := make([]string, 0, maxShown+1)
+	for index, payID := range payIDs {
+		if index == maxShown {
+			parts = append(parts, fmt.Sprintf("...+%d more", len(payIDs)-maxShown))
+			break
+		}
+		parts = append(parts, fmt.Sprintf("%x", payID))
+	}
+	return "[" + strings.Join(parts, ",") + "]"
+}
+
+func hashBytesShort(payload []byte) string {
+	hash := sha256.Sum256(payload)
+	return fmt.Sprintf("%x", hash[:8])
 }
 
 func (p *Processor) ConfirmSettlePaymentChannel(cid ctype.CidType, waitMined bool) error {
