@@ -29,6 +29,8 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+const settleTxGasEstimateRatio = 0.2
+
 func (p *Processor) IntendSettlePaymentChannel(cid ctype.CidType, waitMined bool) error {
 	log.Infoln("Intend settle payment channel", cid.Hex())
 	err := p.dal.Transactional(fsm.OnChannelIntendSettle, cid)
@@ -99,7 +101,7 @@ func (p *Processor) intendSettleAndWaitMined(cid ctype.CidType, stateArrayBytes 
 	receipt, err := p.transactorPool.SubmitWaitMined(
 		fmt.Sprintf("intend settle payment channel %x", cid),
 		p.intendSettleTxMethod(cid, stateArrayBytes),
-		config.TransactOptions()...)
+		config.TransactOptions(eth.WithAddGasEstimateRatio(settleTxGasEstimateRatio))...)
 	if err != nil {
 		log.Errorf("intend settle payment channel error %s, cid %x, state_count %d, self %s, peer %s", err, cid, logCtx.stateCount, logCtx.selfSummary, logCtx.peerSummary)
 		return err
@@ -115,7 +117,7 @@ func (p *Processor) intendSettle(cid ctype.CidType, stateArrayBytes []byte, logC
 	_, err := p.transactorPool.Submit(
 		newGenericTransactionHandler("intend settle", cid),
 		p.intendSettleTxMethod(cid, stateArrayBytes),
-		config.TransactOptions()...)
+		config.TransactOptions(eth.WithAddGasEstimateRatio(settleTxGasEstimateRatio))...)
 	if err != nil {
 		log.Errorf("intend settle payment channel error %s, cid %x, state_count %d, self %s, peer %s", err, cid, logCtx.stateCount, logCtx.selfSummary, logCtx.peerSummary)
 		return err
@@ -196,7 +198,7 @@ func (p *Processor) confirmSettleAndWaitMined(cid ctype.CidType) error {
 	receipt, err := p.transactorPool.SubmitWaitMined(
 		fmt.Sprintf("confirm settle payment channel %x", cid),
 		p.confirmSettleTxMethod(cid),
-		config.TransactOptions()...)
+		config.TransactOptions(eth.WithAddGasEstimateRatio(settleTxGasEstimateRatio))...)
 	if err != nil {
 		log.Errorf("confirm settle payment channel error %s, cid %x", err, cid)
 		return err
@@ -216,7 +218,7 @@ func (p *Processor) confirmSettle(cid ctype.CidType) error {
 	tx, err := p.transactorPool.Submit(
 		newGenericTransactionHandler("confirm settle", cid),
 		p.confirmSettleTxMethod(cid),
-		config.TransactOptions()...)
+		config.TransactOptions(eth.WithAddGasEstimateRatio(settleTxGasEstimateRatio))...)
 	if err != nil {
 		log.Errorf("confirm settle payment channel error %s, cid %x", err, cid)
 		return err
