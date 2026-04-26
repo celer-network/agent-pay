@@ -1,0 +1,107 @@
+name: E2E CI
+
+# When a commit touches ONLY files listed under paths-ignore, this workflow
+# does not run. If the commit touches any non-ignored file alongside, it runs.
+# workflow_dispatch has no paths-ignore, so manual runs always execute.
+#
+# Triggers cover PRs and manual dispatch only — no push trigger on main.
+# Rationale: with "Require branches to be up to date before merging" enabled
+# in branch protection, every PR's last CI run already validates against
+# main's current tip. The post-merge commit on main is byte-identical to the
+# tested PR head, so re-running this e2e workflow on main is duplicate work.
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.gitattributes'
+      - '.editorconfig'
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    name: E2E (${{ matrix.suite.name }})
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ matrix.suite.job_timeout_minutes }}
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - name: default
+            command: go test ./test/e2e -count=1 -timeout 30m -v
+            job_timeout_minutes: 40
+            artifact_name: e2e-default-logs
+          - name: crossnet
+            command: go test ./test/e2e -run '^TestE2ECrossNet$' -count=1 -timeout 30m -v -args -multinet
+            job_timeout_minutes: 45
+            artifact_name: e2e-crossnet-logs
+
+    env:
+      CGO_ENABLED: '1'
+      CELER_INSECURE_TLS: '1'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Configure Go for private modules
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+          echo "GOPRIVATE=github.com/celer-network/*" >> "$GITHUB_ENV"
+
+      - name: Install system dependencies
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y sqlite3
+
+      - name: Install geth
+        run: |
+          set -euo pipefail
+          GETH_VER="geth-linux-amd64-1.17.2-be4dc0c4"
+          curl -sfL "https://gethstore.blob.core.windows.net/builds/${GETH_VER}.tar.gz" -o /tmp/geth.tar.gz
+          sudo tar -xz --strip 1 -C /usr/local/bin -f /tmp/geth.tar.gz "${GETH_VER}/geth"
+          sudo chmod +x /usr/local/bin/geth
+          rm -f /tmp/geth.tar.gz
+          geth version
+
+      - name: Run ${{ matrix.suite.name }} e2e suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          log="/tmp/e2e-${{ matrix.suite.name }}.log"
+          echo "Writing test log to $log"
+          ${{ matrix.suite.command }} 2>&1 | tee "$log"
+
+      - name: Upload e2e logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.suite.artifact_name }}
+          path: |
+            /tmp/e2e-${{ matrix.suite.name }}.log
+            /tmp/celer_e2e_*/chain.log
+            /tmp/celer_e2e_*/build.err
+            /tmp/celer_e2e_*/misc.json
+            /tmp/celer_e2e_*/profile*.json
+          if-no-files-found: ignore
+          retention-days: 7

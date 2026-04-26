@@ -15,9 +15,11 @@ import (
 	enums "github.com/celer-network/agent-pay/common/structs"
 	"github.com/celer-network/agent-pay/config"
 	"github.com/celer-network/agent-pay/ctype"
+	"github.com/celer-network/agent-pay/entity"
 	"github.com/celer-network/agent-pay/fsm"
 	"github.com/celer-network/agent-pay/ledgerview"
 	"github.com/celer-network/agent-pay/metrics"
+	"github.com/celer-network/agent-pay/rpc"
 	"github.com/celer-network/agent-pay/storage"
 	"github.com/celer-network/goutils/eth"
 	"github.com/celer-network/goutils/eth/monitor"
@@ -27,6 +29,8 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+const settleTxGasEstimateRatio = 0.2
+
 func (p *Processor) IntendSettlePaymentChannel(cid ctype.CidType, waitMined bool) error {
 	log.Infoln("Intend settle payment channel", cid.Hex())
 	err := p.dal.Transactional(fsm.OnChannelIntendSettle, cid)
@@ -35,7 +39,7 @@ func (p *Processor) IntendSettlePaymentChannel(cid ctype.CidType, waitMined bool
 		return err
 	}
 
-	_, selfSimplex, _, peerSimplex, found, err := p.dal.GetDuplexChannel(cid)
+	selfSimplex, selfSignedSimplex, peerSimplex, peerSignedSimplex, found, err := p.dal.GetDuplexChannel(cid)
 	if err != nil {
 		log.Errorln("GetDuplexChannel failed:", err, cid.Hex())
 		return err
@@ -46,8 +50,8 @@ func (p *Processor) IntendSettlePaymentChannel(cid ctype.CidType, waitMined bool
 	}
 
 	var stateArray chain.SignedSimplexStateArray
-	if len(selfSimplex.SigOfPeerFrom) > 0 && len(selfSimplex.SigOfPeerTo) > 0 {
-		sigSortedStateSelf, err2 := SigSortedSimplexState(selfSimplex)
+	if len(selfSignedSimplex.SigOfPeerFrom) > 0 && len(selfSignedSimplex.SigOfPeerTo) > 0 {
+		sigSortedStateSelf, err2 := SigSortedSimplexState(selfSignedSimplex)
 		if err2 == nil {
 			stateArray.SignedSimplexStates = append(stateArray.SignedSimplexStates, sigSortedStateSelf)
 		} else {
@@ -55,8 +59,8 @@ func (p *Processor) IntendSettlePaymentChannel(cid ctype.CidType, waitMined bool
 			return err2
 		}
 	}
-	if len(peerSimplex.SigOfPeerFrom) > 0 && len(peerSimplex.SigOfPeerTo) > 0 {
-		sigSortedStatePeer, err2 := SigSortedSimplexState(peerSimplex)
+	if len(peerSignedSimplex.SigOfPeerFrom) > 0 && len(peerSignedSimplex.SigOfPeerTo) > 0 {
+		sigSortedStatePeer, err2 := SigSortedSimplexState(peerSignedSimplex)
 		if err2 == nil {
 			stateArray.SignedSimplexStates = append(stateArray.SignedSimplexStates, sigSortedStatePeer)
 		} else {
@@ -68,9 +72,9 @@ func (p *Processor) IntendSettlePaymentChannel(cid ctype.CidType, waitMined bool
 	// handle empty channel state
 	if len(stateArray.SignedSimplexStates) == 0 {
 		simplexState := &chain.SignedSimplexState{
-			SimplexState: selfSimplex.GetSimplexState(),
+			SimplexState: selfSignedSimplex.GetSimplexState(),
 		}
-		simplexState.Sigs = append(simplexState.Sigs, selfSimplex.SigOfPeerFrom)
+		simplexState.Sigs = append(simplexState.Sigs, selfSignedSimplex.SigOfPeerFrom)
 		stateArray.SignedSimplexStates = append(stateArray.SignedSimplexStates, simplexState)
 	}
 
@@ -79,38 +83,89 @@ func (p *Processor) IntendSettlePaymentChannel(cid ctype.CidType, waitMined bool
 		log.Error(err, "cid", cid.Hex())
 		return err
 	}
+
+	logCtx := buildIntendSettleLogContext(
+		selfSimplex,
+		selfSignedSimplex,
+		peerSimplex,
+		peerSignedSimplex,
+		len(stateArray.SignedSimplexStates),
+	)
 	if waitMined {
-		return p.intendSettleAndWaitMined(cid, stateArrayBytes)
+		return p.intendSettleAndWaitMined(cid, stateArrayBytes, logCtx)
 	}
-	return p.intendSettle(cid, stateArrayBytes)
+	return p.intendSettle(cid, stateArrayBytes, logCtx)
 }
 
-func (p *Processor) intendSettleAndWaitMined(cid ctype.CidType, stateArrayBytes []byte) error {
+func (p *Processor) intendSettleAndWaitMined(cid ctype.CidType, stateArrayBytes []byte, logCtx settleLogContext) error {
 	receipt, err := p.transactorPool.SubmitWaitMined(
 		fmt.Sprintf("intend settle payment channel %x", cid),
 		p.intendSettleTxMethod(cid, stateArrayBytes),
-		config.TransactOptions()...)
+		config.TransactOptions(eth.WithAddGasEstimateRatio(settleTxGasEstimateRatio))...)
 	if err != nil {
-		log.Errorf("intend settle payment channel error %s, cid %x", err, cid)
+		log.Errorf("intend settle payment channel error %s, cid %x, state_count %d, self %s, peer %s", err, cid, logCtx.stateCount, logCtx.selfSummary, logCtx.peerSummary)
 		return err
 	}
 	if receipt.Status != types.ReceiptStatusSuccessful {
+		log.Errorf("intend settle receipt failed, cid %x, tx %x, block %d, gas_used %d, state_count %d, self %s, peer %s", cid, receipt.TxHash, receipt.BlockNumber.Uint64(), receipt.GasUsed, logCtx.stateCount, logCtx.selfSummary, logCtx.peerSummary)
 		return fmt.Errorf("intend settle transaction %x failed", receipt.TxHash)
 	}
 	return nil
 }
 
-func (p *Processor) intendSettle(cid ctype.CidType, stateArrayBytes []byte) error {
-	tx, err := p.transactorPool.Submit(
+func (p *Processor) intendSettle(cid ctype.CidType, stateArrayBytes []byte, logCtx settleLogContext) error {
+	_, err := p.transactorPool.Submit(
 		newGenericTransactionHandler("intend settle", cid),
 		p.intendSettleTxMethod(cid, stateArrayBytes),
-		config.TransactOptions()...)
+		config.TransactOptions(eth.WithAddGasEstimateRatio(settleTxGasEstimateRatio))...)
 	if err != nil {
-		log.Errorf("intend settle payment channel error %s, cid %x", err, cid)
+		log.Errorf("intend settle payment channel error %s, cid %x, state_count %d, self %s, peer %s", err, cid, logCtx.stateCount, logCtx.selfSummary, logCtx.peerSummary)
 		return err
 	}
-	log.Infof("sent intend settle tx %x for cid %x", tx.Hash(), cid)
 	return nil
+}
+
+type settleLogContext struct {
+	stateCount  int
+	selfSummary string
+	peerSummary string
+}
+
+func buildIntendSettleLogContext(
+	selfSimplex *entity.SimplexPaymentChannel,
+	selfSignedSimplex *rpc.SignedSimplexState,
+	peerSimplex *entity.SimplexPaymentChannel,
+	peerSignedSimplex *rpc.SignedSimplexState,
+	stateCount int) settleLogContext {
+	return settleLogContext{
+		stateCount:  stateCount,
+		selfSummary: formatSimplexSummary(selfSimplex, selfSignedSimplex),
+		peerSummary: formatSimplexSummary(peerSimplex, peerSignedSimplex),
+	}
+}
+
+func formatSimplexSummary(simplex *entity.SimplexPaymentChannel, signedSimplex *rpc.SignedSimplexState) string {
+	if simplex == nil {
+		return "<nil>"
+	}
+
+	transferAmt := "0"
+	if simplex.GetTransferToPeer() != nil && simplex.GetTransferToPeer().GetReceiver() != nil {
+		transferAmt = new(big.Int).SetBytes(simplex.GetTransferToPeer().GetReceiver().GetAmt()).String()
+	}
+	totalPendingAmt := new(big.Int).SetBytes(simplex.GetTotalPendingAmount()).String()
+
+	return fmt.Sprintf(
+		"{peer_from:%x seq:%d transfer_amt:%s total_pending:%s pending_pay_count:%d last_pay_deadline:%d sigs:%t/%t}",
+		simplex.GetPeerFrom(),
+		simplex.GetSeqNum(),
+		transferAmt,
+		totalPendingAmt,
+		len(simplex.GetPendingPayIds().GetPayIds()),
+		simplex.GetLastPayResolveDeadline(),
+		signedSimplex != nil && len(signedSimplex.GetSigOfPeerFrom()) > 0,
+		signedSimplex != nil && len(signedSimplex.GetSigOfPeerTo()) > 0,
+	)
 }
 
 func (p *Processor) ConfirmSettlePaymentChannel(cid ctype.CidType, waitMined bool) error {
@@ -143,7 +198,7 @@ func (p *Processor) confirmSettleAndWaitMined(cid ctype.CidType) error {
 	receipt, err := p.transactorPool.SubmitWaitMined(
 		fmt.Sprintf("confirm settle payment channel %x", cid),
 		p.confirmSettleTxMethod(cid),
-		config.TransactOptions()...)
+		config.TransactOptions(eth.WithAddGasEstimateRatio(settleTxGasEstimateRatio))...)
 	if err != nil {
 		log.Errorf("confirm settle payment channel error %s, cid %x", err, cid)
 		return err
@@ -163,7 +218,7 @@ func (p *Processor) confirmSettle(cid ctype.CidType) error {
 	tx, err := p.transactorPool.Submit(
 		newGenericTransactionHandler("confirm settle", cid),
 		p.confirmSettleTxMethod(cid),
-		config.TransactOptions()...)
+		config.TransactOptions(eth.WithAddGasEstimateRatio(settleTxGasEstimateRatio))...)
 	if err != nil {
 		log.Errorf("confirm settle payment channel error %s, cid %x", err, cid)
 		return err
