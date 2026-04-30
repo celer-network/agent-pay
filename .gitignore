@@ -24,3 +24,5 @@ client/main
 *.swp
 
 bin/
+tmp
+.mcp.json

@@ -15,13 +15,13 @@ This repository implements the off-chain backend of AgentPay. Before changing co
 4. Build and runtime workflow in `docs/backend-usage.md`.
 5. Failure handling in `docs/backend-troubleshooting.md`.
 
-First look for companion repos named `agent-pay-docs` and `agent-pay-contracts` in the workspace or as sibling checkouts.
+Companion repos are wired in via the filesystem MCP server. The canonical roots are:
 
-If `agent-pay-docs` is not available there, ask the user where it is before doing protocol-sensitive work.
+- `agent-pay-docs` — protocol architecture (`agentpay-architecture/`). Required reading for protocol-sensitive work. The `state-guardian-network/` subtree is **not** required background; read it only when the task is explicitly about SGN behavior or SGN-related profile wiring.
+- `agent-pay-contracts` — Solidity contracts (CelerLedger, PayResolver, PayRegistry, RouterRegistry, EthPool, Wallet). Optional background; read only when the task touches on-chain contract logic, event semantics, generated bindings under `chain/channel-eth-go/`, or profile/address wiring that depends on contract behavior.
+- `agent-pay-x402` — downstream integration that consumes this repo via WebAPI gRPC + Admin HTTP. Useful as an "external consumer" reference, not required reading.
 
-The companion contracts repo `agent-pay-contracts` is optional background. Read it only when the task touches on-chain contract logic, event semantics, generated bindings under `chain/channel-eth-go/`, or profile/address wiring that depends on contract behavior.
-
-Do not treat `state-guardian-network/` as required background for normal backend work. Only read it when the task is explicitly about SGN behavior or SGN-related profile wiring.
+`.mcp.json` is gitignored per-developer. Copy `.mcp.json.example` to `.mcp.json` and fill in absolute paths to your local sibling clones. If a path is unavailable when needed, ask the user before guessing on protocol-sensitive work.
 
 ## Architecture
 
@@ -51,6 +51,7 @@ Keep `server/server.go` thin. New protocol logic normally belongs in `cnode`, `h
 - When changing message behavior, read the sender and receiver sides together: `messager/*`, `dispatchers/*`, and `handlers/msghdl/*`.
 - Keep protocol changes aligned with `proto/*.proto`, runtime structs, persistence, and tests.
 - Preserve existing logging and metrics patterns around critical protocol transitions.
+- Use `github.com/celer-network/goutils/log` for all logging — leveled package-level API (`log.Infof`, `log.Warnf`, `log.Errorf`, `log.Fatalf`). For structured-ish output, embed `key=value` pairs in the format string. Do not pull in `log/slog` or stdlib `log`.
 - Update docs when a change affects architecture, operator workflow, or protocol-to-code mapping.
 
 ## Build And Test
@@ -62,6 +63,8 @@ mkdir -p ./bin
 go build -o ./bin/server ./server
 go build -o ./bin/osp-cli ./tools/osp-cli
 ```
+
+Toolchain note: on macOS amd64 the local `go1.25.5` toolchain has been observed to fail with duplicate `runtime/cgo` symbols at link time (reproduces on trivial `import "C"` programs too). If you hit this, export `GOTOOLCHAIN=go1.24.9` for the shell before building or testing. SQLite-backed local builds also require cgo — `-storedir` startup fails fast with `sqlite3 requires cgo` if you build with `CGO_ENABLED=0`. See `docs/backend-troubleshooting.md` for the full diagnosis.
 
 Fastest realistic payment-path validation:
 

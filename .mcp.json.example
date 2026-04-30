@@ -1,0 +1,15 @@
+{
+  "_comment": "Template — copy to .mcp.json and replace the </path/to/...> placeholders with absolute paths to your local sibling-repo clones. .mcp.json is gitignored; each developer keeps their own.",
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "</path/to/agent-pay-docs>",
+        "</path/to/agent-pay-contracts>",
+        "</path/to/agent-pay-x402>"
+      ]
+    }
+  }
+}

@@ -120,6 +120,23 @@ The optional OSP WebAPI listener is intentionally narrower than the client-node 
 | [chain](../chain) and [ledgerview](../ledgerview) | Contract bindings and read helpers for on-chain state |
 | [common](../common), [ctype](../ctype), [config](../config), [rtconfig](../rtconfig) | Shared types, low-level identifiers, global config, and runtime-tunable values |
 
+## Wire Contracts
+
+Message and admin contracts live under [proto](../proto) and [webapi/proto](../webapi/proto). These are the source of truth — `messager`, `dispatchers`, and `handlers/msghdl` only realize what `.proto` says. Read these before changing message behavior, and regenerate matched `.pb.go` outputs as part of the same change.
+
+| File | Role |
+| --- | --- |
+| [proto/message.proto](../proto/message.proto) | `CelerMsg` envelope, `CondPayRequest`/`CondPayResponse`, `PaymentSettleRequest`/`PaymentSettleResponse`, hop ACK/NACK |
+| [proto/entity.proto](../proto/entity.proto) | `SimplexPaymentChannel`, `ConditionalPay`, `Condition`, `CooperativeSettleInfo`, signed-state structures |
+| [proto/rpc.proto](../proto/rpc.proto) | `Rpc` service: `CelerStream` (bidirectional streaming peer transport) and the public `WebApi` service |
+| [proto/osp_admin.proto](../proto/osp_admin.proto) | Admin gRPC: stream registration, `OpenChannel`, `Deposit`, `SendToken`, `CooperativeSettle` |
+| [proto/multiserver.proto](../proto/multiserver.proto) | `MultiServer` gRPC used in shared-database, multi-server deployments |
+| [proto/app.proto](../proto/app.proto) | App-session messaging used by the virtual-app layer |
+| [proto/chain.proto](../proto/chain.proto) | Shared on-chain entity encodings used by handlers and storage |
+| [proto/osp_report.proto](../proto/osp_report.proto) | Periodic OSP reporting payloads consumed by the explorer |
+| [webapi/proto/web_api.proto](../webapi/proto/web_api.proto) | Pay-centric WebAPI used by client nodes and the optional `-webapigrpc` listener |
+| [webapi/proto/internal_web_api.proto](../webapi/proto/internal_web_api.proto) | Internal WebAPI variants (non-blocking deposit/withdraw, etc.) reserved for in-process callers |
+
 ## Protocol-to-Code Mapping
 
 ### Stream establishment and peer auth
