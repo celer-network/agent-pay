@@ -415,12 +415,13 @@ func disputePayWithDeployedContract(t *testing.T, tokenType entity.TokenType, to
 		}
 	}
 
-	finalizedTime, err := c1.GetAppChannelSettleFinalizedTime(appChanID)
+	// App-session deadlines (testing/testapp contracts) are still block.number-based.
+	finalizedBlk, err := c1.GetAppChannelSettleFinalizedTime(appChanID)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	err = c1.WaitUntilDeadline(finalizedTime)
+	err = c1.WaitUntilBlockHeight(finalizedBlk)
 	if err != nil {
 		t.Error(err)
 		return
@@ -940,13 +941,12 @@ func disputePayWithDeployedGomoku(t *testing.T, tokenType entity.TokenType, toke
 		ArgsQueryFinalization:   ctype.Hex2Bytes(appChanID),
 		ArgsQueryOutcome:        serializedSessionQuery,
 	}
-	currentTime, err := c1.GetCurrentBlockNumber()
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	// Pay timeout is now a duration in seconds (not blocks); pick a long enough window
+	// that the pay doesn't expire during the dispute scenario, but within the
+	// e2e rt_config max_payment_timeout (1000s).
+	const payTimeoutSec = uint64(600)
 	payID, err := c1.SendPaymentWithBooleanConditions(
-		c2EthAddr, sendAmt, tokenType, tokenAddr, []*entity.Condition{c1Cond}, currentTime+100)
+		c2EthAddr, sendAmt, tokenType, tokenAddr, []*entity.Condition{c1Cond}, payTimeoutSec)
 	if err != nil {
 		t.Error(err)
 		return
@@ -1008,13 +1008,14 @@ func disputePayWithDeployedGomoku(t *testing.T, tokenType entity.TokenType, toke
 		}
 	}
 
-	finalizedTime, err := c2.GetAppChannelSettleFinalizedTime(appChanID)
+	// App-session deadlines (testing/testapp contracts) are still block.number-based.
+	finalizedBlk, err := c2.GetAppChannelSettleFinalizedTime(appChanID)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	err = c2.WaitUntilDeadline(finalizedTime)
+	err = c2.WaitUntilBlockHeight(finalizedBlk)
 	if err != nil {
 		t.Error(err)
 		return
@@ -1026,13 +1027,13 @@ func disputePayWithDeployedGomoku(t *testing.T, tokenType entity.TokenType, toke
 		return
 	}
 
-	actionDeadline, err := c2.GetAppChannelActionDeadline(appChanID)
+	actionDeadlineBlk, err := c2.GetAppChannelActionDeadline(appChanID)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	err = c2.WaitUntilDeadline(actionDeadline)
+	err = c2.WaitUntilBlockHeight(actionDeadlineBlk)
 	if err != nil {
 		t.Error(err)
 		return

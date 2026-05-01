@@ -674,7 +674,8 @@ func (c *CNode) SetDelegation(tokens []ctype.Addr, timeout int64) error {
 	desc := &rpc.DelegationDescription{
 		Delegator:         c.ServerAddr.Bytes(),
 		Delegatee:         c.nodeConfig.GetOnChainAddr().Bytes(),
-		ExpiresAfterBlock: c.monitorService.GetCurrentBlockNumber().Int64() + timeout,
+		// Field is named ExpiresAfterBlock in the proto for back-compat; value is now a unix timestamp (seconds).
+		ExpiresAfterBlock: time.Now().Unix() + timeout,
 		TokenToDelegate:   delegatedTks,
 	}
 	descBytes, err := proto.Marshal(desc)

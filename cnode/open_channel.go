@@ -187,8 +187,8 @@ func (p *openChannelProcessor) tcbOpenChannel(
 		p.callbacks[ctype.Addr2Hex(tokenAddr)] = openCallback
 		p.callbacksLock.Unlock()
 	}
-	// deadline according to CORE-622
-	initializer.OpenDeadline = p.monitorService.GetCurrentBlockNumber().Uint64() + config.TcbTimeoutInBlockNumber
+	// deadline according to CORE-622 — unix timestamp (seconds), matching contract `block.timestamp` semantics
+	initializer.OpenDeadline = uint64(time.Now().Unix()) + config.TcbTimeoutSeconds
 	ocem.ReadableInitializer = utils.PrintChannelInitializer(initializer)
 	initializerBytes, err := proto.Marshal(initializer)
 	if err != nil {
@@ -281,7 +281,7 @@ func (p *openChannelProcessor) openChannel(
 		p.callbacks[ctype.Addr2Hex(tokenAddr)] = openCallback
 		p.callbacksLock.Unlock()
 	}
-	initializer.OpenDeadline = p.monitorService.GetCurrentBlockNumber().Uint64() + config.OpenChannelTimeout
+	initializer.OpenDeadline = uint64(time.Now().Unix()) + config.OpenChannelTimeout
 	ocem.ReadableInitializer = utils.PrintChannelInitializer(initializer)
 	initializerBytes, err := proto.Marshal(initializer)
 	if err != nil {
@@ -698,7 +698,7 @@ func (p *openChannelProcessor) processOpenChannelRequest(req *rpc.OpenChannelReq
 	}
 	ocem.OspToOsp = req.GetOspToOsp()
 	policy, policyErr := RequestStandardDeposit(
-		p.monitorService.GetCurrentBlockNumber().Uint64(), p.nodeConfig.GetOnChainAddr(), &initializer, req.GetOspToOsp(), ocem)
+		uint64(time.Now().Unix()), p.nodeConfig.GetOnChainAddr(), &initializer, req.GetOspToOsp(), ocem)
 	if policy&AllowStandardOpenChannel == 0 {
 		return errResp, status.Error(codes.InvalidArgument, "breaks policy:"+policyErr.Error())
 	}
@@ -935,8 +935,8 @@ func (p *openChannelProcessor) emptySimplex(
 
 func (p *openChannelProcessor) checkBalanceRefill(cid ctype.CidType, tokenAddr string) error {
 	refillThreshold := rtconfig.GetRefillThreshold(tokenAddr)
-	blkNum := p.monitorService.GetCurrentBlockNumber().Uint64()
-	balance, err := ledgerview.GetBalance(p.dal, cid, p.nodeConfig.GetOnChainAddr(), blkNum)
+	nowTs := uint64(time.Now().Unix())
+	balance, err := ledgerview.GetBalance(p.dal, cid, p.nodeConfig.GetOnChainAddr(), nowTs)
 	if err != nil {
 		log.Errorln(err, "unabled to find balance for cid", cid.Hex())
 		return err
@@ -1023,7 +1023,13 @@ func (p *openChannelProcessor) monitorEvent(ledgerContract chain.Contract) {
 
 func (p *openChannelProcessor) monitorSingleEvent(ledgerContract chain.Contract, reset bool) {
 	startBlock := p.monitorService.GetCurrentBlockNumber()
-	endBlock := new(big.Int).Add(startBlock, big.NewInt(int64(config.OpenChannelTimeout)))
+	// monitor.Config.EndBlock is a block height. OpenChannelTimeout is now seconds, so convert
+	// seconds to a block count via BlockIntervalSec (seconds-per-block) before adding.
+	timeoutBlocks := config.OpenChannelTimeout / config.BlockIntervalSec
+	if timeoutBlocks == 0 {
+		timeoutBlocks = 1
+	}
+	endBlock := new(big.Int).Add(startBlock, big.NewInt(int64(timeoutBlocks)))
 	monitorCfg := &monitor.Config{
 		ChainId:       config.ChainId.Uint64(),
 		EventName:     event.OpenChannel,

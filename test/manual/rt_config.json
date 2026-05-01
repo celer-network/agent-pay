@@ -9,13 +9,13 @@
                 "min_deposit": "1000000000000",
                 "max_deposit": "100000000000000000000",
                 "min_deadline_delta": 1,
-                "max_deadline_delta": 500
+                "max_deadline_delta": 7200
             },
             "0000000000000000000000000000000000000000": {
                 "min_deposit": "1000000000000",
                 "max_deposit": "100000000000000000000",
                 "min_deadline_delta": 1,
-                "max_deadline_delta": 500,
+                "max_deadline_delta": 7200,
                 "matching_ratio": 1.0
             }
         }

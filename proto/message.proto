@@ -404,6 +404,7 @@ message DelegationDescription {
   bytes delegator = 1;
   // address of delegatee
   bytes delegatee = 2;
+  // Off-chain delegation expiry. Unix timestamp (seconds). Field name kept for wire-format back-compat.
   int64 expires_after_block = 3;
   // token addresses to be delegated
   repeated bytes token_to_delegate = 4;

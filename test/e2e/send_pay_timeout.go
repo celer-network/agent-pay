@@ -4,6 +4,7 @@ package e2e
 
 import (
 	"testing"
+	"time"
 
 	"github.com/celer-network/agent-pay/ctype"
 	"github.com/celer-network/agent-pay/entity"
@@ -108,8 +109,9 @@ func sendPayTimeout(t *testing.T, tokenType entity.TokenType, tokenAddr string) 
 		ArgsQueryOutcome:       []byte{2},
 	}
 
-	// source pay in full
-	timeout := uint64(3)
+	// source pay in full — timeout is a pay-resolve duration in seconds (was blocks).
+	// Kept short so the timeout-and-sweep flow runs fast in CI.
+	timeout := uint64(5)
 	_, err = c1.SendPaymentWithBooleanConditions(
 		c2EthAddr, sendAmt, tokenType, tokenAddr, []*entity.Condition{c1Cond1}, timeout)
 	if err != nil {
@@ -128,11 +130,8 @@ func sendPayTimeout(t *testing.T, tokenType entity.TokenType, tokenAddr string) 
 		t.Error(err)
 		return
 	}
-	payTime, err := c1.GetCurrentBlockNumber()
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	// Pay deadline is unix timestamp (seconds) now; capture wall clock as the reference.
+	payTime := uint64(time.Now().Unix())
 
 	err = waitForPaymentPending(p3, c2, c1)
 	if err != nil {
@@ -159,6 +158,8 @@ func sendPayTimeout(t *testing.T, tokenType entity.TokenType, tokenAddr string) 
 		return
 	}
 
+	// Wait past the pay deadline + receiver-side safe margin (CELER_PAY_RECV_SAFE_MARGIN_S=5
+	// in TestMain) so SettleExpiredPays sees the pay as expired.
 	err = c1.WaitUntilDeadline(payTime + timeout + 10)
 	if err != nil {
 		t.Error(err)

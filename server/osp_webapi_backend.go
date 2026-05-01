@@ -122,9 +122,9 @@ func (b *ospWebapiBackend) sendBooleanPayment(
 		return ctype.ZeroPayID, err
 	}
 
-	currentBlock := b.cNode.GetCurrentBlockNumber().Uint64()
-	resolveDeadline := currentBlock + timeout
-	if resolveDeadline <= currentBlock {
+	nowTs := uint64(time.Now().Unix())
+	resolveDeadline := nowTs + timeout
+	if resolveDeadline <= nowTs {
 		return ctype.ZeroPayID, common.ErrDeadlinePassed
 	}
 

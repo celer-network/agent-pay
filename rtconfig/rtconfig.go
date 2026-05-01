@@ -26,12 +26,14 @@ var (
 )
 
 const (
-	defaultStreamSendTimeoutS     = uint64(1)
-	defaultOspDepositMultiplier   = int64(10)
-	defaultMaxDisputeTimeout      = uint64(20000)
-	defaultMinDisputeTimeout      = uint64(8000)
+	defaultStreamSendTimeoutS = uint64(1)
+	defaultOspDepositMultiplier = int64(10)
+	// Dispute / payment timeouts are seconds — the contracts now compare against
+	// `block.timestamp`, so the off-chain bounds use the same unit.
+	defaultMaxDisputeTimeout      = uint64(259200) // 3 days, seconds
+	defaultMinDisputeTimeout      = uint64(43200)  // 12 hours, seconds
 	defaultColdBootstrapDeposit   = uint64(1e18)
-	defaultMaxPaymentTimeout      = uint64(10000)
+	defaultMaxPaymentTimeout      = uint64(86400)  // 1 day, seconds
 	defaultMaxNumPendingPays      = uint64(200)
 	defaultRefillMaxWait          = uint64(180)
 	defaultRefillPoolLowRatio     = float64(0.2)

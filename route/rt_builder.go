@@ -20,8 +20,9 @@ import (
 type Edge = structs.Edge
 
 type OspInfo struct {
-	// block number of last onchain routerRegistry update
-	RegistryBlock uint64
+	// Unix timestamp (seconds) of the most recent on-chain RouterRegistry register/refresh.
+	// Field name reflects the contract's `block.timestamp`-based storage.
+	RegistryTime uint64
 	// time of last route message update
 	UpdateTime time.Time
 }
@@ -220,18 +221,19 @@ func (b *routingTableBuilder) updateOspEdge(
 	}
 }
 
-// markOsp marks an Osp as a router and records its block number
-func (b *routingTableBuilder) markOsp(ospAddr ctype.Addr, blknum uint64) {
+// markOsp marks an Osp as a router and records the unix timestamp (seconds)
+// of its most recent on-chain register/refresh.
+func (b *routingTableBuilder) markOsp(ospAddr ctype.Addr, registeredAt uint64) {
 	b.graphLock.Lock()
 	defer b.graphLock.Unlock()
 	log.Infof("markOsp: %x", ospAddr)
 	if _, ok := b.osps[ospAddr]; ok {
-		b.osps[ospAddr].RegistryBlock = blknum
+		b.osps[ospAddr].RegistryTime = registeredAt
 	} else {
 		now := now()
 		b.osps[ospAddr] = &OspInfo{
-			RegistryBlock: blknum,
-			UpdateTime:    now,
+			RegistryTime: registeredAt,
+			UpdateTime:   now,
 		}
 		log.Debugf("add osp %x to neighbor map", ospAddr)
 		cids, tokens, err := b.dal.GetCidTokensByPeer(ospAddr)

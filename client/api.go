@@ -77,7 +77,8 @@ func (c *CelerClient) OpenChannel(
 		}
 		return nil
 	}
-	err := c.dal.UpsertDestTokenOpenChanBlkNum(c.svrEth, token, c.GetCurrentBlockNumberUint64())
+	// Stored value is now a unix timestamp (seconds); DAL column name kept for storage back-compat.
+	err := c.dal.UpsertDestTokenOpenChanBlkNum(c.svrEth, token, uint64(time.Now().Unix()))
 	if err != nil {
 		log.Warnln("OpenChannel: cannot save block number:", err)
 	}
@@ -131,7 +132,7 @@ func (c *CelerClient) AddBooleanPay(
 	if xfer == nil || xfer.Receiver == nil || xfer.Receiver.Account == nil {
 		return ctype.ZeroPayID, common.ErrInvalidArg
 	}
-	if resolveDeadline <= c.GetCurrentBlockNumber().Uint64() {
+	if resolveDeadline <= uint64(time.Now().Unix()) {
 		return ctype.ZeroPayID, common.ErrDeadlinePassed
 	}
 

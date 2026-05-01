@@ -69,7 +69,7 @@ type BooleanCondition struct {
 	OnChainAddress      string // onchain contract address if OnChainDeployed is true
 	SessionID           string // offchain session hex string from NewAppSession
 	ArgsForQueryOutcome []byte
-	TimeoutBlockNum     int // timeout of one session. add current block num for pay deadline
+	TimeoutBlockNum     int // timeout of one session, in seconds; added to wall-clock unix time for the pay deadline. Field name kept for SDK back-compat — value is now seconds, not blocks.
 }
 
 type Token struct {

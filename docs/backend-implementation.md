@@ -244,6 +244,8 @@ The controller in [route/controller.go](../route/controller.go) does the OSP-spe
 - Broadcast routing updates to peer OSPs
 - Report OSP info to the explorer when configured
 
+The `RouterRegistry` contract stores `block.timestamp` (unix seconds) per registered router, so the off-chain liveness thresholds (`refreshIntervalSec = 5 days`, `expireTimeoutSec = 7 days`) are also in seconds. Comparisons use `time.Now().Unix()`, not the chain block height.
+
 This matches the protocol goal that relay nodes should stay simple in payment handling while still maintaining a network-level routing view.
 
 ## Storage and Transaction Boundaries

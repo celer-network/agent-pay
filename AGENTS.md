@@ -44,6 +44,7 @@ Keep `server/server.go` thin. New protocol logic normally belongs in `cnode`, `h
 - Boolean end-to-end payments should not require relay-side on-chain actions. Numeric payments may require registry checks or disputes only where the protocol already allows them.
 - Channel and payment mutations that belong to one protocol step should stay inside the existing `storage.DAL` transaction boundaries.
 - Multi-server mode changes must preserve client ownership and forwarding behavior in `cnode/multiserver.go`.
+- All on-chain deadlines / challenge windows / timeouts are unix seconds — the contracts compare against `block.timestamp`, not `block.number`. Off-chain code uses `time.Now().Unix()` to produce and check them. This applies to `disputeTimeout`, `settleFinalizedTime`, `withdrawDeadline`, `openDeadline`, `resolveDeadline`, `resolveTimeout`, `migrationDeadline`, the `RouterRegistry` register/refresh value, and per-pay deadlines in `PayRegistry`. The testing app-session contracts under `testing/testapp/` are an exception — they still use `block.number`-based deadlines, so test helpers expose `WaitUntilDeadline` (timestamp) and `WaitUntilBlockHeight` (block) separately.
 
 ## Conventions
 

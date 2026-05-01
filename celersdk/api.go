@@ -207,9 +207,9 @@ func (mc *Client) GetChannelState(tk *Token) string {
 // can update UI and/or try open again.
 // Note pending true is only possible for client iniated onchain openchannel, not TCB
 //
-// Internally we save the blockNum when start openchan request, if current blockNum <= saved+OpenChannelTimeout
-// we return true. The value is set to 0 in openchan callback so future calls will
-// return false (assume real blkNum is much larger than OpenChannelTimeout)
+// Internally we save the unix timestamp (seconds) when an openchan request starts; if
+// time.Now().Unix() <= saved+OpenChannelTimeout we return true. The value is set to 0 in the
+// openchan callback so future calls return false.
 func (mc *Client) HasPendingOpenChanRequest(tk *Token) bool {
 	return mc.c.HasPendingOpenChanRequest(sdkToken2entityToken(tk))
 }

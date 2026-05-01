@@ -867,19 +867,44 @@ func (cc *ClientController) FinalizeAppChannelOnActionTimeout(cid string) error 
 	return err
 }
 
+// WaitUntilDeadline blocks until wall-clock unix time has passed the given deadline.
+// Use this for agent-pay channel/payment deadlines, which are unix timestamps (seconds)
+// matching the contract's `block.timestamp`-based windows. On local geth `--dev` chains
+// where block.timestamp only advances on new blocks, this also nudges the chain so
+// subsequent on-chain assertions see the new time.
 func (cc *ClientController) WaitUntilDeadline(deadline uint64) error {
-	log.Infoln("Wait until deadline", deadline)
+	log.Infoln("Wait until deadline (unix ts)", deadline)
+	for {
+		nowTs := uint64(time.Now().Unix())
+		log.Infoln("-- current unix ts --", nowTs)
+		if nowTs > deadline {
+			return nil
+		}
+		// Advance the local chain so block.timestamp tracks wall clock for any
+		// subsequent on-chain assertions, then poll once per second.
+		if err := AdvanceBlocks(1); err != nil {
+			return err
+		}
+		time.Sleep(time.Second)
+	}
+}
+
+// WaitUntilBlockHeight blocks until the on-chain block number passes the given value.
+// Use this for testapp/app-session deadlines, which are still `block.number`-based
+// (the testing/testapp contracts in this repo were not part of the agent-pay-contracts
+// blocktime migration). Agent-pay deadlines should use WaitUntilDeadline instead.
+func (cc *ClientController) WaitUntilBlockHeight(targetBlk uint64) error {
+	log.Infoln("Wait until block height", targetBlk)
 	for {
 		current, err := cc.GetCurrentBlockNumber()
 		if err != nil {
 			return err
 		}
 		log.Infoln("-- current block number --", current)
-		if current > deadline {
+		if current > targetBlk {
 			return nil
 		}
-		err = AdvanceBlocks(1)
-		if err != nil {
+		if err := AdvanceBlocks(1); err != nil {
 			return err
 		}
 	}

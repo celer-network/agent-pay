@@ -213,7 +213,7 @@ func (c *CNode) SettleExpiredPays(cid ctype.CidType) error {
 func (c *CNode) getExpiredPays(simplex *entity.SimplexPaymentChannel) (
 	[]*entity.ConditionalPay, []ctype.PayIDType, error) {
 
-	currBlock := c.GetCurrentBlockNumber().Uint64()
+	nowTs := uint64(time.Now().Unix())
 	var expiredPays []*entity.ConditionalPay
 	var payIDs []ctype.PayIDType
 	for _, payID := range simplex.PendingPayIds.PayIds {
@@ -225,7 +225,8 @@ func (c *CNode) getExpiredPays(simplex *entity.SimplexPaymentChannel) (
 		if !found {
 			return nil, nil, fmt.Errorf("%w: %x", common.ErrPayNotFound, payID)
 		}
-		if currBlock > pay.ResolveDeadline+config.PaySendTimeoutSafeMargin {
+		// Deadlines are unix timestamps in seconds.
+		if nowTs > pay.ResolveDeadline+config.PaySendTimeoutSafeMargin {
 			expiredPays = append(expiredPays, pay)
 			payIDs = append(payIDs, payID)
 		}

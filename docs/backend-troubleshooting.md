@@ -327,7 +327,7 @@ Checks:
 
 1. Validate the receiver and token addresses before retrying.
 2. Confirm the stream and route exist.
-3. Confirm the current block height and `rtconfig` payment-timeout settings are consistent with the send path.
+3. Confirm wall-clock time and `rtconfig` payment-timeout settings are consistent with the send path. Pay deadlines are unix timestamps (seconds) since the contracts switched to `block.timestamp`-based windows; off-chain code uses `time.Now().Unix()` and the `rtconfig.MaxPaymentTimeout` cap is also in seconds.
 4. Confirm the destination is reachable on the intended network.
 
 ### Symptom: receive-side logs show `invalid sequence number`

@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"fmt"
 	"math/big"
+	"time"
 
 	"github.com/celer-network/agent-pay/chain"
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/ledger"
@@ -41,8 +42,8 @@ func (p *Processor) IntendWithdraw(cidFrom ctype.CidType, amount *big.Int, cidTo
 		return fmt.Errorf("previous withdraw still pending")
 	}
 
-	blkNum := p.monitorService.GetCurrentBlockNumber().Uint64()
-	balance, err := ledgerview.GetBalance(p.dal, cidFrom, p.nodeConfig.GetOnChainAddr(), blkNum)
+	nowTs := uint64(time.Now().Unix())
+	balance, err := ledgerview.GetBalance(p.dal, cidFrom, p.nodeConfig.GetOnChainAddr(), nowTs)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -93,7 +94,8 @@ func (p *Processor) ConfirmWithdraw(cid ctype.CidType) error {
 		log.Error("GetOnChainDisputeTimeout failed", err)
 		return err
 	}
-	if p.monitorService.GetCurrentBlockNumber().Uint64() < requestTime+disputeTimeout {
+	// requestTime and disputeTimeout are unix-second values from the contract.
+	if uint64(time.Now().Unix()) < requestTime+disputeTimeout {
 		err2 := fmt.Errorf("withdraw disput timeout not reached")
 		log.Error(err2)
 		return err2

@@ -4,6 +4,8 @@ package config
 
 import (
 	"math/big"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/celer-network/agent-pay/common"
@@ -12,10 +14,26 @@ import (
 	"google.golang.org/grpc/keepalive"
 )
 
-// NOTE: not protected by lock, only set once at initialization
+// envUint returns the env var parsed as a uint64, or def if unset / unparsable.
+// Used for the "safe margin" knobs below so e2e tests can shrink production-safe
+// 60-second slacks down to a few seconds without recompiling the server binary.
+func envUint(key string, def uint64) uint64 {
+	if v := os.Getenv(key); v != "" {
+		if n, err := strconv.ParseUint(v, 10, 64); err == nil {
+			return n
+		}
+	}
+	return def
+}
+
+// NOTE: not protected by lock, only set once at initialization.
+// All "*Timeout" / "*Deadline" / "*SafeMargin" values below are in seconds —
+// the contracts measure deadlines and challenge windows in `block.timestamp`
+// (unix seconds), so off-chain code follows the same unit and comparisons
+// against on-chain state stay aligned.
 var (
 	ChainId               *big.Int
-	ChannelDisputeTimeout = uint64(10000)
+	ChannelDisputeTimeout = uint64(86400) // 1 day, seconds
 	BlockDelay            = uint64(5)
 	BlockIntervalSec      = uint64(10)
 	EventListenerHttp     = ""
@@ -24,20 +42,24 @@ var (
 	RouterAliveTimeout    = 900 * time.Second
 	OspClearPaysInterval  = 613 * time.Second
 	OspReportInverval     = 887 * time.Second
+
+	// Safe-margin knobs are env-var tunable so e2e tests can shrink them. Production
+	// defaults (60s) absorb chain-confirmation slack past a deadline; tests typically
+	// set CELER_*_SAFE_MARGIN_S=5 to keep the timeout-and-sweep flow snappy.
+	WithdrawTimeoutSafeMargin = envUint("CELER_WITHDRAW_SAFE_MARGIN_S", 60) // seconds
+	PaySendTimeoutSafeMargin  = envUint("CELER_PAY_SEND_SAFE_MARGIN_S", 60) // seconds
+	PayRecvTimeoutSafeMargin  = envUint("CELER_PAY_RECV_SAFE_MARGIN_S", 60) // seconds
 )
 
 const (
 	ClientCacheSize            = 1000
 	ServerCacheSize            = 16
-	OpenChannelTimeout         = uint64(100)
-	CooperativeWithdrawTimeout = uint64(10)
-	WithdrawTimeoutSafeMargin  = uint64(6) // TODO: this should be profile.blockdelay + margin
-	PayResolveTimeout          = uint64(10)
-	PaySendTimeoutSafeMargin   = uint64(6)
-	PayRecvTimeoutSafeMargin   = uint64(4)
-	AdminSendTokenTimeout      = uint64(50)
-	QuickCatchBlockDelay       = uint64(2)
-	TcbTimeoutInBlockNumber    = 576000
+	OpenChannelTimeout         = uint64(600)    // seconds
+	CooperativeWithdrawTimeout = uint64(60)     // seconds
+	PayResolveTimeout          = uint64(60)     // seconds (on-chain partial-resolve challenge window)
+	AdminSendTokenTimeout      = uint64(600)    // seconds
+	QuickCatchBlockDelay       = uint64(2)      // blocks (unrelated to deadlines — fast-path reorg confirmation)
+	TcbTimeoutSeconds          = uint64(604800) // 7 days, seconds
 
 	// Protocol Version in AuthReq, >=1 support sync
 	AuthProtocolVersion = uint64(1)

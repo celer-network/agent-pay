@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"fmt"
 	"math/big"
+	"time"
 
 	"github.com/celer-network/agent-pay/chain"
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/ledger"
@@ -104,8 +105,7 @@ func (p *Processor) prepareJob(cid ctype.CidType, amount *big.Int) (*structs.Coo
 		ChannelId: cid[:],
 		SeqNum:    newSeqNumUint64,
 		Withdraw:  withdraw,
-		WithdrawDeadline: p.monitorService.GetCurrentBlockNumber().Uint64() +
-			config.CooperativeWithdrawTimeout,
+		WithdrawDeadline: uint64(time.Now().Unix()) + config.CooperativeWithdrawTimeout,
 	}
 	serializedInfo, err := proto.Marshal(withdrawInfo)
 	if err != nil {

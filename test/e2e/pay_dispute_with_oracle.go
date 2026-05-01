@@ -202,13 +202,12 @@ func sendPayment(client *tf.ClientController, appChanID string, tokenType entity
 		ArgsQueryOutcome:        serializedSessionQuery,
 	}
 
-	currentTime, err := client.GetCurrentBlockNumber()
-	if err != nil {
-		return "", err
-	}
-
+	// Pay timeout is now a duration in seconds; pick a long enough window
+	// that the pay doesn't expire during the oracle-driven scenario, but within the
+	// e2e rt_config max_payment_timeout (1000s).
+	const payTimeoutSec = uint64(600)
 	payID, err := client.SendPaymentWithBooleanConditions(
-		peerAddress, sendAmt, tokenType, tokenAddr, []*entity.Condition{c1Cond}, currentTime+100)
+		peerAddress, sendAmt, tokenType, tokenAddr, []*entity.Condition{c1Cond}, payTimeoutSec)
 	if err != nil {
 		return "", err
 	}

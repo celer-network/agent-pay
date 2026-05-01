@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/celer-network/agent-pay/common"
 	enums "github.com/celer-network/agent-pay/common/structs"
@@ -143,7 +144,8 @@ func (h *CelerMsgHandler) verifyDelegationProof(
 	if !hashlist.Exist(description.GetTokenToDelegate(), tokenAddr.Bytes()) {
 		return errors.New("token type not approved by destination to be delegated")
 	}
-	if description.GetExpiresAfterBlock() < h.monitorService.GetCurrentBlockNumber().Int64() {
+	// ExpiresAfterBlock is now a unix timestamp (seconds); field name kept for wire-format back-compat.
+	if description.GetExpiresAfterBlock() < time.Now().Unix() {
 		return errors.New("description expired")
 	}
 	if !eth.IsSignatureValid(ctype.Bytes2Addr(description.GetDelegator()), payBytes, receipt.GetPayDelegatorSig()) {
