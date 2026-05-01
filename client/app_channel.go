@@ -14,16 +14,14 @@ import (
 func (c *CelerClient) NewAppChannelOnVirtualContract(
 	byteCode []byte,
 	constructor []byte,
-	nonce uint64,
-	onchainTimeout uint64) (string, error) {
-	return c.cNode.AppClient.NewAppChannelOnVirtualContract(byteCode, constructor, nonce, onchainTimeout)
+	nonce uint64) (string, error) {
+	return c.cNode.AppClient.NewAppChannelOnVirtualContract(byteCode, constructor, nonce)
 }
 
 // DeleteAppChannel removes the registered virtual condition contract from the
 // cnode's in-memory bookkeeping. Does not touch on-chain state.
-func (c *CelerClient) DeleteAppChannel(cid string) error {
+func (c *CelerClient) DeleteAppChannel(cid string) {
 	c.cNode.AppClient.DeleteAppChannel(cid)
-	return nil
 }
 
 // GetAppChannelDeployedAddr returns the on-chain deployed address of a

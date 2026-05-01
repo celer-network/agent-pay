@@ -17,12 +17,6 @@ import (
 	"github.com/celer-network/agent-pay/ctype"
 )
 
-type AppInfo struct {
-	DeployedAddr   string
-	ContractBin    string
-	OnChainTimeout int64
-}
-
 type AppSession struct {
 	ID string
 	cc *client.CelerClient
@@ -35,13 +29,11 @@ type AppSession struct {
 func (mc *Client) CreateAppSessionOnVirtualContract(
 	contractBin string,
 	constructor string,
-	nonce uint64,
-	onChainTimeout uint64) (*AppSession, error) {
+	nonce uint64) (*AppSession, error) {
 	sessionID, err := mc.c.NewAppChannelOnVirtualContract(
 		ctype.Hex2Bytes(contractBin),
 		ctype.Hex2Bytes(constructor),
-		nonce,
-		onChainTimeout)
+		nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -49,9 +41,10 @@ func (mc *Client) CreateAppSessionOnVirtualContract(
 }
 
 // EndAppSession removes the registered virtual condition contract from the
-// cnode's in-memory bookkeeping.
-func (mc *Client) EndAppSession(sessionid string) error {
-	return mc.c.DeleteAppChannel(sessionid)
+// cnode's in-memory bookkeeping. The current implementation always succeeds;
+// it cannot fail.
+func (mc *Client) EndAppSession(sessionid string) {
+	mc.c.DeleteAppChannel(sessionid)
 }
 
 // GetDeployedAddress returns the on-chain deployed address of the registered

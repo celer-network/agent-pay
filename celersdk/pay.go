@@ -88,7 +88,16 @@ func (mc *Client) RemoveExpiredPays(tk *Token) error {
 	return mc.c.SettleExpiredPays(token)
 }
 
-// ResolvePayOnChain settles the payment onchain and receives the payment from OSP
+// ResolvePayOnChain settles the payment onchain and receives the payment from OSP.
+//
+// VIRTUAL_CONTRACT prerequisite: PayResolver.resolvePaymentByConditions calls
+// VirtContractResolver.resolve(virtAddr) on-chain, which reverts with
+// "Nonexistent virtual address" if the virtual condition contract has not been
+// deployed yet. The surviving deploy path is the deploy-on-query side effect
+// of AppSession.OnChainGetBooleanOutcome — calling it once after registration
+// (e.g. with a no-op query) ensures the virtual contract has bytecode by the
+// time this resolve tx lands. DEPLOYED_CONTRACT conditions have no such
+// prerequisite.
 func (mc *Client) ResolvePayOnChain(payID string) error {
 	err := mc.c.ResolveCondPayOnChain(ctype.Hex2PayID(payID))
 	if err != nil {
@@ -134,6 +143,9 @@ func (mc *Client) GetOnChainPaymentInfo(paymentID string) (*OnChainPaymentInfo, 
 	return &OnChainPaymentInfo{Amount: amount.String(), ResolveDeadline: resolveDeadline}, nil
 }
 
+// ResolveIncomingPaymentOnChain submits PayResolver.resolvePaymentByConditions
+// for the given payment. See ResolvePayOnChain doc for the VIRTUAL_CONTRACT
+// deploy-before-resolve prerequisite — the same applies here.
 func (mc *Client) ResolveIncomingPaymentOnChain(payId string) error {
 	return mc.c.ResolveCondPayOnChain(ctype.Hex2PayID(payId))
 }

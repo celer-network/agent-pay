@@ -427,8 +427,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 		appChanID, err := c3.NewAppChannelOnVirtualContract(
 			testapp.AppCode,
 			constructor,
-			testapp.Nonce.Uint64(),
-			testapp.Timeout.Uint64())
+			testapp.Nonce.Uint64())
 		if err != nil {
 			t.Error(err)
 			return

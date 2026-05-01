@@ -60,7 +60,7 @@ func (*stubOspPayBackend) RejectIncomingPayment(ctype.PayIDType) error {
 func TestOspPayApiServerCreateAppSessionOnVirtualContract(t *testing.T) {
 	backend := &stubOspPayBackend{createSessionID: "session-123"}
 	server := NewOspPayApiServer(backend, nil)
-	request := &rpc.CreateAppSessionOnVirtualContractRequest{ContractBin: "beef", ContractConstructor: "cafe", Nonce: 7, OnChainTimeout: 8}
+	request := &rpc.CreateAppSessionOnVirtualContractRequest{ContractBin: "beef", ContractConstructor: "cafe", Nonce: 7}
 
 	response, err := server.CreateAppSessionOnVirtualContract(context.Background(), request)
 	if err != nil {

@@ -27,6 +27,8 @@ import (
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/rs/cors"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	empty "google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -746,8 +748,7 @@ func (s *ApiServer) CreateAppSessionOnVirtualContract(
 		s.apiClient.CreateAppSessionOnVirtualContract(
 			request.ContractBin,
 			request.ContractConstructor,
-			request.Nonce,
-			request.OnChainTimeout)
+			request.Nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -769,19 +770,19 @@ func (s *ApiServer) SignData(context context.Context, request *rpc.Data) (*rpc.S
 func (s *ApiServer) DeleteAppSession(
 	context context.Context, request *rpc.SessionID) (*empty.Empty, error) {
 	sessionID := request.SessionId
-	err := s.apiClient.EndAppSession(sessionID)
-	if err != nil {
-		return nil, err
-	}
+	s.apiClient.EndAppSession(sessionID)
 	s.appSessionMapLock.Lock()
-	s.appSessionMap[sessionID] = nil
+	delete(s.appSessionMap, sessionID)
 	s.appSessionMapLock.Unlock()
 	return &empty.Empty{}, nil
 }
 
 func (s *ApiServer) GetDeployedAddressForAppSession(
 	context context.Context, request *rpc.SessionID) (*rpc.Address, error) {
-	session := s.getAppSession(request.SessionId)
+	session, err := s.getAppSession(request.SessionId)
+	if err != nil {
+		return nil, err
+	}
 	address, err := session.GetDeployedAddress()
 	if err != nil {
 		return nil, err
@@ -792,7 +793,10 @@ func (s *ApiServer) GetDeployedAddressForAppSession(
 func (s *ApiServer) GetBooleanOutcomeForAppSession(
 	context context.Context,
 	request *rpc.GetBooleanOutcomeForAppSessionRequest) (*rpc.BooleanOutcome, error) {
-	session := s.getAppSession(request.SessionId)
+	session, err := s.getAppSession(request.SessionId)
+	if err != nil {
+		return nil, err
+	}
 	res, err := session.OnChainGetBooleanOutcome(request.Query)
 	if err != nil {
 		return nil, err
@@ -810,11 +814,14 @@ func (s *ApiServer) SetMsgDropper(context context.Context, req *rpc.SetMsgDropRe
 	return new(empty.Empty), nil
 }
 
-func (s *ApiServer) getAppSession(sessionID string) *celersdk.AppSession {
+func (s *ApiServer) getAppSession(sessionID string) (*celersdk.AppSession, error) {
 	s.appSessionMapLock.Lock()
-	session := s.appSessionMap[sessionID]
+	session, ok := s.appSessionMap[sessionID]
 	s.appSessionMapLock.Unlock()
-	return session
+	if !ok || session == nil {
+		return nil, status.Errorf(codes.NotFound, "app session %q not found", sessionID)
+	}
+	return session, nil
 }
 
 func stripPort(hostport string) string {

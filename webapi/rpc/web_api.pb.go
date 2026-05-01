@@ -1136,7 +1136,6 @@ type CreateAppSessionOnVirtualContractRequest struct {
 	ContractBin         string                 `protobuf:"bytes,1,opt,name=contract_bin,json=contractBin,proto3" json:"contract_bin,omitempty"`
 	ContractConstructor string                 `protobuf:"bytes,2,opt,name=contract_constructor,json=contractConstructor,proto3" json:"contract_constructor,omitempty"`
 	Nonce               uint64                 `protobuf:"varint,3,opt,name=nonce,proto3" json:"nonce,omitempty"`
-	OnChainTimeout      uint64                 `protobuf:"varint,4,opt,name=on_chain_timeout,json=onChainTimeout,proto3" json:"on_chain_timeout,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -1188,13 +1187,6 @@ func (x *CreateAppSessionOnVirtualContractRequest) GetContractConstructor() stri
 func (x *CreateAppSessionOnVirtualContractRequest) GetNonce() uint64 {
 	if x != nil {
 		return x.Nonce
-	}
-	return 0
-}
-
-func (x *CreateAppSessionOnVirtualContractRequest) GetOnChainTimeout() uint64 {
-	if x != nil {
-		return x.OnChainTimeout
 	}
 	return 0
 }
@@ -1668,12 +1660,11 @@ const file_web_api_proto_rawDesc = "" +
 	"\x10resolve_deadline\x18\x02 \x01(\x04R\x0fresolveDeadline\"*\n" +
 	"\tSessionID\x12\x1d\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\"\xc0\x01\n" +
+	"session_id\x18\x01 \x01(\tR\tsessionId\"\x96\x01\n" +
 	"(CreateAppSessionOnVirtualContractRequest\x12!\n" +
 	"\fcontract_bin\x18\x01 \x01(\tR\vcontractBin\x121\n" +
 	"\x14contract_constructor\x18\x02 \x01(\tR\x13contractConstructor\x12\x14\n" +
-	"\x05nonce\x18\x03 \x01(\x04R\x05nonce\x12(\n" +
-	"\x10on_chain_timeout\x18\x04 \x01(\x04R\x0eonChainTimeout\"\x1a\n" +
+	"\x05nonce\x18\x03 \x01(\x04R\x05nonce\"\x1a\n" +
 	"\x04Data\x12\x12\n" +
 	"\x04data\x18\x01 \x01(\fR\x04data\")\n" +
 	"\tSignature\x12\x1c\n" +

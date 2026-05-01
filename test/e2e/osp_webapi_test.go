@@ -174,8 +174,7 @@ func ospWebApiPaySubset(t *testing.T) {
 	appChanID, err := c1.NewAppChannelOnVirtualContract(
 		testapp.AppCode,
 		constructor,
-		testapp.Nonce.Uint64(),
-		testapp.Timeout.Uint64())
+		testapp.Nonce.Uint64())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -263,13 +262,14 @@ func ospWebApiAppSessionSubset(t *testing.T) {
 	}
 	defer conn.Close()
 
-	constructor := testapp.GetSingleSessionConstructor(
-		[]ctype.Addr{ctype.Hex2Addr(c1EthAddr), ctype.Hex2Addr(ospEthAddr)})
+	// This test exercises only the create→pay→reject→delete cycle on the OSP
+	// WebAPI; it never disputes or queries the registered contract, so the
+	// underlying bytecode is incidental. Use BooleanCondMock so the test
+	// doesn't depend on the legacy SimpleSingleSessionApp surface.
 	sessionResp, err := ospClient.CreateAppSessionOnVirtualContract(context.Background(), &webrpc.CreateAppSessionOnVirtualContractRequest{
-		ContractBin:         ctype.Bytes2Hex(testapp.AppCode),
-		ContractConstructor: ctype.Bytes2Hex(constructor),
+		ContractBin:         testapp.BooleanCondMockBin,
+		ContractConstructor: "",
 		Nonce:               testapp.Nonce.Uint64(),
-		OnChainTimeout:      testapp.Timeout.Uint64(),
 	})
 	if err != nil {
 		t.Fatal(err)

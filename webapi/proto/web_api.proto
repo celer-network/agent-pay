@@ -120,7 +120,6 @@ message CreateAppSessionOnVirtualContractRequest {
   string contract_bin = 1;
   string contract_constructor = 2;
   uint64 nonce = 3;
-  uint64 on_chain_timeout = 4;
 }
 
 message Data { bytes data = 1; }

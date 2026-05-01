@@ -67,7 +67,6 @@ func (b *ospWebapiBackend) CreateAppSessionOnVirtualContract(request *webrpc.Cre
 		ctype.Hex2Bytes(request.GetContractBin()),
 		ctype.Hex2Bytes(request.GetContractConstructor()),
 		request.GetNonce(),
-		request.GetOnChainTimeout(),
 	)
 }
 

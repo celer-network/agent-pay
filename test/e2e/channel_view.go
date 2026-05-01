@@ -95,8 +95,7 @@ func channelView(t *testing.T, tokenType entity.TokenType, tokenAddr string) {
 	appChanID, err := c2.NewAppChannelOnVirtualContract(
 		testapp.AppCode,
 		constructor,
-		testapp.Nonce.Uint64(),
-		testapp.Timeout.Uint64())
+		testapp.Nonce.Uint64())
 	if err != nil {
 		t.Error(err)
 		return

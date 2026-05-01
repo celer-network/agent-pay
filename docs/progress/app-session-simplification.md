@@ -1,17 +1,17 @@
 # App Session Simplification
 
-Status: **AS-B completed** — non-test packages build and vet clean; e2e/test-fixture rewrites pending in AS-C.
+Status: **AS-A through AS-D completed** — repo-wide build/vet clean, focused unit + e2e green, docs updated. Plan doc is being kept here pending PR merge (deleted at merge per §8).
 
 | Phase | Scope | Status |
 | --- | --- | --- |
 | AS-A | Pre-flight audit | **completed** — see findings sub-section under AS-A in §5 |
 | AS-B | Off-chain trim in `agent-pay/` | **completed** — see AS-B completion notes in §5 |
 | AS-C | Test-cleanup and helper cleanup | **completed** — repo-wide build/vet green; focused e2e (dispute + sendCondPay + OSP webapi) green |
-| AS-D | Documentation and validation | not started |
+| AS-D | Documentation and validation | **completed** — AGENTS.md / docs / osp-cli README updated; full validation matrix green by group |
 
 **Deferred:** x402 migration to a stateless condition-contract bytecode (was AS-C in earlier draft). x402 currently registers the legacy `SimpleSingleSessionApp` via `CreateAppSessionOnVirtualContract` and never exercises its dispute path; the trim doesn't break that flow. A future PR (in either x402 or agent-pay) swaps the registered bytecode to a stateless verifier — see §7 "Deferred / TODO."
 
-This is the first plan doc under `docs/progress/`. The convention (cribbed from `agent-pay-x402/docs/progress/`): plan files are phase-structured with checkbox subtasks, `Status` is updated as each phase ships, and the file self-deletes at close-out (or moves to `docs/progress/archive/` if its design rationale is worth preserving).
+This is the first plan doc under `docs/progress/`. The convention (cribbed from `agent-pay-x402/docs/progress/`): plan files are phase-structured with checkbox subtasks, `Status` is updated as each phase ships, and the file self-deletes at close-out — see §8 for this plan's specific closeout disposition.
 
 ---
 

@@ -599,13 +599,7 @@ func (c *CNode) initialize(
 		c.dal,
 		c.isOSP)
 
-	c.AppClient = app.NewAppClient(
-		c.nodeConfig,
-		c.masterTransactor,
-		c.transactorPool,
-		c.monitorService,
-		c.dal,
-		c.signer)
+	c.AppClient = app.NewAppClient(c.nodeConfig, c.transactorPool)
 
 	if c.isMultiServer {
 		c.serverForwarder = c.multiServerForwarder

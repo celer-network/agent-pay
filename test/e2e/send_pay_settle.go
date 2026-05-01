@@ -90,7 +90,6 @@ func sendPaySettleDstReconnect(t *testing.T, tokenType entity.TokenType, tokenAd
 		ta.AppCode,
 		constructor,
 		ta.Nonce.Uint64(),
-		ta.Timeout.Uint64(),
 	)
 	if err != nil {
 		t.Error(err)

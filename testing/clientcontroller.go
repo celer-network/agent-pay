@@ -698,19 +698,31 @@ func (cc *ClientController) SyncOnChainChannelStates(tokenType entity.TokenType,
 }
 
 func (cc *ClientController) NewAppChannelOnVirtualContract(
-	byteCode []byte, constructor []byte, nonce uint64, timeout uint64) (string, error) {
+	byteCode []byte, constructor []byte, nonce uint64) (string, error) {
 	sessionID, err := cc.apiClient.CreateAppSessionOnVirtualContract(
 		context.Background(),
 		&rpc.CreateAppSessionOnVirtualContractRequest{
 			ContractBin:         ctype.Bytes2Hex(byteCode),
 			ContractConstructor: ctype.Bytes2Hex(constructor),
 			Nonce:               nonce,
-			OnChainTimeout:      timeout,
 		})
 	if err != nil {
 		return "", err
 	}
 	return sessionID.SessionId, nil
+}
+
+// GetAppChannelDeployedAddr wraps the GetDeployedAddressForAppSession RPC.
+// Returns the on-chain address (hex string) of the registered virtual
+// condition contract, or an error if the contract has not been deployed yet.
+func (cc *ClientController) GetAppChannelDeployedAddr(cid string) (string, error) {
+	resp, err := cc.apiClient.GetDeployedAddressForAppSession(
+		context.Background(),
+		&rpc.SessionID{SessionId: cid})
+	if err != nil {
+		return "", err
+	}
+	return resp.GetAddress(), nil
 }
 
 func (cc *ClientController) DeleteAppChannel(cid string) error {
