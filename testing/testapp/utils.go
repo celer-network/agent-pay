@@ -4,8 +4,10 @@
 // This file (and singlesessionapp.go) is kept for back-compat with
 // agent-pay-x402, which registers SimpleSingleSessionApp via
 // CreateAppSessionOnVirtualContract. See
-// docs/progress/app-session-simplification.md §7 for the migration plan
-// that retires this surface.
+// docs/progress/app-session-simplification.md §7 for the coordinated x402
+// PR spec; both files retire when that PR lands and swaps the registered
+// bytecode to a stateless IBooleanCond impl (e.g. BooleanCondMock, next to
+// this file).
 
 package testapp
 

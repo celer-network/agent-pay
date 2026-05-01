@@ -503,10 +503,42 @@ After AS-B, the testing-side packages (`testing/clientcontroller.go`, the e2e `*
 
 Items intentionally out of scope for this plan but worth a forward pointer:
 
-- **x402 migration to a stateless condition-contract bytecode.** Currently x402 registers `SimpleSingleSessionApp` (turn-based-game contract) via `CreateAppSessionOnVirtualContract`. The trim doesn't break that — x402 doesn't exercise the gaming dispute path — but it's strictly a back-compat carry. Future PR (in either repo): swap the registered bytecode to `BooleanCondMock` (now bundled with this trim) or to a custom `IBooleanCond` impl appropriate for the x402 use case. Once that lands:
-  - `testing/testapp/singlesessionapp.go` and any `singlesessionapp`-specific helpers in `utils.go` delete.
-  - The `singlesessionapp.go`'s deprecation comment goes with them.
-  - Update `AGENTS.md` §Protocol Invariants to drop the "testapp uses block.number" exception.
+- **x402 migration to a stateless condition-contract bytecode.** Currently `agent-pay-x402` registers `SimpleSingleSessionApp` via `CreateAppSessionOnVirtualContract`. The trim doesn't break that registration path — x402 doesn't exercise the dispute machinery either — but it's strictly a back-compat carry, and the registration itself fails to compile against this trim because the `OnChainTimeout` request field is gone. The x402 and agent-pay PRs ship together; ordering is "x402 lands the changes below, then bumps its `agent-pay` Go-mod pin to this PR's merge commit." Concrete changes the **x402 PR** lands:
+
+  **Required for the agent-pay dep bump to compile** (without these, x402 won't build against this PR):
+  - [agent-pay-x402/testinfra/session.go](../../../agent-pay-x402/testinfra/session.go) — drop `OnChainTimeout: ta.Timeout.Uint64()` from the `CreateAppSessionOnVirtualContractRequest` literal. The proto field no longer exists.
+
+  **Bytecode swap (the actual carry retirement)** — same file `testinfra/session.go`:
+  - Replace `ta.GetSingleSessionConstructor([]ctype.Addr{...})` + `ContractBin: ctype.Bytes2Hex(ta.AppCode)` with the `BooleanCondMock` registration. `BooleanCondMock` has no constructor args, so the registration simplifies to:
+    ```go
+    resp, err := client.API.CreateAppSessionOnVirtualContract(
+        context.Background(),
+        &rpc.CreateAppSessionOnVirtualContractRequest{
+            ContractBin:         ta.BooleanCondMockBin, // already hex; no Bytes2Hex needed
+            ContractConstructor: "",
+            Nonce:               nonce,
+        })
+    ```
+  - The `buyerAddr` / `sellerAddr` parameters on `CreateAppSession` become unused at the registration site. Either drop them from the function signature (touching all five callers) or keep them and document that they're now informational only. Recommend dropping — the simpler signature is `CreateAppSession(client *Client, nonce uint64) (string, error)`. The five callers are:
+    - [agent-pay-x402/cmd/setup/main.go:96](../../../agent-pay-x402/cmd/setup/main.go) — `testinfra.CreateAppSession(h.Buyer, h.Buyer.EthAddr, h.Seller.EthAddr, *nonce)`
+    - [agent-pay-x402/testinfra/mixed_session_test.go:72](../../../agent-pay-x402/testinfra/mixed_session_test.go)
+    - [agent-pay-x402/testinfra/oq23_conditional_test.go:34](../../../agent-pay-x402/testinfra/oq23_conditional_test.go), [:84](../../../agent-pay-x402/testinfra/oq23_conditional_test.go)
+    - [agent-pay-x402/testinfra/settlement_engine_test.go:45](../../../agent-pay-x402/testinfra/settlement_engine_test.go)
+    - [agent-pay-x402/testinfra/x402_client_test.go:460](../../../agent-pay-x402/testinfra/x402_client_test.go)
+    - [agent-pay-x402/testinfra/conditional_test.go:47](../../../agent-pay-x402/testinfra/conditional_test.go), [:216](../../../agent-pay-x402/testinfra/conditional_test.go)
+  - [agent-pay-x402/testinfra/channel_manager_test.go:263](../../../agent-pay-x402/testinfra/channel_manager_test.go) — drop the unused-imports guard `var _ = ta.AppCode`. After the swap, the `ta.` import is only `ta "github.com/celer-network/agent-pay/testing/testapp"` for `ta.BooleanCondMockBin` (which the bytecode line above pulls in directly), so the guard is no longer needed.
+
+  **Validation the x402 PR runs:**
+  - `go build ./...` and `go vet ./...` against the bumped `agent-pay` dep — clean.
+  - The existing x402 e2e suite (`go test ./testinfra/... -count=1`) — green. The migration only changes the registered bytecode; the off-chain confirm/reject flow x402 actually exercises is bytecode-agnostic.
+  - Spot-check that the `Nonexistent virtual address` failure mode (resolve-before-deploy) doesn't surface in any x402 path. x402 doesn't call `ResolveIncomingPaymentOnChain` so this should be a no-op, but worth a grep before merge.
+
+  **Once the x402 PR merges** (a follow-up agent-pay PR can land in the same window):
+  - Delete [testing/testapp/singlesessionapp.go](../../testing/testapp/singlesessionapp.go).
+  - Delete [tools/scripts/regenerate-legacy-app-bindings.sh](../../tools/scripts/regenerate-legacy-app-bindings.sh) entirely (the survivor it carried is gone).
+  - Trim [testing/testapp/utils.go](../../testing/testapp/utils.go) to drop `AppCode`, `GetSingleSessionConstructor`, and `Timeout`. `Nonce` survives if any agent-pay e2e test still uses it (verify by grep at retirement time); if not, drop the file entirely.
+  - Drop the "block.number exception" line from [AGENTS.md](../../AGENTS.md) §Protocol Invariants — the inlined wording added during this PR's closeout. After the x402 swap, no `block.number`-based contract is left in `testing/testapp/`.
+  - Drop the breadcrumbs added during this PR's closeout from [docs/backend-implementation.md](../../docs/backend-implementation.md), [tools/scripts/README.md](../../tools/scripts/README.md), and the `testing/testapp/utils.go` file comment.
 - **Generate ABIgen bindings for `NumericCondMock` and `INumericCond` in agent-pay** when a numeric off-chain consumer surfaces. Currently zero callers in agent-pay (every `TransferFunctionType` is `BOOLEAN_AND`); bindings are dead weight. Likely a small follow-up if/when a NUMERIC_ADD/MAX/MIN use case actually emerges.
 - **Rename `BooleanCondMock` / `NumericCondMock` to drop "Mock"** if they ever evolve from test-only fixtures into reference implementations. Today the explicit "Test-only. Do not deploy to a production network." NatSpec is correct, so the name fits.
 - **Rename `CreateAppSessionOnVirtualContract` to drop "Session"** (or rename the entire `app/` package) if the "session" / "app channel" terminology ever stops aligning with the architecture docs. Today they align; the names stay.
@@ -516,6 +548,6 @@ Items intentionally out of scope for this plan but worth a forward pointer:
 
 ## 8. Closeout
 
-This plan doc is deleted as part of the merge. Before deleting, audit and remove (or rewrite) any cross-references — at minimum: `AGENTS.md`, `docs/backend-implementation.md`, `tools/scripts/README.md`, `tools/scripts/regenerate-legacy-app-bindings.sh`, `testing/testapp/utils.go`. The §7 "Deferred / TODO" entries that need long-lived survival should migrate into `AGENTS.md` (or another in-tree home) before that delete happens.
+This plan doc **stays in the tree through the agent-pay PR merge**, because §7's first bullet is a load-bearing spec for the coordinated `agent-pay-x402` follow-up. It deletes when that x402 follow-up lands and the carry retirement (singlesessionapp + legacy regen script + AGENTS.md exception line) is complete. At that point, audit and remove any cross-references that still point here — at minimum: `AGENTS.md`, `docs/backend-implementation.md`, `tools/scripts/README.md`, `tools/scripts/regenerate-legacy-app-bindings.sh`, `testing/testapp/utils.go`.
 
 The summary line for the merge commit / PR description: **"Trim app-session machinery (on-chain dispute paths, off-chain state-exchange RPCs, virt-resolver deploy-watch + callback infrastructure) to the protocol-essential `IBooleanCond` / `INumericCond` surface; preserve `ConditionType_VIRTUAL_CONTRACT` / `_DEPLOYED_CONTRACT` at the wire level; redesign `GetBooleanOutcome` to drop multisession-specific encoding (`IBooleanOutcome` → `IBooleanCond` regenerated from agent-pay-contracts); rewrite dispute coverage onto `BooleanCondMock` for both condition types; defer x402 bytecode swap. ~8200 LOC of legacy gaming-era infrastructure deleted, ~430 LOC of clean fixture-and-test added."**

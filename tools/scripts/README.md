@@ -79,7 +79,7 @@ This script extracts ABI and bytecode literals from the existing Go source files
 
 Generated outputs covered by this script (one survivor only — see notes):
 
-- `testing/testapp/singlesessionapp.go` — kept as an `agent-pay-x402` back-compat carry. Once x402 swaps its registered bytecode away from `SimpleSingleSessionApp` (deferred follow-up tracked in [docs/progress/app-session-simplification.md §7](../../docs/progress/app-session-simplification.md)), this file and this script can both retire.
+- `testing/testapp/singlesessionapp.go` — kept as an `agent-pay-x402` back-compat carry. Retires alongside the coordinated x402 PR specified in [docs/progress/app-session-simplification.md §7](../../docs/progress/app-session-simplification.md), which swaps x402's registered bytecode from `SimpleSingleSessionApp` to `BooleanCondMock` (already shipped at `testing/testapp/booleancondmock.go`). When that PR merges, this file and this script can both delete.
 
 History: prior to the app-session simplification, this script also owned `app/booleanoutcome.go`, `app/numericoutcome.go`, the `app/{multi,single}session*.go` ABIgen files, and the gaming `testing/testapp/*` fixtures. All were deleted (or, for `app/booleancond.go`, moved to `regenerate-go-bindings.sh` to align with the canonical `IBooleanCond.sol` source) during the trim.
 

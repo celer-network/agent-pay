@@ -135,8 +135,8 @@ generate_from_abi_bin() {
 # Only `testing/testapp/singlesessionapp.go` remains here as an x402 back-compat
 # carry. Everything else moved to regenerate-go-bindings.sh (the app/IBooleanCond
 # binding) or was deleted along with the legacy gaming app-session machinery.
-# See docs/progress/app-session-simplification.md §7 for the deferred follow-up
-# that retires this script alongside the x402 bytecode swap.
+# See docs/progress/app-session-simplification.md §7 for the coordinated
+# x402 PR spec; this script retires when that PR lands.
 generate_from_abi_bin testing/testapp/singlesessionapp.go testing/testapp/singlesessionapp.go testapp SimpleSingleSessionApp
 
 echo "generated legacy app bindings under $REPO_ROOT"
