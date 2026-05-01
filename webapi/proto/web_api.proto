@@ -123,61 +123,9 @@ message CreateAppSessionOnVirtualContractRequest {
   uint64 on_chain_timeout = 4;
 }
 
-message CreateAppSessionOnDeployedContractRequest {
-  string contract_address = 1;
-  uint64 nonce = 2;
-  uint64 on_chain_timeout = 3;
-  repeated string participants = 4;
-}
-
-message DisputeInfo {
-  string session_id = 1;
-  uint64 seq_num = 2;
-}
-
-message SignOutgoingStateRequest {
-  string session_id = 1;
-  bytes state = 2;
-}
-
-message SignedState { bytes signed_state = 1; }
-
 message Data { bytes data = 1; }
 
 message Signature { bytes signature = 1; }
-
-message ValidateAckRequest {
-  string session_id = 1;
-  bytes envelope = 2;
-}
-
-message BoolValue { bool value = 1; }
-
-message ProcessReceivedStateRequest {
-  string session_id = 1;
-  bytes envelope = 2;
-}
-
-message ProcessReceivedStateResponse {
-  bytes decoded_state = 1;
-  bytes prepared_ack = 2;
-}
-
-message SettleAppSessionRequest {
-  string session_id = 1;
-  bytes state_proof = 2;
-}
-
-message SettleAppSessionByTimeoutRequest {
-  string session_id = 1;
-  bytes oracle_proof = 2;
-}
-
-message SettleAppSessionByInvalidityRequest {
-  string session_id = 1;
-  bytes oracle_proof = 2;
-  bytes cosigned_state_proof = 3;
-}
 
 message Address { string address = 1; }
 
@@ -191,23 +139,7 @@ message BooleanOutcome {
   bool outcome = 2;
 }
 
-message ApplyActionForAppSessionRequest {
-  string session_id = 1;
-  bytes action = 2;
-}
-
 message BlockNumber { uint64 block_number = 1; }
-
-message AppSessionStatus { uint32 status = 1; }
-
-message GetStateForAppSessionRequest {
-  string session_id = 1;
-  int64 key = 2;
-}
-
-message AppSessionState { bytes state = 1; }
-
-message AppSessionSeqNum { uint64 seq_num = 1; }
 
 message SetMsgDropReq {
   bool drop_recv = 1;
@@ -287,38 +219,11 @@ service WebApi {
 
   rpc CreateAppSessionOnVirtualContract(
       CreateAppSessionOnVirtualContractRequest) returns (SessionID) {}
-  rpc CreateAppSessionOnDeployedContract(
-      CreateAppSessionOnDeployedContractRequest) returns (SessionID) {}
-  rpc SubscribeAppSessionDispute(SessionID) returns (stream DisputeInfo) {}
-  rpc SignOutgoingState(SignOutgoingStateRequest) returns (SignedState) {}
-  rpc ValidateAck(ValidateAckRequest) returns (BoolValue) {}
   rpc SignData(Data) returns (Signature) {}
-  rpc ProcessReceivedState(ProcessReceivedStateRequest)
-      returns (ProcessReceivedStateResponse) {}
-  rpc SettleAppSession(SettleAppSessionRequest)
-      returns (google.protobuf.Empty) {}
-  rpc SettleAppSessionBySigTimeout(SettleAppSessionByTimeoutRequest)
-      returns (google.protobuf.Empty) {}
-  rpc SettleAppSessionByMoveTimeout(SettleAppSessionByTimeoutRequest)
-      returns (google.protobuf.Empty) {}
-  rpc SettleAppSessionByInvalidTurn(SettleAppSessionByInvalidityRequest)
-      returns (google.protobuf.Empty) {}
-  rpc SettleAppSessionByInvalidState(SettleAppSessionByInvalidityRequest)
-      returns (google.protobuf.Empty) {}
   rpc DeleteAppSession(SessionID) returns (google.protobuf.Empty) {}
   rpc GetDeployedAddressForAppSession(SessionID) returns (Address) {}
   rpc GetBooleanOutcomeForAppSession(GetBooleanOutcomeForAppSessionRequest)
       returns (BooleanOutcome) {}
-  rpc ApplyActionForAppSession(ApplyActionForAppSessionRequest)
-      returns (google.protobuf.Empty) {}
-  rpc FinalizeOnActionTimeoutForAppSession(SessionID)
-      returns (google.protobuf.Empty) {}
-  rpc GetSettleFinalizedTimeForAppSession(SessionID) returns (BlockNumber) {}
-  rpc GetActionDeadlineForAppSession(SessionID) returns (BlockNumber) {}
-  rpc GetStatusForAppSession(SessionID) returns (AppSessionStatus) {}
-  rpc GetStateForAppSession(GetStateForAppSessionRequest)
-      returns (AppSessionState) {}
-  rpc GetSeqNumForAppSession(SessionID) returns (AppSessionSeqNum) {}
   rpc GetBlockNumber(google.protobuf.Empty) returns (BlockNumber) {}
 
   rpc SetMsgDropper(SetMsgDropReq) returns (google.protobuf.Empty) {}

@@ -13,7 +13,6 @@ import (
 	"github.com/celer-network/agent-pay/ledgerview"
 	"github.com/celer-network/goutils/log"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"google.golang.org/protobuf/proto"
 )
 
 func (p *Processor) ViewChannelOnChain() {
@@ -116,18 +115,7 @@ func (p Processor) printPayRegistryInfo(payID ctype.PayIDType) {
 
 func (p Processor) printAppBooleanOutcome(appAddr ctype.Addr, argF, argO []byte) {
 	fmt.Println("")
-	if *argdecode {
-		var sq app.SessionQuery
-		err := proto.Unmarshal(argO, &sq)
-		if err != nil {
-			log.Error(err)
-		} else {
-			session := ctype.Bytes2Hex(sq.GetSession())
-			query := ctype.Bytes2Hex(sq.GetQuery())
-			fmt.Println("-- app session", session, "query", query)
-		}
-	}
-	contract, err := app.NewIBooleanOutcomeCaller(appAddr, p.nodeConfig.GetEthConn())
+	contract, err := app.NewIBooleanCondCaller(appAddr, p.nodeConfig.GetEthConn())
 	if err != nil {
 		log.Fatal(err)
 	}

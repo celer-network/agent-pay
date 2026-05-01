@@ -84,7 +84,7 @@ See [server/server.go](../server/server.go) and [common/profile.go](../common/pr
 5. Start the watch service and monitor service.
 6. Construct the global node config with contract ABIs and addresses.
 7. Start route control for OSP mode.
-8. Start processors for deposits, open-channel, cooperative withdraw, disputes, app sessions, and channel migration.
+8. Start processors for deposits, open-channel, cooperative withdraw, disputes, app channels (registration + on-chain outcome query), and channel migration.
 9. Create the `Messager` and `CelerMsgDispatcher`.
 10. Start the periodic OSP cleanup routine.
 
@@ -114,7 +114,7 @@ The optional OSP WebAPI listener is intentionally narrower than the client-node 
 | [storage](../storage) | SQLite or SQL-backed persistence plus the DAL transaction boundary used by protocol handlers |
 | [deposit](../deposit) | Asynchronous deposit-job processing and batching |
 | [dispute](../dispute) | On-chain fallback for payment/channel disputes and registry queries |
-| [app](../app) | App-session support for virtual/deployed app logic that feeds payment conditions |
+| [app](../app) | Bindings for the `IBooleanCond` condition-contract interface (`agent-pay-contracts/src/lib/interface/IBooleanCond.sol`) plus `AppClient` — registration of `VIRTUAL_CONTRACT` bytecode, lazy on-chain deployment, and off-chain `IBooleanCond.{isFinalized,getOutcome}` query. No session state machine, no oracle disputes — see [docs/progress/app-session-simplification.md](progress/app-session-simplification.md) §2 for the design rationale |
 | [client](../client) | Go client wrapper around `CNode` for edge/client nodes |
 | [celersdk](../celersdk) | Higher-level SDK interface intended for app/mobile integration |
 | [chain](../chain) and [ledgerview](../ledgerview) | Contract bindings and read helpers for on-chain state |
@@ -131,7 +131,6 @@ Message and admin contracts live under [proto](../proto) and [webapi/proto](../w
 | [proto/rpc.proto](../proto/rpc.proto) | `Rpc` service: `CelerStream` (bidirectional streaming peer transport) and the public `WebApi` service |
 | [proto/osp_admin.proto](../proto/osp_admin.proto) | Admin gRPC: stream registration, `OpenChannel`, `Deposit`, `SendToken`, `CooperativeSettle` |
 | [proto/multiserver.proto](../proto/multiserver.proto) | `MultiServer` gRPC used in shared-database, multi-server deployments |
-| [proto/app.proto](../proto/app.proto) | App-session messaging used by the virtual-app layer |
 | [proto/chain.proto](../proto/chain.proto) | Shared on-chain entity encodings used by handlers and storage |
 | [proto/osp_report.proto](../proto/osp_report.proto) | Periodic OSP reporting payloads consumed by the explorer |
 | [webapi/proto/web_api.proto](../webapi/proto/web_api.proto) | Pay-centric WebAPI used by client nodes and the optional `-webapigrpc` listener |

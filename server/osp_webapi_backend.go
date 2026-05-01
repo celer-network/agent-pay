@@ -68,17 +68,12 @@ func (b *ospWebapiBackend) CreateAppSessionOnVirtualContract(request *webrpc.Cre
 		ctype.Hex2Bytes(request.GetContractConstructor()),
 		request.GetNonce(),
 		request.GetOnChainTimeout(),
-		nil,
 	)
 }
 
 func (b *ospWebapiBackend) DeleteAppSession(sessionID string) error {
 	b.cNode.AppClient.DeleteAppChannel(sessionID)
 	return nil
-}
-
-func (b *ospWebapiBackend) GetStatusForAppSession(sessionID string) (uint8, error) {
-	return b.cNode.AppClient.GetAppChannelStatus(sessionID)
 }
 
 func (b *ospWebapiBackend) GetIncomingPaymentState(payID ctype.PayIDType) (int, error) {

@@ -85,5 +85,7 @@ generate_binding out/VirtContractResolver.sol/VirtContractResolver.json chain/ch
 generate_binding out/CelerWallet.sol/CelerWallet.json chain/channel-eth-go/wallet/wallet.go wallet CelerWallet
 generate_binding out/ERC20ExampleToken.sol/ERC20ExampleToken.json chain/erc20.go chain ERC20
 generate_binding out/RouterRegistry.sol/RouterRegistry.json route/routerregistry/routerregistry.go routerregistry RouterRegistry
+generate_binding out/IBooleanCond.sol/IBooleanCond.json app/booleancond.go app IBooleanCond
+generate_binding out/BooleanCondMock.sol/BooleanCondMock.json testing/testapp/booleancondmock.go testapp BooleanCondMock
 
 echo "generated bindings under $OUTPUT_ROOT"

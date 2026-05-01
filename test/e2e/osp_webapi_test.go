@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 	"time"
 
@@ -280,14 +279,6 @@ func ospWebApiAppSessionSubset(t *testing.T) {
 		t.Fatal("CreateAppSessionOnVirtualContract returned empty session id")
 	}
 
-	_, err = ospClient.GetStatusForAppSession(context.Background(), &webrpc.SessionID{SessionId: sessionID})
-	if status.Code(err) == codes.Unimplemented {
-		t.Fatalf("GetStatusForAppSession still unimplemented: %v", err)
-	}
-	if err == nil || !strings.Contains(status.Convert(err).Message(), "app channel not deployed") {
-		t.Fatalf("GetStatusForAppSession error = %v, want app channel not deployed", err)
-	}
-
 	payResp, err := ospClient.SendConditionalPayment(context.Background(), &webrpc.SendConditionalPaymentRequest{
 		TokenInfo:          &webrpc.TokenInfo{TokenType: entity.TokenType_ETH, TokenAddress: tokenAddrEth},
 		Destination:        c1EthAddr,
@@ -321,14 +312,6 @@ func ospWebApiAppSessionSubset(t *testing.T) {
 	_, err = ospClient.DeleteAppSession(context.Background(), &webrpc.SessionID{SessionId: sessionID})
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	_, err = ospClient.GetStatusForAppSession(context.Background(), &webrpc.SessionID{SessionId: sessionID})
-	if status.Code(err) == codes.Unimplemented {
-		t.Fatalf("GetStatusForAppSession after delete still unimplemented: %v", err)
-	}
-	if err == nil || !strings.Contains(status.Convert(err).Message(), "app channel not found") {
-		t.Fatalf("GetStatusForAppSession after delete error = %v, want app channel not found", err)
 	}
 }
 

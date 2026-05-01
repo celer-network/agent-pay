@@ -679,13 +679,6 @@ func (cc *ClientController) SettleConditionalPayOnChain(paymentID string) (strin
 	return info.Amount, info.ResolveDeadline, nil
 }
 
-func (cc *ClientController) SignOutgoingState(sessionID string, state []byte) ([]byte, error) {
-	signedState, err := cc.apiClient.SignOutgoingState(
-		context.Background(),
-		&rpc.SignOutgoingStateRequest{SessionId: sessionID, State: state})
-	return signedState.SignedState, err
-}
-
 func (cc *ClientController) SignData(data []byte) ([]byte, error) {
 	signature, err := cc.apiClient.SignData(context.Background(), &rpc.Data{Data: data})
 	if err != nil {
@@ -720,74 +713,6 @@ func (cc *ClientController) NewAppChannelOnVirtualContract(
 	return sessionID.SessionId, nil
 }
 
-func (cc *ClientController) NewAppChannelOnDeployedContract(
-	contractAddress string, nonce uint64, participants []string, timeout uint64) (string, error) {
-	sessionID, err := cc.apiClient.CreateAppSessionOnDeployedContract(
-		context.Background(),
-		&rpc.CreateAppSessionOnDeployedContractRequest{
-			ContractAddress: contractAddress,
-			Nonce:           nonce,
-			Participants:    participants,
-			OnChainTimeout:  timeout,
-		})
-	if err != nil {
-		return "", err
-	}
-	return sessionID.SessionId, nil
-}
-
-func (cc *ClientController) SettleAppChannel(cid string, stateproof []byte) error {
-	_, err := cc.apiClient.SettleAppSession(
-		context.Background(),
-		&rpc.SettleAppSessionRequest{
-			SessionId:  cid,
-			StateProof: stateproof,
-		})
-	return err
-}
-
-func (cc *ClientController) SettleAppChannelBySigTimeout(cid string, oracleProof []byte) error {
-	_, err := cc.apiClient.SettleAppSessionBySigTimeout(
-		context.Background(),
-		&rpc.SettleAppSessionByTimeoutRequest{
-			SessionId:   cid,
-			OracleProof: oracleProof,
-		})
-	return err
-}
-
-func (cc *ClientController) SettleAppChannelByMoveTimeout(cid string, oracleProof []byte) error {
-	_, err := cc.apiClient.SettleAppSessionByMoveTimeout(
-		context.Background(),
-		&rpc.SettleAppSessionByTimeoutRequest{
-			SessionId:   cid,
-			OracleProof: oracleProof,
-		})
-	return err
-}
-
-func (cc *ClientController) SettleAppChannelByInvalidTurn(cid string, oracleProof []byte, cosignedStateProof []byte) error {
-	_, err := cc.apiClient.SettleAppSessionByInvalidTurn(
-		context.Background(),
-		&rpc.SettleAppSessionByInvalidityRequest{
-			SessionId:          cid,
-			OracleProof:        oracleProof,
-			CosignedStateProof: cosignedStateProof,
-		})
-	return err
-}
-
-func (cc *ClientController) SettleAppChannelByInvalidState(cid string, oracleProof []byte, cosignedStateProof []byte) error {
-	_, err := cc.apiClient.SettleAppSessionByInvalidState(
-		context.Background(),
-		&rpc.SettleAppSessionByInvalidityRequest{
-			SessionId:          cid,
-			OracleProof:        oracleProof,
-			CosignedStateProof: cosignedStateProof,
-		})
-	return err
-}
-
 func (cc *ClientController) DeleteAppChannel(cid string) error {
 	_, err := cc.apiClient.DeleteAppSession(
 		context.Background(),
@@ -795,19 +720,6 @@ func (cc *ClientController) DeleteAppChannel(cid string) error {
 			SessionId: cid,
 		})
 	return err
-}
-
-func (cc *ClientController) GetAppChannelState(cid string, key int64) ([]byte, error) {
-	resp, err := cc.apiClient.GetStateForAppSession(
-		context.Background(),
-		&rpc.GetStateForAppSessionRequest{
-			SessionId: cid,
-			Key:       key,
-		})
-	if err != nil {
-		return nil, err
-	}
-	return resp.State, err
 }
 
 func (cc *ClientController) GetAppChannelBooleanOutcome(
@@ -822,49 +734,6 @@ func (cc *ClientController) GetAppChannelBooleanOutcome(
 		return false, false, err
 	}
 	return resp.Finalized, resp.Outcome, err
-}
-
-func (cc *ClientController) GetAppChannelSettleFinalizedTime(cid string) (uint64, error) {
-	blkNum, err := cc.apiClient.GetSettleFinalizedTimeForAppSession(
-		context.Background(),
-		&rpc.SessionID{
-			SessionId: cid,
-		})
-	if err != nil {
-		return 0, err
-	}
-	return blkNum.BlockNumber, err
-}
-
-func (cc *ClientController) ApplyAppChannelAction(cid string, action []byte) error {
-	_, err := cc.apiClient.ApplyActionForAppSession(
-		context.Background(),
-		&rpc.ApplyActionForAppSessionRequest{
-			SessionId: cid,
-			Action:    action,
-		})
-	return err
-}
-
-func (cc *ClientController) GetAppChannelActionDeadline(cid string) (uint64, error) {
-	blkNum, err := cc.apiClient.GetActionDeadlineForAppSession(
-		context.Background(),
-		&rpc.SessionID{
-			SessionId: cid,
-		})
-	if err != nil {
-		return 0, err
-	}
-	return blkNum.BlockNumber, nil
-}
-
-func (cc *ClientController) FinalizeAppChannelOnActionTimeout(cid string) error {
-	_, err := cc.apiClient.FinalizeOnActionTimeoutForAppSession(
-		context.Background(),
-		&rpc.SessionID{
-			SessionId: cid,
-		})
-	return err
 }
 
 // WaitUntilDeadline blocks until wall-clock unix time has passed the given deadline.
@@ -886,27 +755,6 @@ func (cc *ClientController) WaitUntilDeadline(deadline uint64) error {
 			return err
 		}
 		time.Sleep(time.Second)
-	}
-}
-
-// WaitUntilBlockHeight blocks until the on-chain block number passes the given value.
-// Use this for testapp/app-session deadlines, which are still `block.number`-based
-// (the testing/testapp contracts in this repo were not part of the agent-pay-contracts
-// blocktime migration). Agent-pay deadlines should use WaitUntilDeadline instead.
-func (cc *ClientController) WaitUntilBlockHeight(targetBlk uint64) error {
-	log.Infoln("Wait until block height", targetBlk)
-	for {
-		current, err := cc.GetCurrentBlockNumber()
-		if err != nil {
-			return err
-		}
-		log.Infoln("-- current block number --", current)
-		if current > targetBlk {
-			return nil
-		}
-		if err := AdvanceBlocks(1); err != nil {
-			return err
-		}
 	}
 }
 

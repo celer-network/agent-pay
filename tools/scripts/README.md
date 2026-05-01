@@ -24,6 +24,7 @@ Generated outputs covered by this script:
 - `chain/channel-eth-go/wallet/wallet.go`
 - `chain/erc20.go`
 - `route/routerregistry/routerregistry.go`
+- `app/booleancond.go` (regenerated from `agent-pay-contracts/src/lib/interface/IBooleanCond.sol`; the canonical off-chain `IBooleanCond` binding consumed by `AppClient.GetBooleanOutcome`)
 
 Handwritten exception:
 
@@ -66,14 +67,20 @@ find "$tmp" -type f | sort
 
 ## Regenerate Legacy App Bindings
 
-Use [regenerate-legacy-app-bindings.sh](./regenerate-legacy-app-bindings.sh) to regenerate the legacy ABI-based Go bindings that are checked into this repo under `app/` and `testing/testapp/`.
+Use [regenerate-legacy-app-bindings.sh](./regenerate-legacy-app-bindings.sh) to regenerate the one remaining legacy ABI-based Go binding that is checked into this repo under `testing/testapp/`.
 
 This script extracts ABI and bytecode literals from the existing Go source files, then reruns `abigen` against them. It does not depend on the companion contracts repo.
+
+Generated outputs covered by this script (one survivor only — see notes):
+
+- `testing/testapp/singlesessionapp.go` — kept as an `agent-pay-x402` back-compat carry. Once x402 swaps its registered bytecode away from `SimpleSingleSessionApp` (deferred follow-up tracked in [docs/progress/app-session-simplification.md §7](../../docs/progress/app-session-simplification.md)), this file and this script can both retire.
+
+History: prior to the app-session simplification, this script also owned `app/booleanoutcome.go`, `app/numericoutcome.go`, the `app/{multi,single}session*.go` ABIgen files, and the gaming `testing/testapp/*` fixtures. All were deleted (or, for `app/booleancond.go`, moved to `regenerate-go-bindings.sh` to align with the canonical `IBooleanCond.sol` source) during the trim.
 
 Default behavior:
 
 - runs `abigen` through `go run github.com/ethereum/go-ethereum/cmd/abigen@v1.15.11`
-- rewrites the existing checked-in files in place
+- rewrites the existing checked-in file in place
 
 Required tools:
 

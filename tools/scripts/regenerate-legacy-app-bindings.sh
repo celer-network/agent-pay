@@ -124,17 +124,11 @@ generate_from_abi_bin() {
 		--out "$output"
 }
 
-generate_from_abi app/booleanoutcome.go app/booleanoutcome.go app IBooleanOutcome
-generate_from_abi app/numericoutcome.go app/numericoutcome.go app INumericOutcome
-generate_from_abi app/multisession.go app/multisession.go app IMultiSession
-generate_from_abi app/multisessionwithoracle.go app/multisessionwithoracle.go app IMultiSessionWithOracle
-generate_from_abi app/singlesession.go app/singlesession.go app ISingleSession
-generate_from_abi app/singlesessionwithoracle.go app/singlesessionwithoracle.go app ISingleSessionWithOracle
-
-generate_from_abi_bin testing/testapp/multigomoku.go testing/testapp/multigomoku.go testapp MultiGomoku
-generate_from_abi_bin testing/testapp/multisessionapp.go testing/testapp/multisessionapp.go testapp SimpleMultiSessionApp
-generate_from_abi_bin testing/testapp/multisessionappwithoracle.go testing/testapp/multisessionappwithoracle.go testapp SimpleMultiSessionAppWithOracle
+# Only `testing/testapp/singlesessionapp.go` remains here as an x402 back-compat
+# carry. Everything else moved to regenerate-go-bindings.sh (the app/IBooleanCond
+# binding) or was deleted along with the legacy gaming app-session machinery.
+# See docs/progress/app-session-simplification.md §7 for the deferred follow-up
+# that retires this script alongside the x402 bytecode swap.
 generate_from_abi_bin testing/testapp/singlesessionapp.go testing/testapp/singlesessionapp.go testapp SimpleSingleSessionApp
-generate_from_abi_bin testing/testapp/singlesessionappwithoracle.go testing/testapp/singlesessionappwithoracle.go testapp SimpleSingleSessionAppWithOracle
 
 echo "generated legacy app bindings under $REPO_ROOT"

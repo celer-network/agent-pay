@@ -92,9 +92,6 @@ func TestE2E(t *testing.T) {
 	t.Run("e2e-grp3", func(t *testing.T) {
 		t.Run("disputeEthPayWithVirtualContract", disputeEthPayWithVirtualContract)
 		t.Run("disputeEthPayWithDeployedContract", disputeEthPayWithDeployedContract)
-		t.Run("disputeEthPaySrcOffline", disputeEthPaySrcOffline)
-		t.Run("disputeEthPayWithDeployedGomoku", disputeEthPayWithDeployedGomoku)
-		t.Run("disputePayBySigTimeoutWithDeployedContract", disputeEthPayBySigTimeoutWithDeployedContract)
 		t.Run("settleErc20ChannelEmpty", settleErc20ChannelEmpty)
 		t.Run("settleErc20ChannelOneSimplex", settleErc20ChannelOneSimplex)
 		t.Run("settleErc20ChannelFullDuplex", settleErc20ChannelFullDuplex)

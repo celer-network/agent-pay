@@ -3,16 +3,12 @@
 package app
 
 import (
-	"bytes"
-	"errors"
 	"fmt"
 	"math/big"
 	"sync"
 
-	"github.com/celer-network/agent-pay/chain"
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/virtresolver"
 	"github.com/celer-network/agent-pay/common"
-	"github.com/celer-network/agent-pay/common/event"
 	"github.com/celer-network/agent-pay/common/intfs"
 	"github.com/celer-network/agent-pay/config"
 	"github.com/celer-network/agent-pay/ctype"
@@ -20,28 +16,31 @@ import (
 	"github.com/celer-network/agent-pay/storage"
 	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/goutils/eth"
-	"github.com/celer-network/goutils/eth/monitor"
 	"github.com/celer-network/goutils/log"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
-	"google.golang.org/protobuf/proto"
 )
 
+// AppChannel tracks a registered VIRTUAL_CONTRACT condition contract: the
+// bytecode + constructor + nonce that determine its deterministic address, and
+// (after the first deploy-on-query) the on-chain deployed address.
+//
+// Post-trim the legacy gaming surface (turn-based session state machine,
+// `Callback` / `OnDispute` notifications, `Players` / `Session` for the
+// deployed-multisession variant, `IntendSettle` / dispute-window / action loop)
+// is gone. What remains is the bytecode-and-deploy-on-demand bookkeeping for
+// stateless `IBooleanCond` virtual condition contracts.
 type AppChannel struct {
 	Type           entity.ConditionType
 	Nonce          uint64
-	ByteCode       []byte       // only for virtual contract
-	Constructor    []byte       // only for virtual contract
-	Players        []ctype.Addr // only for deployed contract
-	Session        [32]byte     // only for deployed contract
+	ByteCode       []byte
+	Constructor   []byte
 	DeployedAddr   ctype.Addr
 	OnChainTimeout uint64
-	Callback       common.StateCallback
 	mu             sync.Mutex
 	client         *AppClient
 	cid            string
-	callbackID     monitor.CallbackID
 }
 
 type AppClient struct {
@@ -53,11 +52,6 @@ type AppClient struct {
 	signer         eth.Signer
 	appChannels    map[string]*AppChannel
 	cLock          sync.RWMutex
-
-	virtDeployMu           sync.Mutex
-	virtDeployWatchStarted bool
-	virtDeployWatchID      monitor.CallbackID
-	virtDeployChanCount    int
 }
 
 func NewAppClient(
@@ -68,7 +62,7 @@ func NewAppClient(
 	dal *storage.DAL,
 	signer eth.Signer,
 ) *AppClient {
-	p := &AppClient{
+	return &AppClient{
 		nodeConfig:     nodeConfig,
 		transactor:     transactor,
 		transactorPool: transactorPool,
@@ -77,7 +71,6 @@ func NewAppClient(
 		signer:         signer,
 		appChannels:    make(map[string]*AppChannel),
 	}
-	return p
 }
 
 func (a *AppChannel) setDeployedAddr(addr ctype.Addr) {
@@ -92,46 +85,6 @@ func (a *AppChannel) getDeployedAddr() ctype.Addr {
 	return a.DeployedAddr
 }
 
-// onVirtualContractDeploy triggers OnDispute callback for an app based on a virtual contract
-// when the contract is deployed
-func (a *AppChannel) onVirtualContractDeploy(eLog *types.Log) (bool, error) {
-	e := &virtresolver.VirtContractResolverDeploy{}
-	virtResolver := a.client.nodeConfig.GetVirtResolverContract().(*chain.BoundContract)
-	err := virtResolver.ParseEvent(event.Deploy, *eLog, e)
-	if err != nil {
-		log.Error(err)
-		return false, err
-	}
-	if ctype.Bytes2Hex(e.VirtAddr[:]) == a.cid {
-		a.Callback.OnDispute(0) // seqNum = 0 implies the virtual contract is deployed
-		return true, nil
-	}
-	return false, nil
-}
-
-// onDeployedContractSettle triggers OnDispute callback for an app based on a deployed multisession
-// contract when the session is created on chain by IntendSettle
-func (a *AppChannel) onDeployedContractSettle(eLog *types.Log) (bool, error) {
-	e := &IMultiSessionIntendSettle{}
-	deployedAdr := a.getDeployedAddr()
-	contract, err := chain.NewBoundContract(
-		a.client.nodeConfig.GetEthConn(), deployedAdr, IMultiSessionABI)
-	if err != nil {
-		log.Error(err)
-		return false, err
-	}
-	err = contract.ParseEvent(event.IntendSettle, *eLog, e)
-	if err != nil {
-		log.Error(err)
-		return false, err
-	}
-	if bytes.Equal(a.Session[:], e.Session[:]) {
-		a.Callback.OnDispute(int(e.Seq.Int64()))
-		return true, nil
-	}
-	return false, nil
-}
-
 func (c *AppClient) PutAppChannel(cid string, appChannel *AppChannel) {
 	c.cLock.Lock()
 	defer c.cLock.Unlock()
@@ -144,97 +97,25 @@ func (c *AppClient) GetAppChannel(cid string) *AppChannel {
 	return c.appChannels[cid]
 }
 
+// DeleteAppChannel removes the in-memory bookkeeping for a registered virtual
+// condition contract. It does not touch any on-chain state.
 func (c *AppClient) DeleteAppChannel(cid string) {
 	c.cLock.Lock()
-	appChannel := c.appChannels[cid]
-	if appChannel != nil {
-		delete(c.appChannels, cid)
-	}
+	delete(c.appChannels, cid)
 	c.cLock.Unlock()
-
-	if appChannel == nil {
-		return
-	}
-
-	switch appChannel.Type {
-	case entity.ConditionType_VIRTUAL_CONTRACT:
-		c.virtDeployMu.Lock()
-		if c.virtDeployChanCount > 0 {
-			c.virtDeployChanCount--
-		}
-		watchID := c.virtDeployWatchID
-		shouldStop := c.virtDeployChanCount == 0 && c.virtDeployWatchStarted
-		if shouldStop {
-			c.virtDeployWatchStarted = false
-			c.virtDeployWatchID = 0
-		}
-		c.virtDeployMu.Unlock()
-		if shouldStop && watchID != 0 {
-			c.monitorService.RemoveEvent(watchID)
-		}
-	default:
-		if appChannel.callbackID != 0 {
-			c.monitorService.RemoveEvent(appChannel.callbackID)
-		}
-	}
 }
 
-func (c *AppClient) registerVirtResolverDeployWatch() error {
-	c.virtDeployMu.Lock()
-	defer c.virtDeployMu.Unlock()
-
-	c.virtDeployChanCount++
-
-	if c.virtDeployWatchStarted {
-		return nil
-	}
-
-	monitorCfg := &monitor.Config{
-		ChainId:    config.ChainId.Uint64(),
-		EventName:  event.Deploy,
-		Contract:   c.nodeConfig.GetVirtResolverContract(),
-		StartBlock: c.monitorService.GetCurrentBlockNumber(),
-	}
-	if config.QuickCatchBlockDelay < config.BlockDelay {
-		monitorCfg.BlockDelay = config.QuickCatchBlockDelay
-	}
-
-	watchID, err := c.monitorService.Monitor(monitorCfg, func(id monitor.CallbackID, eLog types.Log) bool {
-		e := &virtresolver.VirtContractResolverDeploy{}
-		virtResolver, ok := c.nodeConfig.GetVirtResolverContract().(*chain.BoundContract)
-		if !ok {
-			log.Error("VirtResolver contract is not a BoundContract")
-			return false
-		}
-		if err := virtResolver.ParseEvent(event.Deploy, eLog, e); err != nil {
-			log.Error(err)
-			return false
-		}
-
-		cid := ctype.Bytes2Hex(e.VirtAddr[:])
-		appChannel := c.GetAppChannel(cid)
-		if appChannel == nil || appChannel.Type != entity.ConditionType_VIRTUAL_CONTRACT || appChannel.Callback == nil {
-			return false
-		}
-		appChannel.Callback.OnDispute(0) // seqNum = 0 implies the virtual contract is deployed
-		return false
-	})
-	if err != nil {
-		c.virtDeployChanCount--
-		return err
-	}
-
-	c.virtDeployWatchStarted = true
-	c.virtDeployWatchID = watchID
-	return nil
-}
-
+// NewAppChannelOnVirtualContract registers a VIRTUAL_CONTRACT condition
+// contract. The cnode stores the bytecode + constructor + nonce so that, when
+// dispute resolution requires it, the contract can be deployed on-chain and
+// queried via `IBooleanCond.{isFinalized,getOutcome}`. Returns the deterministic
+// virtual-contract address (hex) used as the session id / `OnChainAddress` in
+// `Condition` payloads.
 func (c *AppClient) NewAppChannelOnVirtualContract(
 	byteCode []byte,
 	constructor []byte,
 	nonce uint64,
-	onchainTimeout uint64,
-	sc common.StateCallback) (string, error) {
+	onchainTimeout uint64) (string, error) {
 
 	cid := ctype.Bytes2Hex(GetVirtualAddress(byteCode, constructor, nonce))
 	appChannel := &AppChannel{
@@ -244,91 +125,16 @@ func (c *AppClient) NewAppChannelOnVirtualContract(
 		Constructor:    constructor,
 		DeployedAddr:   ctype.ZeroAddr,
 		OnChainTimeout: onchainTimeout,
-		Callback:       sc,
 		client:         c,
 		cid:            cid,
 	}
 	c.PutAppChannel(cid, appChannel)
-
-	if err := c.registerVirtResolverDeployWatch(); err != nil {
-		log.Error(err)
-		c.DeleteAppChannel(cid)
-		return cid, err
-	}
 	return cid, nil
 }
 
-func (c *AppClient) NewAppChannelOnDeployedContract(
-	contractAddr ctype.Addr,
-	nonce uint64,
-	players []ctype.Addr,
-	onchainTimeout uint64,
-	sc common.StateCallback) (string, error) {
-
-	players = SortPlayers(players)
-	session, err := c.getSessionID(contractAddr, nonce, players)
-	if err != nil {
-		return "", err
-	}
-	cid := ctype.Bytes2Hex(session[:])
-	appChannel := &AppChannel{
-		Type:           entity.ConditionType_DEPLOYED_CONTRACT,
-		Nonce:          nonce,
-		Players:        players,
-		Session:        session,
-		DeployedAddr:   contractAddr,
-		OnChainTimeout: onchainTimeout,
-		Callback:       sc,
-		client:         c,
-		cid:            cid,
-	}
-	c.PutAppChannel(cid, appChannel)
-
-	contract, err := chain.NewBoundContract(
-		c.nodeConfig.GetEthConn(), contractAddr, IMultiSessionABI)
-	if err != nil {
-		log.Error(err)
-		return cid, err
-	}
-	monitorCfg := &monitor.Config{
-		ChainId:    config.ChainId.Uint64(),
-		EventName:  event.IntendSettle,
-		Contract:   contract,
-		StartBlock: c.monitorService.GetCurrentBlockNumber(),
-	}
-	if config.QuickCatchBlockDelay < config.BlockDelay {
-		monitorCfg.BlockDelay = config.QuickCatchBlockDelay
-	}
-	callbackID, err := c.monitorService.Monitor(monitorCfg,
-		func(id monitor.CallbackID, eLog types.Log) bool {
-			hit, _ := appChannel.onDeployedContractSettle(&eLog)
-			if hit {
-				c.monitorService.RemoveEvent(id)
-			}
-			return false
-		})
-	if err != nil {
-		log.Error(err)
-	}
-	appChannel.callbackID = callbackID
-	return cid, err
-}
-
-func (c *AppClient) SettleAppChannel(cid string, stateproof []byte) error {
-	log.Infoln("Settle app channel", cid)
-	appChannel := c.GetAppChannel(cid)
-	if appChannel == nil {
-		return fmt.Errorf("SettleAppChannel error: app channel not found")
-	}
-
-	if err := c.deployIfNeeded(appChannel); err != nil {
-		return err
-	}
-
-	err := c.intendSettle(appChannel, stateproof)
-	return err
-}
-
+// GetAppChannelDeployedAddr returns the on-chain deployed address of a
+// registered virtual condition contract. If the contract has not been deployed
+// yet, it probes the virt-resolver registry; returns an error if not deployed.
 func (c *AppClient) GetAppChannelDeployedAddr(cid string) (ctype.Addr, error) {
 	appChannel := c.GetAppChannel(cid)
 	if appChannel == nil {
@@ -350,10 +156,13 @@ func (c *AppClient) GetAppChannelDeployedAddr(cid string) (ctype.Addr, error) {
 	return addr, nil
 }
 
-// GetBooleanOutcome returns contract isFinalized and getOutcome
+// GetBooleanOutcome queries `IBooleanCond.{isFinalized,getOutcome}` for the
+// registered condition contract. For VIRTUAL_CONTRACT, this triggers
+// deploy-on-query: if the virtual contract has not been deployed yet, this call
+// submits a deployment transaction first. The query bytes are passed through
+// unchanged (matches what `PayResolver` does on-chain) — no `SessionQuery`
+// wrapping.
 func (c *AppClient) GetBooleanOutcome(cid string, query []byte) (bool, bool, error) {
-	finalized := false
-	result := false
 	appChannel := c.GetAppChannel(cid)
 	if appChannel == nil {
 		return false, false, fmt.Errorf("GetBooleanOutcome error: app channel not found")
@@ -362,466 +171,27 @@ func (c *AppClient) GetBooleanOutcome(cid string, query []byte) (bool, bool, err
 		return false, false, err
 	}
 	deployedAddr := appChannel.getDeployedAddr()
-	contract, err := NewIBooleanOutcomeCaller(
-		deployedAddr, c.transactorPool.ContractCaller())
+	contract, err := NewIBooleanCondCaller(deployedAddr, c.transactorPool.ContractCaller())
 	if err != nil {
 		return false, false, fmt.Errorf("GetBooleanOutcome error: %w", err)
 	}
-	if appChannel.Type == entity.ConditionType_VIRTUAL_CONTRACT {
-		finalized, err = contract.IsFinalized(&bind.CallOpts{}, nil)
-		if err != nil {
-			return false, false, fmt.Errorf("contract IsFinalized error: %w", err)
-		}
-		result, err = contract.GetOutcome(&bind.CallOpts{}, query)
-		if err != nil {
-			return false, false, fmt.Errorf("contract GetResult error: %w", err)
-		}
-	} else if appChannel.Type == entity.ConditionType_DEPLOYED_CONTRACT {
-		finalized, err = contract.IsFinalized(&bind.CallOpts{}, appChannel.Session[:])
-		if err != nil {
-			return false, false, fmt.Errorf("contract IsFinalized error: %w", err)
-		}
-		sessionQuery := &SessionQuery{
-			Session: appChannel.Session[:],
-			Query:   query,
-		}
-		seralizedSessionQuery, err2 := proto.Marshal(sessionQuery)
-		if err2 != nil {
-			return false, false, fmt.Errorf("contract GetResult error: %w", err2)
-		}
-		result, err = contract.GetOutcome(&bind.CallOpts{}, seralizedSessionQuery)
-	}
-	return finalized, result, err
-}
-
-func (c *AppClient) ApplyAction(cid string, action []byte) error {
-	log.Infoln("Apply action to app channel", cid)
-	appChannel := c.GetAppChannel(cid)
-	if appChannel == nil {
-		return fmt.Errorf("ApplyAction error: app channel not found")
-	}
-
-	receipt, err := c.transactor.TransactWaitMined(
-		"ApplyAction",
-		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
-			addr := appChannel.getDeployedAddr()
-			if addr == (ctype.ZeroAddr) {
-				return nil, fmt.Errorf("FinalizeOnActionTimeout error: app channel not deployed")
-			}
-			if appChannel.Type == entity.ConditionType_VIRTUAL_CONTRACT {
-				contract, err2 := NewISingleSessionTransactor(addr, transactor)
-				if err2 != nil {
-					return nil, err2
-				}
-				return contract.ApplyAction(opts, action)
-			} else if appChannel.Type == entity.ConditionType_DEPLOYED_CONTRACT {
-				contract, err2 := NewIMultiSessionTransactor(addr, transactor)
-				if err2 != nil {
-					return nil, err2
-				}
-				return contract.ApplyAction(opts, appChannel.Session, action)
-			}
-			return nil, errors.New("ApplyAction failed: invalid app channel type")
-		},
-		config.QuickTransactOptions()...)
+	finalized, err := contract.IsFinalized(&bind.CallOpts{}, query)
 	if err != nil {
-		log.Error(err)
-		return err
+		return false, false, fmt.Errorf("contract IsFinalized error: %w", err)
 	}
-	if receipt.Status != types.ReceiptStatusSuccessful {
-		return fmt.Errorf("ApplyAction transaction %x failed", receipt.TxHash)
-	}
-	return nil
-}
-
-func (c *AppClient) FinalizeAppChannelOnActionTimeout(cid string) error {
-	log.Infoln("Finalize on action timeout on app channel", cid)
-	appChannel := c.GetAppChannel(cid)
-	if appChannel == nil {
-		return fmt.Errorf("FinalizeOnActionTimeout error: app channel not found")
-	}
-
-	receipt, err := c.transactor.TransactWaitMined(
-		"FinalizeOnActionTimeout",
-		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
-			addr := appChannel.getDeployedAddr()
-			if addr == (ctype.ZeroAddr) {
-				return nil, fmt.Errorf("FinalizeOnActionTimeout error: app channel not deployed")
-			}
-			if appChannel.Type == entity.ConditionType_VIRTUAL_CONTRACT {
-				contract, err2 := NewISingleSessionTransactor(addr, transactor)
-				if err2 != nil {
-					return nil, err2
-				}
-				return contract.FinalizeOnActionTimeout(opts)
-			} else if appChannel.Type == entity.ConditionType_DEPLOYED_CONTRACT {
-				contract, err2 := NewIMultiSessionTransactor(addr, transactor)
-				if err2 != nil {
-					return nil, err2
-				}
-				return contract.FinalizeOnActionTimeout(opts, appChannel.Session)
-			}
-			return nil, errors.New("FinalizeOnActionTimeout failed: invalid app channel type")
-		},
-		config.QuickTransactOptions()...)
+	result, err := contract.GetOutcome(&bind.CallOpts{}, query)
 	if err != nil {
-		log.Error(err)
-		return err
+		return false, false, fmt.Errorf("contract GetOutcome error: %w", err)
 	}
-	if receipt.Status != types.ReceiptStatusSuccessful {
-		return fmt.Errorf("FinalizeOnActionTimeout transaction %x failed", receipt.TxHash)
-	}
-	return nil
+	return finalized, result, nil
 }
 
-func (c *AppClient) GetAppChannelSettleFinalizedTime(cid string) (uint64, error) {
-	appChannel := c.GetAppChannel(cid)
-	if appChannel == nil {
-		return 0, fmt.Errorf("GetSettleFinalizedTime error: app channel not found")
-	}
-	deployedAddr := appChannel.getDeployedAddr()
-	if deployedAddr == (ctype.ZeroAddr) {
-		return 0, fmt.Errorf("GetSettleFinalizedTime error: app channel not deployed")
-	}
-	if appChannel.Type == entity.ConditionType_VIRTUAL_CONTRACT {
-		contract, err := NewISingleSessionCaller(deployedAddr, c.transactorPool.ContractCaller())
-		if err != nil {
-			return 0, err
-		}
-		blkNum, err := contract.GetSettleFinalizedTime(&bind.CallOpts{})
-		if err != nil {
-			return 0, err
-		}
-		if blkNum == nil {
-			return 0, fmt.Errorf("GetActionDeadline failed, nil blkNum")
-		}
-		return blkNum.Uint64(), nil
-	} else if appChannel.Type == entity.ConditionType_DEPLOYED_CONTRACT {
-		contract, err := NewIMultiSessionCaller(deployedAddr, c.transactorPool.ContractCaller())
-		if err != nil {
-			return 0, err
-		}
-		blkNum, err := contract.GetSettleFinalizedTime(&bind.CallOpts{}, appChannel.Session)
-		if err != nil {
-			return 0, err
-		}
-		if blkNum == nil {
-			return 0, fmt.Errorf("GetActionDeadline failed, nil blkNum")
-		}
-		return blkNum.Uint64(), nil
-	}
-	return 0, errors.New("GetSettleFinalizedTime failed: invalid app channel type")
-}
-
-func (c *AppClient) GetAppChannelActionDeadline(cid string) (uint64, error) {
-	appChannel := c.GetAppChannel(cid)
-	if appChannel == nil {
-		return 0, fmt.Errorf("GetActionDeadline error: app channel not found")
-	}
-	deployedAddr := appChannel.getDeployedAddr()
-	if deployedAddr == (ctype.ZeroAddr) {
-		return 0, fmt.Errorf("GetActionDeadline error: app channel not deployed")
-	}
-	if appChannel.Type == entity.ConditionType_VIRTUAL_CONTRACT {
-		contract, err := NewISingleSessionCaller(deployedAddr, c.transactorPool.ContractCaller())
-		if err != nil {
-			return 0, err
-		}
-		blkNum, err := contract.GetActionDeadline(&bind.CallOpts{})
-		if err != nil {
-			return 0, err
-		}
-		if blkNum == nil {
-			return 0, fmt.Errorf("GetActionDeadline failed, nil blkNum")
-		}
-		return blkNum.Uint64(), nil
-	} else if appChannel.Type == entity.ConditionType_DEPLOYED_CONTRACT {
-		contract, err := NewIMultiSessionCaller(deployedAddr, c.transactorPool.ContractCaller())
-		if err != nil {
-			return 0, err
-		}
-		blkNum, err := contract.GetActionDeadline(&bind.CallOpts{}, appChannel.Session)
-		if err != nil {
-			return 0, err
-		}
-		if blkNum == nil {
-			return 0, fmt.Errorf("GetActionDeadline failed, nil blkNum")
-		}
-		return blkNum.Uint64(), nil
-	}
-	return 0, errors.New("GetActionDeadline failed: invalid app channel type")
-}
-
-func (c *AppClient) GetAppChannelSeqNum(cid string) (uint64, error) {
-	appChannel := c.GetAppChannel(cid)
-	if appChannel == nil {
-		return 0, fmt.Errorf("GetSeqNum error: app channel not found")
-	}
-	deployedAddr := appChannel.getDeployedAddr()
-	if deployedAddr == (ctype.ZeroAddr) {
-		return 0, fmt.Errorf("GetSeqNum error: app channel not deployed")
-	}
-	if appChannel.Type == entity.ConditionType_VIRTUAL_CONTRACT {
-		contract, err := NewISingleSessionCaller(deployedAddr, c.transactorPool.ContractCaller())
-		if err != nil {
-			return 0, err
-		}
-		seq, err := contract.GetSeqNum(&bind.CallOpts{})
-		if err != nil {
-			return 0, err
-		}
-		if seq == nil {
-			return 0, fmt.Errorf("GetSeqNum failed, nil seq")
-		}
-		return seq.Uint64(), nil
-	} else if appChannel.Type == entity.ConditionType_DEPLOYED_CONTRACT {
-		contract, err := NewIMultiSessionCaller(deployedAddr, c.transactorPool.ContractCaller())
-		if err != nil {
-			return 0, err
-		}
-		seq, err := contract.GetSeqNum(&bind.CallOpts{}, appChannel.Session)
-		if err != nil {
-			return 0, err
-		}
-		if seq == nil {
-			return 0, fmt.Errorf("GetSeqNum failed, nil seq")
-		}
-		return seq.Uint64(), nil
-	}
-	return 0, errors.New("GetSeqNum failed: invalid app channel type")
-}
-
-func (c *AppClient) GetAppChannelStatus(cid string) (uint8, error) {
-	appChannel := c.GetAppChannel(cid)
-	if appChannel == nil {
-		return 0, fmt.Errorf("GetStatus error: app channel not found")
-	}
-	deployedAddr := appChannel.getDeployedAddr()
-	if deployedAddr == (ctype.ZeroAddr) {
-		return 0, fmt.Errorf("GetStatus error: app channel not deployed")
-	}
-	if appChannel.Type == entity.ConditionType_VIRTUAL_CONTRACT {
-		contract, err := NewISingleSessionCaller(deployedAddr, c.transactorPool.ContractCaller())
-		if err != nil {
-			return 0, err
-		}
-		return contract.GetStatus(&bind.CallOpts{})
-	} else if appChannel.Type == entity.ConditionType_DEPLOYED_CONTRACT {
-		contract, err := NewIMultiSessionCaller(deployedAddr, c.transactorPool.ContractCaller())
-		if err != nil {
-			return 0, err
-		}
-		return contract.GetStatus(&bind.CallOpts{}, appChannel.Session)
-	}
-	return 0, errors.New("GetStatus failed: invalid app channel type")
-}
-
-func (c *AppClient) GetAppChannelState(cid string, key *big.Int) ([]byte, error) {
-	appChannel := c.GetAppChannel(cid)
-	if appChannel == nil {
-		return nil, fmt.Errorf("GetState error: app channel not found")
-	}
-	deployedAddr := appChannel.getDeployedAddr()
-	if deployedAddr == (ctype.ZeroAddr) {
-		return nil, fmt.Errorf("GetState error: app channel not deployed")
-	}
-	if appChannel.Type == entity.ConditionType_VIRTUAL_CONTRACT {
-		contract, err := NewISingleSessionCaller(deployedAddr, c.transactorPool.ContractCaller())
-		if err != nil {
-			return nil, err
-		}
-		return contract.GetState(&bind.CallOpts{}, key)
-	} else if appChannel.Type == entity.ConditionType_DEPLOYED_CONTRACT {
-		contract, err := NewIMultiSessionCaller(deployedAddr, c.transactorPool.ContractCaller())
-		if err != nil {
-			return nil, err
-		}
-		return contract.GetState(&bind.CallOpts{}, appChannel.Session, key)
-	}
-	return nil, errors.New("GetState failed: invalid app channel type")
-}
-
-// SignAppState returns 1: proto serialized app state, 2: signature, 3: error
-func (c *AppClient) SignAppState(cid string, seqNum uint64, state []byte) ([]byte, []byte, error) {
-	appChannel := c.GetAppChannel(cid)
-	if appChannel == nil {
-		return nil, nil, fmt.Errorf("SignAppState error: app channel not found")
-	}
-	appStateBytes, err := EncodeAppState(appChannel.Nonce, seqNum, state, appChannel.OnChainTimeout)
-	if err != nil {
-		return nil, appStateBytes, err
-	}
-	sig, err := c.signer.SignEthMessage(appStateBytes)
-	if err != nil {
-		return nil, appStateBytes, err
-	}
-	return appStateBytes, sig, nil
-}
-
-func (c *AppClient) SettleBySigTimeout(gcid string, oracleProof []byte) error {
-	log.Infoln("Settle by signature timeout", gcid)
-	appChannel := c.GetAppChannel(gcid)
-	if appChannel == nil {
-		return fmt.Errorf("SettleBySigTimeout error: app channel not found")
-	}
-
-	receipt, err := c.transactor.TransactWaitMined(
-		"SettleBySigTimeout",
-		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
-			addr := appChannel.getDeployedAddr()
-			if addr == (ctype.ZeroAddr) {
-				return nil, fmt.Errorf("FinalizeOnActionTimeout error: app channel not deployed")
-			}
-			if appChannel.Type == entity.ConditionType_VIRTUAL_CONTRACT {
-				contract, err2 := NewISingleSessionWithOracleTransactor(addr, transactor)
-				if err2 != nil {
-					return nil, err2
-				}
-				return contract.SettleBySigTimeout(opts, oracleProof)
-			} else if appChannel.Type == entity.ConditionType_DEPLOYED_CONTRACT {
-				contract, err2 := NewIMultiSessionWithOracleTransactor(addr, transactor)
-				if err2 != nil {
-					return nil, err2
-				}
-
-				return contract.SettleBySigTimeout(opts, oracleProof)
-			}
-			return nil, errors.New("SettleBySigTimeout failed: invalid app channel type")
-		},
-		config.QuickTransactOptions()...)
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-	if receipt.Status != types.ReceiptStatusSuccessful {
-		return fmt.Errorf("SettleBySigTimeout transaction %x failed", receipt.TxHash)
-	}
-	return nil
-}
-
-func (c *AppClient) SettleByMoveTimeout(gcid string, oracleProof []byte) error {
-	log.Infoln("Settle by movement timeout", gcid)
-	appChannel := c.GetAppChannel(gcid)
-	if appChannel == nil {
-		return fmt.Errorf("SettleByMoveTimeout error: app channel not found")
-	}
-
-	receipt, err := c.transactor.TransactWaitMined(
-		"SettleByMoveTimeout",
-		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
-			addr := appChannel.getDeployedAddr()
-			if addr == (ctype.ZeroAddr) {
-				return nil, fmt.Errorf("FinalizeOnActionTimeout error: app channel not deployed")
-			}
-			if appChannel.Type == entity.ConditionType_VIRTUAL_CONTRACT {
-				contract, err2 := NewISingleSessionWithOracleTransactor(addr, transactor)
-				if err2 != nil {
-					return nil, err2
-				}
-				return contract.SettleByMoveTimeout(opts, oracleProof)
-			} else if appChannel.Type == entity.ConditionType_DEPLOYED_CONTRACT {
-				contract, err2 := NewIMultiSessionWithOracleTransactor(addr, transactor)
-				if err2 != nil {
-					return nil, err2
-				}
-				return contract.SettleByMoveTimeout(opts, oracleProof)
-			}
-			return nil, errors.New("SettleByMoveTimeout failed: invalid app channel type")
-		},
-		config.QuickTransactOptions()...)
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-	if receipt.Status != types.ReceiptStatusSuccessful {
-		return fmt.Errorf("SettleByMoveTimeout transaction %x failed", receipt.TxHash)
-	}
-	return nil
-}
-
-func (c *AppClient) SettleByInvalidTurn(gcid string, oracleProof []byte, cosignedStateProof []byte) error {
-	log.Infoln("Settle by invalid turn", gcid)
-	appChannel := c.GetAppChannel(gcid)
-	if appChannel == nil {
-		return fmt.Errorf("SettleByInvalidTurn error: app channel not found")
-	}
-
-	receipt, err := c.transactor.TransactWaitMined(
-		"SettleByInvalidTurn",
-		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
-			addr := appChannel.getDeployedAddr()
-			if addr == (ctype.ZeroAddr) {
-				return nil, fmt.Errorf("FinalizeOnActionTimeout error: app channel not deployed")
-			}
-			if appChannel.Type == entity.ConditionType_VIRTUAL_CONTRACT {
-				contract, err2 := NewISingleSessionWithOracleTransactor(addr, transactor)
-				if err2 != nil {
-					return nil, err2
-				}
-				return contract.SettleByInvalidTurn(opts, oracleProof, cosignedStateProof)
-			} else if appChannel.Type == entity.ConditionType_DEPLOYED_CONTRACT {
-				contract, err2 := NewIMultiSessionWithOracleTransactor(addr, transactor)
-				if err2 != nil {
-					return nil, err2
-				}
-				return contract.SettleByInvalidTurn(opts, oracleProof, cosignedStateProof)
-			}
-			return nil, errors.New("SettleByInvalidTurn failed: invalid app channel type")
-		},
-		config.QuickTransactOptions()...)
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-	if receipt.Status != types.ReceiptStatusSuccessful {
-		return fmt.Errorf("SettleByInvalidTurn transaction %x failed", receipt.TxHash)
-	}
-	return nil
-}
-
-func (c *AppClient) SettleByInvalidState(gcid string, oracleProof []byte, cosignedStateProof []byte) error {
-	log.Infoln("Settle by invalid state", gcid)
-	appChannel := c.GetAppChannel(gcid)
-	if appChannel == nil {
-		return fmt.Errorf("SettleByInvalidState error: app channel not found")
-	}
-
-	receipt, err := c.transactor.TransactWaitMined(
-		"SettleByInvalidState",
-		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
-			addr := appChannel.getDeployedAddr()
-			if addr == (ctype.ZeroAddr) {
-				return nil, fmt.Errorf("FinalizeOnActionTimeout error: app channel not deployed")
-			}
-			if appChannel.Type == entity.ConditionType_VIRTUAL_CONTRACT {
-				contract, err2 := NewISingleSessionWithOracleTransactor(addr, transactor)
-				if err2 != nil {
-					return nil, err2
-				}
-				return contract.SettleByInvalidState(opts, oracleProof, cosignedStateProof)
-			} else if appChannel.Type == entity.ConditionType_DEPLOYED_CONTRACT {
-				contract, err2 := NewIMultiSessionWithOracleTransactor(addr, transactor)
-				if err2 != nil {
-					return nil, err2
-				}
-				return contract.SettleByInvalidState(opts, oracleProof, cosignedStateProof)
-			}
-			return nil, errors.New("SettleByInvalidState failed: invalid app channel type")
-		},
-		config.QuickTransactOptions()...)
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-	if receipt.Status != types.ReceiptStatusSuccessful {
-		return fmt.Errorf("SettleByInvalidState transaction %x failed", receipt.TxHash)
-	}
-	return nil
-}
-
+// deployIfNeeded ensures the registered virtual condition contract is deployed
+// on-chain. For VIRTUAL_CONTRACT entries with no deployed address yet, it
+// submits the deployment transaction via the virt-resolver and caches the
+// resulting address on the `AppChannel`.
 func (c *AppClient) deployIfNeeded(appChannel *AppChannel) error {
 	deployedAddr := appChannel.getDeployedAddr()
-	// Deploy virtual contract
 	if appChannel.Type == entity.ConditionType_VIRTUAL_CONTRACT && deployedAddr == (ctype.ZeroAddr) {
 		deployedAddr, err :=
 			c.deployVirtualContract(appChannel.Nonce, appChannel.ByteCode, appChannel.Constructor)
@@ -876,8 +246,8 @@ func (c *AppClient) deployVirtualContract(
 	return ctype.ZeroAddr, fmt.Errorf("virtual contract not deployed")
 }
 
-// isDeployed checks if the given virtual address has been deployed on-chain
-// if yes, also returns the deployment address
+// isDeployed checks if the given virtual address has been deployed on-chain;
+// if yes, also returns the deployment address.
 func (c *AppClient) isDeployed(virtAddr []byte) (bool, ctype.Addr, error) {
 	contract, err := virtresolver.NewVirtContractResolverCaller(
 		c.nodeConfig.GetVirtResolverContract().GetAddr(), c.transactorPool.ContractCaller())
@@ -893,43 +263,10 @@ func (c *AppClient) isDeployed(virtAddr []byte) (bool, ctype.Addr, error) {
 	return true, deployedAddr, nil
 }
 
-func (c *AppClient) intendSettle(appChannel *AppChannel, stateproof []byte) error {
-	var err error
-	if appChannel.Type == entity.ConditionType_DEPLOYED_CONTRACT {
-		stateproof, err = SigSortedAppStateProof(stateproof)
-		if err != nil {
-			return err
-		}
-	}
-	_, err = c.transactorPool.SubmitWaitMined(
-		"intend settle app channel",
-		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
-			addr := appChannel.getDeployedAddr()
-			// intendSettle API for SingleSession and MultiSession contracts are same
-			contract, err2 := NewISingleSessionTransactor(addr, transactor)
-			if err2 != nil {
-				return nil, err2
-			}
-			return contract.IntendSettle(opts, stateproof)
-		},
-		config.QuickTransactOptions()...)
-	if err != nil {
-		log.Errorln("intend settle app channel tx error", err)
-	}
-	return err
-}
-
-func (c *AppClient) getSessionID(
-	contractAddr ctype.Addr, nonce uint64, players []ctype.Addr) ([32]byte, error) {
-	contract, err := NewIMultiSessionCaller(contractAddr, c.transactorPool.ContractCaller())
-	if err != nil {
-		var s [32]byte
-		return s, err
-	}
-	session, err := contract.GetSessionID(&bind.CallOpts{}, new(big.Int).SetUint64(nonce), players)
-	return session, err
-}
-
+// GetVirtualAddress derives the deterministic virtual-contract address from
+// `(bytecode, constructor, nonce)`. Used both at registration time (to compute
+// the session id) and at deploy time (to look up the eventual on-chain address
+// in the virt-resolver).
 func GetVirtualAddress(byteCode []byte, constructor []byte, nonce uint64) []byte {
 	codeWithCons := append(byteCode, constructor...)
 	return crypto.Keccak256(codeWithCons, utils.Pad(new(big.Int).SetUint64(nonce).Bytes(), 32))

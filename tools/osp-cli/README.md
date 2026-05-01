@@ -48,7 +48,7 @@ Note: `chanstate` is enum integer, valid states for commands above include 3 for
 * `-onchainview channel -cid [channel ID]`: get onchain channel info from CelerLedger contract
 * `-onchainview pay -payid [payment ID]`: get onchain payment info from PayRegistry contract
 * `-onchainview tx -txhash [transaction hash]`: get on-chain transaction information
-* `-onchainview app -appaddr [app contract addr] -outcome [arg for query outcome] -finalize [arg for query finalization] -decode`: get onchain CelerApp session info
+* `-onchainview app -appaddr [app contract addr] -outcome [arg for query outcome] -finalize [arg for query finalization]`: query an `IBooleanCond` condition contract on-chain (`isFinalized` and `getOutcome`)
 
 ### Unilateral channel settle or withdraw action 
 
