@@ -68,16 +68,17 @@ func (c *multiServerClient) BcastRoutingInfo(ctx context.Context, in *BcastRouti
 }
 
 // MultiServerServer is the server API for MultiServer service.
-// All implementations should embed UnimplementedMultiServerServer
+// All implementations must embed UnimplementedMultiServerServer
 // for forward compatibility
 type MultiServerServer interface {
 	FwdMsg(context.Context, *FwdReq) (*FwdReply, error)
 	Ping(context.Context, *PingReq) (*PingReply, error)
 	PickServer(context.Context, *PickReq) (*PickReply, error)
 	BcastRoutingInfo(context.Context, *BcastRoutingRequest) (*BcastRoutingReply, error)
+	mustEmbedUnimplementedMultiServerServer()
 }
 
-// UnimplementedMultiServerServer should be embedded to have forward compatible implementations.
+// UnimplementedMultiServerServer must be embedded to have forward compatible implementations.
 type UnimplementedMultiServerServer struct {
 }
 
@@ -93,6 +94,7 @@ func (UnimplementedMultiServerServer) PickServer(context.Context, *PickReq) (*Pi
 func (UnimplementedMultiServerServer) BcastRoutingInfo(context.Context, *BcastRoutingRequest) (*BcastRoutingReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BcastRoutingInfo not implemented")
 }
+func (UnimplementedMultiServerServer) mustEmbedUnimplementedMultiServerServer() {}
 
 // UnsafeMultiServerServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to MultiServerServer will

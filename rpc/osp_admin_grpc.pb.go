@@ -160,7 +160,7 @@ func (c *adminClient) CooperativeSettle(ctx context.Context, in *ChannelOpReques
 }
 
 // AdminServer is the server API for Admin service.
-// All implementations should embed UnimplementedAdminServer
+// All implementations must embed UnimplementedAdminServer
 // for forward compatibility
 type AdminServer interface {
 	// ConfirmOnChainResolvedPaysWithPeerOsps instructs Osp to confirm on-chain resolved pays between itself and connected osps.
@@ -186,9 +186,10 @@ type AdminServer interface {
 	RegisterStream(context.Context, *RegisterStreamRequest) (*emptypb.Empty, error)
 	CooperativeWithdraw(context.Context, *ChannelOpRequest) (*ChannelOpResponse, error)
 	CooperativeSettle(context.Context, *ChannelOpRequest) (*ChannelOpResponse, error)
+	mustEmbedUnimplementedAdminServer()
 }
 
-// UnimplementedAdminServer should be embedded to have forward compatible implementations.
+// UnimplementedAdminServer must be embedded to have forward compatible implementations.
 type UnimplementedAdminServer struct {
 }
 
@@ -228,6 +229,7 @@ func (UnimplementedAdminServer) CooperativeWithdraw(context.Context, *ChannelOpR
 func (UnimplementedAdminServer) CooperativeSettle(context.Context, *ChannelOpRequest) (*ChannelOpResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CooperativeSettle not implemented")
 }
+func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
 
 // UnsafeAdminServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to AdminServer will

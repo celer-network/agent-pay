@@ -2575,8 +2575,9 @@ type DelegationDescription struct {
 	// address of delegator
 	Delegator []byte `protobuf:"bytes,1,opt,name=delegator,proto3" json:"delegator,omitempty"`
 	// address of delegatee
-	Delegatee         []byte `protobuf:"bytes,2,opt,name=delegatee,proto3" json:"delegatee,omitempty"`
-	ExpiresAfterBlock int64  `protobuf:"varint,3,opt,name=expires_after_block,json=expiresAfterBlock,proto3" json:"expires_after_block,omitempty"`
+	Delegatee []byte `protobuf:"bytes,2,opt,name=delegatee,proto3" json:"delegatee,omitempty"`
+	// Off-chain delegation expiry. Unix timestamp (seconds). Field name kept for wire-format back-compat.
+	ExpiresAfterBlock int64 `protobuf:"varint,3,opt,name=expires_after_block,json=expiresAfterBlock,proto3" json:"expires_after_block,omitempty"`
 	// token addresses to be delegated
 	TokenToDelegate [][]byte `protobuf:"bytes,4,rep,name=token_to_delegate,json=tokenToDelegate,proto3" json:"token_to_delegate,omitempty"`
 	unknownFields   protoimpl.UnknownFields

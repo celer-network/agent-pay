@@ -1,12 +1,13 @@
 // Copyright 2018-2025 Celer Network
 
 syntax = "proto3";
-option go_package = "github.com/celer-network/agent-pay/rpc";
 package rpc;
 
 // For Proto V2
 import "entity.proto";
 import "google/protobuf/any.proto";
+
+option go_package = "github.com/celer-network/agent-pay/rpc";
 
 // MID is the message identifier, used as map key for unary over stream
 // NOTE: all field types must be golang comparable so map[MID] can work
@@ -393,7 +394,7 @@ message ChannelInAuth {
 
 message PayInAuthAck {
   bytes pay = 1; // pay bytes
-  google.protobuf.Any note = 2;  // pay note
+  google.protobuf.Any note = 2; // pay note
   // pay state, from instate or outstate depending on which simplex
   int64 state = 3;
 }
