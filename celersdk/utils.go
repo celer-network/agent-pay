@@ -64,7 +64,7 @@ func bc2c(bc *BooleanCondition) (*entity.Condition, error) {
 	}
 	return &entity.Condition{
 		ConditionType:          entity.ConditionType_VIRTUAL_CONTRACT,
-		VirtualContractAddress: ctype.Hex2Bytes(bc.SessionID),
+		VirtualContractAddress: ctype.Hex2Bytes(bc.VirtualContractAddress),
 		ArgsQueryOutcome:       bc.ArgsForQueryOutcome,
 	}, nil
 }

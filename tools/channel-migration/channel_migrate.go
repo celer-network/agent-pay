@@ -176,13 +176,8 @@ func handleSingleOnchainTx(
 
 	log.Infof("Found low gas price for channel %x migration: %d", cid, gasPrice.Uint64())
 	// check if current migration request is expired
-	header, err := client.HeaderByNumber(context.Background(), nil)
-	if err != nil {
-		log.Errorln(err)
-		return txFailed
-	}
-	currentBlockNum := header.Number.Uint64()
-	if deadlines[cid] <= currentBlockNum {
+	nowTs := uint64(time.Now().Unix())
+	if deadlines[cid] <= nowTs {
 		log.Infof("migration request has been expired for channel %x", cid)
 		return txExpired
 	}

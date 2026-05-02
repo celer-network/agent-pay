@@ -139,6 +139,7 @@ message BooleanOutcome {
 }
 
 message BlockNumber { uint64 block_number = 1; }
+message Timestamp { uint64 timestamp = 1; }
 
 message SetMsgDropReq {
   bool drop_recv = 1;
@@ -210,7 +211,7 @@ service WebApi {
 
   rpc IntendSettlePaymentChannel(TokenInfo) returns (google.protobuf.Empty) {}
   rpc ConfirmSettlePaymentChannel(TokenInfo) returns (google.protobuf.Empty) {}
-  rpc GetSettleFinalizedTimeForPaymentChannel(TokenInfo) returns (BlockNumber) {}
+  rpc GetSettleFinalizedTimeForPaymentChannel(TokenInfo) returns (Timestamp) {}
 
   rpc SyncOnChainPaymentChannelStatus(TokenInfo)
       returns (google.protobuf.Empty) {}

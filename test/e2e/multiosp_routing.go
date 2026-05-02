@@ -433,7 +433,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 			ArgsQueryFinalization:  []byte{},
 			ArgsQueryOutcome:       []byte{2},
 		}
-		// Pay timeout is a duration in seconds (was blocks). Short for fast CI.
+		// Pay timeout in seconds. Short for fast CI.
 		timeout := uint64(5)
 		p7, err := c3.SendPaymentWithBooleanConditions(
 			c5EthAddr, sendAmt, entity.TokenType_ETH, tokenAddrEth, []*entity.Condition{c3Cond1}, timeout)

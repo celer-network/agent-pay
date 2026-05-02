@@ -65,11 +65,11 @@ type Balance struct {
 }
 
 type BooleanCondition struct {
-	OnChainDeployed     bool
-	OnChainAddress      string // on-chain IBooleanCond contract address if OnChainDeployed is true
-	SessionID           string // virtual contract address (hex) from CreateAppSessionOnVirtualContract; ignored if OnChainDeployed is true. Field name kept for SDK back-compat.
-	ArgsForQueryOutcome []byte
-	TimeoutBlockNum     int // timeout of one pay, in seconds; added to wall-clock unix time for the pay deadline. Field name kept for SDK back-compat — value is now seconds, not blocks.
+	OnChainDeployed        bool
+	OnChainAddress         string // on-chain IBooleanCond contract address if OnChainDeployed is true
+	VirtualContractAddress string // deterministic virtual-contract address (hex) from CreateAppSessionOnVirtualContract; ignored if OnChainDeployed is true
+	ArgsForQueryOutcome    []byte
+	TimeoutSec             int // pay deadline = wall-clock unix time + TimeoutSec
 }
 
 type Token struct {

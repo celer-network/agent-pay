@@ -761,31 +761,6 @@ func (c *CNode) Close() {
 	}
 }
 
-// waitTimeout emits a signal to the timeoutChan when the given timeout has passed
-func (c *CNode) waitTimeout(ctx context.Context, timeoutChan chan bool, timeout *big.Int) {
-	queryTicker := time.NewTicker(time.Second)
-	defer queryTicker.Stop()
-	currentBlkNum := c.GetCurrentBlockNumber()
-	deadline := big.NewInt(0)
-	deadline.Add(currentBlkNum, timeout)
-	for {
-		blockNum := c.GetCurrentBlockNumber()
-		if blockNum.Cmp(deadline) > 0 {
-			select {
-			case timeoutChan <- true:
-			default:
-			}
-			return
-		}
-		// Wait for the next round.
-		select {
-		case <-ctx.Done():
-			return
-		case <-queryTicker.C:
-		}
-	}
-}
-
 func (c *CNode) GetCurrentBlockNumber() *big.Int {
 	return c.monitorService.GetCurrentBlockNumber()
 }

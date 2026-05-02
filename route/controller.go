@@ -242,7 +242,8 @@ func (c *Controller) checkAndRefreshIfNeeded() {
 	}
 }
 
-// send on-chain transaction to refresh the block number of Osp address.
+// send on-chain transaction to refresh the OSP address's last-seen unix
+// timestamp in the RouterRegistry.
 // CAUTION: need to pay attention if it fails to refresh
 func (c *Controller) refreshRouterRegistry() {
 	log.Infoln("sending RefreshRouter tx")

@@ -373,9 +373,7 @@ func (c *CelerClient) GetChannelState(tkAddr ctype.Addr) string {
 }
 
 func (c *CelerClient) HasPendingOpenChanRequest(tk *entity.TokenInfo) bool {
-	// Stored value is the unix timestamp (seconds) of the last open-channel request
-	// (DAL column name kept for storage back-compat).
-	openedAt, found, err := c.dal.GetDestTokenOpenChanBlkNum(c.svrEth, tk)
+	openedAt, found, err := c.dal.GetDestTokenOpenTs(c.svrEth, tk)
 	if err != nil || !found {
 		// not found, never requested, no pending
 		return false

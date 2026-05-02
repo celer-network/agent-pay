@@ -103,8 +103,8 @@ func sendPayTimeout(t *testing.T, tokenType entity.TokenType, tokenAddr string) 
 		ArgsQueryOutcome:       []byte{2},
 	}
 
-	// source pay in full — timeout is a pay-resolve duration in seconds (was blocks).
-	// Kept short so the timeout-and-sweep flow runs fast in CI.
+	// source pay in full. Pay-resolve timeout in seconds, kept short so the
+	// timeout-and-sweep flow runs fast in CI.
 	timeout := uint64(5)
 	_, err = c1.SendPaymentWithBooleanConditions(
 		c2EthAddr, sendAmt, tokenType, tokenAddr, []*entity.Condition{c1Cond1}, timeout)

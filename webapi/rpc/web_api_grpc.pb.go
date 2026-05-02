@@ -71,7 +71,7 @@ type WebApiClient interface {
 	ConfirmWithdraw(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	IntendSettlePaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ConfirmSettlePaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetSettleFinalizedTimeForPaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BlockNumber, error)
+	GetSettleFinalizedTimeForPaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*Timestamp, error)
 	SyncOnChainPaymentChannelStatus(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SyncStateWithPeer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreateAppSessionOnVirtualContract(ctx context.Context, in *CreateAppSessionOnVirtualContractRequest, opts ...grpc.CallOption) (*SessionID, error)
@@ -398,8 +398,8 @@ func (c *webApiClient) ConfirmSettlePaymentChannel(ctx context.Context, in *Toke
 	return out, nil
 }
 
-func (c *webApiClient) GetSettleFinalizedTimeForPaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BlockNumber, error) {
-	out := new(BlockNumber)
+func (c *webApiClient) GetSettleFinalizedTimeForPaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*Timestamp, error) {
+	out := new(Timestamp)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/GetSettleFinalizedTimeForPaymentChannel", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -545,7 +545,7 @@ type WebApiServer interface {
 	ConfirmWithdraw(context.Context, *TokenInfo) (*emptypb.Empty, error)
 	IntendSettlePaymentChannel(context.Context, *TokenInfo) (*emptypb.Empty, error)
 	ConfirmSettlePaymentChannel(context.Context, *TokenInfo) (*emptypb.Empty, error)
-	GetSettleFinalizedTimeForPaymentChannel(context.Context, *TokenInfo) (*BlockNumber, error)
+	GetSettleFinalizedTimeForPaymentChannel(context.Context, *TokenInfo) (*Timestamp, error)
 	SyncOnChainPaymentChannelStatus(context.Context, *TokenInfo) (*emptypb.Empty, error)
 	SyncStateWithPeer(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	CreateAppSessionOnVirtualContract(context.Context, *CreateAppSessionOnVirtualContractRequest) (*SessionID, error)
@@ -649,7 +649,7 @@ func (UnimplementedWebApiServer) IntendSettlePaymentChannel(context.Context, *To
 func (UnimplementedWebApiServer) ConfirmSettlePaymentChannel(context.Context, *TokenInfo) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfirmSettlePaymentChannel not implemented")
 }
-func (UnimplementedWebApiServer) GetSettleFinalizedTimeForPaymentChannel(context.Context, *TokenInfo) (*BlockNumber, error) {
+func (UnimplementedWebApiServer) GetSettleFinalizedTimeForPaymentChannel(context.Context, *TokenInfo) (*Timestamp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSettleFinalizedTimeForPaymentChannel not implemented")
 }
 func (UnimplementedWebApiServer) SyncOnChainPaymentChannelStatus(context.Context, *TokenInfo) (*emptypb.Empty, error) {

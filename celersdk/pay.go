@@ -53,8 +53,8 @@ func (mc *Client) SendETHWithCondition(receiver string, amtWei string, cond *Boo
 func (mc *Client) SendTokenWithCondition(tk *Token, receiver string, amtWei string, cond *BooleanCondition) (string, error) {
 	xfer := createXfer(tk, receiver, amtWei)
 	timeout := cPayTimeout
-	if cond.TimeoutBlockNum > 0 {
-		timeout = cond.TimeoutBlockNum
+	if cond.TimeoutSec > 0 {
+		timeout = cond.TimeoutSec
 	}
 	condition, err := bc2c(cond)
 	if err != nil {

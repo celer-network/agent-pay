@@ -675,8 +675,8 @@ func (s *ApiServer) ConfirmSettlePaymentChannel(
 }
 
 func (s *ApiServer) GetSettleFinalizedTimeForPaymentChannel(
-	context context.Context, request *rpc.TokenInfo) (*rpc.BlockNumber, error) {
-	time, err := s.apiClient.GetSettleFinalizedTimeForPaymentChannel(
+	context context.Context, request *rpc.TokenInfo) (*rpc.Timestamp, error) {
+	ts, err := s.apiClient.GetSettleFinalizedTimeForPaymentChannel(
 		&celersdk.TokenInfo{
 			TokenType:    celersdk.TokenType(int32(request.TokenType)),
 			TokenAddress: request.TokenAddress,
@@ -684,7 +684,7 @@ func (s *ApiServer) GetSettleFinalizedTimeForPaymentChannel(
 	if err != nil {
 		return nil, err
 	}
-	return &rpc.BlockNumber{BlockNumber: uint64(time)}, nil
+	return &rpc.Timestamp{Timestamp: uint64(ts)}, nil
 }
 
 // GetPayHistory returns paginated pay history.

@@ -41,12 +41,12 @@ func (p *Processor) EthPoolWithdraw() {
 
 func (p *Processor) RegisterRouter() {
 	// check router registration
-	blk, err := p.queryRouterRegistry()
+	ts, err := p.queryRouterRegistry()
 	if err != nil {
 		return
 	}
 	// registry router
-	if blk == 0 {
+	if ts == 0 {
 		err = p.registerRouter()
 		if err != nil {
 			return
@@ -58,12 +58,12 @@ func (p *Processor) RegisterRouter() {
 
 func (p *Processor) DeregisterRouter() {
 	// check router registration
-	blk, err := p.queryRouterRegistry()
+	ts, err := p.queryRouterRegistry()
 	if err != nil {
 		return
 	}
 	// registry router
-	if blk == 0 {
+	if ts == 0 {
 		log.Info("OSP not registered as a network router")
 		return
 	}
@@ -189,16 +189,16 @@ func (p *Processor) queryRouterRegistry() (uint64, error) {
 		log.Error(err)
 		return 0, err
 	}
-	blk, err := contract.RouterInfo(&bind.CallOpts{}, p.myAddr)
+	info, err := contract.RouterInfo(&bind.CallOpts{}, p.myAddr)
 	if err != nil {
 		log.Error(err)
 		return 0, err
 	}
-	blknum := blk.Uint64()
-	if blknum != 0 {
-		log.Infoln("router registered / refreshed at block", blknum)
+	ts := info.Uint64()
+	if ts != 0 {
+		log.Infoln("router registered / refreshed at unix-ts", ts)
 	}
-	return blknum, nil
+	return ts, nil
 }
 
 func (p *Processor) registerRouter() error {

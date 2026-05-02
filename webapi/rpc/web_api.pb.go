@@ -1471,6 +1471,50 @@ func (x *BlockNumber) GetBlockNumber() uint64 {
 	return 0
 }
 
+type Timestamp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Timestamp     uint64                 `protobuf:"varint,1,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Timestamp) Reset() {
+	*x = Timestamp{}
+	mi := &file_web_api_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Timestamp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Timestamp) ProtoMessage() {}
+
+func (x *Timestamp) ProtoReflect() protoreflect.Message {
+	mi := &file_web_api_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Timestamp.ProtoReflect.Descriptor instead.
+func (*Timestamp) Descriptor() ([]byte, []int) {
+	return file_web_api_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *Timestamp) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
 type SetMsgDropReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DropRecv      bool                   `protobuf:"varint,1,opt,name=drop_recv,json=dropRecv,proto3" json:"drop_recv,omitempty"`
@@ -1481,7 +1525,7 @@ type SetMsgDropReq struct {
 
 func (x *SetMsgDropReq) Reset() {
 	*x = SetMsgDropReq{}
-	mi := &file_web_api_proto_msgTypes[26]
+	mi := &file_web_api_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1493,7 +1537,7 @@ func (x *SetMsgDropReq) String() string {
 func (*SetMsgDropReq) ProtoMessage() {}
 
 func (x *SetMsgDropReq) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[26]
+	mi := &file_web_api_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1506,7 +1550,7 @@ func (x *SetMsgDropReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMsgDropReq.ProtoReflect.Descriptor instead.
 func (*SetMsgDropReq) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{26}
+	return file_web_api_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *SetMsgDropReq) GetDropRecv() bool {
@@ -1532,7 +1576,7 @@ type PaymentStatus struct {
 
 func (x *PaymentStatus) Reset() {
 	*x = PaymentStatus{}
-	mi := &file_web_api_proto_msgTypes[27]
+	mi := &file_web_api_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1544,7 +1588,7 @@ func (x *PaymentStatus) String() string {
 func (*PaymentStatus) ProtoMessage() {}
 
 func (x *PaymentStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[27]
+	mi := &file_web_api_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1557,7 +1601,7 @@ func (x *PaymentStatus) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PaymentStatus.ProtoReflect.Descriptor instead.
 func (*PaymentStatus) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{27}
+	return file_web_api_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *PaymentStatus) GetStatus() uint32 {
@@ -1679,12 +1723,14 @@ const file_web_api_proto_rawDesc = "" +
 	"\tfinalized\x18\x01 \x01(\bR\tfinalized\x12\x18\n" +
 	"\aoutcome\x18\x02 \x01(\bR\aoutcome\"0\n" +
 	"\vBlockNumber\x12!\n" +
-	"\fblock_number\x18\x01 \x01(\x04R\vblockNumber\"I\n" +
+	"\fblock_number\x18\x01 \x01(\x04R\vblockNumber\")\n" +
+	"\tTimestamp\x12\x1c\n" +
+	"\ttimestamp\x18\x01 \x01(\x04R\ttimestamp\"I\n" +
 	"\rSetMsgDropReq\x12\x1b\n" +
 	"\tdrop_recv\x18\x01 \x01(\bR\bdropRecv\x12\x1b\n" +
 	"\tdrop_send\x18\x02 \x01(\bR\bdropSend\"'\n" +
 	"\rPaymentStatus\x12\x16\n" +
-	"\x06status\x18\x01 \x01(\rR\x06status2\xcf\x17\n" +
+	"\x06status\x18\x01 \x01(\rR\x06status2\xcd\x17\n" +
 	"\x06WebApi\x12N\n" +
 	"\rGetPayHistory\x12\x1c.webrpc.GetPayHistoryRequest\x1a\x1d.webrpc.GetPayHistoryResponse\"\x00\x12G\n" +
 	"\rSetDelegation\x12\x1c.webrpc.SetDelegationRequest\x1a\x16.google.protobuf.Empty\"\x00\x12L\n" +
@@ -1715,8 +1761,8 @@ const file_web_api_proto_rawDesc = "" +
 	"\x0eIntendWithdraw\x12 .webrpc.DepositOrWithdrawRequest\x1a\x16.google.protobuf.Empty\"\x00\x12>\n" +
 	"\x0fConfirmWithdraw\x12\x11.webrpc.TokenInfo\x1a\x16.google.protobuf.Empty\"\x00\x12I\n" +
 	"\x1aIntendSettlePaymentChannel\x12\x11.webrpc.TokenInfo\x1a\x16.google.protobuf.Empty\"\x00\x12J\n" +
-	"\x1bConfirmSettlePaymentChannel\x12\x11.webrpc.TokenInfo\x1a\x16.google.protobuf.Empty\"\x00\x12S\n" +
-	"'GetSettleFinalizedTimeForPaymentChannel\x12\x11.webrpc.TokenInfo\x1a\x13.webrpc.BlockNumber\"\x00\x12N\n" +
+	"\x1bConfirmSettlePaymentChannel\x12\x11.webrpc.TokenInfo\x1a\x16.google.protobuf.Empty\"\x00\x12Q\n" +
+	"'GetSettleFinalizedTimeForPaymentChannel\x12\x11.webrpc.TokenInfo\x1a\x11.webrpc.Timestamp\"\x00\x12N\n" +
 	"\x1fSyncOnChainPaymentChannelStatus\x12\x11.webrpc.TokenInfo\x1a\x16.google.protobuf.Empty\"\x00\x12E\n" +
 	"\x11SyncStateWithPeer\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12j\n" +
 	"!CreateAppSessionOnVirtualContract\x120.webrpc.CreateAppSessionOnVirtualContractRequest\x1a\x11.webrpc.SessionID\"\x00\x12-\n" +
@@ -1739,7 +1785,7 @@ func file_web_api_proto_rawDescGZIP() []byte {
 	return file_web_api_proto_rawDescData
 }
 
-var file_web_api_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
+var file_web_api_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
 var file_web_api_proto_goTypes = []any{
 	(*GetPayHistoryRequest)(nil),                     // 0: webrpc.GetPayHistoryRequest
 	(*GetPayHistoryResponse)(nil),                    // 1: webrpc.GetPayHistoryResponse
@@ -1767,27 +1813,28 @@ var file_web_api_proto_goTypes = []any{
 	(*GetBooleanOutcomeForAppSessionRequest)(nil),    // 23: webrpc.GetBooleanOutcomeForAppSessionRequest
 	(*BooleanOutcome)(nil),                           // 24: webrpc.BooleanOutcome
 	(*BlockNumber)(nil),                              // 25: webrpc.BlockNumber
-	(*SetMsgDropReq)(nil),                            // 26: webrpc.SetMsgDropReq
-	(*PaymentStatus)(nil),                            // 27: webrpc.PaymentStatus
-	(*rpc.OneHistoricalPay)(nil),                     // 28: rpc.OneHistoricalPay
-	(entity.TokenType)(0),                            // 29: entity.TokenType
-	(entity.TransferFunctionType)(0),                 // 30: entity.TransferFunctionType
-	(*anypb.Any)(nil),                                // 31: google.protobuf.Any
-	(*emptypb.Empty)(nil),                            // 32: google.protobuf.Empty
+	(*Timestamp)(nil),                                // 26: webrpc.Timestamp
+	(*SetMsgDropReq)(nil),                            // 27: webrpc.SetMsgDropReq
+	(*PaymentStatus)(nil),                            // 28: webrpc.PaymentStatus
+	(*rpc.OneHistoricalPay)(nil),                     // 29: rpc.OneHistoricalPay
+	(entity.TokenType)(0),                            // 30: entity.TokenType
+	(entity.TransferFunctionType)(0),                 // 31: entity.TransferFunctionType
+	(*anypb.Any)(nil),                                // 32: google.protobuf.Any
+	(*emptypb.Empty)(nil),                            // 33: google.protobuf.Empty
 }
 var file_web_api_proto_depIdxs = []int32{
-	28, // 0: webrpc.GetPayHistoryResponse.pays:type_name -> rpc.OneHistoricalPay
-	29, // 1: webrpc.TokenInfo.token_type:type_name -> entity.TokenType
+	29, // 0: webrpc.GetPayHistoryResponse.pays:type_name -> rpc.OneHistoricalPay
+	30, // 1: webrpc.TokenInfo.token_type:type_name -> entity.TokenType
 	2,  // 2: webrpc.SetDelegationRequest.token_infos:type_name -> webrpc.TokenInfo
 	2,  // 3: webrpc.OpenPaymentChannelRequest.token_info:type_name -> webrpc.TokenInfo
 	2,  // 4: webrpc.DepositOrWithdrawRequest.token_info:type_name -> webrpc.TokenInfo
 	2,  // 5: webrpc.GetPeerFreeBalanceRequest.token_info:type_name -> webrpc.TokenInfo
 	2,  // 6: webrpc.SendConditionalPaymentRequest.token_info:type_name -> webrpc.TokenInfo
-	30, // 7: webrpc.SendConditionalPaymentRequest.transfer_logic_type:type_name -> entity.TransferFunctionType
+	31, // 7: webrpc.SendConditionalPaymentRequest.transfer_logic_type:type_name -> entity.TransferFunctionType
 	11, // 8: webrpc.SendConditionalPaymentRequest.conditions:type_name -> webrpc.Condition
-	31, // 9: webrpc.SendConditionalPaymentRequest.note:type_name -> google.protobuf.Any
+	32, // 9: webrpc.SendConditionalPaymentRequest.note:type_name -> google.protobuf.Any
 	2,  // 10: webrpc.SendTokenRequest.token_info:type_name -> webrpc.TokenInfo
-	31, // 11: webrpc.SendTokenRequest.note:type_name -> google.protobuf.Any
+	32, // 11: webrpc.SendTokenRequest.note:type_name -> google.protobuf.Any
 	2,  // 12: webrpc.PaymentInfo.token_info:type_name -> webrpc.TokenInfo
 	15, // 13: webrpc.OutgoingPaymentInfo.payment:type_name -> webrpc.PaymentInfo
 	0,  // 14: webrpc.WebApi.GetPayHistory:input_type -> webrpc.GetPayHistoryRequest
@@ -1803,8 +1850,8 @@ var file_web_api_proto_depIdxs = []int32{
 	9,  // 24: webrpc.WebApi.GetPeerFreeBalance:input_type -> webrpc.GetPeerFreeBalanceRequest
 	13, // 25: webrpc.WebApi.SendToken:input_type -> webrpc.SendTokenRequest
 	12, // 26: webrpc.WebApi.SendConditionalPayment:input_type -> webrpc.SendConditionalPaymentRequest
-	32, // 27: webrpc.WebApi.SubscribeIncomingPayments:input_type -> google.protobuf.Empty
-	32, // 28: webrpc.WebApi.SubscribeOutgoingPayments:input_type -> google.protobuf.Empty
+	33, // 27: webrpc.WebApi.SubscribeIncomingPayments:input_type -> google.protobuf.Empty
+	33, // 28: webrpc.WebApi.SubscribeOutgoingPayments:input_type -> google.protobuf.Empty
 	14, // 29: webrpc.WebApi.GetIncomingPaymentStatus:input_type -> webrpc.PaymentID
 	14, // 30: webrpc.WebApi.GetIncomingPaymentInfo:input_type -> webrpc.PaymentID
 	14, // 31: webrpc.WebApi.GetOutgoingPaymentStatus:input_type -> webrpc.PaymentID
@@ -1821,16 +1868,16 @@ var file_web_api_proto_depIdxs = []int32{
 	2,  // 42: webrpc.WebApi.ConfirmSettlePaymentChannel:input_type -> webrpc.TokenInfo
 	2,  // 43: webrpc.WebApi.GetSettleFinalizedTimeForPaymentChannel:input_type -> webrpc.TokenInfo
 	2,  // 44: webrpc.WebApi.SyncOnChainPaymentChannelStatus:input_type -> webrpc.TokenInfo
-	32, // 45: webrpc.WebApi.SyncStateWithPeer:input_type -> google.protobuf.Empty
+	33, // 45: webrpc.WebApi.SyncStateWithPeer:input_type -> google.protobuf.Empty
 	19, // 46: webrpc.WebApi.CreateAppSessionOnVirtualContract:input_type -> webrpc.CreateAppSessionOnVirtualContractRequest
 	20, // 47: webrpc.WebApi.SignData:input_type -> webrpc.Data
 	18, // 48: webrpc.WebApi.DeleteAppSession:input_type -> webrpc.SessionID
 	18, // 49: webrpc.WebApi.GetDeployedAddressForAppSession:input_type -> webrpc.SessionID
 	23, // 50: webrpc.WebApi.GetBooleanOutcomeForAppSession:input_type -> webrpc.GetBooleanOutcomeForAppSessionRequest
-	32, // 51: webrpc.WebApi.GetBlockNumber:input_type -> google.protobuf.Empty
-	26, // 52: webrpc.WebApi.SetMsgDropper:input_type -> webrpc.SetMsgDropReq
+	33, // 51: webrpc.WebApi.GetBlockNumber:input_type -> google.protobuf.Empty
+	27, // 52: webrpc.WebApi.SetMsgDropper:input_type -> webrpc.SetMsgDropReq
 	1,  // 53: webrpc.WebApi.GetPayHistory:output_type -> webrpc.GetPayHistoryResponse
-	32, // 54: webrpc.WebApi.SetDelegation:output_type -> google.protobuf.Empty
+	33, // 54: webrpc.WebApi.SetDelegation:output_type -> google.protobuf.Empty
 	5,  // 55: webrpc.WebApi.OpenPaymentChannel:output_type -> webrpc.ChannelID
 	7,  // 56: webrpc.WebApi.Deposit:output_type -> webrpc.DepositOrWithdrawJob
 	7,  // 57: webrpc.WebApi.DepositNonBlocking:output_type -> webrpc.DepositOrWithdrawJob
@@ -1844,30 +1891,30 @@ var file_web_api_proto_depIdxs = []int32{
 	14, // 65: webrpc.WebApi.SendConditionalPayment:output_type -> webrpc.PaymentID
 	15, // 66: webrpc.WebApi.SubscribeIncomingPayments:output_type -> webrpc.PaymentInfo
 	16, // 67: webrpc.WebApi.SubscribeOutgoingPayments:output_type -> webrpc.OutgoingPaymentInfo
-	27, // 68: webrpc.WebApi.GetIncomingPaymentStatus:output_type -> webrpc.PaymentStatus
+	28, // 68: webrpc.WebApi.GetIncomingPaymentStatus:output_type -> webrpc.PaymentStatus
 	15, // 69: webrpc.WebApi.GetIncomingPaymentInfo:output_type -> webrpc.PaymentInfo
-	27, // 70: webrpc.WebApi.GetOutgoingPaymentStatus:output_type -> webrpc.PaymentStatus
-	32, // 71: webrpc.WebApi.ConfirmOutgoingPayment:output_type -> google.protobuf.Empty
-	32, // 72: webrpc.WebApi.RejectIncomingPayment:output_type -> google.protobuf.Empty
-	32, // 73: webrpc.WebApi.SettleOnChainResolvedIncomingPayment:output_type -> google.protobuf.Empty
-	32, // 74: webrpc.WebApi.ResolveIncomingPaymentOnChain:output_type -> google.protobuf.Empty
+	28, // 70: webrpc.WebApi.GetOutgoingPaymentStatus:output_type -> webrpc.PaymentStatus
+	33, // 71: webrpc.WebApi.ConfirmOutgoingPayment:output_type -> google.protobuf.Empty
+	33, // 72: webrpc.WebApi.RejectIncomingPayment:output_type -> google.protobuf.Empty
+	33, // 73: webrpc.WebApi.SettleOnChainResolvedIncomingPayment:output_type -> google.protobuf.Empty
+	33, // 74: webrpc.WebApi.ResolveIncomingPaymentOnChain:output_type -> google.protobuf.Empty
 	17, // 75: webrpc.WebApi.GetOnChainPaymentInfo:output_type -> webrpc.OnChainPaymentInfo
-	32, // 76: webrpc.WebApi.ConfirmOnChainResolvedPayments:output_type -> google.protobuf.Empty
-	32, // 77: webrpc.WebApi.SettleExpiredPayments:output_type -> google.protobuf.Empty
-	32, // 78: webrpc.WebApi.IntendWithdraw:output_type -> google.protobuf.Empty
-	32, // 79: webrpc.WebApi.ConfirmWithdraw:output_type -> google.protobuf.Empty
-	32, // 80: webrpc.WebApi.IntendSettlePaymentChannel:output_type -> google.protobuf.Empty
-	32, // 81: webrpc.WebApi.ConfirmSettlePaymentChannel:output_type -> google.protobuf.Empty
-	25, // 82: webrpc.WebApi.GetSettleFinalizedTimeForPaymentChannel:output_type -> webrpc.BlockNumber
-	32, // 83: webrpc.WebApi.SyncOnChainPaymentChannelStatus:output_type -> google.protobuf.Empty
-	32, // 84: webrpc.WebApi.SyncStateWithPeer:output_type -> google.protobuf.Empty
+	33, // 76: webrpc.WebApi.ConfirmOnChainResolvedPayments:output_type -> google.protobuf.Empty
+	33, // 77: webrpc.WebApi.SettleExpiredPayments:output_type -> google.protobuf.Empty
+	33, // 78: webrpc.WebApi.IntendWithdraw:output_type -> google.protobuf.Empty
+	33, // 79: webrpc.WebApi.ConfirmWithdraw:output_type -> google.protobuf.Empty
+	33, // 80: webrpc.WebApi.IntendSettlePaymentChannel:output_type -> google.protobuf.Empty
+	33, // 81: webrpc.WebApi.ConfirmSettlePaymentChannel:output_type -> google.protobuf.Empty
+	26, // 82: webrpc.WebApi.GetSettleFinalizedTimeForPaymentChannel:output_type -> webrpc.Timestamp
+	33, // 83: webrpc.WebApi.SyncOnChainPaymentChannelStatus:output_type -> google.protobuf.Empty
+	33, // 84: webrpc.WebApi.SyncStateWithPeer:output_type -> google.protobuf.Empty
 	18, // 85: webrpc.WebApi.CreateAppSessionOnVirtualContract:output_type -> webrpc.SessionID
 	21, // 86: webrpc.WebApi.SignData:output_type -> webrpc.Signature
-	32, // 87: webrpc.WebApi.DeleteAppSession:output_type -> google.protobuf.Empty
+	33, // 87: webrpc.WebApi.DeleteAppSession:output_type -> google.protobuf.Empty
 	22, // 88: webrpc.WebApi.GetDeployedAddressForAppSession:output_type -> webrpc.Address
 	24, // 89: webrpc.WebApi.GetBooleanOutcomeForAppSession:output_type -> webrpc.BooleanOutcome
 	25, // 90: webrpc.WebApi.GetBlockNumber:output_type -> webrpc.BlockNumber
-	32, // 91: webrpc.WebApi.SetMsgDropper:output_type -> google.protobuf.Empty
+	33, // 91: webrpc.WebApi.SetMsgDropper:output_type -> google.protobuf.Empty
 	53, // [53:92] is the sub-list for method output_type
 	14, // [14:53] is the sub-list for method input_type
 	14, // [14:14] is the sub-list for extension type_name
@@ -1886,7 +1933,7 @@ func file_web_api_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_web_api_proto_rawDesc), len(file_web_api_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   28,
+			NumMessages:   29,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

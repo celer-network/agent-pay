@@ -3,8 +3,8 @@
 package cli
 
 import (
-	"context"
 	"fmt"
+	"time"
 
 	"github.com/celer-network/agent-pay/app"
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/ledger"
@@ -81,19 +81,13 @@ func (p *Processor) printChannelLedgerInfo(cid ctype.CidType) {
 	fmt.Println("-- total balance:", balance)
 
 	if status == ledgerview.OnChainStatus_SETTLING {
-		var blknum int64
-		header, err := p.nodeConfig.GetEthConn().HeaderByNumber(context.Background(), nil)
+		finalizeTs, err := contract.GetSettleFinalizedTime(&bind.CallOpts{}, cid)
 		if err != nil {
-			log.Error(err)
-		} else {
-			blknum = header.Number.Int64()
+			log.Fatalln("GetSettleFinalizedTime error", err)
 		}
-		finalizeBlk, err2 := contract.GetSettleFinalizedTime(&bind.CallOpts{}, cid)
-		if err2 != nil {
-			log.Fatalln("GetSettleFinalizedTime error", err2)
-		}
-		finalizeBlknum := finalizeBlk.Int64()
-		fmt.Printf("-- settle finalized block %d, current block %d, diff %d\n", finalizeBlknum, blknum, finalizeBlknum-blknum)
+		nowTs := time.Now().Unix()
+		fmt.Printf("-- settle finalized at unix-ts %d, current %d, diff %d\n",
+			finalizeTs.Int64(), nowTs, finalizeTs.Int64()-nowTs)
 	}
 	// TODO: add other info
 }

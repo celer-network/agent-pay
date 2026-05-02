@@ -30,7 +30,7 @@ var sqlSchemaCmds = [...]string{
 	"CREATE TABLE IF NOT EXISTS nettokens ( netid INT NOT NULL, nettoken TEXT NOT NULL, localtoken TEXT NOT NULL, rate FLOAT NOT NULL, UNIQUE (netid, nettoken), UNIQUE (netid, localtoken) );",
 	"CREATE TABLE IF NOT EXISTS peers ( peer TEXT PRIMARY KEY NOT NULL, server TEXT NOT NULL, activecids TEXT NOT NULL,  delegateproof BYTEA );",
 	"CREATE INDEX IF NOT EXISTS peers_server_idx ON peers (server);",
-	"CREATE TABLE IF NOT EXISTS desttokens ( dest TEXT NOT NULL, token TEXT NOT NULL, osps TEXT NOT NULL,  openchanblknum INT NOT NULL, UNIQUE (dest, token) );",
+	"CREATE TABLE IF NOT EXISTS desttokens ( dest TEXT NOT NULL, token TEXT NOT NULL, osps TEXT NOT NULL,  openchants INT NOT NULL, UNIQUE (dest, token) );",
 	"CREATE TABLE IF NOT EXISTS chanmessages ( cid TEXT NOT NULL, seqnum INT NOT NULL, msg BYTEA, UNIQUE (cid, seqnum) );",
 	"CREATE TABLE IF NOT EXISTS chanmigration ( cid TEXT NOT NULL REFERENCES channels (cid) ON DELETE CASCADE, toledger TEXT NOT NULL, deadline INT NOT NULL, onchainreq BYTEA, state INT NOT NULL, ts TIMESTAMPTZ NOT NULL, UNIQUE (cid, toledger) );",
 	"CREATE INDEX IF NOT EXISTS mg_toledger_state_idx ON chanmigration (toledger, state);",

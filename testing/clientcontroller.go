@@ -396,7 +396,7 @@ func (cc *ClientController) GetPayHistory(fromStart bool, itemsPerPage int32) ([
 
 func (cc *ClientController) GetSettleFinalizedTime(
 	tokenType entity.TokenType, tokenAddr string) (uint64, error) {
-	blknum, err := cc.apiClient.GetSettleFinalizedTimeForPaymentChannel(
+	resp, err := cc.apiClient.GetSettleFinalizedTimeForPaymentChannel(
 		context.Background(),
 		&rpc.TokenInfo{
 			TokenType:    tokenType,
@@ -405,7 +405,7 @@ func (cc *ClientController) GetSettleFinalizedTime(
 	if err != nil {
 		return 0, err
 	}
-	return blknum.BlockNumber, nil
+	return resp.Timestamp, nil
 }
 
 func (cc *ClientController) OpenChannel(

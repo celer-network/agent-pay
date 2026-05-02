@@ -2153,42 +2153,42 @@ func insertDestToken(
 	dest ctype.Addr,
 	token *entity.TokenInfo,
 	osps []ctype.Addr,
-	chanBlockNum uint64) error {
+	openTs uint64) error {
 	s := make([]string, 0, len(osps))
 	for _, o := range osps {
 		s = append(s, ctype.Addr2Hex(o))
 	}
 
-	q := `INSERT INTO desttokens (dest, token, osps, openchanblknum)
+	q := `INSERT INTO desttokens (dest, token, osps, openchants)
 		VALUES ($1, $2, $3, $4)`
 	res, err := st.Exec(q, ctype.Addr2Hex(dest), utils.GetTokenAddrStr(token),
-		strings.Join(s, listSep), chanBlockNum)
+		strings.Join(s, listSep), openTs)
 	return chkExec(res, err, 1, "insertDestToken")
 }
 
-func getDestTokenOpenChanBlkNum(
+func getDestTokenOpenTs(
 	st SqlStorage,
 	dest ctype.Addr,
 	token *entity.TokenInfo) (uint64, bool, error) {
-	var blkNum uint64
-	q := `SELECT openchanblknum FROM desttokens WHERE dest = $1 AND token = $2`
+	var openTs uint64
+	q := `SELECT openchants FROM desttokens WHERE dest = $1 AND token = $2`
 	err := st.QueryRow(q, ctype.Addr2Hex(dest),
-		utils.GetTokenAddrStr(token)).Scan(&blkNum)
+		utils.GetTokenAddrStr(token)).Scan(&openTs)
 	found, err := chkQueryRow(err)
-	return blkNum, found, err
+	return openTs, found, err
 }
 
-func upsertDestTokenOpenChanBlkNum(
+func upsertDestTokenOpenTs(
 	st SqlStorage,
 	dest ctype.Addr,
 	token *entity.TokenInfo,
-	chanBlockNum uint64) error {
-	q := `INSERT INTO desttokens (dest, token, osps, openchanblknum)
+	openTs uint64) error {
+	q := `INSERT INTO desttokens (dest, token, osps, openchants)
 		VALUES ($1, $2, $3, $4) ON CONFLICT (dest, token)
-		DO UPDATE SET openchanblknum = excluded.openchanblknum`
+		DO UPDATE SET openchants = excluded.openchants`
 	res, err := st.Exec(q, ctype.Addr2Hex(dest),
-		utils.GetTokenAddrStr(token), "", chanBlockNum)
-	return chkExec(res, err, 1, "upsertDestTokenOpenChanBlkNum")
+		utils.GetTokenAddrStr(token), "", openTs)
+	return chkExec(res, err, 1, "upsertDestTokenOpenTs")
 }
 
 func updateDestTokenOsps(
