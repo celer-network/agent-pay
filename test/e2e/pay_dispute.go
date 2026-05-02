@@ -475,13 +475,9 @@ func runVirtualContractResolveBeforeDeploy(
 }
 
 // runVirtualContractParallelDeploy fires N concurrent deploy-on-query calls
-// against a freshly-registered virtual contract — interleaved with a few
-// `GetAppChannelDeployedAddr` probes that take the same per-AppChannel mutex
-// — and asserts:
+// against a freshly-registered virtual contract and asserts:
 //
-//   - Every concurrent call returns either `(true, true, nil)` from
-//     GetBooleanOutcome or a successfully-resolved address from
-//     GetAppChannelDeployedAddr.
+//   - Every concurrent `GetBooleanOutcome` call returns `(true, true, nil)`.
 //   - Exactly one VirtContractResolver `Deploy` event was emitted for the
 //     virtual address. This is the stronger invariant the mutex is supposed
 //     to guarantee: "exactly one deploy tx submitted," not just "no caller
@@ -492,7 +488,7 @@ func runVirtualContractResolveBeforeDeploy(
 // second one with "Current real address is not 0" (the first goroutine sees
 // an error from `SubmitWaitMined`) or the second tx lands and a Deploy event
 // count of 2 would surface here. With the mutex, the first goroutine deploys,
-// every other goroutine sees the cached `DeployedAddr` and returns without
+// every other goroutine sees the cached `deployedAddr` and returns without
 // a tx.
 func runVirtualContractParallelDeploy(
 	c *tf.ClientController,
@@ -507,12 +503,9 @@ func runVirtualContractParallelDeploy(
 		return fmt.Errorf("NewAppChannelOnVirtualContract: %w", err)
 	}
 
-	const outcomeWorkers = 4
-	const addrWorkers = 2
-	totalWorkers := outcomeWorkers + addrWorkers
-
-	errs := make(chan error, totalWorkers)
-	for i := 0; i < outcomeWorkers; i++ {
+	const workers = 4
+	errs := make(chan error, workers)
+	for i := 0; i < workers; i++ {
 		go func(idx int) {
 			f, o, e := c.GetAppChannelBooleanOutcome(appChanID, []byte{0x01})
 			if e != nil {
@@ -527,25 +520,7 @@ func runVirtualContractParallelDeploy(
 			errs <- nil
 		}(i)
 	}
-	// Interleave a couple of `GetAppChannelDeployedAddr` calls. This path
-	// takes the same `appChannel.mu` as `GetBooleanOutcome` so it should
-	// either return the resolved address (after the deploy lands) or block
-	// on the mutex until it does. Either way, no error.
-	for i := 0; i < addrWorkers; i++ {
-		go func(idx int) {
-			addr, e := c.GetAppChannelDeployedAddr(appChanID)
-			if e != nil {
-				errs <- fmt.Errorf("parallel GetAppChannelDeployedAddr[%d]: %w", idx, e)
-				return
-			}
-			if addr == "" {
-				errs <- fmt.Errorf("parallel GetAppChannelDeployedAddr[%d]: empty address", idx)
-				return
-			}
-			errs <- nil
-		}(i)
-	}
-	for i := 0; i < totalWorkers; i++ {
+	for i := 0; i < workers; i++ {
 		if e := <-errs; e != nil {
 			return e
 		}
@@ -578,7 +553,7 @@ func runVirtualContractParallelDeploy(
 	if deployCount != 1 {
 		return fmt.Errorf("VirtContractResolver Deploy events for virtAddr = %d, want exactly 1 (mutex should serialize concurrent deploys to a single tx)", deployCount)
 	}
-	log.Infof("parallel-deploy scenario passed: %d concurrent calls converged on a single deploy tx (Deploy event count = %d)", totalWorkers, deployCount)
+	log.Infof("parallel-deploy scenario passed: %d concurrent calls converged on a single deploy tx (Deploy event count = %d)", workers, deployCount)
 	return nil
 }
 

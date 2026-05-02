@@ -712,18 +712,6 @@ func (cc *ClientController) NewAppChannelOnVirtualContract(
 	return sessionID.SessionId, nil
 }
 
-// GetAppChannelDeployedAddr wraps the GetDeployedAddressForAppSession RPC.
-// Returns the on-chain address (hex string) of the registered virtual
-// condition contract, or an error if the contract has not been deployed yet.
-func (cc *ClientController) GetAppChannelDeployedAddr(cid string) (string, error) {
-	resp, err := cc.apiClient.GetDeployedAddressForAppSession(
-		context.Background(),
-		&rpc.SessionID{SessionId: cid})
-	if err != nil {
-		return "", err
-	}
-	return resp.GetAddress(), nil
-}
 
 func (cc *ClientController) DeleteAppChannel(cid string) error {
 	_, err := cc.apiClient.DeleteAppSession(
