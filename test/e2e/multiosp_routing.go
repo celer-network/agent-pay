@@ -419,15 +419,10 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 		}
 
 		log.Info("------------------ test auto clear pays ------------------")
-		constructor := testapp.GetSingleSessionConstructor(
-			[]ctype.Addr{
-				ctype.Hex2Addr(c3EthAddr),
-				ctype.Hex2Addr(c5EthAddr),
-			})
 		appChanID, err := c3.NewAppChannelOnVirtualContract(
-			testapp.AppCode,
-			constructor,
-			testapp.Nonce.Uint64())
+			ctype.Hex2Bytes(testapp.BooleanCondMockBin),
+			[]byte{},
+			1004)
 		if err != nil {
 			t.Error(err)
 			return

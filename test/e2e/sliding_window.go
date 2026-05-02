@@ -74,16 +74,12 @@ func slidingWindow(t *testing.T, tokenType entity.TokenType, tokenAddr string) {
 		return
 	}
 
-	// construct payment condition
-	constructor := testapp.GetSingleSessionConstructor(
-		[]ctype.Addr{
-			ctype.Hex2Addr(c1EthAddr),
-			ctype.Hex2Addr(c2EthAddr),
-		})
+	// register a virtual condition contract; the bytecode is just a vehicle
+	// for a deterministic virtual address, the contract is never queried.
 	appChanID, err := c1.NewAppChannelOnVirtualContract(
-		testapp.AppCode,
-		constructor,
-		testapp.Nonce.Uint64())
+		ctype.Hex2Bytes(testapp.BooleanCondMockBin),
+		[]byte{},
+		1001)
 	if err != nil {
 		t.Error(err)
 		return

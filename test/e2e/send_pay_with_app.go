@@ -74,15 +74,10 @@ func sendPayOnVirtualContractCondition(t *testing.T, tokenType entity.TokenType,
 		return
 	}
 
-	constructor := testapp.GetSingleSessionConstructor(
-		[]ctype.Addr{
-			ctype.Hex2Addr(c1EthAddr),
-			ctype.Hex2Addr(c2EthAddr),
-		})
 	appChanID, err := c1.NewAppChannelOnVirtualContract(
-		testapp.AppCode,
-		constructor,
-		testapp.Nonce.Uint64())
+		ctype.Hex2Bytes(testapp.BooleanCondMockBin),
+		[]byte{},
+		1008)
 	if err != nil {
 		t.Error(err)
 		return

@@ -10,7 +10,6 @@ import (
 	tf "github.com/celer-network/agent-pay/testing"
 	ta "github.com/celer-network/agent-pay/testing/testapp"
 	"github.com/celer-network/goutils/log"
-	ec "github.com/ethereum/go-ethereum/common"
 )
 
 func sendPaySettleWithEthDstReconnect(t *testing.T) {
@@ -79,17 +78,10 @@ func sendPaySettleDstReconnect(t *testing.T, tokenType entity.TokenType, tokenAd
 		return
 	}
 
-	// construct payment condition
-	constructor := ta.GetSingleSessionConstructor(
-		[]ec.Address{
-			ctype.Hex2Addr(c1Addr),
-			ctype.Hex2Addr(c2Addr),
-		},
-	)
 	appChanId, err := c1.NewAppChannelOnVirtualContract(
-		ta.AppCode,
-		constructor,
-		ta.Nonce.Uint64(),
+		ctype.Hex2Bytes(ta.BooleanCondMockBin),
+		[]byte{},
+		1003,
 	)
 	if err != nil {
 		t.Error(err)

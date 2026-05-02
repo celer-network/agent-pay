@@ -78,7 +78,7 @@ func TestOSPWebApiRoutingBehavior(t *testing.T) {
 	defer conn.Close()
 
 	directResp, err := ospClient.SendToken(context.Background(), &webrpc.SendTokenRequest{
-		TokenInfo:    &webrpc.TokenInfo{TokenType: entity.TokenType_ETH, TokenAddress: tokenAddrEth},
+		TokenInfo:   &webrpc.TokenInfo{TokenType: entity.TokenType_ETH, TokenAddress: tokenAddrEth},
 		Destination: c1EthAddr,
 		Amount:      sendAmt,
 	})
@@ -93,7 +93,7 @@ func TestOSPWebApiRoutingBehavior(t *testing.T) {
 	}
 
 	routedResp, err := ospClient.SendToken(context.Background(), &webrpc.SendTokenRequest{
-		TokenInfo:    &webrpc.TokenInfo{TokenType: entity.TokenType_ETH, TokenAddress: tokenAddrEth},
+		TokenInfo:   &webrpc.TokenInfo{TokenType: entity.TokenType_ETH, TokenAddress: tokenAddrEth},
 		Destination: c2EthAddr,
 		Amount:      sendAmt,
 	})
@@ -152,7 +152,7 @@ func ospWebApiPaySubset(t *testing.T) {
 	}()
 
 	outgoingResp, err := ospClient.SendToken(context.Background(), &webrpc.SendTokenRequest{
-		TokenInfo: &webrpc.TokenInfo{TokenType: entity.TokenType_ETH, TokenAddress: tokenAddrEth},
+		TokenInfo:   &webrpc.TokenInfo{TokenType: entity.TokenType_ETH, TokenAddress: tokenAddrEth},
 		Destination: c1EthAddr,
 		Amount:      sendAmt,
 	})
@@ -169,12 +169,10 @@ func ospWebApiPaySubset(t *testing.T) {
 		t.Fatal("OSP unexpectedly fetched outgoing pay via GetIncomingPaymentInfo")
 	}
 
-	constructor := testapp.GetSingleSessionConstructor(
-		[]ctype.Addr{ctype.Hex2Addr(c1EthAddr), ctype.Hex2Addr(ospEthAddr)})
 	appChanID, err := c1.NewAppChannelOnVirtualContract(
-		testapp.AppCode,
-		constructor,
-		testapp.Nonce.Uint64())
+		ctype.Hex2Bytes(testapp.BooleanCondMockBin),
+		[]byte{},
+		1006)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -264,12 +262,11 @@ func ospWebApiAppSessionSubset(t *testing.T) {
 
 	// This test exercises only the create→pay→reject→delete cycle on the OSP
 	// WebAPI; it never disputes or queries the registered contract, so the
-	// underlying bytecode is incidental. Use BooleanCondMock so the test
-	// doesn't depend on the legacy SimpleSingleSessionApp surface.
+	// underlying bytecode is incidental.
 	sessionResp, err := ospClient.CreateAppSessionOnVirtualContract(context.Background(), &webrpc.CreateAppSessionOnVirtualContractRequest{
 		ContractBin:         testapp.BooleanCondMockBin,
 		ContractConstructor: "",
-		Nonce:               testapp.Nonce.Uint64(),
+		Nonce:               1007,
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -280,12 +277,12 @@ func ospWebApiAppSessionSubset(t *testing.T) {
 	}
 
 	payResp, err := ospClient.SendConditionalPayment(context.Background(), &webrpc.SendConditionalPaymentRequest{
-		TokenInfo:          &webrpc.TokenInfo{TokenType: entity.TokenType_ETH, TokenAddress: tokenAddrEth},
-		Destination:        c1EthAddr,
-		Amount:             sendAmt,
-		TransferLogicType:  entity.TransferFunctionType_BOOLEAN_AND,
-		Conditions:         []*webrpc.Condition{{OnChainDeployed: false, ContractAddress: sessionID, IsFinalizedArgs: []byte{}, GetOutcomeArgs: []byte{2}}},
-		Timeout:            100,
+		TokenInfo:         &webrpc.TokenInfo{TokenType: entity.TokenType_ETH, TokenAddress: tokenAddrEth},
+		Destination:       c1EthAddr,
+		Amount:            sendAmt,
+		TransferLogicType: entity.TransferFunctionType_BOOLEAN_AND,
+		Conditions:        []*webrpc.Condition{{OnChainDeployed: false, ContractAddress: sessionID, IsFinalizedArgs: []byte{}, GetOutcomeArgs: []byte{2}}},
+		Timeout:           100,
 	})
 	if err != nil {
 		t.Fatal(err)
