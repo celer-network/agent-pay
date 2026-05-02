@@ -64,14 +64,6 @@ type Balance struct {
 	ReceivingCap string
 }
 
-type BooleanCondition struct {
-	OnChainDeployed        bool
-	OnChainAddress         string // on-chain IBooleanCond contract address if OnChainDeployed is true
-	VirtualContractAddress string // deterministic virtual-contract address (hex) from CreateAppSessionOnVirtualContract; ignored if OnChainDeployed is true
-	ArgsForQueryOutcome    []byte
-	TimeoutSec             int // pay deadline = wall-clock unix time + TimeoutSec
-}
-
 type Token struct {
 	Erctype string // ERC20, ERC721 etc.
 	Addr    string // token contract addr

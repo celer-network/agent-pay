@@ -4,6 +4,7 @@ package client
 
 import (
 	"errors"
+	"fmt"
 	"math/big"
 	"time"
 
@@ -219,9 +220,50 @@ func (c *CelerClient) SignState(in []byte) []byte {
 	return c.cNode.SignState(in)
 }
 
-// ResolveCondPayOnChain tries to resolve a payment onchain in the PayRegistry
+// ResolveCondPayOnChain tries to resolve a payment onchain in the PayRegistry.
+// Before submitting the resolve tx, it walks the pay's `VIRTUAL_CONTRACT`
+// conditions and deploys any that are still bytecode-only. PayResolver's
+// `resolvePaymentByConditions` calls `VirtContractResolver.resolve(virtAddr)`
+// and reverts with "Nonexistent virtual address" if the virtual contract
+// hasn't been deployed yet — handling that here makes the resolve API
+// self-sufficient instead of silently requiring callers to first invoke
+// `OnChainGetBooleanOutcome` for its deploy-on-query side effect.
+//
+// We can only deploy contracts this node registered locally (the bytecode +
+// constructor live in `AppClient.appChannels`); for conditions registered
+// elsewhere we trust that the registering side already deployed and let the
+// resolve tx fail loudly if not.
 func (c *CelerClient) ResolveCondPayOnChain(payID ctype.PayIDType) error {
+	if err := c.ensureVirtualConditionsDeployed(payID); err != nil {
+		return err
+	}
 	return c.cNode.Disputer.SettleConditionalPay(payID)
+}
+
+func (c *CelerClient) ensureVirtualConditionsDeployed(payID ctype.PayIDType) error {
+	pay, _, found, err := c.cNode.GetDAL().GetPayment(payID)
+	if err != nil {
+		return err
+	}
+	if !found || pay == nil {
+		return common.ErrPayNotFound
+	}
+	for _, cond := range pay.GetConditions() {
+		if cond.GetConditionType() != entity.ConditionType_VIRTUAL_CONTRACT {
+			continue
+		}
+		cid := ctype.Bytes2Hex(cond.GetVirtualContractAddress())
+		// Locally registered? Trigger deploy-if-needed. Not registered locally
+		// is the cross-node case — leave it to the registering side; the
+		// resolve tx will surface a contract revert if neither side deploys.
+		if c.cNode.AppClient.GetAppChannel(cid) == nil {
+			continue
+		}
+		if _, err := c.cNode.AppClient.EnsureAppChannelDeployed(cid); err != nil {
+			return fmt.Errorf("ensure virt-contract %s deployed: %w", cid, err)
+		}
+	}
+	return nil
 }
 
 func (c *CelerClient) GetCondPayInfoFromRegistry(payID ctype.PayIDType) (*big.Int, uint64, error) {

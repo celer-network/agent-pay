@@ -29,6 +29,9 @@ message TokenInfo {
 }
 message SetDelegationRequest{
   repeated TokenInfo token_infos = 1;
+  // Delegation expiry, interpreted as a number of seconds added to the
+  // current unix time. The field name is kept for wire compatibility with
+  // existing clients; the value is no longer in blocks.
   int64 block_duration = 2;
 }
 message OpenPaymentChannelRequest {

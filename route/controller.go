@@ -3,6 +3,7 @@
 package route
 
 import (
+	"context"
 	"fmt"
 	"math/big"
 	"sync"
@@ -25,6 +26,7 @@ import (
 	"github.com/celer-network/goutils/log"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -35,6 +37,7 @@ type Controller struct {
 	nodeConfig        common.GlobalNodeConfig
 	transactor        *eth.Transactor
 	monitorService    intfs.MonitorService
+	ethclient         *ethclient.Client
 	dal               *storage.DAL
 	signer            eth.Signer
 	bcastSendCallback BcastSendCallback
@@ -65,10 +68,18 @@ const (
 	checkRegistryInterval = 6 * time.Hour  // time interval to check for self-refresh and OSP timeouts
 	refreshIntervalSec    = uint64(432000) // 5 days, seconds — refresh self if stored ts is older
 	expireTimeoutSec      = uint64(604800) // 7 days, seconds — drop a router whose stored ts is older
-	// eventBacktrackBlocks is how far back the on-chain event monitor scans on startup so it
-	// won't miss a still-relevant RouterUpdated event. This stays a block count because the
-	// event monitor's StartBlock is a block height, independent of contract deadline semantics.
-	eventBacktrackBlocks = uint64(50000)
+	// backtrackSafetyMargin is multiplied with `expireTimeoutSec` when computing
+	// the on-chain event-monitor backtrack window, so a chain whose actual block
+	// time briefly accelerates can't push a still-live RouterUpdated event out
+	// of the replay window.
+	backtrackSafetyMargin = 2
+	// minBacktrackBlocks lower-bounds the computed backtrack so we always scan
+	// at least a sane number of blocks, even on very slow chains.
+	minBacktrackBlocks = uint64(50000)
+	// blockTimeSampleSpan is how many blocks back we sample to estimate the
+	// chain's effective block time at startup. Big enough to absorb per-block
+	// jitter, small enough to be one HeaderByNumber call.
+	blockTimeSampleSpan = uint64(1000)
 
 	routeTTL = 15
 )
@@ -78,6 +89,7 @@ func NewController(
 	nodeConfig common.GlobalNodeConfig,
 	transactor *eth.Transactor,
 	monitorService intfs.MonitorService,
+	ethclient *ethclient.Client,
 	dal *storage.DAL,
 	signer eth.Signer,
 	bcastSendCallback BcastSendCallback,
@@ -88,6 +100,7 @@ func NewController(
 		nodeConfig:        nodeConfig,
 		transactor:        transactor,
 		monitorService:    monitorService,
+		ethclient:         ethclient,
 		dal:               dal,
 		signer:            signer,
 		bcastSendCallback: bcastSendCallback,
@@ -155,11 +168,16 @@ func (c *Controller) monitorRouterUpdatedEvent() {
 			txHash := fmt.Sprintf("%x", eLog.TxHash)
 			log.Infoln("Seeing RouterUpdated event, router addr:", routerAddr, "tx hash:", txHash, "callback id:", id, "blkNum:", eLog.BlockNumber)
 
-			// The contract stores `block.timestamp` (unix seconds) per router; since the event
-			// fired in approximately the current block, time.Now() is within a few seconds of
-			// the canonical contract value. The off-chain comparisons use multi-day windows, so
-			// this approximation is operationally lossless.
-			c.processRouterUpdatedEvent(e, uint64(time.Now().Unix()))
+			// Use the event's block timestamp — that's the canonical
+			// `block.timestamp` the contract stamped into RouterRegistry. On
+			// startup replay this can be days old, so falling back to
+			// time.Now() would silently revive stale routers.
+			registeredAt, err := c.blockTimestamp(eLog.BlockNumber)
+			if err != nil {
+				log.Errorf("fetch block %d timestamp for RouterUpdated event: %s", eLog.BlockNumber, err)
+				return false
+			}
+			c.processRouterUpdatedEvent(e, registeredAt)
 			return false
 		},
 	)
@@ -201,17 +219,74 @@ func (c *Controller) refreshRouter(routerAddr ctype.Addr, registeredAt uint64) {
 	c.rtBuilder.markOsp(routerAddr, registeredAt)
 }
 
-// calculates the start block number for event monitor service.
-// No matter whether Osp starts from scratch or starts from existing database,
-// Osp backtracks eventBacktrackBlocks from the current block so it won't miss
-// a still-relevant RouterUpdated event.
+// calculateStartBlockNumber computes the on-chain event-monitor start block
+// so a RouterUpdated event from anywhere in the live `expireTimeoutSec`
+// window is still in range on startup. The block-count backtrack is derived
+// from the chain's actual block time (sampled from headers) — a fixed block
+// count would either under-cover a fast chain (e.g. 50k blocks ≈ 28h on a
+// 2s chain, far less than the 7-day expiry) or waste replay work on a slow
+// one.
 func (c *Controller) calculateStartBlockNumber() *big.Int {
 	currentBlk := c.monitorService.GetCurrentBlockNumber()
-	backtrack := big.NewInt(0).SetUint64(eventBacktrackBlocks)
-	if backtrack.Cmp(currentBlk) == 1 {
+	backtrack := new(big.Int).SetUint64(c.computeBacktrackBlocks(currentBlk))
+	if backtrack.Cmp(currentBlk) >= 0 {
 		return big.NewInt(0)
 	}
-	return currentBlk.Sub(currentBlk, backtrack) // start block number for onchain monitor service
+	return new(big.Int).Sub(currentBlk, backtrack)
+}
+
+// computeBacktrackBlocks samples the chain's effective block time from a pair
+// of header timestamps (current vs ~`blockTimeSampleSpan` blocks back) and
+// converts the live-router window into a block count. Falls back to
+// `minBacktrackBlocks` if the sample fails or yields a degenerate block time.
+func (c *Controller) computeBacktrackBlocks(currentBlk *big.Int) uint64 {
+	window := expireTimeoutSec * backtrackSafetyMargin
+	if c.ethclient == nil || currentBlk.Sign() <= 0 {
+		return minBacktrackBlocks
+	}
+	span := new(big.Int).SetUint64(blockTimeSampleSpan)
+	if span.Cmp(currentBlk) >= 0 {
+		// Brand-new chain — the window-in-blocks would be hand-wavy; use the
+		// floor and let the monitor scan from genesis if currentBlk is small.
+		return minBacktrackBlocks
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	latest, err := c.ethclient.HeaderByNumber(ctx, currentBlk)
+	if err != nil {
+		log.Warnf("backtrack block-time sample (latest) failed: %s — using minBacktrackBlocks", err)
+		return minBacktrackBlocks
+	}
+	older, err := c.ethclient.HeaderByNumber(ctx, new(big.Int).Sub(currentBlk, span))
+	if err != nil {
+		log.Warnf("backtrack block-time sample (older) failed: %s — using minBacktrackBlocks", err)
+		return minBacktrackBlocks
+	}
+	if latest.Time <= older.Time {
+		log.Warnf("backtrack block-time sample non-monotonic (latest %d, older %d) — using minBacktrackBlocks", latest.Time, older.Time)
+		return minBacktrackBlocks
+	}
+	elapsed := latest.Time - older.Time
+	// blocks needed = window * span / elapsed (avoids float division).
+	backtrack := window * blockTimeSampleSpan / elapsed
+	if backtrack < minBacktrackBlocks {
+		return minBacktrackBlocks
+	}
+	return backtrack
+}
+
+// blockTimestamp returns the unix-second timestamp of the given block.
+func (c *Controller) blockTimestamp(blockNumber uint64) (uint64, error) {
+	if c.ethclient == nil {
+		return 0, fmt.Errorf("ethclient not configured")
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	header, err := c.ethclient.HeaderByNumber(ctx, new(big.Int).SetUint64(blockNumber))
+	if err != nil {
+		return 0, err
+	}
+	return header.Time, nil
 }
 
 // call routerInfo in router registry contract to check if Osp has been registered.
@@ -234,6 +309,14 @@ func (c *Controller) checkAndRefreshIfNeeded() {
 	registeredAt, err := c.queryRouterRegistry()
 	if err != nil {
 		log.Errorf("query router registry failed: %s", err)
+		return
+	}
+	// `registeredAt == 0` means RouterRegistry has no entry for us — either
+	// we were never registered, or we (or the operator) deregistered. Either
+	// way, refreshing here would silently re-register us; respect the
+	// deregistration and let an explicit register call bring us back.
+	if registeredAt == 0 {
+		log.Warn("OSP not registered on-chain; skipping periodic refresh")
 		return
 	}
 	nowTs := uint64(time.Now().Unix())

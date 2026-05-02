@@ -47,9 +47,8 @@ func TestGetAppSessionAfterDelete(t *testing.T) {
 }
 
 // Public-handler regression: a query for an unknown session ID must return
-// codes.NotFound at the gRPC surface (rather than nil-deref panicking, the
-// pre-fix behavior). Exercises the actual surviving handlers, not just the
-// helper they delegate to.
+// codes.NotFound at the gRPC surface (rather than nil-deref panicking).
+// Exercises the actual public handler, not just the helper it delegates to.
 func TestGetDeployedAddressForAppSessionUnknownID(t *testing.T) {
 	s := &ApiServer{
 		appSessionMap: make(map[string]*celersdk.AppSession),
