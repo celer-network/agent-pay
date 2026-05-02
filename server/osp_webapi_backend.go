@@ -19,7 +19,14 @@ import (
 	"google.golang.org/protobuf/types/known/anypb"
 )
 
-const ospWebapiDefaultPayTimeout = 50
+// ospWebapiDefaultPayTimeoutSec is the resolve-deadline window used by the
+// `SendToken` WebAPI shortcut, which doesn't take a caller-supplied timeout.
+// The deadline is `now + this value` (seconds), and must be long enough to
+// cover the source→destination forward, the reveal-secret round-trip, and any
+// settle-request retry under load. 600s (10 min) gives multi-hop crossnet
+// payments comfortable headroom while still being short enough that abandoned
+// pays expire promptly.
+const ospWebapiDefaultPayTimeoutSec = uint64(600)
 
 var _ webapi.OspPayBackend = (*ospWebapiBackend)(nil)
 
@@ -36,7 +43,7 @@ func newOspWebapiBackend(cNode *cnode.CNode) *ospWebapiBackend {
 }
 
 func (b *ospWebapiBackend) SendToken(request *webrpc.SendTokenRequest) (ctype.PayIDType, error) {
-	return b.sendBooleanPayment(request.GetTokenInfo(), request.GetDestination(), request.GetAmount(), nil, ospWebapiDefaultPayTimeout, request.GetNote())
+	return b.sendBooleanPayment(request.GetTokenInfo(), request.GetDestination(), request.GetAmount(), nil, ospWebapiDefaultPayTimeoutSec, request.GetNote())
 }
 
 func (b *ospWebapiBackend) SendConditionalPayment(request *webrpc.SendConditionalPaymentRequest) (ctype.PayIDType, error) {

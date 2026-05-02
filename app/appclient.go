@@ -134,6 +134,20 @@ func (c *AppClient) GetAppChannelDeployedAddr(cid string) (ctype.Addr, error) {
 	return addr, nil
 }
 
+// EnsureAppChannelDeployed deploys the registered virtual condition contract
+// on-chain if it isn't already, and returns the deployed address. Useful for
+// callers that need the contract on-chain but don't have a query to run
+// (e.g. `PayResolver.resolvePaymentByConditions`, which calls
+// `VirtContractResolver.resolve(virtAddr)` and reverts with
+// "Nonexistent virtual address" otherwise).
+func (c *AppClient) EnsureAppChannelDeployed(cid string) (ctype.Addr, error) {
+	appChannel := c.GetAppChannel(cid)
+	if appChannel == nil {
+		return ctype.ZeroAddr, fmt.Errorf("EnsureAppChannelDeployed: app channel not found")
+	}
+	return c.deployIfNeeded(appChannel)
+}
+
 // GetBooleanOutcome queries `IBooleanCond.{isFinalized,getOutcome}` for the
 // registered condition contract, triggering deploy-on-query if the virtual
 // contract has not been deployed yet. The query bytes are passed through

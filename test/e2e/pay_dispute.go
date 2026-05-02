@@ -38,9 +38,13 @@
 //     This is the path PayResolver takes when at least one BOOLEAN_AND
 //     condition is finalized-but-false.
 //
-// Two negative scenarios pin down on-chain prerequisites for VIRTUAL_CONTRACT:
-//   - `runVirtualContractResolveBeforeDeploy`: skipping step 2 reverts with
-//     "Nonexistent virtual address";
+// Two additional scenarios pin down VIRTUAL_CONTRACT specifics:
+//   - `runVirtualContractResolveAutoDeploys`: skipping step 2 still resolves
+//     because the SDK's resolve path auto-deploys any locally-registered
+//     virtual contract before submitting the resolve tx. This documents the
+//     deploy-before-resolve invariant the on-chain VirtContractResolver still
+//     enforces (would revert with "Nonexistent virtual address" otherwise),
+//     wrapped behind a self-sufficient resolve API.
 //   - `runVirtualContractParallelDeploy`: concurrent deploy-on-query calls
 //     converge on a single deploy tx (the `AppChannel.mu` mutex prevents
 //     duplicate submissions that would revert with VirtContractResolver's
@@ -118,10 +122,11 @@ func disputePayWithVirtualContract(t *testing.T, tokenType entity.TokenType, tok
 		t.Error(err)
 		return
 	}
-	// Negative scenario: resolving a VIRTUAL_CONTRACT pay before the virtual
-	// contract is deployed must fail at PayResolver. This documents the
-	// deploy-before-resolve contract enforced on-chain by VirtContractResolver.
-	if err := runVirtualContractResolveBeforeDeploy(c1, c2, c2EthAddr, tokenType, tokenAddr,
+	// Resolve auto-deploy scenario: the SDK's `ResolveCondPayOnChain` walks
+	// the pay's VIRTUAL_CONTRACT conditions and deploys any that are still
+	// bytecode-only before submitting the resolve tx, so a caller that never
+	// invokes `OnChainGetBooleanOutcome` still gets a successful resolve.
+	if err := runVirtualContractResolveAutoDeploys(c1, c2, c2EthAddr, tokenType, tokenAddr,
 		ctype.Hex2Bytes(bytecode), constructor, 4); err != nil {
 		t.Error(err)
 		return
@@ -417,13 +422,16 @@ func runVirtualContractFalseOutcomeScenario(
 	return nil
 }
 
-// runVirtualContractResolveBeforeDeploy registers a virtual condition
-// contract (so the off-chain Condition is well-formed) but deliberately skips
-// the deploy-on-query step, then sends a conditional pay against that
-// undeployed virtual address and asserts that PayResolver rejects the resolve
-// with "Nonexistent virtual address". This pins down the on-chain
-// deploy-before-resolve contract that the positive scenarios above rely on.
-func runVirtualContractResolveBeforeDeploy(
+// runVirtualContractResolveAutoDeploys registers a virtual condition
+// contract on both clients, sends a conditional pay against it, and resolves
+// on-chain WITHOUT calling `GetAppChannelBooleanOutcome` first. The SDK's
+// `ResolveCondPayOnChain` walks the pay's VIRTUAL_CONTRACT conditions and
+// deploys any locally-registered ones before submitting the resolve tx, so
+// the resolve must succeed and amount must be the full sendAmt. Without that
+// auto-deploy step the on-chain VirtContractResolver would revert with
+// "Nonexistent virtual address" — that revert is the invariant being pinned
+// down here, just wrapped behind a self-sufficient resolve API.
+func runVirtualContractResolveAutoDeploys(
 	c1, c2 *tf.ClientController,
 	c2EthAddr string,
 	tokenType entity.TokenType,
@@ -432,7 +440,7 @@ func runVirtualContractResolveBeforeDeploy(
 	constructor []byte,
 	nonce uint64,
 ) error {
-	log.Infof("virtual-contract negative scenario (resolve-before-deploy): nonce=%d", nonce)
+	log.Infof("virtual-contract resolve auto-deploys scenario: nonce=%d", nonce)
 
 	appChanID, err := c1.NewAppChannelOnVirtualContract(bytecode, constructor, nonce)
 	if err != nil {
@@ -442,9 +450,13 @@ func runVirtualContractResolveBeforeDeploy(
 		return fmt.Errorf("c2 NewAppChannelOnVirtualContract: %w", err)
 	}
 
+	// Symmetric pass: argsQueryFinalization=argsQueryOutcome=0x01 so
+	// `BooleanCondMock.{isFinalized,getOutcome}` both return true and the
+	// pay registry resolves to the full amount.
 	cond := &entity.Condition{
 		ConditionType:          entity.ConditionType_VIRTUAL_CONTRACT,
 		VirtualContractAddress: ctype.Hex2Bytes(appChanID),
+		ArgsQueryFinalization:  []byte{0x01},
 		ArgsQueryOutcome:       []byte{0x01},
 	}
 
@@ -461,16 +473,16 @@ func runVirtualContractResolveBeforeDeploy(
 	go tf.AdvanceBlocksUntilDone(done)
 	defer func() { done <- true }()
 
-	// Intentionally skip GetAppChannelBooleanOutcome — the virtual contract
-	// must remain undeployed for this scenario.
-	_, _, err = c2.SettleConditionalPayOnChain(payID)
-	if err == nil {
-		return fmt.Errorf("SettleConditionalPayOnChain unexpectedly succeeded against undeployed virtual contract")
+	// Intentionally skip GetAppChannelBooleanOutcome — the resolve path is
+	// expected to deploy the virtual contract on its own.
+	amount, _, err := c2.SettleConditionalPayOnChain(payID)
+	if err != nil {
+		return fmt.Errorf("SettleConditionalPayOnChain (auto-deploy expected): %w", err)
 	}
-	if !strings.Contains(err.Error(), "Nonexistent virtual address") {
-		return fmt.Errorf("SettleConditionalPayOnChain error = %v, want substring %q", err, "Nonexistent virtual address")
+	if amount != sendAmt {
+		return fmt.Errorf("on-chain pay amount = %s, want %s (auto-deploy resolve)", amount, sendAmt)
 	}
-	log.Infof("resolve-before-deploy correctly rejected: %v", err)
+	log.Infof("resolve auto-deploy succeeded: amount=%s", amount)
 	return nil
 }
 

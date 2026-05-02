@@ -547,6 +547,7 @@ func (c *CNode) initialize(
 			c.nodeConfig,
 			c.masterTransactor,
 			c.monitorService,
+			c.ethclient,
 			c.dal,
 			c.signer,
 			c.bcastSend,
