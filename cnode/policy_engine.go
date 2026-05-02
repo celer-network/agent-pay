@@ -228,8 +228,11 @@ func getDepositCapacity(nodeConfig common.GlobalNodeConfig, tokenAddr string) (*
 	return balance, nil
 }
 
+// RequestStandardDeposit checks open-channel policy. nowTs is a unix timestamp (seconds);
+// the contract's `OpenDeadline` and rtconfig `MinDeadlineDelta` / `MaxDeadlineDelta` are
+// also seconds in the blocktime contracts.
 func RequestStandardDeposit(
-	currentBlock uint64, myAddr ctype.Addr,
+	nowTs uint64, myAddr ctype.Addr,
 	initializer *entity.PaymentChannelInitializer, ospToOsp bool,
 	ocem *pem.OpenChannelEventMessage) (int, error) {
 	noPolicyAllowed := 0
@@ -287,11 +290,11 @@ func RequestStandardDeposit(
 	}
 	// Deadline not big.
 	deadline := initializer.GetOpenDeadline()
-	if deadline > config.GetMaxDeadlineDelta()+currentBlock {
+	if deadline > config.GetMaxDeadlineDelta()+nowTs {
 		log.Errorln("deadline too late")
 		return noPolicyAllowed, deadlineOutOfRange
 	}
-	if deadline < config.GetMinDeadlineDelta()+currentBlock {
+	if deadline < config.GetMinDeadlineDelta()+nowTs {
 		log.Errorln("deadline too early")
 		return noPolicyAllowed, deadlineOutOfRange
 	}

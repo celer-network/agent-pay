@@ -10,6 +10,7 @@ import (
 	"math/big"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/celer-network/agent-pay/chain"
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/ledger"
@@ -265,8 +266,9 @@ func (p *Processor) updateOnChainBalance(
 func (p *Processor) checkWithdrawBalanceTx(tx *storage.DALTx, args ...interface{}) error {
 	cid := args[0].(ctype.CidType)
 	withdrawInfo := args[1].(*entity.CooperativeWithdrawInfo)
-	blkNum := p.monitorService.GetCurrentBlockNumber().Uint64()
-	balance, err := ledgerview.GetBalanceTx(tx, cid, p.selfAddress, blkNum)
+	// Withdraw deadlines are unix timestamps (seconds), matching contract `block.timestamp`.
+	nowTs := uint64(time.Now().Unix())
+	balance, err := ledgerview.GetBalanceTx(tx, cid, p.selfAddress, nowTs)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -281,7 +283,7 @@ func (p *Processor) checkWithdrawBalanceTx(tx *storage.DALTx, args ...interface{
 	if !found {
 		return common.ErrChannelNotFound
 	}
-	if blkNum <= onChainBalance.PendingWithdrawal.Deadline+config.WithdrawTimeoutSafeMargin {
+	if nowTs <= onChainBalance.PendingWithdrawal.Deadline+config.WithdrawTimeoutSafeMargin {
 		log.Errorln("previous withdraw still pending", onChainBalance.PendingWithdrawal)
 		return errors.New("previous withdraw still pending")
 	}
@@ -290,7 +292,7 @@ func (p *Processor) checkWithdrawBalanceTx(tx *storage.DALTx, args ...interface{
 	withdrawAmt := new(big.Int).SetBytes(withdrawInfo.Withdraw.Amt)
 	receiver := ctype.Bytes2Addr(withdrawInfo.GetWithdraw().GetAccount())
 	onChainBalance.PendingWithdrawal.Amount = withdrawAmt
-	onChainBalance.PendingWithdrawal.Deadline = blkNum + config.CooperativeWithdrawTimeout
+	onChainBalance.PendingWithdrawal.Deadline = nowTs + config.CooperativeWithdrawTimeout
 	onChainBalance.PendingWithdrawal.Receiver = receiver
 	var freeBalance *big.Int
 	if receiver == p.selfAddress {

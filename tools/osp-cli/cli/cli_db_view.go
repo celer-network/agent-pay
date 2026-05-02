@@ -3,7 +3,6 @@
 package cli
 
 import (
-	"context"
 	"fmt"
 	"math/big"
 	"time"
@@ -138,15 +137,9 @@ func (p *Processor) printChannelInfo(cid ctype.CidType) {
 				"receiver", ctype.Addr2Hex(bal.PendingWithdrawal.Receiver), "deadline", bal.PendingWithdrawal.Deadline)
 		}
 	}
-	blknum := ^uint64(0)
-	header, err := p.nodeConfig.GetEthConn().HeaderByNumber(context.Background(), nil)
-	if err != nil {
-		log.Error(err)
-	} else {
-		blknum = header.Number.Uint64()
-	}
+	nowTs := uint64(time.Now().Unix())
 	balance := ledgerview.ComputeBalance(selfsimplex, peersimplex, bal,
-		ctype.Bytes2Addr(selfsimplex.GetPeerFrom()), ctype.Bytes2Addr(peersimplex.GetPeerFrom()), blknum)
+		ctype.Bytes2Addr(selfsimplex.GetPeerFrom()), ctype.Bytes2Addr(peersimplex.GetPeerFrom()), nowTs)
 	fmt.Println("-- self free balance:", balance.MyFree, "locked balance:", balance.MyLocked)
 	fmt.Println("-- peer free balance:", balance.PeerFree, "locked balance:", balance.PeerLocked)
 }
@@ -284,13 +277,7 @@ func (p *Processor) printDetailedChannels(token *entity.TokenInfo, state int, in
 		log.Fatal(err)
 	}
 
-	blknum := ^uint64(0)
-	header, err := p.nodeConfig.GetEthConn().HeaderByNumber(context.Background(), nil)
-	if err != nil {
-		log.Error(err)
-	} else {
-		blknum = header.Number.Uint64()
-	}
+	nowTs := uint64(time.Now().Unix())
 	for i, _ := range cids {
 		fmt.Println("-- channel ID:", ctype.Cid2Hex(cids[i]))
 		tk := utils.PrintToken(tokens[i])
@@ -299,7 +286,7 @@ func (p *Processor) printDetailedChannels(token *entity.TokenInfo, state int, in
 		fmt.Println("-- onchain balance: self deposit", balances[i].MyDeposit, "self withdrawal", balances[i].MyWithdrawal)
 		fmt.Println("-- onchain balance: peer deposit", balances[i].PeerDeposit, "peer withdrawal", balances[i].PeerWithdrawal)
 		balance := ledgerview.ComputeBalance(selfSimplexes[i], peerSimplexes[i], balances[i],
-			ctype.Bytes2Addr(selfSimplexes[i].GetPeerFrom()), ctype.Bytes2Addr(peerSimplexes[i].GetPeerFrom()), blknum)
+			ctype.Bytes2Addr(selfSimplexes[i].GetPeerFrom()), ctype.Bytes2Addr(peerSimplexes[i].GetPeerFrom()), nowTs)
 		fmt.Println("-- self free balance:", balance.MyFree, "locked balance:", balance.MyLocked)
 		fmt.Println("-- peer free balance:", balance.PeerFree, "locked balance:", balance.PeerLocked)
 		fmt.Println()
@@ -323,18 +310,12 @@ func (p *Processor) printTokenBalance(token *entity.TokenInfo, state int) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	blknum := ^uint64(0)
-	header, err := p.nodeConfig.GetEthConn().HeaderByNumber(context.Background(), nil)
-	if err != nil {
-		log.Error(err)
-	} else {
-		blknum = header.Number.Uint64()
-	}
+	nowTs := uint64(time.Now().Unix())
 	freeBalance := new(big.Int).SetUint64(0)
 	lockedBalance := new(big.Int).SetUint64(0)
 	for i, _ := range cids {
 		balance := ledgerview.ComputeBalance(selfSimplexes[i], peerSimplexes[i], balances[i],
-			ctype.Bytes2Addr(selfSimplexes[i].GetPeerFrom()), ctype.Bytes2Addr(peerSimplexes[i].GetPeerFrom()), blknum)
+			ctype.Bytes2Addr(selfSimplexes[i].GetPeerFrom()), ctype.Bytes2Addr(peerSimplexes[i].GetPeerFrom()), nowTs)
 		freeBalance = freeBalance.Add(freeBalance, balance.MyFree)
 		lockedBalance = lockedBalance.Add(lockedBalance, balance.MyLocked)
 	}

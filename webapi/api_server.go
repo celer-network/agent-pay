@@ -27,20 +27,21 @@ import (
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/rs/cors"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	empty "google.golang.org/protobuf/types/known/emptypb"
 )
 
 type ApiServer struct {
-	webPort                   int
-	grpcPort                  int
-	allowedOrigins            string
-	apiClient                 *celersdk.Client
-	payIter                   *celersdk.PayHistoryIterator
-	callbackImpl              *callbackImpl
-	appSessionMap             map[string]*celersdk.AppSession
-	appSessionMapLock         sync.Mutex
-	appSessionCallbackMap     map[string]*appSessionCallback
-	appSessionCallbackMapLock sync.Mutex
+	rpc.UnimplementedWebApiServer
+	webPort           int
+	grpcPort          int
+	allowedOrigins    string
+	apiClient         *celersdk.Client
+	payIter           *celersdk.PayHistoryIterator
+	callbackImpl      *callbackImpl
+	appSessionMap     map[string]*celersdk.AppSession
+	appSessionMapLock sync.Mutex
 }
 
 // implement celersdk.ExternalSignerCallback interface
@@ -71,12 +72,11 @@ func NewApiServer(
 	useExtSigner bool) *ApiServer {
 	callbackImpl := NewCallbackImpl()
 	s := &ApiServer{
-		webPort:               webPort,
-		grpcPort:              grpcPort,
-		allowedOrigins:        allowedOrigins,
-		callbackImpl:          callbackImpl,
-		appSessionMap:         make(map[string]*celersdk.AppSession),
-		appSessionCallbackMap: make(map[string]*appSessionCallback),
+		webPort:        webPort,
+		grpcPort:       grpcPort,
+		allowedOrigins: allowedOrigins,
+		callbackImpl:   callbackImpl,
+		appSessionMap:  make(map[string]*celersdk.AppSession),
 	}
 	if !useExtSigner {
 		go celersdk.InitClient(
@@ -675,8 +675,8 @@ func (s *ApiServer) ConfirmSettlePaymentChannel(
 }
 
 func (s *ApiServer) GetSettleFinalizedTimeForPaymentChannel(
-	context context.Context, request *rpc.TokenInfo) (*rpc.BlockNumber, error) {
-	time, err := s.apiClient.GetSettleFinalizedTimeForPaymentChannel(
+	context context.Context, request *rpc.TokenInfo) (*rpc.Timestamp, error) {
+	ts, err := s.apiClient.GetSettleFinalizedTimeForPaymentChannel(
 		&celersdk.TokenInfo{
 			TokenType:    celersdk.TokenType(int32(request.TokenType)),
 			TokenAddress: request.TokenAddress,
@@ -684,7 +684,7 @@ func (s *ApiServer) GetSettleFinalizedTimeForPaymentChannel(
 	if err != nil {
 		return nil, err
 	}
-	return &rpc.BlockNumber{BlockNumber: uint64(time)}, nil
+	return &rpc.Timestamp{Timestamp: uint64(ts)}, nil
 }
 
 // GetPayHistory returns paginated pay history.
@@ -740,29 +740,15 @@ func (s *ApiServer) SyncStateWithPeer(
 	return &empty.Empty{}, nil
 }
 
-type appSessionCallback struct {
-	seqNumChan chan int
-}
-
-func (cb *appSessionCallback) OnDispute(seqNum int) {
-	select {
-	case cb.seqNumChan <- seqNum:
-	default:
-	}
-}
-
 func (s *ApiServer) CreateAppSessionOnVirtualContract(
 	context context.Context,
 	request *rpc.CreateAppSessionOnVirtualContractRequest) (
 	*rpc.SessionID, error) {
-	callback := &appSessionCallback{seqNumChan: make(chan int)}
 	session, err :=
 		s.apiClient.CreateAppSessionOnVirtualContract(
 			request.ContractBin,
 			request.ContractConstructor,
-			request.Nonce,
-			request.OnChainTimeout,
-			callback)
+			request.Nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -770,87 +756,7 @@ func (s *ApiServer) CreateAppSessionOnVirtualContract(
 	s.appSessionMapLock.Lock()
 	s.appSessionMap[sessionID] = session
 	s.appSessionMapLock.Unlock()
-	s.appSessionCallbackMapLock.Lock()
-	s.appSessionCallbackMap[sessionID] = callback
-	s.appSessionCallbackMapLock.Unlock()
 	return &rpc.SessionID{SessionId: sessionID}, nil
-}
-
-func (s *ApiServer) CreateAppSessionOnDeployedContract(
-	context context.Context,
-	request *rpc.CreateAppSessionOnDeployedContractRequest) (
-	*rpc.SessionID, error) {
-	callback := &appSessionCallback{seqNumChan: make(chan int)}
-	participants := strings.Join(request.Participants, ",")
-	session, err :=
-		s.apiClient.CreateAppSessionOnDeployedContract(
-			request.ContractAddress,
-			request.Nonce,
-			request.OnChainTimeout,
-			participants,
-			callback)
-	if err != nil {
-		return nil, err
-	}
-	sessionID := session.ID
-	s.appSessionMapLock.Lock()
-	s.appSessionMap[sessionID] = session
-	s.appSessionMapLock.Unlock()
-	s.appSessionCallbackMapLock.Lock()
-	s.appSessionCallbackMap[sessionID] = callback
-	s.appSessionCallbackMapLock.Unlock()
-	return &rpc.SessionID{SessionId: sessionID}, nil
-}
-
-func (s *ApiServer) SubscribeAppSessionDispute(
-	request *rpc.SessionID, stream rpc.WebApi_SubscribeAppSessionDisputeServer) error {
-	sessionID := request.SessionId
-	s.appSessionCallbackMapLock.Lock()
-	callback := s.appSessionCallbackMap[sessionID]
-	s.appSessionCallbackMapLock.Unlock()
-	for {
-		seqNum := <-callback.seqNumChan
-		err := stream.Send(&rpc.DisputeInfo{
-			SessionId: sessionID,
-			SeqNum:    uint64(seqNum),
-		})
-		if err != nil {
-			return err
-		}
-	}
-}
-
-func (s *ApiServer) SignOutgoingState(
-	context context.Context, request *rpc.SignOutgoingStateRequest) (*rpc.SignedState, error) {
-	session := s.getAppSession(request.SessionId)
-	signed, err := session.SignAppData(request.State)
-	if err != nil {
-		return nil, err
-	}
-	return &rpc.SignedState{SignedState: signed}, nil
-}
-
-func (s *ApiServer) ValidateAck(
-	context context.Context, request *rpc.ValidateAckRequest) (*rpc.BoolValue, error) {
-	session := s.getAppSession(request.SessionId)
-	_, err := session.HandleMatchData(celersdk.OPCODE_ACK, request.Envelope)
-	valid := true
-	if err != nil {
-		valid = false
-	}
-	return &rpc.BoolValue{Value: valid}, nil
-}
-
-func (s *ApiServer) ProcessReceivedState(
-	context context.Context,
-	request *rpc.ProcessReceivedStateRequest) (*rpc.ProcessReceivedStateResponse, error) {
-	session := s.getAppSession(request.SessionId)
-	appData, err := session.HandleMatchData(celersdk.OPCODE_NEWSTATE, request.Envelope)
-	if err != nil {
-		return nil, err
-	}
-	return &rpc.ProcessReceivedStateResponse{
-		DecodedState: appData.Received, PreparedAck: appData.AckMsg}, nil
 }
 
 func (s *ApiServer) SignData(context context.Context, request *rpc.Data) (*rpc.Signature, error) {
@@ -861,77 +767,22 @@ func (s *ApiServer) SignData(context context.Context, request *rpc.Data) (*rpc.S
 	return &rpc.Signature{Signature: signature}, nil
 }
 
-func (s *ApiServer) SettleAppSession(
-	context context.Context,
-	request *rpc.SettleAppSessionRequest) (*empty.Empty, error) {
-	session := s.getAppSession(request.SessionId)
-	err := session.SwitchToOnchain(request.StateProof)
-	if err != nil {
-		return nil, err
-	}
-	return &empty.Empty{}, nil
-}
-
-func (s *ApiServer) SettleAppSessionBySigTimeout(
-	context context.Context,
-	request *rpc.SettleAppSessionByTimeoutRequest) (*empty.Empty, error) {
-	session := s.getAppSession(request.SessionId)
-	err := session.SettleBySigTimeout(request.OracleProof)
-	if err != nil {
-		return nil, err
-	}
-	return &empty.Empty{}, nil
-}
-
-func (s *ApiServer) SettleAppSessionByMoveTimeout(
-	context context.Context,
-	request *rpc.SettleAppSessionByTimeoutRequest) (*empty.Empty, error) {
-	session := s.getAppSession(request.SessionId)
-	err := session.SettleByMoveTimeout(request.OracleProof)
-	if err != nil {
-		return nil, err
-	}
-	return &empty.Empty{}, nil
-}
-
-func (s *ApiServer) SettleAppSessionByInvalidTurn(
-	context context.Context,
-	request *rpc.SettleAppSessionByInvalidityRequest) (*empty.Empty, error) {
-	session := s.getAppSession(request.SessionId)
-	err := session.SettleByInvalidTurn(request.OracleProof, request.CosignedStateProof)
-	if err != nil {
-		return nil, err
-	}
-	return &empty.Empty{}, nil
-}
-
-func (s *ApiServer) SettleAppSessionByInvalidState(
-	context context.Context,
-	request *rpc.SettleAppSessionByInvalidityRequest) (*empty.Empty, error) {
-	session := s.getAppSession(request.SessionId)
-	err := session.SettleByInvalidState(request.OracleProof, request.CosignedStateProof)
-	if err != nil {
-		return nil, err
-	}
-	return &empty.Empty{}, nil
-}
-
 func (s *ApiServer) DeleteAppSession(
 	context context.Context, request *rpc.SessionID) (*empty.Empty, error) {
 	sessionID := request.SessionId
-	err := s.apiClient.EndAppSession(sessionID)
-	if err != nil {
-		return nil, err
-	}
+	s.apiClient.EndAppSession(sessionID)
 	s.appSessionMapLock.Lock()
-	s.appSessionMap[sessionID] = nil
+	delete(s.appSessionMap, sessionID)
 	s.appSessionMapLock.Unlock()
 	return &empty.Empty{}, nil
 }
 
 func (s *ApiServer) GetDeployedAddressForAppSession(
 	context context.Context, request *rpc.SessionID) (*rpc.Address, error) {
-	session := s.getAppSession(request.SessionId)
+	session, err := s.getAppSession(request.SessionId)
+	if err != nil {
+		return nil, err
+	}
 	address, err := session.GetDeployedAddress()
 	if err != nil {
 		return nil, err
@@ -942,83 +793,15 @@ func (s *ApiServer) GetDeployedAddressForAppSession(
 func (s *ApiServer) GetBooleanOutcomeForAppSession(
 	context context.Context,
 	request *rpc.GetBooleanOutcomeForAppSessionRequest) (*rpc.BooleanOutcome, error) {
-	session := s.getAppSession(request.SessionId)
+	session, err := s.getAppSession(request.SessionId)
+	if err != nil {
+		return nil, err
+	}
 	res, err := session.OnChainGetBooleanOutcome(request.Query)
 	if err != nil {
 		return nil, err
 	}
 	return &rpc.BooleanOutcome{Finalized: res.Finalized, Outcome: res.Outcome}, nil
-}
-
-func (s *ApiServer) ApplyActionForAppSession(
-	context context.Context, request *rpc.ApplyActionForAppSessionRequest) (*empty.Empty, error) {
-	session := s.getAppSession(request.SessionId)
-	err := session.OnChainApplyAction(request.Action)
-	if err != nil {
-		return nil, err
-	}
-	return &empty.Empty{}, nil
-}
-
-func (s *ApiServer) FinalizeOnActionTimeoutForAppSession(
-	context context.Context, request *rpc.SessionID) (*empty.Empty, error) {
-	session := s.getAppSession(request.SessionId)
-	err := session.OnChainFinalizeOnActionTimeout()
-	if err != nil {
-		return nil, err
-	}
-	return &empty.Empty{}, nil
-}
-
-func (s *ApiServer) GetSettleFinalizedTimeForAppSession(
-	context context.Context, request *rpc.SessionID) (*rpc.BlockNumber, error) {
-	session := s.getAppSession(request.SessionId)
-	time, err := session.OnChainGetSettleFinalizedTime()
-	if err != nil {
-		return nil, err
-	}
-	return &rpc.BlockNumber{BlockNumber: uint64(time)}, nil
-}
-
-func (s *ApiServer) GetActionDeadlineForAppSession(
-	context context.Context, request *rpc.SessionID) (*rpc.BlockNumber, error) {
-	session := s.getAppSession(request.SessionId)
-	deadline, err := session.OnChainGetActionDeadline()
-	if err != nil {
-		return nil, err
-	}
-	return &rpc.BlockNumber{BlockNumber: uint64(deadline)}, err
-}
-
-func (s *ApiServer) GetStatusForAppSession(
-	context context.Context, request *rpc.SessionID) (*rpc.AppSessionStatus, error) {
-	session := s.getAppSession(request.SessionId)
-	status, err := session.OnChainGetStatus()
-	if err != nil {
-		return nil, err
-	}
-	return &rpc.AppSessionStatus{Status: uint32(status)}, err
-}
-
-func (s *ApiServer) GetStateForAppSession(
-	context context.Context,
-	request *rpc.GetStateForAppSessionRequest) (*rpc.AppSessionState, error) {
-	session := s.getAppSession(request.SessionId)
-	state, err := session.OnChainGetState(request.Key)
-	if err != nil {
-		return nil, err
-	}
-	return &rpc.AppSessionState{State: state}, nil
-}
-
-func (s *ApiServer) GetSeqNumForAppSession(
-	context context.Context, request *rpc.SessionID) (*rpc.AppSessionSeqNum, error) {
-	session := s.getAppSession(request.SessionId)
-	seqNum, err := session.OnChainGetSeqNum()
-	if err != nil {
-		return nil, err
-	}
-	return &rpc.AppSessionSeqNum{SeqNum: uint64(seqNum)}, err
 }
 
 func (s *ApiServer) GetBlockNumber(
@@ -1031,11 +814,14 @@ func (s *ApiServer) SetMsgDropper(context context.Context, req *rpc.SetMsgDropRe
 	return new(empty.Empty), nil
 }
 
-func (s *ApiServer) getAppSession(sessionID string) *celersdk.AppSession {
+func (s *ApiServer) getAppSession(sessionID string) (*celersdk.AppSession, error) {
 	s.appSessionMapLock.Lock()
-	session := s.appSessionMap[sessionID]
+	session, ok := s.appSessionMap[sessionID]
 	s.appSessionMapLock.Unlock()
-	return session
+	if !ok || session == nil {
+		return nil, status.Errorf(codes.NotFound, "app session %q not found", sessionID)
+	}
+	return session, nil
 }
 
 func stripPort(hostport string) string {

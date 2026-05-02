@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"time"
 
 	"github.com/celer-network/agent-pay/common"
 	enums "github.com/celer-network/agent-pay/common/structs"
@@ -177,10 +178,10 @@ func (m *Messager) sendCondPayRequest(
 		return common.ErrInvalidPayDst
 	}
 
-	// verify payment deadline is within limit
-	blknum := m.monitorService.GetCurrentBlockNumber().Uint64()
-	if pay.GetResolveDeadline() > blknum+rtconfig.GetMaxPaymentTimeout() {
-		return fmt.Errorf("%w, deadline %d current %d", common.ErrInvalidPayDeadline, pay.GetResolveDeadline(), blknum)
+	// verify payment deadline is within limit (deadlines are unix timestamps in seconds)
+	nowTs := uint64(time.Now().Unix())
+	if pay.GetResolveDeadline() > nowTs+rtconfig.GetMaxPaymentTimeout() {
+		return fmt.Errorf("%w, deadline %d now %d", common.ErrInvalidPayDeadline, pay.GetResolveDeadline(), nowTs)
 	}
 
 	var seqnum uint64
@@ -238,9 +239,9 @@ func (m *Messager) runCondPayTx(tx *storage.DALTx, args ...interface{}) error {
 		return fmt.Errorf("GetBaseSimplex err %w", err)
 	}
 
-	blkNum := m.monitorService.GetCurrentBlockNumber().Uint64()
+	nowTs := uint64(time.Now().Unix())
 	balance := ledgerview.ComputeBalance(
-		workingSimplex, peerSimplex, onChainBalance, m.nodeConfig.GetOnChainAddr(), peer, blkNum)
+		workingSimplex, peerSimplex, onChainBalance, m.nodeConfig.GetOnChainAddr(), peer, nowTs)
 	sendAmt := new(big.Int).SetBytes(pay.GetTransferFunc().GetMaxTransfer().GetReceiver().GetAmt())
 	// OSP refill if free balance is below threshold
 	if m.isOSP && chanState == enums.ChanState_OPENED {
@@ -400,7 +401,7 @@ func (m *Messager) sendCrossNetPay(
 		return fmt.Errorf("InsertCrossNetPay err: %w", err)
 	}
 
-	xnet.Timeout = pay.ResolveDeadline - m.monitorService.GetCurrentBlockNumber().Uint64()
+	xnet.Timeout = pay.ResolveDeadline - uint64(time.Now().Unix())
 	request := &rpc.CondPayRequest{
 		CondPay:  payBytes,
 		Note:     note,

@@ -180,12 +180,14 @@ func (p *Processor) ConfirmSettlePaymentChannel(cid ctype.CidType, waitMined boo
 	if state != enums.ChanState_SETTLING {
 		return fmt.Errorf("invalid channel %x state %s", cid, fsm.ChanStateName(state))
 	}
-	blkNum := p.monitorService.GetCurrentBlockNumber()
-	finalizedBlknum, err := ledgerview.GetOnChainSettleFinalizedTime(cid, p.nodeConfig)
+	// settleFinalizedTime is now a unix timestamp (seconds), per the contract's
+	// `block.timestamp`-based settlement semantics.
+	nowTs := uint64(time.Now().Unix())
+	finalizedTs, err := ledgerview.GetOnChainSettleFinalizedTime(cid, p.nodeConfig)
 	if err != nil {
 		return fmt.Errorf("GetOnChainSettleFinalizedTime err: %w", err)
 	}
-	if blkNum.Uint64() < finalizedBlknum.Uint64() {
+	if nowTs < finalizedTs.Uint64() {
 		return fmt.Errorf("channel %x not finalized yet", cid)
 	}
 	if waitMined {

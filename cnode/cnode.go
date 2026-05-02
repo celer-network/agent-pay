@@ -599,13 +599,7 @@ func (c *CNode) initialize(
 		c.dal,
 		c.isOSP)
 
-	c.AppClient = app.NewAppClient(
-		c.nodeConfig,
-		c.masterTransactor,
-		c.transactorPool,
-		c.monitorService,
-		c.dal,
-		c.signer)
+	c.AppClient = app.NewAppClient(c.nodeConfig, c.transactorPool)
 
 	if c.isMultiServer {
 		c.serverForwarder = c.multiServerForwarder
@@ -674,7 +668,8 @@ func (c *CNode) SetDelegation(tokens []ctype.Addr, timeout int64) error {
 	desc := &rpc.DelegationDescription{
 		Delegator:         c.ServerAddr.Bytes(),
 		Delegatee:         c.nodeConfig.GetOnChainAddr().Bytes(),
-		ExpiresAfterBlock: c.monitorService.GetCurrentBlockNumber().Int64() + timeout,
+		// Field is named ExpiresAfterBlock in the proto for back-compat; value is now a unix timestamp (seconds).
+		ExpiresAfterBlock: time.Now().Unix() + timeout,
 		TokenToDelegate:   delegatedTks,
 	}
 	descBytes, err := proto.Marshal(desc)
@@ -763,31 +758,6 @@ func (c *CNode) Close() {
 	}
 	if c.connManager != nil {
 		c.connManager.CloseNoRetry(c.ServerAddr)
-	}
-}
-
-// waitTimeout emits a signal to the timeoutChan when the given timeout has passed
-func (c *CNode) waitTimeout(ctx context.Context, timeoutChan chan bool, timeout *big.Int) {
-	queryTicker := time.NewTicker(time.Second)
-	defer queryTicker.Stop()
-	currentBlkNum := c.GetCurrentBlockNumber()
-	deadline := big.NewInt(0)
-	deadline.Add(currentBlkNum, timeout)
-	for {
-		blockNum := c.GetCurrentBlockNumber()
-		if blockNum.Cmp(deadline) > 0 {
-			select {
-			case timeoutChan <- true:
-			default:
-			}
-			return
-		}
-		// Wait for the next round.
-		select {
-		case <-ctx.Done():
-			return
-		case <-queryTicker.C:
-		}
 	}
 }
 

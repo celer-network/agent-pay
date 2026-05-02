@@ -6,6 +6,7 @@ package celersdk
 
 import (
 	"errors"
+	"time"
 
 	"github.com/celer-network/agent-pay/celersdkintf"
 	"github.com/celer-network/agent-pay/common"
@@ -17,7 +18,7 @@ import (
 	"google.golang.org/protobuf/types/known/anypb"
 )
 
-const cPayTimeout = 50 // timeout in blocknum for cpay ie. no app channel condition
+const cPayTimeout = 600 // timeout in seconds for cpay ie. no app channel condition
 
 // noteTypeUrl should be type url of any.Any.
 // noteStr should be string representation of []byte in note (any.Any)
@@ -34,7 +35,7 @@ func (mc *Client) SendToken(tk *Token, receiver string, amtWei string, noteTypeU
 		Value:   noteValueByte,
 	}
 	payID, err := mc.c.AddBooleanPay(
-		xfer, []*entity.Condition{}, mc.c.GetCurrentBlockNumberUint64()+cPayTimeout, note, 0)
+		xfer, []*entity.Condition{}, uint64(time.Now().Unix())+cPayTimeout, note, 0)
 	if err != nil {
 		log.Errorln("SendToken:", err)
 		return ctype.ZeroPayIDHex, err
@@ -52,8 +53,8 @@ func (mc *Client) SendETHWithCondition(receiver string, amtWei string, cond *Boo
 func (mc *Client) SendTokenWithCondition(tk *Token, receiver string, amtWei string, cond *BooleanCondition) (string, error) {
 	xfer := createXfer(tk, receiver, amtWei)
 	timeout := cPayTimeout
-	if cond.TimeoutBlockNum > 0 {
-		timeout = cond.TimeoutBlockNum
+	if cond.TimeoutSec > 0 {
+		timeout = cond.TimeoutSec
 	}
 	condition, err := bc2c(cond)
 	if err != nil {
@@ -61,7 +62,7 @@ func (mc *Client) SendTokenWithCondition(tk *Token, receiver string, amtWei stri
 		return ctype.ZeroPayIDHex, err
 	}
 	payID, err := mc.c.AddBooleanPay(
-		xfer, []*entity.Condition{condition}, mc.c.GetCurrentBlockNumberUint64()+uint64(timeout), nil /*note*/, 0)
+		xfer, []*entity.Condition{condition}, uint64(time.Now().Unix())+uint64(timeout), nil /*note*/, 0)
 	if err != nil {
 		log.Errorln("SendTokenWithCondition:", err)
 		return ctype.ZeroPayIDHex, err
@@ -87,7 +88,16 @@ func (mc *Client) RemoveExpiredPays(tk *Token) error {
 	return mc.c.SettleExpiredPays(token)
 }
 
-// ResolvePayOnChain settles the payment onchain and receives the payment from OSP
+// ResolvePayOnChain settles the payment onchain and receives the payment from OSP.
+//
+// VIRTUAL_CONTRACT prerequisite: PayResolver.resolvePaymentByConditions calls
+// VirtContractResolver.resolve(virtAddr) on-chain, which reverts with
+// "Nonexistent virtual address" if the virtual condition contract has not been
+// deployed yet. The surviving deploy path is the deploy-on-query side effect
+// of AppSession.OnChainGetBooleanOutcome — calling it once after registration
+// (e.g. with a no-op query) ensures the virtual contract has bytecode by the
+// time this resolve tx lands. DEPLOYED_CONTRACT conditions have no such
+// prerequisite.
 func (mc *Client) ResolvePayOnChain(payID string) error {
 	err := mc.c.ResolveCondPayOnChain(ctype.Hex2PayID(payID))
 	if err != nil {
@@ -133,6 +143,9 @@ func (mc *Client) GetOnChainPaymentInfo(paymentID string) (*OnChainPaymentInfo, 
 	return &OnChainPaymentInfo{Amount: amount.String(), ResolveDeadline: resolveDeadline}, nil
 }
 
+// ResolveIncomingPaymentOnChain submits PayResolver.resolvePaymentByConditions
+// for the given payment. See ResolvePayOnChain doc for the VIRTUAL_CONTRACT
+// deploy-before-resolve prerequisite — the same applies here.
 func (mc *Client) ResolveIncomingPaymentOnChain(payId string) error {
 	return mc.c.ResolveCondPayOnChain(ctype.Hex2PayID(payId))
 }
@@ -170,7 +183,7 @@ func (mc *Client) SendConditionalPayment(
 	payID, err := mc.c.AddBooleanPay(
 		transfer,
 		entityConditions,
-		mc.c.GetCurrentBlockNumberUint64()+uint64(timeout),
+		uint64(time.Now().Unix())+uint64(timeout),
 		note, 0)
 	if err != nil {
 		log.Error(err)

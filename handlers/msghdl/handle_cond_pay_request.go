@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"time"
 
 	"github.com/celer-network/agent-pay/common"
 	"github.com/celer-network/agent-pay/common/structs"
@@ -26,7 +27,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-const onchainCheckInterval = 5
+const onchainCheckInterval = 60 // seconds between on-chain balance re-syncs
 
 func (h *CelerMsgHandler) HandleCondPayRequest(frame *common.MsgFrame) error {
 	if frame.Message.GetCondPayRequest() == nil {
@@ -178,14 +179,14 @@ func (h *CelerMsgHandler) processCondPayRequest(
 		return common.ErrInvalidPaySrc // pay src is myself
 	}
 
-	// verify payment deadline is within limit
-	blknum := h.monitorService.GetCurrentBlockNumber().Uint64()
-	if pay.GetResolveDeadline() > blknum+rtconfig.GetMaxPaymentTimeout() {
+	// verify payment deadline is within limit (deadlines are unix timestamps in seconds)
+	nowTs := uint64(time.Now().Unix())
+	if pay.GetResolveDeadline() > nowTs+rtconfig.GetMaxPaymentTimeout() {
 		if seqErr := h.checkSeqNum(request, cid, recvdSimplex, logEntry); seqErr != nil {
 			return seqErr
 		}
 		// should not happen if peer has the same config
-		return fmt.Errorf("%w, deadline %d current %d", common.ErrInvalidPayDeadline, pay.GetResolveDeadline(), blknum)
+		return fmt.Errorf("%w, deadline %d now %d", common.ErrInvalidPayDeadline, pay.GetResolveDeadline(), nowTs)
 	}
 	var routeLoop bool
 	err := h.dal.Transactional(
@@ -406,33 +407,34 @@ func (h *CelerMsgHandler) verifyCommonPayRequest(
 		return common.ErrInvalidSeqNum // packet loss
 	}
 
-	// verify balance
-	blkNum := h.monitorService.GetCurrentBlockNumber().Uint64()
+	// verify balance — nowTs is a unix timestamp (seconds) used for both ComputeBalance's
+	// pending-withdraw check and on-chain re-sync rate limiting (PutQueryTime stores seconds too).
+	nowTs := uint64(time.Now().Unix())
 	balance := ledgerview.ComputeBalance(
-		selfSimplex, storedSimplex, onChainBalance, h.nodeConfig.GetOnChainAddr(), peer, blkNum)
+		selfSimplex, storedSimplex, onChainBalance, h.nodeConfig.GetOnChainAddr(), peer, nowTs)
 	recvdAmt := new(big.Int).SetBytes(pay.GetTransferFunc().GetMaxTransfer().GetReceiver().GetAmt())
 	if recvdAmt.Cmp(balance.PeerFree) == 1 {
 		if !h.isOSP {
-			lastSyncBlk, _ := tx.GetQueryTime(config.QueryName_OnChainBalance)
-			if blkNum-lastSyncBlk > onchainCheckInterval {
+			lastSyncTs, _ := tx.GetQueryTime(config.QueryName_OnChainBalance)
+			if nowTs-lastSyncTs > onchainCheckInterval {
 				log.Warnf("channel %x balance not enough, try sync with onchain balance once", cid)
 				var err error
 				onChainBalance, err = ledgerview.SyncOnChainBalanceTx(tx, cid, h.nodeConfig)
 				if err != nil {
 					log.Error(err)
 				} else {
-					err = tx.PutQueryTime(config.QueryName_OnChainBalance, blkNum)
+					err = tx.PutQueryTime(config.QueryName_OnChainBalance, nowTs)
 					if err != nil {
 						log.Error(err)
 					}
 					balance = ledgerview.ComputeBalance(
-						selfSimplex, storedSimplex, onChainBalance, h.nodeConfig.GetOnChainAddr(), peer, blkNum)
+						selfSimplex, storedSimplex, onChainBalance, h.nodeConfig.GetOnChainAddr(), peer, nowTs)
 					if recvdAmt.Cmp(balance.PeerFree) != 1 {
 						return nil
 					}
 				}
 			} else {
-				log.Warnf("channel %x balance not enough, last sycned onchain balance at blk %d", cid, lastSyncBlk)
+				log.Warnf("channel %x balance not enough, last synced onchain balance at unix ts %d", cid, lastSyncTs)
 			}
 
 		}
@@ -638,9 +640,10 @@ func (h *CelerMsgHandler) checkPayDelegable(
 	}
 
 	token := pay.GetTransferFunc().GetMaxTransfer().GetToken().GetTokenAddress()
+	// ExpiresAfterBlock is now a unix timestamp (seconds); field name kept for wire-format back-compat.
 	delegable := ctype.Bytes2Addr(description.GetDelegatee()) == dest &&
 		hashlist.Exist(description.GetTokenToDelegate(), token) &&
-		description.GetExpiresAfterBlock() > h.monitorService.GetCurrentBlockNumber().Int64()
+		description.GetExpiresAfterBlock() > time.Now().Unix()
 
 	return delegable, proof, description
 }
@@ -689,7 +692,7 @@ func (h *CelerMsgHandler) crossNetPayInbound(
 		newPay.TransferFunc.MaxTransfer.Token = localToken
 	}
 	// TODO: update resolve dealine and timeout, check conditions
-	newPay.ResolveDeadline = h.monitorService.GetCurrentBlockNumber().Uint64() + xnet.GetTimeout()
+	newPay.ResolveDeadline = uint64(time.Now().Unix()) + xnet.GetTimeout()
 	newPay.ResolveTimeout = config.PayResolveTimeout
 	newPay.PayResolver = h.nodeConfig.GetPayResolverContract().GetAddr().Bytes()
 	newPayID := ctype.Pay2PayID(newPay)

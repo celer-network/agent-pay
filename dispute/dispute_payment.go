@@ -5,6 +5,7 @@ package dispute
 import (
 	"fmt"
 	"math/big"
+	"time"
 
 	"github.com/celer-network/agent-pay/chain"
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/payregistry"
@@ -56,7 +57,7 @@ func (p *Processor) resolvePaymentByConditions(payID ctype.PayIDType) error {
 		// return nli if payment is already resolved to max
 		return nil
 	}
-	if pay.ResolveDeadline < p.monitorService.GetCurrentBlockNumber().Uint64() {
+	if pay.ResolveDeadline < uint64(time.Now().Unix()) {
 		log.Errorln(common.ErrDeadlinePassed, "pay:", utils.PrintConditionalPay(pay))
 		return common.ErrDeadlinePassed
 	}

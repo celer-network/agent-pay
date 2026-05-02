@@ -2,13 +2,14 @@
 
 syntax = "proto3";
 package rpc;
-option go_package = "github.com/celer-network/agent-pay/rpc";
 
+import "entity.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
-import "entity.proto";
 import "message.proto";
+
+option go_package = "github.com/celer-network/agent-pay/rpc";
 
 // Next Tag: 3
 message RegisterStreamRequest {

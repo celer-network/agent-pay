@@ -4,7 +4,6 @@ package rpc
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -72,31 +71,14 @@ type WebApiClient interface {
 	ConfirmWithdraw(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	IntendSettlePaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ConfirmSettlePaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetSettleFinalizedTimeForPaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BlockNumber, error)
+	GetSettleFinalizedTimeForPaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*Timestamp, error)
 	SyncOnChainPaymentChannelStatus(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SyncStateWithPeer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreateAppSessionOnVirtualContract(ctx context.Context, in *CreateAppSessionOnVirtualContractRequest, opts ...grpc.CallOption) (*SessionID, error)
-	CreateAppSessionOnDeployedContract(ctx context.Context, in *CreateAppSessionOnDeployedContractRequest, opts ...grpc.CallOption) (*SessionID, error)
-	SubscribeAppSessionDispute(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (WebApi_SubscribeAppSessionDisputeClient, error)
-	SignOutgoingState(ctx context.Context, in *SignOutgoingStateRequest, opts ...grpc.CallOption) (*SignedState, error)
-	ValidateAck(ctx context.Context, in *ValidateAckRequest, opts ...grpc.CallOption) (*BoolValue, error)
 	SignData(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Signature, error)
-	ProcessReceivedState(ctx context.Context, in *ProcessReceivedStateRequest, opts ...grpc.CallOption) (*ProcessReceivedStateResponse, error)
-	SettleAppSession(ctx context.Context, in *SettleAppSessionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	SettleAppSessionBySigTimeout(ctx context.Context, in *SettleAppSessionByTimeoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	SettleAppSessionByMoveTimeout(ctx context.Context, in *SettleAppSessionByTimeoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	SettleAppSessionByInvalidTurn(ctx context.Context, in *SettleAppSessionByInvalidityRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	SettleAppSessionByInvalidState(ctx context.Context, in *SettleAppSessionByInvalidityRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetDeployedAddressForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*Address, error)
 	GetBooleanOutcomeForAppSession(ctx context.Context, in *GetBooleanOutcomeForAppSessionRequest, opts ...grpc.CallOption) (*BooleanOutcome, error)
-	ApplyActionForAppSession(ctx context.Context, in *ApplyActionForAppSessionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	FinalizeOnActionTimeoutForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetSettleFinalizedTimeForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*BlockNumber, error)
-	GetActionDeadlineForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*BlockNumber, error)
-	GetStatusForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*AppSessionStatus, error)
-	GetStateForAppSession(ctx context.Context, in *GetStateForAppSessionRequest, opts ...grpc.CallOption) (*AppSessionState, error)
-	GetSeqNumForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*AppSessionSeqNum, error)
 	GetBlockNumber(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BlockNumber, error)
 	SetMsgDropper(ctx context.Context, in *SetMsgDropReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -416,8 +398,8 @@ func (c *webApiClient) ConfirmSettlePaymentChannel(ctx context.Context, in *Toke
 	return out, nil
 }
 
-func (c *webApiClient) GetSettleFinalizedTimeForPaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BlockNumber, error) {
-	out := new(BlockNumber)
+func (c *webApiClient) GetSettleFinalizedTimeForPaymentChannel(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*Timestamp, error) {
+	out := new(Timestamp)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/GetSettleFinalizedTimeForPaymentChannel", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -452,122 +434,9 @@ func (c *webApiClient) CreateAppSessionOnVirtualContract(ctx context.Context, in
 	return out, nil
 }
 
-func (c *webApiClient) CreateAppSessionOnDeployedContract(ctx context.Context, in *CreateAppSessionOnDeployedContractRequest, opts ...grpc.CallOption) (*SessionID, error) {
-	out := new(SessionID)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/CreateAppSessionOnDeployedContract", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webApiClient) SubscribeAppSessionDispute(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (WebApi_SubscribeAppSessionDisputeClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_WebApi_serviceDesc.Streams[2], "/webrpc.WebApi/SubscribeAppSessionDispute", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &webApiSubscribeAppSessionDisputeClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type WebApi_SubscribeAppSessionDisputeClient interface {
-	Recv() (*DisputeInfo, error)
-	grpc.ClientStream
-}
-
-type webApiSubscribeAppSessionDisputeClient struct {
-	grpc.ClientStream
-}
-
-func (x *webApiSubscribeAppSessionDisputeClient) Recv() (*DisputeInfo, error) {
-	m := new(DisputeInfo)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *webApiClient) SignOutgoingState(ctx context.Context, in *SignOutgoingStateRequest, opts ...grpc.CallOption) (*SignedState, error) {
-	out := new(SignedState)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SignOutgoingState", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webApiClient) ValidateAck(ctx context.Context, in *ValidateAckRequest, opts ...grpc.CallOption) (*BoolValue, error) {
-	out := new(BoolValue)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/ValidateAck", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *webApiClient) SignData(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Signature, error) {
 	out := new(Signature)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SignData", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webApiClient) ProcessReceivedState(ctx context.Context, in *ProcessReceivedStateRequest, opts ...grpc.CallOption) (*ProcessReceivedStateResponse, error) {
-	out := new(ProcessReceivedStateResponse)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/ProcessReceivedState", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webApiClient) SettleAppSession(ctx context.Context, in *SettleAppSessionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SettleAppSession", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webApiClient) SettleAppSessionBySigTimeout(ctx context.Context, in *SettleAppSessionByTimeoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SettleAppSessionBySigTimeout", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webApiClient) SettleAppSessionByMoveTimeout(ctx context.Context, in *SettleAppSessionByTimeoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SettleAppSessionByMoveTimeout", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webApiClient) SettleAppSessionByInvalidTurn(ctx context.Context, in *SettleAppSessionByInvalidityRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SettleAppSessionByInvalidTurn", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webApiClient) SettleAppSessionByInvalidState(ctx context.Context, in *SettleAppSessionByInvalidityRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/SettleAppSessionByInvalidState", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -601,69 +470,6 @@ func (c *webApiClient) GetBooleanOutcomeForAppSession(ctx context.Context, in *G
 	return out, nil
 }
 
-func (c *webApiClient) ApplyActionForAppSession(ctx context.Context, in *ApplyActionForAppSessionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/ApplyActionForAppSession", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webApiClient) FinalizeOnActionTimeoutForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/FinalizeOnActionTimeoutForAppSession", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webApiClient) GetSettleFinalizedTimeForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*BlockNumber, error) {
-	out := new(BlockNumber)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/GetSettleFinalizedTimeForAppSession", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webApiClient) GetActionDeadlineForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*BlockNumber, error) {
-	out := new(BlockNumber)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/GetActionDeadlineForAppSession", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webApiClient) GetStatusForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*AppSessionStatus, error) {
-	out := new(AppSessionStatus)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/GetStatusForAppSession", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webApiClient) GetStateForAppSession(ctx context.Context, in *GetStateForAppSessionRequest, opts ...grpc.CallOption) (*AppSessionState, error) {
-	out := new(AppSessionState)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/GetStateForAppSession", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webApiClient) GetSeqNumForAppSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*AppSessionSeqNum, error) {
-	out := new(AppSessionSeqNum)
-	err := c.cc.Invoke(ctx, "/webrpc.WebApi/GetSeqNumForAppSession", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *webApiClient) GetBlockNumber(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BlockNumber, error) {
 	out := new(BlockNumber)
 	err := c.cc.Invoke(ctx, "/webrpc.WebApi/GetBlockNumber", in, out, opts...)
@@ -683,7 +489,7 @@ func (c *webApiClient) SetMsgDropper(ctx context.Context, in *SetMsgDropReq, opt
 }
 
 // WebApiServer is the server API for WebApi service.
-// All implementations should embed UnimplementedWebApiServer
+// All implementations must embed UnimplementedWebApiServer
 // for forward compatibility
 type WebApiServer interface {
 	GetPayHistory(context.Context, *GetPayHistoryRequest) (*GetPayHistoryResponse, error)
@@ -739,36 +545,20 @@ type WebApiServer interface {
 	ConfirmWithdraw(context.Context, *TokenInfo) (*emptypb.Empty, error)
 	IntendSettlePaymentChannel(context.Context, *TokenInfo) (*emptypb.Empty, error)
 	ConfirmSettlePaymentChannel(context.Context, *TokenInfo) (*emptypb.Empty, error)
-	GetSettleFinalizedTimeForPaymentChannel(context.Context, *TokenInfo) (*BlockNumber, error)
+	GetSettleFinalizedTimeForPaymentChannel(context.Context, *TokenInfo) (*Timestamp, error)
 	SyncOnChainPaymentChannelStatus(context.Context, *TokenInfo) (*emptypb.Empty, error)
 	SyncStateWithPeer(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	CreateAppSessionOnVirtualContract(context.Context, *CreateAppSessionOnVirtualContractRequest) (*SessionID, error)
-	CreateAppSessionOnDeployedContract(context.Context, *CreateAppSessionOnDeployedContractRequest) (*SessionID, error)
-	SubscribeAppSessionDispute(*SessionID, WebApi_SubscribeAppSessionDisputeServer) error
-	SignOutgoingState(context.Context, *SignOutgoingStateRequest) (*SignedState, error)
-	ValidateAck(context.Context, *ValidateAckRequest) (*BoolValue, error)
 	SignData(context.Context, *Data) (*Signature, error)
-	ProcessReceivedState(context.Context, *ProcessReceivedStateRequest) (*ProcessReceivedStateResponse, error)
-	SettleAppSession(context.Context, *SettleAppSessionRequest) (*emptypb.Empty, error)
-	SettleAppSessionBySigTimeout(context.Context, *SettleAppSessionByTimeoutRequest) (*emptypb.Empty, error)
-	SettleAppSessionByMoveTimeout(context.Context, *SettleAppSessionByTimeoutRequest) (*emptypb.Empty, error)
-	SettleAppSessionByInvalidTurn(context.Context, *SettleAppSessionByInvalidityRequest) (*emptypb.Empty, error)
-	SettleAppSessionByInvalidState(context.Context, *SettleAppSessionByInvalidityRequest) (*emptypb.Empty, error)
 	DeleteAppSession(context.Context, *SessionID) (*emptypb.Empty, error)
 	GetDeployedAddressForAppSession(context.Context, *SessionID) (*Address, error)
 	GetBooleanOutcomeForAppSession(context.Context, *GetBooleanOutcomeForAppSessionRequest) (*BooleanOutcome, error)
-	ApplyActionForAppSession(context.Context, *ApplyActionForAppSessionRequest) (*emptypb.Empty, error)
-	FinalizeOnActionTimeoutForAppSession(context.Context, *SessionID) (*emptypb.Empty, error)
-	GetSettleFinalizedTimeForAppSession(context.Context, *SessionID) (*BlockNumber, error)
-	GetActionDeadlineForAppSession(context.Context, *SessionID) (*BlockNumber, error)
-	GetStatusForAppSession(context.Context, *SessionID) (*AppSessionStatus, error)
-	GetStateForAppSession(context.Context, *GetStateForAppSessionRequest) (*AppSessionState, error)
-	GetSeqNumForAppSession(context.Context, *SessionID) (*AppSessionSeqNum, error)
 	GetBlockNumber(context.Context, *emptypb.Empty) (*BlockNumber, error)
 	SetMsgDropper(context.Context, *SetMsgDropReq) (*emptypb.Empty, error)
+	mustEmbedUnimplementedWebApiServer()
 }
 
-// UnimplementedWebApiServer should be embedded to have forward compatible implementations.
+// UnimplementedWebApiServer must be embedded to have forward compatible implementations.
 type UnimplementedWebApiServer struct {
 }
 
@@ -859,7 +649,7 @@ func (UnimplementedWebApiServer) IntendSettlePaymentChannel(context.Context, *To
 func (UnimplementedWebApiServer) ConfirmSettlePaymentChannel(context.Context, *TokenInfo) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfirmSettlePaymentChannel not implemented")
 }
-func (UnimplementedWebApiServer) GetSettleFinalizedTimeForPaymentChannel(context.Context, *TokenInfo) (*BlockNumber, error) {
+func (UnimplementedWebApiServer) GetSettleFinalizedTimeForPaymentChannel(context.Context, *TokenInfo) (*Timestamp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSettleFinalizedTimeForPaymentChannel not implemented")
 }
 func (UnimplementedWebApiServer) SyncOnChainPaymentChannelStatus(context.Context, *TokenInfo) (*emptypb.Empty, error) {
@@ -871,38 +661,8 @@ func (UnimplementedWebApiServer) SyncStateWithPeer(context.Context, *emptypb.Emp
 func (UnimplementedWebApiServer) CreateAppSessionOnVirtualContract(context.Context, *CreateAppSessionOnVirtualContractRequest) (*SessionID, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAppSessionOnVirtualContract not implemented")
 }
-func (UnimplementedWebApiServer) CreateAppSessionOnDeployedContract(context.Context, *CreateAppSessionOnDeployedContractRequest) (*SessionID, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateAppSessionOnDeployedContract not implemented")
-}
-func (UnimplementedWebApiServer) SubscribeAppSessionDispute(*SessionID, WebApi_SubscribeAppSessionDisputeServer) error {
-	return status.Errorf(codes.Unimplemented, "method SubscribeAppSessionDispute not implemented")
-}
-func (UnimplementedWebApiServer) SignOutgoingState(context.Context, *SignOutgoingStateRequest) (*SignedState, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SignOutgoingState not implemented")
-}
-func (UnimplementedWebApiServer) ValidateAck(context.Context, *ValidateAckRequest) (*BoolValue, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ValidateAck not implemented")
-}
 func (UnimplementedWebApiServer) SignData(context.Context, *Data) (*Signature, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignData not implemented")
-}
-func (UnimplementedWebApiServer) ProcessReceivedState(context.Context, *ProcessReceivedStateRequest) (*ProcessReceivedStateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ProcessReceivedState not implemented")
-}
-func (UnimplementedWebApiServer) SettleAppSession(context.Context, *SettleAppSessionRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SettleAppSession not implemented")
-}
-func (UnimplementedWebApiServer) SettleAppSessionBySigTimeout(context.Context, *SettleAppSessionByTimeoutRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SettleAppSessionBySigTimeout not implemented")
-}
-func (UnimplementedWebApiServer) SettleAppSessionByMoveTimeout(context.Context, *SettleAppSessionByTimeoutRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SettleAppSessionByMoveTimeout not implemented")
-}
-func (UnimplementedWebApiServer) SettleAppSessionByInvalidTurn(context.Context, *SettleAppSessionByInvalidityRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SettleAppSessionByInvalidTurn not implemented")
-}
-func (UnimplementedWebApiServer) SettleAppSessionByInvalidState(context.Context, *SettleAppSessionByInvalidityRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SettleAppSessionByInvalidState not implemented")
 }
 func (UnimplementedWebApiServer) DeleteAppSession(context.Context, *SessionID) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAppSession not implemented")
@@ -913,33 +673,13 @@ func (UnimplementedWebApiServer) GetDeployedAddressForAppSession(context.Context
 func (UnimplementedWebApiServer) GetBooleanOutcomeForAppSession(context.Context, *GetBooleanOutcomeForAppSessionRequest) (*BooleanOutcome, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBooleanOutcomeForAppSession not implemented")
 }
-func (UnimplementedWebApiServer) ApplyActionForAppSession(context.Context, *ApplyActionForAppSessionRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ApplyActionForAppSession not implemented")
-}
-func (UnimplementedWebApiServer) FinalizeOnActionTimeoutForAppSession(context.Context, *SessionID) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FinalizeOnActionTimeoutForAppSession not implemented")
-}
-func (UnimplementedWebApiServer) GetSettleFinalizedTimeForAppSession(context.Context, *SessionID) (*BlockNumber, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSettleFinalizedTimeForAppSession not implemented")
-}
-func (UnimplementedWebApiServer) GetActionDeadlineForAppSession(context.Context, *SessionID) (*BlockNumber, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetActionDeadlineForAppSession not implemented")
-}
-func (UnimplementedWebApiServer) GetStatusForAppSession(context.Context, *SessionID) (*AppSessionStatus, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetStatusForAppSession not implemented")
-}
-func (UnimplementedWebApiServer) GetStateForAppSession(context.Context, *GetStateForAppSessionRequest) (*AppSessionState, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetStateForAppSession not implemented")
-}
-func (UnimplementedWebApiServer) GetSeqNumForAppSession(context.Context, *SessionID) (*AppSessionSeqNum, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSeqNumForAppSession not implemented")
-}
 func (UnimplementedWebApiServer) GetBlockNumber(context.Context, *emptypb.Empty) (*BlockNumber, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBlockNumber not implemented")
 }
 func (UnimplementedWebApiServer) SetMsgDropper(context.Context, *SetMsgDropReq) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetMsgDropper not implemented")
 }
+func (UnimplementedWebApiServer) mustEmbedUnimplementedWebApiServer() {}
 
 // UnsafeWebApiServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to WebApiServer will
@@ -1552,81 +1292,6 @@ func _WebApi_CreateAppSessionOnVirtualContract_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _WebApi_CreateAppSessionOnDeployedContract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateAppSessionOnDeployedContractRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).CreateAppSessionOnDeployedContract(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/CreateAppSessionOnDeployedContract",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).CreateAppSessionOnDeployedContract(ctx, req.(*CreateAppSessionOnDeployedContractRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _WebApi_SubscribeAppSessionDispute_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(SessionID)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(WebApiServer).SubscribeAppSessionDispute(m, &webApiSubscribeAppSessionDisputeServer{stream})
-}
-
-type WebApi_SubscribeAppSessionDisputeServer interface {
-	Send(*DisputeInfo) error
-	grpc.ServerStream
-}
-
-type webApiSubscribeAppSessionDisputeServer struct {
-	grpc.ServerStream
-}
-
-func (x *webApiSubscribeAppSessionDisputeServer) Send(m *DisputeInfo) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func _WebApi_SignOutgoingState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SignOutgoingStateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).SignOutgoingState(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/SignOutgoingState",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).SignOutgoingState(ctx, req.(*SignOutgoingStateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _WebApi_ValidateAck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ValidateAckRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).ValidateAck(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/ValidateAck",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).ValidateAck(ctx, req.(*ValidateAckRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _WebApi_SignData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Data)
 	if err := dec(in); err != nil {
@@ -1641,114 +1306,6 @@ func _WebApi_SignData_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(WebApiServer).SignData(ctx, req.(*Data))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _WebApi_ProcessReceivedState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProcessReceivedStateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).ProcessReceivedState(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/ProcessReceivedState",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).ProcessReceivedState(ctx, req.(*ProcessReceivedStateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _WebApi_SettleAppSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SettleAppSessionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).SettleAppSession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/SettleAppSession",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).SettleAppSession(ctx, req.(*SettleAppSessionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _WebApi_SettleAppSessionBySigTimeout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SettleAppSessionByTimeoutRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).SettleAppSessionBySigTimeout(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/SettleAppSessionBySigTimeout",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).SettleAppSessionBySigTimeout(ctx, req.(*SettleAppSessionByTimeoutRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _WebApi_SettleAppSessionByMoveTimeout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SettleAppSessionByTimeoutRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).SettleAppSessionByMoveTimeout(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/SettleAppSessionByMoveTimeout",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).SettleAppSessionByMoveTimeout(ctx, req.(*SettleAppSessionByTimeoutRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _WebApi_SettleAppSessionByInvalidTurn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SettleAppSessionByInvalidityRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).SettleAppSessionByInvalidTurn(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/SettleAppSessionByInvalidTurn",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).SettleAppSessionByInvalidTurn(ctx, req.(*SettleAppSessionByInvalidityRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _WebApi_SettleAppSessionByInvalidState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SettleAppSessionByInvalidityRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).SettleAppSessionByInvalidState(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/SettleAppSessionByInvalidState",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).SettleAppSessionByInvalidState(ctx, req.(*SettleAppSessionByInvalidityRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1803,132 +1360,6 @@ func _WebApi_GetBooleanOutcomeForAppSession_Handler(srv interface{}, ctx context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(WebApiServer).GetBooleanOutcomeForAppSession(ctx, req.(*GetBooleanOutcomeForAppSessionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _WebApi_ApplyActionForAppSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ApplyActionForAppSessionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).ApplyActionForAppSession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/ApplyActionForAppSession",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).ApplyActionForAppSession(ctx, req.(*ApplyActionForAppSessionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _WebApi_FinalizeOnActionTimeoutForAppSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SessionID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).FinalizeOnActionTimeoutForAppSession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/FinalizeOnActionTimeoutForAppSession",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).FinalizeOnActionTimeoutForAppSession(ctx, req.(*SessionID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _WebApi_GetSettleFinalizedTimeForAppSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SessionID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).GetSettleFinalizedTimeForAppSession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/GetSettleFinalizedTimeForAppSession",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).GetSettleFinalizedTimeForAppSession(ctx, req.(*SessionID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _WebApi_GetActionDeadlineForAppSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SessionID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).GetActionDeadlineForAppSession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/GetActionDeadlineForAppSession",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).GetActionDeadlineForAppSession(ctx, req.(*SessionID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _WebApi_GetStatusForAppSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SessionID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).GetStatusForAppSession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/GetStatusForAppSession",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).GetStatusForAppSession(ctx, req.(*SessionID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _WebApi_GetStateForAppSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetStateForAppSessionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).GetStateForAppSession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/GetStateForAppSession",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).GetStateForAppSession(ctx, req.(*GetStateForAppSessionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _WebApi_GetSeqNumForAppSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SessionID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebApiServer).GetSeqNumForAppSession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/webrpc.WebApi/GetSeqNumForAppSession",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebApiServer).GetSeqNumForAppSession(ctx, req.(*SessionID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2098,44 +1529,8 @@ var _WebApi_serviceDesc = grpc.ServiceDesc{
 			Handler:    _WebApi_CreateAppSessionOnVirtualContract_Handler,
 		},
 		{
-			MethodName: "CreateAppSessionOnDeployedContract",
-			Handler:    _WebApi_CreateAppSessionOnDeployedContract_Handler,
-		},
-		{
-			MethodName: "SignOutgoingState",
-			Handler:    _WebApi_SignOutgoingState_Handler,
-		},
-		{
-			MethodName: "ValidateAck",
-			Handler:    _WebApi_ValidateAck_Handler,
-		},
-		{
 			MethodName: "SignData",
 			Handler:    _WebApi_SignData_Handler,
-		},
-		{
-			MethodName: "ProcessReceivedState",
-			Handler:    _WebApi_ProcessReceivedState_Handler,
-		},
-		{
-			MethodName: "SettleAppSession",
-			Handler:    _WebApi_SettleAppSession_Handler,
-		},
-		{
-			MethodName: "SettleAppSessionBySigTimeout",
-			Handler:    _WebApi_SettleAppSessionBySigTimeout_Handler,
-		},
-		{
-			MethodName: "SettleAppSessionByMoveTimeout",
-			Handler:    _WebApi_SettleAppSessionByMoveTimeout_Handler,
-		},
-		{
-			MethodName: "SettleAppSessionByInvalidTurn",
-			Handler:    _WebApi_SettleAppSessionByInvalidTurn_Handler,
-		},
-		{
-			MethodName: "SettleAppSessionByInvalidState",
-			Handler:    _WebApi_SettleAppSessionByInvalidState_Handler,
 		},
 		{
 			MethodName: "DeleteAppSession",
@@ -2148,34 +1543,6 @@ var _WebApi_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBooleanOutcomeForAppSession",
 			Handler:    _WebApi_GetBooleanOutcomeForAppSession_Handler,
-		},
-		{
-			MethodName: "ApplyActionForAppSession",
-			Handler:    _WebApi_ApplyActionForAppSession_Handler,
-		},
-		{
-			MethodName: "FinalizeOnActionTimeoutForAppSession",
-			Handler:    _WebApi_FinalizeOnActionTimeoutForAppSession_Handler,
-		},
-		{
-			MethodName: "GetSettleFinalizedTimeForAppSession",
-			Handler:    _WebApi_GetSettleFinalizedTimeForAppSession_Handler,
-		},
-		{
-			MethodName: "GetActionDeadlineForAppSession",
-			Handler:    _WebApi_GetActionDeadlineForAppSession_Handler,
-		},
-		{
-			MethodName: "GetStatusForAppSession",
-			Handler:    _WebApi_GetStatusForAppSession_Handler,
-		},
-		{
-			MethodName: "GetStateForAppSession",
-			Handler:    _WebApi_GetStateForAppSession_Handler,
-		},
-		{
-			MethodName: "GetSeqNumForAppSession",
-			Handler:    _WebApi_GetSeqNumForAppSession_Handler,
 		},
 		{
 			MethodName: "GetBlockNumber",
@@ -2195,11 +1562,6 @@ var _WebApi_serviceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "SubscribeOutgoingPayments",
 			Handler:       _WebApi_SubscribeOutgoingPayments_Handler,
-			ServerStreams: true,
-		},
-		{
-			StreamName:    "SubscribeAppSessionDispute",
-			Handler:       _WebApi_SubscribeAppSessionDispute_Handler,
 			ServerStreams: true,
 		},
 	},

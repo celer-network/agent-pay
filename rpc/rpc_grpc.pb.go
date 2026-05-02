@@ -131,7 +131,7 @@ func (c *rpcClient) CelerMigrateChannel(ctx context.Context, in *MigrateChannelR
 }
 
 // RpcServer is the server API for Rpc service.
-// All implementations should embed UnimplementedRpcServer
+// All implementations must embed UnimplementedRpcServer
 // for forward compatibility
 type RpcServer interface {
 	GetPayHistory(context.Context, *GetPayHistoryRequest) (*GetPayHistoryResponse, error)
@@ -143,9 +143,10 @@ type RpcServer interface {
 	// unified offchain bidi streaming rpc and msg definition
 	CelerStream(Rpc_CelerStreamServer) error
 	CelerMigrateChannel(context.Context, *MigrateChannelRequest) (*MigrateChannelResponse, error)
+	mustEmbedUnimplementedRpcServer()
 }
 
-// UnimplementedRpcServer should be embedded to have forward compatible implementations.
+// UnimplementedRpcServer must be embedded to have forward compatible implementations.
 type UnimplementedRpcServer struct {
 }
 
@@ -173,6 +174,7 @@ func (UnimplementedRpcServer) CelerStream(Rpc_CelerStreamServer) error {
 func (UnimplementedRpcServer) CelerMigrateChannel(context.Context, *MigrateChannelRequest) (*MigrateChannelResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CelerMigrateChannel not implemented")
 }
+func (UnimplementedRpcServer) mustEmbedUnimplementedRpcServer() {}
 
 // UnsafeRpcServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to RpcServer will

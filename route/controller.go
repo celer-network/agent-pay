@@ -57,13 +57,18 @@ const (
 
 const (
 	// A router OSP checks the router registry at startup and then every checkRegistryInterval to see
-	// whether its registry time is more than refreshIntervalBlock before or not, and refresh itself
-	// onchain if so. It also scans the local rtBuilder.getAllOsps() for every checkRegistryInterval
-	// (first scan time is startupTime + checkRegistryInterval), and removes expired OSPs if they
-	// have not been refreshed for expireTimeoutBlock.
-	checkRegistryInterval = 6 * time.Hour // time interval to check for self-refresh and OSP timeouts
-	refreshIntervalBlock  = uint64(36000) // block interval for OSP to refresh registry
-	expireTimeoutBlock    = uint64(50000) // remove OSP as router if not refreshed within timeout blocks
+	// whether its registry time is older than refreshIntervalSec, and refreshes itself onchain if so.
+	// It also scans the local rtBuilder.getAllOsps() each interval (first scan at
+	// startupTime + checkRegistryInterval) and removes routers whose stored timestamp is older than
+	// expireTimeoutSec. The contract stores `block.timestamp` (unix seconds) per router, so these
+	// thresholds are likewise in seconds.
+	checkRegistryInterval = 6 * time.Hour  // time interval to check for self-refresh and OSP timeouts
+	refreshIntervalSec    = uint64(432000) // 5 days, seconds — refresh self if stored ts is older
+	expireTimeoutSec      = uint64(604800) // 7 days, seconds — drop a router whose stored ts is older
+	// eventBacktrackBlocks is how far back the on-chain event monitor scans on startup so it
+	// won't miss a still-relevant RouterUpdated event. This stays a block count because the
+	// event monitor's StartBlock is a block height, independent of contract deadline semantics.
+	eventBacktrackBlocks = uint64(50000)
 
 	routeTTL = 15
 )
@@ -103,17 +108,18 @@ func NewController(
 
 // Start starts router process to instantiate OSP as a router.
 func (c *Controller) Start() {
-	// check if OSP is registered on-chain as a router
-	blknum, err := c.queryRouterRegistry()
+	// check if OSP is registered on-chain as a router. Stored value is the unix
+	// timestamp (seconds) of the most recent register/refresh — see RouterRegistry.sol.
+	registeredAt, err := c.queryRouterRegistry()
 	if err != nil {
 		log.Errorf("query router registry failed: %s", err)
 		return
 	}
-	if blknum != 0 {
-		log.Infoln("router registered / refreshed at block", blknum)
+	if registeredAt != 0 {
+		log.Infoln("router registered / refreshed at unix ts", registeredAt)
 		// check if OSP needs to send refresh transaction
-		currentBlk := c.monitorService.GetCurrentBlockNumber().Uint64()
-		if currentBlk-blknum > refreshIntervalBlock {
+		nowTs := uint64(time.Now().Unix())
+		if nowTs-registeredAt > refreshIntervalSec {
 			c.refreshRouterRegistry()
 		}
 		// start onchain events monitor
@@ -149,7 +155,11 @@ func (c *Controller) monitorRouterUpdatedEvent() {
 			txHash := fmt.Sprintf("%x", eLog.TxHash)
 			log.Infoln("Seeing RouterUpdated event, router addr:", routerAddr, "tx hash:", txHash, "callback id:", id, "blkNum:", eLog.BlockNumber)
 
-			c.processRouterUpdatedEvent(e, eLog.BlockNumber)
+			// The contract stores `block.timestamp` (unix seconds) per router; since the event
+			// fired in approximately the current block, time.Now() is within a few seconds of
+			// the canonical contract value. The off-chain comparisons use multi-day windows, so
+			// this approximation is operationally lossless.
+			c.processRouterUpdatedEvent(e, uint64(time.Now().Unix()))
 			return false
 		},
 	)
@@ -160,22 +170,22 @@ func (c *Controller) monitorRouterUpdatedEvent() {
 }
 
 // processes the RouterUpdated event according to various router opeartion
-func (c *Controller) processRouterUpdatedEvent(e *rt.RouterRegistryRouterUpdated, blkNum uint64) {
+func (c *Controller) processRouterUpdatedEvent(e *rt.RouterRegistryRouterUpdated, registeredAt uint64) {
 	switch e.Op {
 	case routerAdded:
-		c.addRouter(e.RouterAddress, blkNum)
+		c.addRouter(e.RouterAddress, registeredAt)
 	case routerRemoved:
 		c.removeRouter(e.RouterAddress)
 	case routerRefreshed:
-		c.refreshRouter(e.RouterAddress, blkNum)
+		c.refreshRouter(e.RouterAddress, registeredAt)
 	default:
 		log.Warnf("Unknown router operation from router registry contract: %v", e.Op)
 	}
 }
 
-// adds router node and record the block number
-func (c *Controller) addRouter(routerAddr ctype.Addr, blkNum uint64) {
-	c.rtBuilder.markOsp(routerAddr, blkNum)
+// adds router node and record the unix timestamp of register/refresh
+func (c *Controller) addRouter(routerAddr ctype.Addr, registeredAt uint64) {
+	c.rtBuilder.markOsp(routerAddr, registeredAt)
 }
 
 // removes router node and delete it from the map
@@ -186,52 +196,54 @@ func (c *Controller) removeRouter(routerAddr ctype.Addr) {
 	c.rtBuilder.unmarkOsp(routerAddr)
 }
 
-// refreshes a router node and update block number in the map
-func (c *Controller) refreshRouter(routerAddr ctype.Addr, blkNum uint64) {
-	c.rtBuilder.markOsp(routerAddr, blkNum)
+// refreshes a router node and update its stored register/refresh unix timestamp.
+func (c *Controller) refreshRouter(routerAddr ctype.Addr, registeredAt uint64) {
+	c.rtBuilder.markOsp(routerAddr, registeredAt)
 }
 
 // calculates the start block number for event monitor service.
 // No matter whether Osp starts from scratch or starts from existing database,
-// Osp only backtracks one interval back from the current block number.
-// Interval is the same as the expire interval in rtconfig
+// Osp backtracks eventBacktrackBlocks from the current block so it won't miss
+// a still-relevant RouterUpdated event.
 func (c *Controller) calculateStartBlockNumber() *big.Int {
 	currentBlk := c.monitorService.GetCurrentBlockNumber()
-	timeout := big.NewInt(0).SetUint64(expireTimeoutBlock)
-	if timeout.Cmp(currentBlk) == 1 {
+	backtrack := big.NewInt(0).SetUint64(eventBacktrackBlocks)
+	if backtrack.Cmp(currentBlk) == 1 {
 		return big.NewInt(0)
 	}
-	return currentBlk.Sub(currentBlk, timeout) // start block number for onchain monitor service
+	return currentBlk.Sub(currentBlk, backtrack) // start block number for onchain monitor service
 }
 
 // call routerInfo in router registry contract to check if Osp has been registered.
-// Return value is the block number corresponding to Osp address
+// Return value is the unix timestamp (seconds) of the most recent register/refresh
+// for this Osp address — the contract stores `block.timestamp`, see RouterRegistry.sol.
 func (c *Controller) queryRouterRegistry() (uint64, error) {
 	routerRegistryAddr := c.nodeConfig.GetRouterRegistryContract().GetAddr()
 	caller, err := rt.NewRouterRegistryCaller(routerRegistryAddr, c.transactor.ContractCaller())
 	if err != nil {
 		return 0, err
 	}
-	blknum, err := caller.RouterInfo(&bind.CallOpts{}, c.transactor.Address())
+	registeredAt, err := caller.RouterInfo(&bind.CallOpts{}, c.transactor.Address())
 	if err != nil {
 		return 0, err
 	}
-	return blknum.Uint64(), nil
+	return registeredAt.Uint64(), nil
 }
 
 func (c *Controller) checkAndRefreshIfNeeded() {
-	blknum, err := c.queryRouterRegistry()
+	registeredAt, err := c.queryRouterRegistry()
 	if err != nil {
 		log.Errorf("query router registry failed: %s", err)
 		return
 	}
-	currentBlk := c.monitorService.GetCurrentBlockNumber().Uint64()
-	if currentBlk-blknum > refreshIntervalBlock {
+	nowTs := uint64(time.Now().Unix())
+	if nowTs-registeredAt > refreshIntervalSec {
 		c.refreshRouterRegistry()
 	}
 }
 
-// send on-chain transaction to refresh the block number of Osp address.
+// send on-chain transaction to refresh the OSP address's last-seen unix
+// timestamp in the RouterRegistry.
 // CAUTION: need to pay attention if it fails to refresh
 func (c *Controller) refreshRouterRegistry() {
 	log.Infoln("sending RefreshRouter tx")
@@ -291,19 +303,19 @@ func (c *Controller) runRoutersRoutineJob() {
 
 // Traverses the map and remove the expired routers.
 func (c *Controller) removeExpiredRouters() {
-	currentBlk := c.monitorService.GetCurrentBlockNumber().Uint64()
+	nowTs := uint64(time.Now().Unix())
 	ospInfo := c.rtBuilder.getAllOsps()
 	for addr := range ospInfo {
-		blk := ospInfo[addr].RegistryBlock
+		registeredAt := ospInfo[addr].RegistryTime
 
-		if isRouterExpired(blk, currentBlk) {
+		if isRouterExpired(registeredAt, nowTs) {
 			c.rtBuilder.unmarkOsp(addr)
 		}
 	}
 }
 
-func isRouterExpired(routerBlk, currentBlk uint64) bool {
-	return routerBlk+expireTimeoutBlock < currentBlk
+func isRouterExpired(registeredAt, nowTs uint64) bool {
+	return registeredAt+expireTimeoutSec < nowTs
 }
 
 // Get my dynamic routing information and broadcast it to peer OSPs.
@@ -342,10 +354,10 @@ func (c *Controller) bcastRouterInfo() {
 
 func (c *Controller) gatherChannelInfo() []*rpc.ChannelRoutingInfo {
 	var channels []*rpc.ChannelRoutingInfo
-	blkNum := c.monitorService.GetCurrentBlockNumber().Uint64()
+	nowTs := uint64(time.Now().Unix())
 	for _, neighbor := range c.rtBuilder.getAliveNeighbors() {
 		for _, cid := range neighbor.TokenCids {
-			bal, err := ledgerview.GetBalance(c.dal, cid, c.nodeConfig.GetOnChainAddr(), blkNum)
+			bal, err := ledgerview.GetBalance(c.dal, cid, c.nodeConfig.GetOnChainAddr(), nowTs)
 			if err != nil {
 				log.Error(err)
 				continue
@@ -489,13 +501,13 @@ func (c *Controller) reportOspInfoToExplorer() {
 	}
 	// set osp peers
 	c.explorerReport.OspPeers = nil
-	blkNum := c.monitorService.GetCurrentBlockNumber().Uint64()
+	nowTs := uint64(time.Now().Unix())
 	for addr, neighbor := range c.rtBuilder.getAliveNeighbors() {
 		peerBalances := &ospreport.PeerBalances{
 			Peer: addr.Hex(), // format required by explorer
 		}
 		for tk, cid := range neighbor.TokenCids {
-			bal, err := ledgerview.GetBalance(c.dal, cid, c.nodeConfig.GetOnChainAddr(), blkNum)
+			bal, err := ledgerview.GetBalance(c.dal, cid, c.nodeConfig.GetOnChainAddr(), nowTs)
 			if err != nil {
 				log.Error(err)
 				continue

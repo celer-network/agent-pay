@@ -4,11 +4,11 @@
 
 syntax = "proto3";
 
-option go_package = "github.com/celer-network/agent-pay/rpc";
-
 package rpc;
 
 import "message.proto";
+
+option go_package = "github.com/celer-network/agent-pay/rpc";
 
 // Interface exported by the server on an internal port (inter-server).
 service MultiServer {
@@ -31,8 +31,7 @@ message FwdReply {
 }
 
 // Next tag: 1
-message PingReq {
-}
+message PingReq {}
 
 // Next tag: 2
 message PingReply {
@@ -58,5 +57,4 @@ message BcastRoutingRequest {
 }
 
 // Next tag: 1
-message BcastRoutingReply {
-}
+message BcastRoutingReply {}

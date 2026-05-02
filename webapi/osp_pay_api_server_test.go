@@ -17,9 +17,6 @@ type stubOspPayBackend struct {
 	createErr       error
 	deleteSessionID string
 	deleteErr       error
-	statusSessionID string
-	statusValue     uint8
-	statusErr       error
 }
 
 func (*stubOspPayBackend) SendToken(*rpc.SendTokenRequest) (ctype.PayIDType, error) {
@@ -38,11 +35,6 @@ func (b *stubOspPayBackend) CreateAppSessionOnVirtualContract(request *rpc.Creat
 func (b *stubOspPayBackend) DeleteAppSession(sessionID string) error {
 	b.deleteSessionID = sessionID
 	return b.deleteErr
-}
-
-func (b *stubOspPayBackend) GetStatusForAppSession(sessionID string) (uint8, error) {
-	b.statusSessionID = sessionID
-	return b.statusValue, b.statusErr
 }
 
 func (*stubOspPayBackend) GetIncomingPaymentState(ctype.PayIDType) (int, error) {
@@ -68,7 +60,7 @@ func (*stubOspPayBackend) RejectIncomingPayment(ctype.PayIDType) error {
 func TestOspPayApiServerCreateAppSessionOnVirtualContract(t *testing.T) {
 	backend := &stubOspPayBackend{createSessionID: "session-123"}
 	server := NewOspPayApiServer(backend, nil)
-	request := &rpc.CreateAppSessionOnVirtualContractRequest{ContractBin: "beef", ContractConstructor: "cafe", Nonce: 7, OnChainTimeout: 8}
+	request := &rpc.CreateAppSessionOnVirtualContractRequest{ContractBin: "beef", ContractConstructor: "cafe", Nonce: 7}
 
 	response, err := server.CreateAppSessionOnVirtualContract(context.Background(), request)
 	if err != nil {
@@ -79,22 +71,6 @@ func TestOspPayApiServerCreateAppSessionOnVirtualContract(t *testing.T) {
 	}
 	if backend.createRequest != request {
 		t.Fatal("CreateAppSessionOnVirtualContract request not forwarded to backend")
-	}
-}
-
-func TestOspPayApiServerGetStatusForAppSession(t *testing.T) {
-	backend := &stubOspPayBackend{statusValue: 3}
-	server := NewOspPayApiServer(backend, nil)
-
-	response, err := server.GetStatusForAppSession(context.Background(), &rpc.SessionID{SessionId: "session-123"})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if response.GetStatus() != uint32(backend.statusValue) {
-		t.Fatalf("GetStatusForAppSession status = %d, want %d", response.GetStatus(), backend.statusValue)
-	}
-	if backend.statusSessionID != "session-123" {
-		t.Fatalf("GetStatusForAppSession session_id = %q, want %q", backend.statusSessionID, "session-123")
 	}
 }
 

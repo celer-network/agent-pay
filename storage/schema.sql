@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS desttokens (
     dest TEXT NOT NULL,
     token TEXT NOT NULL,
     osps TEXT NOT NULL, -- comma-separated list of access OSPs
-    openchanblknum INT NOT NULL,
+    openchants INT NOT NULL, -- unix-second timestamp of the channel-open
     UNIQUE (dest, token)
 );
 

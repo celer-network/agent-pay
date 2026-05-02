@@ -7,7 +7,6 @@ import (
 	"math/rand"
 	"sync"
 
-	"github.com/celer-network/agent-pay/app"
 	"github.com/celer-network/agent-pay/celersdkintf"
 	"github.com/celer-network/agent-pay/client"
 	"github.com/celer-network/agent-pay/common"
@@ -15,7 +14,6 @@ import (
 	"github.com/celer-network/agent-pay/entity"
 	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/goutils/log"
-	"google.golang.org/protobuf/proto"
 )
 
 // newClient creates a new Celer Client based on provided config
@@ -57,30 +55,18 @@ func createXfer(tk *Token, receiver, amtWei string) *entity.TokenTransfer {
 }
 
 func bc2c(bc *BooleanCondition) (*entity.Condition, error) {
-	var cond *entity.Condition
 	if bc.OnChainDeployed {
-		sessionQuery := &app.SessionQuery{
-			Session: ctype.Hex2Bytes(bc.SessionID),
-			Query:   bc.ArgsForQueryOutcome,
-		}
-		seralizedSessionQuery, err := proto.Marshal(sessionQuery)
-		if err != nil {
-			return nil, err
-		}
-		cond = &entity.Condition{
+		return &entity.Condition{
 			ConditionType:           entity.ConditionType_DEPLOYED_CONTRACT,
 			DeployedContractAddress: ctype.Hex2Addr(bc.OnChainAddress).Bytes(),
-			ArgsQueryFinalization:   ctype.Hex2Bytes(bc.SessionID),
-			ArgsQueryOutcome:        seralizedSessionQuery,
-		}
-	} else {
-		cond = &entity.Condition{
-			ConditionType:          entity.ConditionType_VIRTUAL_CONTRACT,
-			VirtualContractAddress: ctype.Hex2Bytes(bc.SessionID),
-			ArgsQueryOutcome:       bc.ArgsForQueryOutcome,
-		}
+			ArgsQueryOutcome:        bc.ArgsForQueryOutcome,
+		}, nil
 	}
-	return cond, nil
+	return &entity.Condition{
+		ConditionType:          entity.ConditionType_VIRTUAL_CONTRACT,
+		VirtualContractAddress: ctype.Hex2Bytes(bc.VirtualContractAddress),
+		ArgsQueryOutcome:       bc.ArgsForQueryOutcome,
+	}, nil
 }
 
 func sdkToken2entityToken(tk *Token) *entity.TokenInfo {

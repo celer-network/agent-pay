@@ -29,8 +29,8 @@ func (c *CNode) GetChannelIdForPeer(peer, tokenAddr ctype.Addr) (ctype.CidType, 
 }
 
 func (c *CNode) GetBalance(cid ctype.CidType) (*common.ChannelBalance, error) {
-	blkNum := c.GetCurrentBlockNumber().Uint64()
-	return ledgerview.GetBalance(c.dal, cid, c.nodeConfig.GetOnChainAddr(), blkNum)
+	nowTs := uint64(time.Now().Unix())
+	return ledgerview.GetBalance(c.dal, cid, c.nodeConfig.GetOnChainAddr(), nowTs)
 }
 
 // GetJoinStatusForNode gets the join status of an endpoint

@@ -65,11 +65,11 @@ type Balance struct {
 }
 
 type BooleanCondition struct {
-	OnChainDeployed     bool
-	OnChainAddress      string // onchain contract address if OnChainDeployed is true
-	SessionID           string // offchain session hex string from NewAppSession
-	ArgsForQueryOutcome []byte
-	TimeoutBlockNum     int // timeout of one session. add current block num for pay deadline
+	OnChainDeployed        bool
+	OnChainAddress         string // on-chain IBooleanCond contract address if OnChainDeployed is true
+	VirtualContractAddress string // deterministic virtual-contract address (hex) from CreateAppSessionOnVirtualContract; ignored if OnChainDeployed is true
+	ArgsForQueryOutcome    []byte
+	TimeoutSec             int // pay deadline = wall-clock unix time + TimeoutSec
 }
 
 type Token struct {

@@ -60,7 +60,7 @@ type RuntimeConfig struct {
 	StandardConfigs *StandardConfigs `protobuf:"bytes,13,opt,name=standard_configs,json=standardConfigs,proto3" json:"standard_configs,omitempty"`
 	// OspToOsp config is keyed by pair (peerOspAddr, tokenAddr)
 	OspToOspOpenConfigs *OspToOspOpenConfigs `protobuf:"bytes,17,opt,name=osp_to_osp_open_configs,json=ospToOspOpenConfigs,proto3" json:"osp_to_osp_open_configs,omitempty"`
-	// max payment timeout (in block number) OSP accepts
+	// max payment timeout (in seconds) the OSP accepts
 	MaxPaymentTimeout uint64 `protobuf:"varint,14,opt,name=max_payment_timeout,json=maxPaymentTimeout,proto3" json:"max_payment_timeout,omitempty"`
 	// max number of pending pay IDs in the simplex state
 	MaxNumPendingPays uint64 `protobuf:"varint,15,opt,name=max_num_pending_pays,json=maxNumPendingPays,proto3" json:"max_num_pending_pays,omitempty"`

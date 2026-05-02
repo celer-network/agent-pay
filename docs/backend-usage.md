@@ -314,6 +314,22 @@ Examples:
 - [testing/profile/rt_config_multiosp.json](../testing/profile/rt_config_multiosp.json)
 - [test/manual/rt_config.json](../test/manual/rt_config.json)
 
+### Deadline and timeout units
+
+The on-chain contracts use `block.timestamp` (unix seconds) for every challenge window, dispute timeout, and deadline (`disputeTimeout`, `settleFinalizedTime`, `withdrawDeadline`, `openDeadline`, `resolveDeadline`, `resolveTimeout`, `migrationDeadline`, plus the `RouterRegistry` register/refresh value). Off-chain code follows the same unit, so all of the following are seconds:
+
+- profile `DisputeTimeout` (challenge window applied to each opened channel)
+- rtconfig `min_dispute_timeout` / `max_dispute_timeout` / `max_payment_timeout`
+- per-token rtconfig `min_deadline_delta` / `max_deadline_delta` (open-channel policy)
+- `config.OpenChannelTimeout`, `CooperativeWithdrawTimeout`, `PayResolveTimeout`, `AdminSendTokenTimeout`, `TcbTimeoutSeconds`
+- env-var safe-margin knobs (`CELER_PAY_RECV_SAFE_MARGIN_S`, `CELER_PAY_SEND_SAFE_MARGIN_S`, `CELER_WITHDRAW_SAFE_MARGIN_S`, default `60` each)
+
+When tuning rtconfig for a new chain, retune in seconds — not blocks. There is no implicit blocks-per-second multiplier in the off-chain code.
+
+#### Test environment overrides
+
+The e2e test harness sets `CELER_*_SAFE_MARGIN_S=5` in `TestMain` so the timeout-and-sweep flow runs in seconds instead of minutes. Production deployments should leave these unset (default `60`).
+
 ## Server Flags That Matter Most
 
 | Flag | Meaning |

@@ -108,43 +108,18 @@ func SetupOnChain(appMap map[string]ctype.Addr, groupId uint64, autofund bool) (
 	}
 	chkTxStatus(receipt.Status, "Deploy ERC20 "+ctype.Addr2Hex(erc20Addr))
 
-	// Deploy MultiSessionApp contract
-	appAddr1, tx3, _, err := testapp.DeploySimpleMultiSessionApp(etherBaseAuth, conclient, testapp.PlayerNum)
+	// Deploy BooleanCondMock — the on-chain IBooleanCond used by both
+	// VIRTUAL_CONTRACT and DEPLOYED_CONTRACT dispute scenarios.
+	appAddr1, tx3, _, err := testapp.DeployBooleanCondMock(etherBaseAuth, conclient)
 	if err != nil {
-		log.Fatalf("Failed to deploy SimpleMultiSessionApp contract: %v", err)
+		log.Fatalf("Failed to deploy BooleanCondMock contract: %v", err)
 	}
 	receipt, err = eth.WaitMined(ctx, conclient, tx3, eth.WithPollingInterval(time.Second))
 	if err != nil {
 		log.Fatal(err)
 	}
-	chkTxStatus(receipt.Status, "Deploy SimpleMultiSessionApp "+ctype.Addr2Hex(appAddr1))
-	appMap["SimpleMultiSessionApp"] = appAddr1
-
-	// Deploy MultiSessionAppWithOracle contract
-	timeout := new(big.Int).SetUint64(2)
-	appAddr2, tx4, _, err := testapp.DeploySimpleMultiSessionAppWithOracle(
-		etherBaseAuth, conclient, timeout, timeout, testapp.PlayerNum, ctype.Hex2Addr(etherBaseAddr))
-	if err != nil {
-		log.Fatalf("Failed to deploy SimpleMultiSessionAppWithOracle contract: %v", err)
-	}
-	appMap["SimpleMultiSessionAppWithOracle"] = appAddr2
-	receipt, err = eth.WaitMined(ctx, conclient, tx4, eth.WithPollingInterval(time.Second))
-	if err != nil {
-		log.Fatal(err)
-	}
-	chkTxStatus(receipt.Status, "Deploy SimpleMultiSessionAppWithOracle "+ctype.Addr2Hex(appAddr2))
-
-	// Deploy MultiGomoku contract
-	appAddr3, tx5, _, err := testapp.DeployMultiGomoku(etherBaseAuth, conclient, testapp.GomokuMinOffChain, testapp.GomokuMaxOnChain)
-	if err != nil {
-		log.Fatalf("Failed to deploy MultiGomoku contract: %v", err)
-	}
-	appMap["MultiGomoku"] = appAddr3
-	receipt, err = eth.WaitMined(ctx, conclient, tx5, eth.WithPollingInterval(time.Second))
-	if err != nil {
-		log.Fatal(err)
-	}
-	chkTxStatus(receipt.Status, "Deploy MultiGomoku "+ctype.Addr2Hex(appAddr3))
+	chkTxStatus(receipt.Status, "Deploy BooleanCondMock "+ctype.Addr2Hex(appAddr1))
+	appMap["BooleanCondMock"] = appAddr1
 
 	// Deploy a new Celer Ledger for channel migration test
 	log.Infoln("Deploying new CelerLedger contract...")

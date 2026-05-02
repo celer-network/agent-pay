@@ -28,7 +28,7 @@ const (
 	// OSP only, track path of failed payments
 	payPathTable = "ppt" // payID -> rpc.PayPath
 	// client only
-	queryTimeTable = "qtt" // query -> last time (unit defined by query, either unix sec or block number)
+	queryTimeTable = "qtt" // query -> unix-second timestamp of last successful run
 	// single-entry self netid table
 	netIdTable = "netid"
 
@@ -861,16 +861,16 @@ func (dtx *DALTx) GetPeerCids(peer ctype.Addr) ([]ctype.CidType, bool, error) {
 }
 
 // The "desttokens" table.
-func (d *DAL) InsertDestToken(dest ctype.Addr, token *entity.TokenInfo, osps []ctype.Addr, chanBlockNum uint64) error {
-	return insertDestToken(d.st, dest, token, osps, chanBlockNum)
+func (d *DAL) InsertDestToken(dest ctype.Addr, token *entity.TokenInfo, osps []ctype.Addr, openTs uint64) error {
+	return insertDestToken(d.st, dest, token, osps, openTs)
 }
 
-func (d *DAL) GetDestTokenOpenChanBlkNum(dest ctype.Addr, token *entity.TokenInfo) (uint64, bool, error) {
-	return getDestTokenOpenChanBlkNum(d.st, dest, token)
+func (d *DAL) GetDestTokenOpenTs(dest ctype.Addr, token *entity.TokenInfo) (uint64, bool, error) {
+	return getDestTokenOpenTs(d.st, dest, token)
 }
 
-func (d *DAL) UpsertDestTokenOpenChanBlkNum(dest ctype.Addr, token *entity.TokenInfo, chanBlockNum uint64) error {
-	return upsertDestTokenOpenChanBlkNum(d.st, dest, token, chanBlockNum)
+func (d *DAL) UpsertDestTokenOpenTs(dest ctype.Addr, token *entity.TokenInfo, openTs uint64) error {
+	return upsertDestTokenOpenTs(d.st, dest, token, openTs)
 }
 
 func (d *DAL) UpdateDestTokenOsps(dest ctype.Addr, token *entity.TokenInfo, osps []ctype.Addr) error {

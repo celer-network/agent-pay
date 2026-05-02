@@ -4,6 +4,7 @@ package delegate
 
 import (
 	"math/big"
+	"time"
 
 	"github.com/celer-network/agent-pay/common"
 	"github.com/celer-network/agent-pay/common/structs"
@@ -19,7 +20,6 @@ import (
 
 type delegateProcess interface {
 	AddBooleanPay(pay *entity.ConditionalPay, note *anypb.Any, dstNetId uint64) (ctype.PayIDType, error)
-	GetCurrentBlockNumber() *big.Int
 }
 
 type DelegateManager struct {
@@ -151,7 +151,7 @@ func (m *DelegateManager) sendToken(dst ctype.Addr, lumpsum *lumpSum) error {
 			LogicType:   entity.TransferFunctionType_BOOLEAN_AND,
 			MaxTransfer: transfer,
 		},
-		ResolveDeadline: m.process.GetCurrentBlockNumber().Uint64() + config.AdminSendTokenTimeout,
+		ResolveDeadline: uint64(time.Now().Unix()) + config.AdminSendTokenTimeout,
 		ResolveTimeout:  config.PayResolveTimeout,
 	}
 

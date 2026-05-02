@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"time"
 
 	"github.com/celer-network/agent-pay/common"
 	"github.com/celer-network/agent-pay/common/structs"
@@ -330,7 +331,7 @@ func (h *CelerMsgHandler) processPaySettleRequestTx(tx *storage.DALTx, args ...i
 		}
 
 	case rpc.PaymentSettleReason_PAY_EXPIRED:
-		curblkNum := h.monitorService.GetCurrentBlockNumber().Uint64()
+		nowTs := uint64(time.Now().Unix())
 		for _, pi := range payInfos {
 			h.checkPayRouteLoop(cid, pi)
 			if pi.routeLoop {
@@ -346,10 +347,10 @@ func (h *CelerMsgHandler) processPaySettleRequestTx(tx *storage.DALTx, args ...i
 			// 4. pay has egress state other than CoSignedCanceled, and has resolved onchain with non-zero amount
 
 			payID := ctype.Bytes2PayID(pi.req.GetSettledPayId())
-			// verify pay already expired
-			if curblkNum < pi.pay.GetResolveDeadline()+config.PayRecvTimeoutSafeMargin {
+			// verify pay already expired (deadlines are unix timestamps in seconds)
+			if nowTs < pi.pay.GetResolveDeadline()+config.PayRecvTimeoutSafeMargin {
 				log.Errorln(common.ErrInvalidSettleReason,
-					"deadline", pi.pay.GetResolveDeadline(), curblkNum)
+					"deadline", pi.pay.GetResolveDeadline(), nowTs)
 				return common.ErrInvalidSettleReason // should not happen if peer follows the same protocol
 			}
 

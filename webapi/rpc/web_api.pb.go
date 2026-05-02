@@ -1136,7 +1136,6 @@ type CreateAppSessionOnVirtualContractRequest struct {
 	ContractBin         string                 `protobuf:"bytes,1,opt,name=contract_bin,json=contractBin,proto3" json:"contract_bin,omitempty"`
 	ContractConstructor string                 `protobuf:"bytes,2,opt,name=contract_constructor,json=contractConstructor,proto3" json:"contract_constructor,omitempty"`
 	Nonce               uint64                 `protobuf:"varint,3,opt,name=nonce,proto3" json:"nonce,omitempty"`
-	OnChainTimeout      uint64                 `protobuf:"varint,4,opt,name=on_chain_timeout,json=onChainTimeout,proto3" json:"on_chain_timeout,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -1192,229 +1191,6 @@ func (x *CreateAppSessionOnVirtualContractRequest) GetNonce() uint64 {
 	return 0
 }
 
-func (x *CreateAppSessionOnVirtualContractRequest) GetOnChainTimeout() uint64 {
-	if x != nil {
-		return x.OnChainTimeout
-	}
-	return 0
-}
-
-type CreateAppSessionOnDeployedContractRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	ContractAddress string                 `protobuf:"bytes,1,opt,name=contract_address,json=contractAddress,proto3" json:"contract_address,omitempty"`
-	Nonce           uint64                 `protobuf:"varint,2,opt,name=nonce,proto3" json:"nonce,omitempty"`
-	OnChainTimeout  uint64                 `protobuf:"varint,3,opt,name=on_chain_timeout,json=onChainTimeout,proto3" json:"on_chain_timeout,omitempty"`
-	Participants    []string               `protobuf:"bytes,4,rep,name=participants,proto3" json:"participants,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *CreateAppSessionOnDeployedContractRequest) Reset() {
-	*x = CreateAppSessionOnDeployedContractRequest{}
-	mi := &file_web_api_proto_msgTypes[20]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateAppSessionOnDeployedContractRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateAppSessionOnDeployedContractRequest) ProtoMessage() {}
-
-func (x *CreateAppSessionOnDeployedContractRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[20]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateAppSessionOnDeployedContractRequest.ProtoReflect.Descriptor instead.
-func (*CreateAppSessionOnDeployedContractRequest) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{20}
-}
-
-func (x *CreateAppSessionOnDeployedContractRequest) GetContractAddress() string {
-	if x != nil {
-		return x.ContractAddress
-	}
-	return ""
-}
-
-func (x *CreateAppSessionOnDeployedContractRequest) GetNonce() uint64 {
-	if x != nil {
-		return x.Nonce
-	}
-	return 0
-}
-
-func (x *CreateAppSessionOnDeployedContractRequest) GetOnChainTimeout() uint64 {
-	if x != nil {
-		return x.OnChainTimeout
-	}
-	return 0
-}
-
-func (x *CreateAppSessionOnDeployedContractRequest) GetParticipants() []string {
-	if x != nil {
-		return x.Participants
-	}
-	return nil
-}
-
-type DisputeInfo struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	SeqNum        uint64                 `protobuf:"varint,2,opt,name=seq_num,json=seqNum,proto3" json:"seq_num,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DisputeInfo) Reset() {
-	*x = DisputeInfo{}
-	mi := &file_web_api_proto_msgTypes[21]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DisputeInfo) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DisputeInfo) ProtoMessage() {}
-
-func (x *DisputeInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[21]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DisputeInfo.ProtoReflect.Descriptor instead.
-func (*DisputeInfo) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{21}
-}
-
-func (x *DisputeInfo) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
-}
-
-func (x *DisputeInfo) GetSeqNum() uint64 {
-	if x != nil {
-		return x.SeqNum
-	}
-	return 0
-}
-
-type SignOutgoingStateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	State         []byte                 `protobuf:"bytes,2,opt,name=state,proto3" json:"state,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SignOutgoingStateRequest) Reset() {
-	*x = SignOutgoingStateRequest{}
-	mi := &file_web_api_proto_msgTypes[22]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SignOutgoingStateRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SignOutgoingStateRequest) ProtoMessage() {}
-
-func (x *SignOutgoingStateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[22]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SignOutgoingStateRequest.ProtoReflect.Descriptor instead.
-func (*SignOutgoingStateRequest) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{22}
-}
-
-func (x *SignOutgoingStateRequest) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
-}
-
-func (x *SignOutgoingStateRequest) GetState() []byte {
-	if x != nil {
-		return x.State
-	}
-	return nil
-}
-
-type SignedState struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SignedState   []byte                 `protobuf:"bytes,1,opt,name=signed_state,json=signedState,proto3" json:"signed_state,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SignedState) Reset() {
-	*x = SignedState{}
-	mi := &file_web_api_proto_msgTypes[23]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SignedState) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SignedState) ProtoMessage() {}
-
-func (x *SignedState) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[23]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SignedState.ProtoReflect.Descriptor instead.
-func (*SignedState) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{23}
-}
-
-func (x *SignedState) GetSignedState() []byte {
-	if x != nil {
-		return x.SignedState
-	}
-	return nil
-}
-
 type Data struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -1424,7 +1200,7 @@ type Data struct {
 
 func (x *Data) Reset() {
 	*x = Data{}
-	mi := &file_web_api_proto_msgTypes[24]
+	mi := &file_web_api_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1436,7 +1212,7 @@ func (x *Data) String() string {
 func (*Data) ProtoMessage() {}
 
 func (x *Data) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[24]
+	mi := &file_web_api_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1449,7 +1225,7 @@ func (x *Data) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Data.ProtoReflect.Descriptor instead.
 func (*Data) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{24}
+	return file_web_api_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *Data) GetData() []byte {
@@ -1468,7 +1244,7 @@ type Signature struct {
 
 func (x *Signature) Reset() {
 	*x = Signature{}
-	mi := &file_web_api_proto_msgTypes[25]
+	mi := &file_web_api_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1480,7 +1256,7 @@ func (x *Signature) String() string {
 func (*Signature) ProtoMessage() {}
 
 func (x *Signature) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[25]
+	mi := &file_web_api_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1493,376 +1269,12 @@ func (x *Signature) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Signature.ProtoReflect.Descriptor instead.
 func (*Signature) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{25}
+	return file_web_api_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *Signature) GetSignature() []byte {
 	if x != nil {
 		return x.Signature
-	}
-	return nil
-}
-
-type ValidateAckRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	Envelope      []byte                 `protobuf:"bytes,2,opt,name=envelope,proto3" json:"envelope,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ValidateAckRequest) Reset() {
-	*x = ValidateAckRequest{}
-	mi := &file_web_api_proto_msgTypes[26]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ValidateAckRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ValidateAckRequest) ProtoMessage() {}
-
-func (x *ValidateAckRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[26]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ValidateAckRequest.ProtoReflect.Descriptor instead.
-func (*ValidateAckRequest) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{26}
-}
-
-func (x *ValidateAckRequest) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
-}
-
-func (x *ValidateAckRequest) GetEnvelope() []byte {
-	if x != nil {
-		return x.Envelope
-	}
-	return nil
-}
-
-type BoolValue struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Value         bool                   `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *BoolValue) Reset() {
-	*x = BoolValue{}
-	mi := &file_web_api_proto_msgTypes[27]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *BoolValue) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*BoolValue) ProtoMessage() {}
-
-func (x *BoolValue) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[27]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use BoolValue.ProtoReflect.Descriptor instead.
-func (*BoolValue) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{27}
-}
-
-func (x *BoolValue) GetValue() bool {
-	if x != nil {
-		return x.Value
-	}
-	return false
-}
-
-type ProcessReceivedStateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	Envelope      []byte                 `protobuf:"bytes,2,opt,name=envelope,proto3" json:"envelope,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ProcessReceivedStateRequest) Reset() {
-	*x = ProcessReceivedStateRequest{}
-	mi := &file_web_api_proto_msgTypes[28]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ProcessReceivedStateRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ProcessReceivedStateRequest) ProtoMessage() {}
-
-func (x *ProcessReceivedStateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[28]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ProcessReceivedStateRequest.ProtoReflect.Descriptor instead.
-func (*ProcessReceivedStateRequest) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{28}
-}
-
-func (x *ProcessReceivedStateRequest) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
-}
-
-func (x *ProcessReceivedStateRequest) GetEnvelope() []byte {
-	if x != nil {
-		return x.Envelope
-	}
-	return nil
-}
-
-type ProcessReceivedStateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DecodedState  []byte                 `protobuf:"bytes,1,opt,name=decoded_state,json=decodedState,proto3" json:"decoded_state,omitempty"`
-	PreparedAck   []byte                 `protobuf:"bytes,2,opt,name=prepared_ack,json=preparedAck,proto3" json:"prepared_ack,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ProcessReceivedStateResponse) Reset() {
-	*x = ProcessReceivedStateResponse{}
-	mi := &file_web_api_proto_msgTypes[29]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ProcessReceivedStateResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ProcessReceivedStateResponse) ProtoMessage() {}
-
-func (x *ProcessReceivedStateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[29]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ProcessReceivedStateResponse.ProtoReflect.Descriptor instead.
-func (*ProcessReceivedStateResponse) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{29}
-}
-
-func (x *ProcessReceivedStateResponse) GetDecodedState() []byte {
-	if x != nil {
-		return x.DecodedState
-	}
-	return nil
-}
-
-func (x *ProcessReceivedStateResponse) GetPreparedAck() []byte {
-	if x != nil {
-		return x.PreparedAck
-	}
-	return nil
-}
-
-type SettleAppSessionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	StateProof    []byte                 `protobuf:"bytes,2,opt,name=state_proof,json=stateProof,proto3" json:"state_proof,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SettleAppSessionRequest) Reset() {
-	*x = SettleAppSessionRequest{}
-	mi := &file_web_api_proto_msgTypes[30]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SettleAppSessionRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SettleAppSessionRequest) ProtoMessage() {}
-
-func (x *SettleAppSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[30]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SettleAppSessionRequest.ProtoReflect.Descriptor instead.
-func (*SettleAppSessionRequest) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{30}
-}
-
-func (x *SettleAppSessionRequest) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
-}
-
-func (x *SettleAppSessionRequest) GetStateProof() []byte {
-	if x != nil {
-		return x.StateProof
-	}
-	return nil
-}
-
-type SettleAppSessionByTimeoutRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	OracleProof   []byte                 `protobuf:"bytes,2,opt,name=oracle_proof,json=oracleProof,proto3" json:"oracle_proof,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SettleAppSessionByTimeoutRequest) Reset() {
-	*x = SettleAppSessionByTimeoutRequest{}
-	mi := &file_web_api_proto_msgTypes[31]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SettleAppSessionByTimeoutRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SettleAppSessionByTimeoutRequest) ProtoMessage() {}
-
-func (x *SettleAppSessionByTimeoutRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[31]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SettleAppSessionByTimeoutRequest.ProtoReflect.Descriptor instead.
-func (*SettleAppSessionByTimeoutRequest) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{31}
-}
-
-func (x *SettleAppSessionByTimeoutRequest) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
-}
-
-func (x *SettleAppSessionByTimeoutRequest) GetOracleProof() []byte {
-	if x != nil {
-		return x.OracleProof
-	}
-	return nil
-}
-
-type SettleAppSessionByInvalidityRequest struct {
-	state              protoimpl.MessageState `protogen:"open.v1"`
-	SessionId          string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	OracleProof        []byte                 `protobuf:"bytes,2,opt,name=oracle_proof,json=oracleProof,proto3" json:"oracle_proof,omitempty"`
-	CosignedStateProof []byte                 `protobuf:"bytes,3,opt,name=cosigned_state_proof,json=cosignedStateProof,proto3" json:"cosigned_state_proof,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *SettleAppSessionByInvalidityRequest) Reset() {
-	*x = SettleAppSessionByInvalidityRequest{}
-	mi := &file_web_api_proto_msgTypes[32]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SettleAppSessionByInvalidityRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SettleAppSessionByInvalidityRequest) ProtoMessage() {}
-
-func (x *SettleAppSessionByInvalidityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[32]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SettleAppSessionByInvalidityRequest.ProtoReflect.Descriptor instead.
-func (*SettleAppSessionByInvalidityRequest) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{32}
-}
-
-func (x *SettleAppSessionByInvalidityRequest) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
-}
-
-func (x *SettleAppSessionByInvalidityRequest) GetOracleProof() []byte {
-	if x != nil {
-		return x.OracleProof
-	}
-	return nil
-}
-
-func (x *SettleAppSessionByInvalidityRequest) GetCosignedStateProof() []byte {
-	if x != nil {
-		return x.CosignedStateProof
 	}
 	return nil
 }
@@ -1876,7 +1288,7 @@ type Address struct {
 
 func (x *Address) Reset() {
 	*x = Address{}
-	mi := &file_web_api_proto_msgTypes[33]
+	mi := &file_web_api_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1888,7 +1300,7 @@ func (x *Address) String() string {
 func (*Address) ProtoMessage() {}
 
 func (x *Address) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[33]
+	mi := &file_web_api_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1901,7 +1313,7 @@ func (x *Address) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Address.ProtoReflect.Descriptor instead.
 func (*Address) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{33}
+	return file_web_api_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *Address) GetAddress() string {
@@ -1921,7 +1333,7 @@ type GetBooleanOutcomeForAppSessionRequest struct {
 
 func (x *GetBooleanOutcomeForAppSessionRequest) Reset() {
 	*x = GetBooleanOutcomeForAppSessionRequest{}
-	mi := &file_web_api_proto_msgTypes[34]
+	mi := &file_web_api_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1933,7 +1345,7 @@ func (x *GetBooleanOutcomeForAppSessionRequest) String() string {
 func (*GetBooleanOutcomeForAppSessionRequest) ProtoMessage() {}
 
 func (x *GetBooleanOutcomeForAppSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[34]
+	mi := &file_web_api_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1946,7 +1358,7 @@ func (x *GetBooleanOutcomeForAppSessionRequest) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use GetBooleanOutcomeForAppSessionRequest.ProtoReflect.Descriptor instead.
 func (*GetBooleanOutcomeForAppSessionRequest) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{34}
+	return file_web_api_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *GetBooleanOutcomeForAppSessionRequest) GetSessionId() string {
@@ -1973,7 +1385,7 @@ type BooleanOutcome struct {
 
 func (x *BooleanOutcome) Reset() {
 	*x = BooleanOutcome{}
-	mi := &file_web_api_proto_msgTypes[35]
+	mi := &file_web_api_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1985,7 +1397,7 @@ func (x *BooleanOutcome) String() string {
 func (*BooleanOutcome) ProtoMessage() {}
 
 func (x *BooleanOutcome) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[35]
+	mi := &file_web_api_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1998,7 +1410,7 @@ func (x *BooleanOutcome) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BooleanOutcome.ProtoReflect.Descriptor instead.
 func (*BooleanOutcome) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{35}
+	return file_web_api_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *BooleanOutcome) GetFinalized() bool {
@@ -2015,58 +1427,6 @@ func (x *BooleanOutcome) GetOutcome() bool {
 	return false
 }
 
-type ApplyActionForAppSessionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	Action        []byte                 `protobuf:"bytes,2,opt,name=action,proto3" json:"action,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ApplyActionForAppSessionRequest) Reset() {
-	*x = ApplyActionForAppSessionRequest{}
-	mi := &file_web_api_proto_msgTypes[36]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ApplyActionForAppSessionRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ApplyActionForAppSessionRequest) ProtoMessage() {}
-
-func (x *ApplyActionForAppSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[36]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ApplyActionForAppSessionRequest.ProtoReflect.Descriptor instead.
-func (*ApplyActionForAppSessionRequest) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{36}
-}
-
-func (x *ApplyActionForAppSessionRequest) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
-}
-
-func (x *ApplyActionForAppSessionRequest) GetAction() []byte {
-	if x != nil {
-		return x.Action
-	}
-	return nil
-}
-
 type BlockNumber struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BlockNumber   uint64                 `protobuf:"varint,1,opt,name=block_number,json=blockNumber,proto3" json:"block_number,omitempty"`
@@ -2076,7 +1436,7 @@ type BlockNumber struct {
 
 func (x *BlockNumber) Reset() {
 	*x = BlockNumber{}
-	mi := &file_web_api_proto_msgTypes[37]
+	mi := &file_web_api_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2088,7 +1448,7 @@ func (x *BlockNumber) String() string {
 func (*BlockNumber) ProtoMessage() {}
 
 func (x *BlockNumber) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[37]
+	mi := &file_web_api_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2101,7 +1461,7 @@ func (x *BlockNumber) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BlockNumber.ProtoReflect.Descriptor instead.
 func (*BlockNumber) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{37}
+	return file_web_api_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *BlockNumber) GetBlockNumber() uint64 {
@@ -2111,28 +1471,28 @@ func (x *BlockNumber) GetBlockNumber() uint64 {
 	return 0
 }
 
-type AppSessionStatus struct {
+type Timestamp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Status        uint32                 `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
+	Timestamp     uint64                 `protobuf:"varint,1,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppSessionStatus) Reset() {
-	*x = AppSessionStatus{}
-	mi := &file_web_api_proto_msgTypes[38]
+func (x *Timestamp) Reset() {
+	*x = Timestamp{}
+	mi := &file_web_api_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppSessionStatus) String() string {
+func (x *Timestamp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppSessionStatus) ProtoMessage() {}
+func (*Timestamp) ProtoMessage() {}
 
-func (x *AppSessionStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[38]
+func (x *Timestamp) ProtoReflect() protoreflect.Message {
+	mi := &file_web_api_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2143,154 +1503,14 @@ func (x *AppSessionStatus) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppSessionStatus.ProtoReflect.Descriptor instead.
-func (*AppSessionStatus) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{38}
+// Deprecated: Use Timestamp.ProtoReflect.Descriptor instead.
+func (*Timestamp) Descriptor() ([]byte, []int) {
+	return file_web_api_proto_rawDescGZIP(), []int{26}
 }
 
-func (x *AppSessionStatus) GetStatus() uint32 {
+func (x *Timestamp) GetTimestamp() uint64 {
 	if x != nil {
-		return x.Status
-	}
-	return 0
-}
-
-type GetStateForAppSessionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	Key           int64                  `protobuf:"varint,2,opt,name=key,proto3" json:"key,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetStateForAppSessionRequest) Reset() {
-	*x = GetStateForAppSessionRequest{}
-	mi := &file_web_api_proto_msgTypes[39]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetStateForAppSessionRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetStateForAppSessionRequest) ProtoMessage() {}
-
-func (x *GetStateForAppSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[39]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetStateForAppSessionRequest.ProtoReflect.Descriptor instead.
-func (*GetStateForAppSessionRequest) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{39}
-}
-
-func (x *GetStateForAppSessionRequest) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
-}
-
-func (x *GetStateForAppSessionRequest) GetKey() int64 {
-	if x != nil {
-		return x.Key
-	}
-	return 0
-}
-
-type AppSessionState struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	State         []byte                 `protobuf:"bytes,1,opt,name=state,proto3" json:"state,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AppSessionState) Reset() {
-	*x = AppSessionState{}
-	mi := &file_web_api_proto_msgTypes[40]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AppSessionState) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AppSessionState) ProtoMessage() {}
-
-func (x *AppSessionState) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[40]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AppSessionState.ProtoReflect.Descriptor instead.
-func (*AppSessionState) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{40}
-}
-
-func (x *AppSessionState) GetState() []byte {
-	if x != nil {
-		return x.State
-	}
-	return nil
-}
-
-type AppSessionSeqNum struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SeqNum        uint64                 `protobuf:"varint,1,opt,name=seq_num,json=seqNum,proto3" json:"seq_num,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AppSessionSeqNum) Reset() {
-	*x = AppSessionSeqNum{}
-	mi := &file_web_api_proto_msgTypes[41]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AppSessionSeqNum) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AppSessionSeqNum) ProtoMessage() {}
-
-func (x *AppSessionSeqNum) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[41]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AppSessionSeqNum.ProtoReflect.Descriptor instead.
-func (*AppSessionSeqNum) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{41}
-}
-
-func (x *AppSessionSeqNum) GetSeqNum() uint64 {
-	if x != nil {
-		return x.SeqNum
+		return x.Timestamp
 	}
 	return 0
 }
@@ -2305,7 +1525,7 @@ type SetMsgDropReq struct {
 
 func (x *SetMsgDropReq) Reset() {
 	*x = SetMsgDropReq{}
-	mi := &file_web_api_proto_msgTypes[42]
+	mi := &file_web_api_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2317,7 +1537,7 @@ func (x *SetMsgDropReq) String() string {
 func (*SetMsgDropReq) ProtoMessage() {}
 
 func (x *SetMsgDropReq) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[42]
+	mi := &file_web_api_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2330,7 +1550,7 @@ func (x *SetMsgDropReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMsgDropReq.ProtoReflect.Descriptor instead.
 func (*SetMsgDropReq) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{42}
+	return file_web_api_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *SetMsgDropReq) GetDropRecv() bool {
@@ -2356,7 +1576,7 @@ type PaymentStatus struct {
 
 func (x *PaymentStatus) Reset() {
 	*x = PaymentStatus{}
-	mi := &file_web_api_proto_msgTypes[43]
+	mi := &file_web_api_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2368,7 +1588,7 @@ func (x *PaymentStatus) String() string {
 func (*PaymentStatus) ProtoMessage() {}
 
 func (x *PaymentStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_web_api_proto_msgTypes[43]
+	mi := &file_web_api_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2381,7 +1601,7 @@ func (x *PaymentStatus) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PaymentStatus.ProtoReflect.Descriptor instead.
 func (*PaymentStatus) Descriptor() ([]byte, []int) {
-	return file_web_api_proto_rawDescGZIP(), []int{43}
+	return file_web_api_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *PaymentStatus) GetStatus() uint32 {
@@ -2484,58 +1704,15 @@ const file_web_api_proto_rawDesc = "" +
 	"\x10resolve_deadline\x18\x02 \x01(\x04R\x0fresolveDeadline\"*\n" +
 	"\tSessionID\x12\x1d\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\"\xc0\x01\n" +
+	"session_id\x18\x01 \x01(\tR\tsessionId\"\x96\x01\n" +
 	"(CreateAppSessionOnVirtualContractRequest\x12!\n" +
 	"\fcontract_bin\x18\x01 \x01(\tR\vcontractBin\x121\n" +
 	"\x14contract_constructor\x18\x02 \x01(\tR\x13contractConstructor\x12\x14\n" +
-	"\x05nonce\x18\x03 \x01(\x04R\x05nonce\x12(\n" +
-	"\x10on_chain_timeout\x18\x04 \x01(\x04R\x0eonChainTimeout\"\xba\x01\n" +
-	")CreateAppSessionOnDeployedContractRequest\x12)\n" +
-	"\x10contract_address\x18\x01 \x01(\tR\x0fcontractAddress\x12\x14\n" +
-	"\x05nonce\x18\x02 \x01(\x04R\x05nonce\x12(\n" +
-	"\x10on_chain_timeout\x18\x03 \x01(\x04R\x0eonChainTimeout\x12\"\n" +
-	"\fparticipants\x18\x04 \x03(\tR\fparticipants\"E\n" +
-	"\vDisputeInfo\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x17\n" +
-	"\aseq_num\x18\x02 \x01(\x04R\x06seqNum\"O\n" +
-	"\x18SignOutgoingStateRequest\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x14\n" +
-	"\x05state\x18\x02 \x01(\fR\x05state\"0\n" +
-	"\vSignedState\x12!\n" +
-	"\fsigned_state\x18\x01 \x01(\fR\vsignedState\"\x1a\n" +
+	"\x05nonce\x18\x03 \x01(\x04R\x05nonce\"\x1a\n" +
 	"\x04Data\x12\x12\n" +
 	"\x04data\x18\x01 \x01(\fR\x04data\")\n" +
 	"\tSignature\x12\x1c\n" +
-	"\tsignature\x18\x01 \x01(\fR\tsignature\"O\n" +
-	"\x12ValidateAckRequest\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x1a\n" +
-	"\benvelope\x18\x02 \x01(\fR\benvelope\"!\n" +
-	"\tBoolValue\x12\x14\n" +
-	"\x05value\x18\x01 \x01(\bR\x05value\"X\n" +
-	"\x1bProcessReceivedStateRequest\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x1a\n" +
-	"\benvelope\x18\x02 \x01(\fR\benvelope\"f\n" +
-	"\x1cProcessReceivedStateResponse\x12#\n" +
-	"\rdecoded_state\x18\x01 \x01(\fR\fdecodedState\x12!\n" +
-	"\fprepared_ack\x18\x02 \x01(\fR\vpreparedAck\"Y\n" +
-	"\x17SettleAppSessionRequest\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x1f\n" +
-	"\vstate_proof\x18\x02 \x01(\fR\n" +
-	"stateProof\"d\n" +
-	" SettleAppSessionByTimeoutRequest\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\x12!\n" +
-	"\foracle_proof\x18\x02 \x01(\fR\voracleProof\"\x99\x01\n" +
-	"#SettleAppSessionByInvalidityRequest\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\x12!\n" +
-	"\foracle_proof\x18\x02 \x01(\fR\voracleProof\x120\n" +
-	"\x14cosigned_state_proof\x18\x03 \x01(\fR\x12cosignedStateProof\"#\n" +
+	"\tsignature\x18\x01 \x01(\fR\tsignature\"#\n" +
 	"\aAddress\x12\x18\n" +
 	"\aaddress\x18\x01 \x01(\tR\aaddress\"\\\n" +
 	"%GetBooleanOutcomeForAppSessionRequest\x12\x1d\n" +
@@ -2544,28 +1721,16 @@ const file_web_api_proto_rawDesc = "" +
 	"\x05query\x18\x02 \x01(\fR\x05query\"H\n" +
 	"\x0eBooleanOutcome\x12\x1c\n" +
 	"\tfinalized\x18\x01 \x01(\bR\tfinalized\x12\x18\n" +
-	"\aoutcome\x18\x02 \x01(\bR\aoutcome\"X\n" +
-	"\x1fApplyActionForAppSessionRequest\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x16\n" +
-	"\x06action\x18\x02 \x01(\fR\x06action\"0\n" +
+	"\aoutcome\x18\x02 \x01(\bR\aoutcome\"0\n" +
 	"\vBlockNumber\x12!\n" +
-	"\fblock_number\x18\x01 \x01(\x04R\vblockNumber\"*\n" +
-	"\x10AppSessionStatus\x12\x16\n" +
-	"\x06status\x18\x01 \x01(\rR\x06status\"O\n" +
-	"\x1cGetStateForAppSessionRequest\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x10\n" +
-	"\x03key\x18\x02 \x01(\x03R\x03key\"'\n" +
-	"\x0fAppSessionState\x12\x14\n" +
-	"\x05state\x18\x01 \x01(\fR\x05state\"+\n" +
-	"\x10AppSessionSeqNum\x12\x17\n" +
-	"\aseq_num\x18\x01 \x01(\x04R\x06seqNum\"I\n" +
+	"\fblock_number\x18\x01 \x01(\x04R\vblockNumber\")\n" +
+	"\tTimestamp\x12\x1c\n" +
+	"\ttimestamp\x18\x01 \x01(\x04R\ttimestamp\"I\n" +
 	"\rSetMsgDropReq\x12\x1b\n" +
 	"\tdrop_recv\x18\x01 \x01(\bR\bdropRecv\x12\x1b\n" +
 	"\tdrop_send\x18\x02 \x01(\bR\bdropSend\"'\n" +
 	"\rPaymentStatus\x12\x16\n" +
-	"\x06status\x18\x01 \x01(\rR\x06status2\xa0#\n" +
+	"\x06status\x18\x01 \x01(\rR\x06status2\xcd\x17\n" +
 	"\x06WebApi\x12N\n" +
 	"\rGetPayHistory\x12\x1c.webrpc.GetPayHistoryRequest\x1a\x1d.webrpc.GetPayHistoryResponse\"\x00\x12G\n" +
 	"\rSetDelegation\x12\x1c.webrpc.SetDelegationRequest\x1a\x16.google.protobuf.Empty\"\x00\x12L\n" +
@@ -2596,32 +1761,15 @@ const file_web_api_proto_rawDesc = "" +
 	"\x0eIntendWithdraw\x12 .webrpc.DepositOrWithdrawRequest\x1a\x16.google.protobuf.Empty\"\x00\x12>\n" +
 	"\x0fConfirmWithdraw\x12\x11.webrpc.TokenInfo\x1a\x16.google.protobuf.Empty\"\x00\x12I\n" +
 	"\x1aIntendSettlePaymentChannel\x12\x11.webrpc.TokenInfo\x1a\x16.google.protobuf.Empty\"\x00\x12J\n" +
-	"\x1bConfirmSettlePaymentChannel\x12\x11.webrpc.TokenInfo\x1a\x16.google.protobuf.Empty\"\x00\x12S\n" +
-	"'GetSettleFinalizedTimeForPaymentChannel\x12\x11.webrpc.TokenInfo\x1a\x13.webrpc.BlockNumber\"\x00\x12N\n" +
+	"\x1bConfirmSettlePaymentChannel\x12\x11.webrpc.TokenInfo\x1a\x16.google.protobuf.Empty\"\x00\x12Q\n" +
+	"'GetSettleFinalizedTimeForPaymentChannel\x12\x11.webrpc.TokenInfo\x1a\x11.webrpc.Timestamp\"\x00\x12N\n" +
 	"\x1fSyncOnChainPaymentChannelStatus\x12\x11.webrpc.TokenInfo\x1a\x16.google.protobuf.Empty\"\x00\x12E\n" +
 	"\x11SyncStateWithPeer\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12j\n" +
-	"!CreateAppSessionOnVirtualContract\x120.webrpc.CreateAppSessionOnVirtualContractRequest\x1a\x11.webrpc.SessionID\"\x00\x12l\n" +
-	"\"CreateAppSessionOnDeployedContract\x121.webrpc.CreateAppSessionOnDeployedContractRequest\x1a\x11.webrpc.SessionID\"\x00\x12H\n" +
-	"\x1aSubscribeAppSessionDispute\x12\x11.webrpc.SessionID\x1a\x13.webrpc.DisputeInfo\"\x000\x01\x12L\n" +
-	"\x11SignOutgoingState\x12 .webrpc.SignOutgoingStateRequest\x1a\x13.webrpc.SignedState\"\x00\x12>\n" +
-	"\vValidateAck\x12\x1a.webrpc.ValidateAckRequest\x1a\x11.webrpc.BoolValue\"\x00\x12-\n" +
-	"\bSignData\x12\f.webrpc.Data\x1a\x11.webrpc.Signature\"\x00\x12c\n" +
-	"\x14ProcessReceivedState\x12#.webrpc.ProcessReceivedStateRequest\x1a$.webrpc.ProcessReceivedStateResponse\"\x00\x12M\n" +
-	"\x10SettleAppSession\x12\x1f.webrpc.SettleAppSessionRequest\x1a\x16.google.protobuf.Empty\"\x00\x12b\n" +
-	"\x1cSettleAppSessionBySigTimeout\x12(.webrpc.SettleAppSessionByTimeoutRequest\x1a\x16.google.protobuf.Empty\"\x00\x12c\n" +
-	"\x1dSettleAppSessionByMoveTimeout\x12(.webrpc.SettleAppSessionByTimeoutRequest\x1a\x16.google.protobuf.Empty\"\x00\x12f\n" +
-	"\x1dSettleAppSessionByInvalidTurn\x12+.webrpc.SettleAppSessionByInvalidityRequest\x1a\x16.google.protobuf.Empty\"\x00\x12g\n" +
-	"\x1eSettleAppSessionByInvalidState\x12+.webrpc.SettleAppSessionByInvalidityRequest\x1a\x16.google.protobuf.Empty\"\x00\x12?\n" +
+	"!CreateAppSessionOnVirtualContract\x120.webrpc.CreateAppSessionOnVirtualContractRequest\x1a\x11.webrpc.SessionID\"\x00\x12-\n" +
+	"\bSignData\x12\f.webrpc.Data\x1a\x11.webrpc.Signature\"\x00\x12?\n" +
 	"\x10DeleteAppSession\x12\x11.webrpc.SessionID\x1a\x16.google.protobuf.Empty\"\x00\x12G\n" +
 	"\x1fGetDeployedAddressForAppSession\x12\x11.webrpc.SessionID\x1a\x0f.webrpc.Address\"\x00\x12i\n" +
-	"\x1eGetBooleanOutcomeForAppSession\x12-.webrpc.GetBooleanOutcomeForAppSessionRequest\x1a\x16.webrpc.BooleanOutcome\"\x00\x12]\n" +
-	"\x18ApplyActionForAppSession\x12'.webrpc.ApplyActionForAppSessionRequest\x1a\x16.google.protobuf.Empty\"\x00\x12S\n" +
-	"$FinalizeOnActionTimeoutForAppSession\x12\x11.webrpc.SessionID\x1a\x16.google.protobuf.Empty\"\x00\x12O\n" +
-	"#GetSettleFinalizedTimeForAppSession\x12\x11.webrpc.SessionID\x1a\x13.webrpc.BlockNumber\"\x00\x12J\n" +
-	"\x1eGetActionDeadlineForAppSession\x12\x11.webrpc.SessionID\x1a\x13.webrpc.BlockNumber\"\x00\x12G\n" +
-	"\x16GetStatusForAppSession\x12\x11.webrpc.SessionID\x1a\x18.webrpc.AppSessionStatus\"\x00\x12X\n" +
-	"\x15GetStateForAppSession\x12$.webrpc.GetStateForAppSessionRequest\x1a\x17.webrpc.AppSessionState\"\x00\x12G\n" +
-	"\x16GetSeqNumForAppSession\x12\x11.webrpc.SessionID\x1a\x18.webrpc.AppSessionSeqNum\"\x00\x12?\n" +
+	"\x1eGetBooleanOutcomeForAppSession\x12-.webrpc.GetBooleanOutcomeForAppSessionRequest\x1a\x16.webrpc.BooleanOutcome\"\x00\x12?\n" +
 	"\x0eGetBlockNumber\x12\x16.google.protobuf.Empty\x1a\x13.webrpc.BlockNumber\"\x00\x12@\n" +
 	"\rSetMsgDropper\x12\x15.webrpc.SetMsgDropReq\x1a\x16.google.protobuf.Empty\"\x00B/Z-github.com/celer-network/agent-pay/webapi/rpcb\x06proto3"
 
@@ -2637,71 +1785,56 @@ func file_web_api_proto_rawDescGZIP() []byte {
 	return file_web_api_proto_rawDescData
 }
 
-var file_web_api_proto_msgTypes = make([]protoimpl.MessageInfo, 44)
+var file_web_api_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
 var file_web_api_proto_goTypes = []any{
-	(*GetPayHistoryRequest)(nil),                      // 0: webrpc.GetPayHistoryRequest
-	(*GetPayHistoryResponse)(nil),                     // 1: webrpc.GetPayHistoryResponse
-	(*TokenInfo)(nil),                                 // 2: webrpc.TokenInfo
-	(*SetDelegationRequest)(nil),                      // 3: webrpc.SetDelegationRequest
-	(*OpenPaymentChannelRequest)(nil),                 // 4: webrpc.OpenPaymentChannelRequest
-	(*ChannelID)(nil),                                 // 5: webrpc.ChannelID
-	(*DepositOrWithdrawRequest)(nil),                  // 6: webrpc.DepositOrWithdrawRequest
-	(*DepositOrWithdrawJob)(nil),                      // 7: webrpc.DepositOrWithdrawJob
-	(*GetBalanceResponse)(nil),                        // 8: webrpc.GetBalanceResponse
-	(*GetPeerFreeBalanceRequest)(nil),                 // 9: webrpc.GetPeerFreeBalanceRequest
-	(*FreeBalance)(nil),                               // 10: webrpc.FreeBalance
-	(*Condition)(nil),                                 // 11: webrpc.Condition
-	(*SendConditionalPaymentRequest)(nil),             // 12: webrpc.SendConditionalPaymentRequest
-	(*SendTokenRequest)(nil),                          // 13: webrpc.SendTokenRequest
-	(*PaymentID)(nil),                                 // 14: webrpc.PaymentID
-	(*PaymentInfo)(nil),                               // 15: webrpc.PaymentInfo
-	(*OutgoingPaymentInfo)(nil),                       // 16: webrpc.OutgoingPaymentInfo
-	(*OnChainPaymentInfo)(nil),                        // 17: webrpc.OnChainPaymentInfo
-	(*SessionID)(nil),                                 // 18: webrpc.SessionID
-	(*CreateAppSessionOnVirtualContractRequest)(nil),  // 19: webrpc.CreateAppSessionOnVirtualContractRequest
-	(*CreateAppSessionOnDeployedContractRequest)(nil), // 20: webrpc.CreateAppSessionOnDeployedContractRequest
-	(*DisputeInfo)(nil),                               // 21: webrpc.DisputeInfo
-	(*SignOutgoingStateRequest)(nil),                  // 22: webrpc.SignOutgoingStateRequest
-	(*SignedState)(nil),                               // 23: webrpc.SignedState
-	(*Data)(nil),                                      // 24: webrpc.Data
-	(*Signature)(nil),                                 // 25: webrpc.Signature
-	(*ValidateAckRequest)(nil),                        // 26: webrpc.ValidateAckRequest
-	(*BoolValue)(nil),                                 // 27: webrpc.BoolValue
-	(*ProcessReceivedStateRequest)(nil),               // 28: webrpc.ProcessReceivedStateRequest
-	(*ProcessReceivedStateResponse)(nil),              // 29: webrpc.ProcessReceivedStateResponse
-	(*SettleAppSessionRequest)(nil),                   // 30: webrpc.SettleAppSessionRequest
-	(*SettleAppSessionByTimeoutRequest)(nil),          // 31: webrpc.SettleAppSessionByTimeoutRequest
-	(*SettleAppSessionByInvalidityRequest)(nil),       // 32: webrpc.SettleAppSessionByInvalidityRequest
-	(*Address)(nil),                                   // 33: webrpc.Address
-	(*GetBooleanOutcomeForAppSessionRequest)(nil),     // 34: webrpc.GetBooleanOutcomeForAppSessionRequest
-	(*BooleanOutcome)(nil),                            // 35: webrpc.BooleanOutcome
-	(*ApplyActionForAppSessionRequest)(nil),           // 36: webrpc.ApplyActionForAppSessionRequest
-	(*BlockNumber)(nil),                               // 37: webrpc.BlockNumber
-	(*AppSessionStatus)(nil),                          // 38: webrpc.AppSessionStatus
-	(*GetStateForAppSessionRequest)(nil),              // 39: webrpc.GetStateForAppSessionRequest
-	(*AppSessionState)(nil),                           // 40: webrpc.AppSessionState
-	(*AppSessionSeqNum)(nil),                          // 41: webrpc.AppSessionSeqNum
-	(*SetMsgDropReq)(nil),                             // 42: webrpc.SetMsgDropReq
-	(*PaymentStatus)(nil),                             // 43: webrpc.PaymentStatus
-	(*rpc.OneHistoricalPay)(nil),                      // 44: rpc.OneHistoricalPay
-	(entity.TokenType)(0),                             // 45: entity.TokenType
-	(entity.TransferFunctionType)(0),                  // 46: entity.TransferFunctionType
-	(*anypb.Any)(nil),                                 // 47: google.protobuf.Any
-	(*emptypb.Empty)(nil),                             // 48: google.protobuf.Empty
+	(*GetPayHistoryRequest)(nil),                     // 0: webrpc.GetPayHistoryRequest
+	(*GetPayHistoryResponse)(nil),                    // 1: webrpc.GetPayHistoryResponse
+	(*TokenInfo)(nil),                                // 2: webrpc.TokenInfo
+	(*SetDelegationRequest)(nil),                     // 3: webrpc.SetDelegationRequest
+	(*OpenPaymentChannelRequest)(nil),                // 4: webrpc.OpenPaymentChannelRequest
+	(*ChannelID)(nil),                                // 5: webrpc.ChannelID
+	(*DepositOrWithdrawRequest)(nil),                 // 6: webrpc.DepositOrWithdrawRequest
+	(*DepositOrWithdrawJob)(nil),                     // 7: webrpc.DepositOrWithdrawJob
+	(*GetBalanceResponse)(nil),                       // 8: webrpc.GetBalanceResponse
+	(*GetPeerFreeBalanceRequest)(nil),                // 9: webrpc.GetPeerFreeBalanceRequest
+	(*FreeBalance)(nil),                              // 10: webrpc.FreeBalance
+	(*Condition)(nil),                                // 11: webrpc.Condition
+	(*SendConditionalPaymentRequest)(nil),            // 12: webrpc.SendConditionalPaymentRequest
+	(*SendTokenRequest)(nil),                         // 13: webrpc.SendTokenRequest
+	(*PaymentID)(nil),                                // 14: webrpc.PaymentID
+	(*PaymentInfo)(nil),                              // 15: webrpc.PaymentInfo
+	(*OutgoingPaymentInfo)(nil),                      // 16: webrpc.OutgoingPaymentInfo
+	(*OnChainPaymentInfo)(nil),                       // 17: webrpc.OnChainPaymentInfo
+	(*SessionID)(nil),                                // 18: webrpc.SessionID
+	(*CreateAppSessionOnVirtualContractRequest)(nil), // 19: webrpc.CreateAppSessionOnVirtualContractRequest
+	(*Data)(nil),                                     // 20: webrpc.Data
+	(*Signature)(nil),                                // 21: webrpc.Signature
+	(*Address)(nil),                                  // 22: webrpc.Address
+	(*GetBooleanOutcomeForAppSessionRequest)(nil),    // 23: webrpc.GetBooleanOutcomeForAppSessionRequest
+	(*BooleanOutcome)(nil),                           // 24: webrpc.BooleanOutcome
+	(*BlockNumber)(nil),                              // 25: webrpc.BlockNumber
+	(*Timestamp)(nil),                                // 26: webrpc.Timestamp
+	(*SetMsgDropReq)(nil),                            // 27: webrpc.SetMsgDropReq
+	(*PaymentStatus)(nil),                            // 28: webrpc.PaymentStatus
+	(*rpc.OneHistoricalPay)(nil),                     // 29: rpc.OneHistoricalPay
+	(entity.TokenType)(0),                            // 30: entity.TokenType
+	(entity.TransferFunctionType)(0),                 // 31: entity.TransferFunctionType
+	(*anypb.Any)(nil),                                // 32: google.protobuf.Any
+	(*emptypb.Empty)(nil),                            // 33: google.protobuf.Empty
 }
 var file_web_api_proto_depIdxs = []int32{
-	44, // 0: webrpc.GetPayHistoryResponse.pays:type_name -> rpc.OneHistoricalPay
-	45, // 1: webrpc.TokenInfo.token_type:type_name -> entity.TokenType
+	29, // 0: webrpc.GetPayHistoryResponse.pays:type_name -> rpc.OneHistoricalPay
+	30, // 1: webrpc.TokenInfo.token_type:type_name -> entity.TokenType
 	2,  // 2: webrpc.SetDelegationRequest.token_infos:type_name -> webrpc.TokenInfo
 	2,  // 3: webrpc.OpenPaymentChannelRequest.token_info:type_name -> webrpc.TokenInfo
 	2,  // 4: webrpc.DepositOrWithdrawRequest.token_info:type_name -> webrpc.TokenInfo
 	2,  // 5: webrpc.GetPeerFreeBalanceRequest.token_info:type_name -> webrpc.TokenInfo
 	2,  // 6: webrpc.SendConditionalPaymentRequest.token_info:type_name -> webrpc.TokenInfo
-	46, // 7: webrpc.SendConditionalPaymentRequest.transfer_logic_type:type_name -> entity.TransferFunctionType
+	31, // 7: webrpc.SendConditionalPaymentRequest.transfer_logic_type:type_name -> entity.TransferFunctionType
 	11, // 8: webrpc.SendConditionalPaymentRequest.conditions:type_name -> webrpc.Condition
-	47, // 9: webrpc.SendConditionalPaymentRequest.note:type_name -> google.protobuf.Any
+	32, // 9: webrpc.SendConditionalPaymentRequest.note:type_name -> google.protobuf.Any
 	2,  // 10: webrpc.SendTokenRequest.token_info:type_name -> webrpc.TokenInfo
-	47, // 11: webrpc.SendTokenRequest.note:type_name -> google.protobuf.Any
+	32, // 11: webrpc.SendTokenRequest.note:type_name -> google.protobuf.Any
 	2,  // 12: webrpc.PaymentInfo.token_info:type_name -> webrpc.TokenInfo
 	15, // 13: webrpc.OutgoingPaymentInfo.payment:type_name -> webrpc.PaymentInfo
 	0,  // 14: webrpc.WebApi.GetPayHistory:input_type -> webrpc.GetPayHistoryRequest
@@ -2717,8 +1850,8 @@ var file_web_api_proto_depIdxs = []int32{
 	9,  // 24: webrpc.WebApi.GetPeerFreeBalance:input_type -> webrpc.GetPeerFreeBalanceRequest
 	13, // 25: webrpc.WebApi.SendToken:input_type -> webrpc.SendTokenRequest
 	12, // 26: webrpc.WebApi.SendConditionalPayment:input_type -> webrpc.SendConditionalPaymentRequest
-	48, // 27: webrpc.WebApi.SubscribeIncomingPayments:input_type -> google.protobuf.Empty
-	48, // 28: webrpc.WebApi.SubscribeOutgoingPayments:input_type -> google.protobuf.Empty
+	33, // 27: webrpc.WebApi.SubscribeIncomingPayments:input_type -> google.protobuf.Empty
+	33, // 28: webrpc.WebApi.SubscribeOutgoingPayments:input_type -> google.protobuf.Empty
 	14, // 29: webrpc.WebApi.GetIncomingPaymentStatus:input_type -> webrpc.PaymentID
 	14, // 30: webrpc.WebApi.GetIncomingPaymentInfo:input_type -> webrpc.PaymentID
 	14, // 31: webrpc.WebApi.GetOutgoingPaymentStatus:input_type -> webrpc.PaymentID
@@ -2735,89 +1868,55 @@ var file_web_api_proto_depIdxs = []int32{
 	2,  // 42: webrpc.WebApi.ConfirmSettlePaymentChannel:input_type -> webrpc.TokenInfo
 	2,  // 43: webrpc.WebApi.GetSettleFinalizedTimeForPaymentChannel:input_type -> webrpc.TokenInfo
 	2,  // 44: webrpc.WebApi.SyncOnChainPaymentChannelStatus:input_type -> webrpc.TokenInfo
-	48, // 45: webrpc.WebApi.SyncStateWithPeer:input_type -> google.protobuf.Empty
+	33, // 45: webrpc.WebApi.SyncStateWithPeer:input_type -> google.protobuf.Empty
 	19, // 46: webrpc.WebApi.CreateAppSessionOnVirtualContract:input_type -> webrpc.CreateAppSessionOnVirtualContractRequest
-	20, // 47: webrpc.WebApi.CreateAppSessionOnDeployedContract:input_type -> webrpc.CreateAppSessionOnDeployedContractRequest
-	18, // 48: webrpc.WebApi.SubscribeAppSessionDispute:input_type -> webrpc.SessionID
-	22, // 49: webrpc.WebApi.SignOutgoingState:input_type -> webrpc.SignOutgoingStateRequest
-	26, // 50: webrpc.WebApi.ValidateAck:input_type -> webrpc.ValidateAckRequest
-	24, // 51: webrpc.WebApi.SignData:input_type -> webrpc.Data
-	28, // 52: webrpc.WebApi.ProcessReceivedState:input_type -> webrpc.ProcessReceivedStateRequest
-	30, // 53: webrpc.WebApi.SettleAppSession:input_type -> webrpc.SettleAppSessionRequest
-	31, // 54: webrpc.WebApi.SettleAppSessionBySigTimeout:input_type -> webrpc.SettleAppSessionByTimeoutRequest
-	31, // 55: webrpc.WebApi.SettleAppSessionByMoveTimeout:input_type -> webrpc.SettleAppSessionByTimeoutRequest
-	32, // 56: webrpc.WebApi.SettleAppSessionByInvalidTurn:input_type -> webrpc.SettleAppSessionByInvalidityRequest
-	32, // 57: webrpc.WebApi.SettleAppSessionByInvalidState:input_type -> webrpc.SettleAppSessionByInvalidityRequest
-	18, // 58: webrpc.WebApi.DeleteAppSession:input_type -> webrpc.SessionID
-	18, // 59: webrpc.WebApi.GetDeployedAddressForAppSession:input_type -> webrpc.SessionID
-	34, // 60: webrpc.WebApi.GetBooleanOutcomeForAppSession:input_type -> webrpc.GetBooleanOutcomeForAppSessionRequest
-	36, // 61: webrpc.WebApi.ApplyActionForAppSession:input_type -> webrpc.ApplyActionForAppSessionRequest
-	18, // 62: webrpc.WebApi.FinalizeOnActionTimeoutForAppSession:input_type -> webrpc.SessionID
-	18, // 63: webrpc.WebApi.GetSettleFinalizedTimeForAppSession:input_type -> webrpc.SessionID
-	18, // 64: webrpc.WebApi.GetActionDeadlineForAppSession:input_type -> webrpc.SessionID
-	18, // 65: webrpc.WebApi.GetStatusForAppSession:input_type -> webrpc.SessionID
-	39, // 66: webrpc.WebApi.GetStateForAppSession:input_type -> webrpc.GetStateForAppSessionRequest
-	18, // 67: webrpc.WebApi.GetSeqNumForAppSession:input_type -> webrpc.SessionID
-	48, // 68: webrpc.WebApi.GetBlockNumber:input_type -> google.protobuf.Empty
-	42, // 69: webrpc.WebApi.SetMsgDropper:input_type -> webrpc.SetMsgDropReq
-	1,  // 70: webrpc.WebApi.GetPayHistory:output_type -> webrpc.GetPayHistoryResponse
-	48, // 71: webrpc.WebApi.SetDelegation:output_type -> google.protobuf.Empty
-	5,  // 72: webrpc.WebApi.OpenPaymentChannel:output_type -> webrpc.ChannelID
-	7,  // 73: webrpc.WebApi.Deposit:output_type -> webrpc.DepositOrWithdrawJob
-	7,  // 74: webrpc.WebApi.DepositNonBlocking:output_type -> webrpc.DepositOrWithdrawJob
-	7,  // 75: webrpc.WebApi.MonitorDepositJob:output_type -> webrpc.DepositOrWithdrawJob
-	7,  // 76: webrpc.WebApi.CooperativeWithdraw:output_type -> webrpc.DepositOrWithdrawJob
-	7,  // 77: webrpc.WebApi.CooperativeWithdrawNonBlocking:output_type -> webrpc.DepositOrWithdrawJob
-	7,  // 78: webrpc.WebApi.MonitorCooperativeWithdrawJob:output_type -> webrpc.DepositOrWithdrawJob
-	8,  // 79: webrpc.WebApi.GetBalance:output_type -> webrpc.GetBalanceResponse
-	10, // 80: webrpc.WebApi.GetPeerFreeBalance:output_type -> webrpc.FreeBalance
-	14, // 81: webrpc.WebApi.SendToken:output_type -> webrpc.PaymentID
-	14, // 82: webrpc.WebApi.SendConditionalPayment:output_type -> webrpc.PaymentID
-	15, // 83: webrpc.WebApi.SubscribeIncomingPayments:output_type -> webrpc.PaymentInfo
-	16, // 84: webrpc.WebApi.SubscribeOutgoingPayments:output_type -> webrpc.OutgoingPaymentInfo
-	43, // 85: webrpc.WebApi.GetIncomingPaymentStatus:output_type -> webrpc.PaymentStatus
-	15, // 86: webrpc.WebApi.GetIncomingPaymentInfo:output_type -> webrpc.PaymentInfo
-	43, // 87: webrpc.WebApi.GetOutgoingPaymentStatus:output_type -> webrpc.PaymentStatus
-	48, // 88: webrpc.WebApi.ConfirmOutgoingPayment:output_type -> google.protobuf.Empty
-	48, // 89: webrpc.WebApi.RejectIncomingPayment:output_type -> google.protobuf.Empty
-	48, // 90: webrpc.WebApi.SettleOnChainResolvedIncomingPayment:output_type -> google.protobuf.Empty
-	48, // 91: webrpc.WebApi.ResolveIncomingPaymentOnChain:output_type -> google.protobuf.Empty
-	17, // 92: webrpc.WebApi.GetOnChainPaymentInfo:output_type -> webrpc.OnChainPaymentInfo
-	48, // 93: webrpc.WebApi.ConfirmOnChainResolvedPayments:output_type -> google.protobuf.Empty
-	48, // 94: webrpc.WebApi.SettleExpiredPayments:output_type -> google.protobuf.Empty
-	48, // 95: webrpc.WebApi.IntendWithdraw:output_type -> google.protobuf.Empty
-	48, // 96: webrpc.WebApi.ConfirmWithdraw:output_type -> google.protobuf.Empty
-	48, // 97: webrpc.WebApi.IntendSettlePaymentChannel:output_type -> google.protobuf.Empty
-	48, // 98: webrpc.WebApi.ConfirmSettlePaymentChannel:output_type -> google.protobuf.Empty
-	37, // 99: webrpc.WebApi.GetSettleFinalizedTimeForPaymentChannel:output_type -> webrpc.BlockNumber
-	48, // 100: webrpc.WebApi.SyncOnChainPaymentChannelStatus:output_type -> google.protobuf.Empty
-	48, // 101: webrpc.WebApi.SyncStateWithPeer:output_type -> google.protobuf.Empty
-	18, // 102: webrpc.WebApi.CreateAppSessionOnVirtualContract:output_type -> webrpc.SessionID
-	18, // 103: webrpc.WebApi.CreateAppSessionOnDeployedContract:output_type -> webrpc.SessionID
-	21, // 104: webrpc.WebApi.SubscribeAppSessionDispute:output_type -> webrpc.DisputeInfo
-	23, // 105: webrpc.WebApi.SignOutgoingState:output_type -> webrpc.SignedState
-	27, // 106: webrpc.WebApi.ValidateAck:output_type -> webrpc.BoolValue
-	25, // 107: webrpc.WebApi.SignData:output_type -> webrpc.Signature
-	29, // 108: webrpc.WebApi.ProcessReceivedState:output_type -> webrpc.ProcessReceivedStateResponse
-	48, // 109: webrpc.WebApi.SettleAppSession:output_type -> google.protobuf.Empty
-	48, // 110: webrpc.WebApi.SettleAppSessionBySigTimeout:output_type -> google.protobuf.Empty
-	48, // 111: webrpc.WebApi.SettleAppSessionByMoveTimeout:output_type -> google.protobuf.Empty
-	48, // 112: webrpc.WebApi.SettleAppSessionByInvalidTurn:output_type -> google.protobuf.Empty
-	48, // 113: webrpc.WebApi.SettleAppSessionByInvalidState:output_type -> google.protobuf.Empty
-	48, // 114: webrpc.WebApi.DeleteAppSession:output_type -> google.protobuf.Empty
-	33, // 115: webrpc.WebApi.GetDeployedAddressForAppSession:output_type -> webrpc.Address
-	35, // 116: webrpc.WebApi.GetBooleanOutcomeForAppSession:output_type -> webrpc.BooleanOutcome
-	48, // 117: webrpc.WebApi.ApplyActionForAppSession:output_type -> google.protobuf.Empty
-	48, // 118: webrpc.WebApi.FinalizeOnActionTimeoutForAppSession:output_type -> google.protobuf.Empty
-	37, // 119: webrpc.WebApi.GetSettleFinalizedTimeForAppSession:output_type -> webrpc.BlockNumber
-	37, // 120: webrpc.WebApi.GetActionDeadlineForAppSession:output_type -> webrpc.BlockNumber
-	38, // 121: webrpc.WebApi.GetStatusForAppSession:output_type -> webrpc.AppSessionStatus
-	40, // 122: webrpc.WebApi.GetStateForAppSession:output_type -> webrpc.AppSessionState
-	41, // 123: webrpc.WebApi.GetSeqNumForAppSession:output_type -> webrpc.AppSessionSeqNum
-	37, // 124: webrpc.WebApi.GetBlockNumber:output_type -> webrpc.BlockNumber
-	48, // 125: webrpc.WebApi.SetMsgDropper:output_type -> google.protobuf.Empty
-	70, // [70:126] is the sub-list for method output_type
-	14, // [14:70] is the sub-list for method input_type
+	20, // 47: webrpc.WebApi.SignData:input_type -> webrpc.Data
+	18, // 48: webrpc.WebApi.DeleteAppSession:input_type -> webrpc.SessionID
+	18, // 49: webrpc.WebApi.GetDeployedAddressForAppSession:input_type -> webrpc.SessionID
+	23, // 50: webrpc.WebApi.GetBooleanOutcomeForAppSession:input_type -> webrpc.GetBooleanOutcomeForAppSessionRequest
+	33, // 51: webrpc.WebApi.GetBlockNumber:input_type -> google.protobuf.Empty
+	27, // 52: webrpc.WebApi.SetMsgDropper:input_type -> webrpc.SetMsgDropReq
+	1,  // 53: webrpc.WebApi.GetPayHistory:output_type -> webrpc.GetPayHistoryResponse
+	33, // 54: webrpc.WebApi.SetDelegation:output_type -> google.protobuf.Empty
+	5,  // 55: webrpc.WebApi.OpenPaymentChannel:output_type -> webrpc.ChannelID
+	7,  // 56: webrpc.WebApi.Deposit:output_type -> webrpc.DepositOrWithdrawJob
+	7,  // 57: webrpc.WebApi.DepositNonBlocking:output_type -> webrpc.DepositOrWithdrawJob
+	7,  // 58: webrpc.WebApi.MonitorDepositJob:output_type -> webrpc.DepositOrWithdrawJob
+	7,  // 59: webrpc.WebApi.CooperativeWithdraw:output_type -> webrpc.DepositOrWithdrawJob
+	7,  // 60: webrpc.WebApi.CooperativeWithdrawNonBlocking:output_type -> webrpc.DepositOrWithdrawJob
+	7,  // 61: webrpc.WebApi.MonitorCooperativeWithdrawJob:output_type -> webrpc.DepositOrWithdrawJob
+	8,  // 62: webrpc.WebApi.GetBalance:output_type -> webrpc.GetBalanceResponse
+	10, // 63: webrpc.WebApi.GetPeerFreeBalance:output_type -> webrpc.FreeBalance
+	14, // 64: webrpc.WebApi.SendToken:output_type -> webrpc.PaymentID
+	14, // 65: webrpc.WebApi.SendConditionalPayment:output_type -> webrpc.PaymentID
+	15, // 66: webrpc.WebApi.SubscribeIncomingPayments:output_type -> webrpc.PaymentInfo
+	16, // 67: webrpc.WebApi.SubscribeOutgoingPayments:output_type -> webrpc.OutgoingPaymentInfo
+	28, // 68: webrpc.WebApi.GetIncomingPaymentStatus:output_type -> webrpc.PaymentStatus
+	15, // 69: webrpc.WebApi.GetIncomingPaymentInfo:output_type -> webrpc.PaymentInfo
+	28, // 70: webrpc.WebApi.GetOutgoingPaymentStatus:output_type -> webrpc.PaymentStatus
+	33, // 71: webrpc.WebApi.ConfirmOutgoingPayment:output_type -> google.protobuf.Empty
+	33, // 72: webrpc.WebApi.RejectIncomingPayment:output_type -> google.protobuf.Empty
+	33, // 73: webrpc.WebApi.SettleOnChainResolvedIncomingPayment:output_type -> google.protobuf.Empty
+	33, // 74: webrpc.WebApi.ResolveIncomingPaymentOnChain:output_type -> google.protobuf.Empty
+	17, // 75: webrpc.WebApi.GetOnChainPaymentInfo:output_type -> webrpc.OnChainPaymentInfo
+	33, // 76: webrpc.WebApi.ConfirmOnChainResolvedPayments:output_type -> google.protobuf.Empty
+	33, // 77: webrpc.WebApi.SettleExpiredPayments:output_type -> google.protobuf.Empty
+	33, // 78: webrpc.WebApi.IntendWithdraw:output_type -> google.protobuf.Empty
+	33, // 79: webrpc.WebApi.ConfirmWithdraw:output_type -> google.protobuf.Empty
+	33, // 80: webrpc.WebApi.IntendSettlePaymentChannel:output_type -> google.protobuf.Empty
+	33, // 81: webrpc.WebApi.ConfirmSettlePaymentChannel:output_type -> google.protobuf.Empty
+	26, // 82: webrpc.WebApi.GetSettleFinalizedTimeForPaymentChannel:output_type -> webrpc.Timestamp
+	33, // 83: webrpc.WebApi.SyncOnChainPaymentChannelStatus:output_type -> google.protobuf.Empty
+	33, // 84: webrpc.WebApi.SyncStateWithPeer:output_type -> google.protobuf.Empty
+	18, // 85: webrpc.WebApi.CreateAppSessionOnVirtualContract:output_type -> webrpc.SessionID
+	21, // 86: webrpc.WebApi.SignData:output_type -> webrpc.Signature
+	33, // 87: webrpc.WebApi.DeleteAppSession:output_type -> google.protobuf.Empty
+	22, // 88: webrpc.WebApi.GetDeployedAddressForAppSession:output_type -> webrpc.Address
+	24, // 89: webrpc.WebApi.GetBooleanOutcomeForAppSession:output_type -> webrpc.BooleanOutcome
+	25, // 90: webrpc.WebApi.GetBlockNumber:output_type -> webrpc.BlockNumber
+	33, // 91: webrpc.WebApi.SetMsgDropper:output_type -> google.protobuf.Empty
+	53, // [53:92] is the sub-list for method output_type
+	14, // [14:53] is the sub-list for method input_type
 	14, // [14:14] is the sub-list for extension type_name
 	14, // [14:14] is the sub-list for extension extendee
 	0,  // [0:14] is the sub-list for field type_name
@@ -2834,7 +1933,7 @@ func file_web_api_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_web_api_proto_rawDesc), len(file_web_api_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   44,
+			NumMessages:   29,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

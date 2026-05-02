@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/celer-network/agent-pay/chain"
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/ledger"
@@ -27,8 +28,8 @@ import (
 )
 
 const (
-	chanMigrationDeadline uint64 = uint64(365 * 24 * 60 * 60 / 13) // estimation of block numbers produced in one year
-	chanMigrationInterval uint64 = uint64(30 * 24 * 60 * 60 / 13)  // estimation of block numbers produced in one month
+	chanMigrationDeadline uint64 = 365 * 24 * 60 * 60 // 1 year, seconds
+	chanMigrationInterval uint64 = 30 * 24 * 60 * 60  // 1 month, seconds — tolerance window before the deadline
 
 	// migration state for channel
 	MigrationStateInitialized int = 0
@@ -110,25 +111,25 @@ func (p *MigrateChannelProcessor) checkChannelMigration(peer ctype.Addr, cid cty
 		return nil
 	}
 
-	currentBlk := p.monitorService.GetCurrentBlockNumber().Uint64()
+	nowTs := uint64(time.Now().Unix())
 	deadline, state, _, found, err := p.dal.GetChanMigration(cid, latestLedgerAddr)
 	if err != nil {
 		return fmt.Errorf("Fail to get channel(%x) migration info: %w", cid, err)
 	}
 	// if migration info already exists and state is submitted or deadline is still valid
-	if found && (state == MigrationStateSubmitted || deadline > currentBlk) {
+	if found && (state == MigrationStateSubmitted || deadline > nowTs) {
 		return nil
 	}
 
 	// if no migration info found for channel,
 	// then we need to begin migration initialization
 	log.Infof("Start migrating channel: %x for peer: %x", cid, peer)
-	deadline = currentBlk + chanMigrationDeadline
+	deadline = nowTs + chanMigrationDeadline
 	migrationInfo := &entity.ChannelMigrationInfo{
 		ChannelId:         cid.Bytes(),
 		FromLedgerAddress: currentLedger.Bytes(),
 		ToLedgerAddress:   latestLedgerAddr.Bytes(),
-		MigrationDeadline: currentBlk + chanMigrationDeadline,
+		MigrationDeadline: nowTs + chanMigrationDeadline,
 	}
 
 	migrationInfoBytes, err := proto.Marshal(migrationInfo)
@@ -214,10 +215,10 @@ func (p *MigrateChannelProcessor) ProcessMigrateChannelRequest(req *rpc.MigrateC
 		return nil, errors.New("inconsistent config ledger info")
 	}
 
-	currentBlk := p.monitorService.GetCurrentBlockNumber().Uint64()
+	nowTs := uint64(time.Now().Unix())
 	deadline := migrationInfo.GetMigrationDeadline()
-	if currentBlk+chanMigrationInterval >= deadline { // have a tolerant range for deadline
-		log.Errorf("Channel migration deadline check failed: current(%d), deadline(%d)", currentBlk, deadline)
+	if nowTs+chanMigrationInterval >= deadline { // have a tolerant range for deadline
+		log.Errorf("Channel migration deadline check failed: now(%d), deadline(%d)", nowTs, deadline)
 		return nil, common.ErrDeadlinePassed
 	}
 

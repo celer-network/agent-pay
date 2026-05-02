@@ -39,7 +39,7 @@ message RuntimeConfig {
     StandardConfigs standard_configs = 13;
     // OspToOsp config is keyed by pair (peerOspAddr, tokenAddr)
     OspToOspOpenConfigs osp_to_osp_open_configs = 17;
-    // max payment timeout (in block number) OSP accepts
+    // max payment timeout (in seconds) the OSP accepts
     uint64 max_payment_timeout = 14;
     // max number of pending pay IDs in the simplex state
     uint64 max_num_pending_pays = 15;

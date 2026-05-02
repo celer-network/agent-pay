@@ -10,7 +10,7 @@
                         "min_deposit": "0",
                         "max_deposit": "10000000000000000000",
                         "min_deadline_delta": 1,
-                        "max_deadline_delta": 500,
+                        "max_deadline_delta": 1200,
                         "matching_ratio": 1.0
                     }
                 }
@@ -21,7 +21,7 @@
                         "min_deposit": "0",
                         "max_deposit": "10000000000000000000",
                         "min_deadline_delta": 1,
-                        "max_deadline_delta": 500,
+                        "max_deadline_delta": 1200,
                         "matching_ratio": 1.0
                     }
                 }
@@ -32,7 +32,7 @@
                         "min_deposit": "0",
                         "max_deposit": "10000000000000000000",
                         "min_deadline_delta": 1,
-                        "max_deadline_delta": 500,
+                        "max_deadline_delta": 1200,
                         "matching_ratio": 1.0
                     }
                 }
@@ -43,7 +43,7 @@
                         "min_deposit": "0",
                         "max_deposit": "10000000000000000000",
                         "min_deadline_delta": 1,
-                        "max_deadline_delta": 500,
+                        "max_deadline_delta": 1200,
                         "matching_ratio": 1.0
                     }
                 }
@@ -54,7 +54,7 @@
                         "min_deposit": "0",
                         "max_deposit": "10000000000000000000",
                         "min_deadline_delta": 1,
-                        "max_deadline_delta": 500,
+                        "max_deadline_delta": 1200,
                         "matching_ratio": 1.0
                     }
                 }
@@ -67,13 +67,13 @@
                 "min_deposit": "0",
                 "max_deposit": "1",
                 "min_deadline_delta": 1,
-                "max_deadline_delta": 500
+                "max_deadline_delta": 1200
             },
             "0000000000000000000000000000000000000000": {
                 "min_deposit": "0",
                 "max_deposit": "5000000000000000000",
                 "min_deadline_delta": 1,
-                "max_deadline_delta": 500,
+                "max_deadline_delta": 1200,
                 "matching_ratio": 1.0
             }
         }

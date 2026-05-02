@@ -31,6 +31,12 @@ func TestMain(m *testing.M) {
 	// Allow client dials to use insecure transport for localhost during e2e,
 	// avoiding CA mismatches with the server's self-signed localhost cert.
 	os.Setenv("CELER_INSECURE_TLS", "1")
+	// Shrink the chain-confirmation slack past pay/withdraw deadlines so the
+	// timeout-and-sweep e2e flow runs in seconds instead of minutes. Production
+	// defaults (60s) are restored automatically when these env vars are unset.
+	os.Setenv("CELER_PAY_RECV_SAFE_MARGIN_S", "5")
+	os.Setenv("CELER_PAY_SEND_SAFE_MARGIN_S", "5")
+	os.Setenv("CELER_WITHDRAW_SAFE_MARGIN_S", "5")
 	// Ensure DEBUG and above from app are visible in test output by default
 	log.SetLevelByName("debug")
 	if *reuse != "" {

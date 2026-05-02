@@ -26,3 +26,4 @@ client/main
 bin/
 tmp
 .mcp.json
+.claude

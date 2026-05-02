@@ -3,6 +3,7 @@
 package client
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"math/big"
@@ -25,7 +26,6 @@ import (
 	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/goutils/eth"
 	"github.com/celer-network/goutils/log"
-	"golang.org/x/net/context"
 	"google.golang.org/protobuf/types/known/anypb"
 )
 
@@ -373,13 +373,13 @@ func (c *CelerClient) GetChannelState(tkAddr ctype.Addr) string {
 }
 
 func (c *CelerClient) HasPendingOpenChanRequest(tk *entity.TokenInfo) bool {
-	blk, found, err := c.dal.GetDestTokenOpenChanBlkNum(c.svrEth, tk)
+	openedAt, found, err := c.dal.GetDestTokenOpenTs(c.svrEth, tk)
 	if err != nil || !found {
 		// not found, never requested, no pending
 		return false
 	}
-	curBlk := c.GetCurrentBlockNumberUint64()
-	if curBlk <= blk+uint64(config.OpenChannelTimeout) {
+	nowTs := uint64(time.Now().Unix())
+	if nowTs <= openedAt+config.OpenChannelTimeout {
 		return true
 	}
 	return false

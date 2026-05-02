@@ -18,23 +18,26 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func GetBalance(dal *storage.DAL, cid ctype.CidType, myAddr ctype.Addr, blkNum uint64) (*common.ChannelBalance, error) {
+// GetBalance computes the channel balance. nowTs is a unix timestamp (seconds) used to
+// decide whether a pending withdrawal is still active per the contract's
+// `block.timestamp`-based deadline semantics.
+func GetBalance(dal *storage.DAL, cid ctype.CidType, myAddr ctype.Addr, nowTs uint64) (*common.ChannelBalance, error) {
 	var balance *common.ChannelBalance
-	err := dal.Transactional(getBalanceTx, cid, myAddr, blkNum, &balance)
+	err := dal.Transactional(getBalanceTx, cid, myAddr, nowTs, &balance)
 	return balance, err
 }
 
 func getBalanceTx(tx *storage.DALTx, args ...interface{}) error {
 	cid := args[0].(ctype.CidType)
 	myAddr := args[1].(ctype.Addr)
-	blkNum := args[2].(uint64)
+	nowTs := args[2].(uint64)
 	balance := args[3].(**common.ChannelBalance)
-	bal, err := GetBalanceTx(tx, cid, myAddr, blkNum)
+	bal, err := GetBalanceTx(tx, cid, myAddr, nowTs)
 	*balance = bal
 	return err
 }
 
-func GetBalanceTx(tx *storage.DALTx, cid ctype.CidType, myAddr ctype.Addr, blkNum uint64) (*common.ChannelBalance, error) {
+func GetBalanceTx(tx *storage.DALTx, cid ctype.CidType, myAddr ctype.Addr, nowTs uint64) (*common.ChannelBalance, error) {
 	peer, onChainBalance, baseSeq, lastAckedSeq, selfSimplex, peerSimplex, found, err := tx.GetChanForBalance(cid)
 	if err != nil {
 		return nil, fmt.Errorf("GetChanForBalance err: %w", err)
@@ -47,7 +50,7 @@ func GetBalanceTx(tx *storage.DALTx, cid ctype.CidType, myAddr ctype.Addr, blkNu
 		return nil, fmt.Errorf("GetBaseSimplex err: %w", err)
 	}
 
-	balance := ComputeBalance(mySimplex, peerSimplex, onChainBalance, myAddr, peer, blkNum)
+	balance := ComputeBalance(mySimplex, peerSimplex, onChainBalance, myAddr, peer, nowTs)
 	return balance, nil
 }
 
@@ -81,11 +84,13 @@ func GetBaseSimplex(
 	return selfSimplex, nil
 }
 
+// ComputeBalance derives free / locked channel balance. nowTs is a unix timestamp
+// (seconds) used to evaluate the active-pending-withdraw deadline window.
 func ComputeBalance(
 	selfSimplex, peerSimplex *entity.SimplexPaymentChannel,
 	onChainBalance *structs.OnChainBalance,
 	myAddr, peerAddr ctype.Addr,
-	blkNum uint64) *common.ChannelBalance {
+	nowTs uint64) *common.ChannelBalance {
 
 	myLockedAmt := new(big.Int).SetBytes(selfSimplex.TotalPendingAmount)
 	toPeerAmt := utils.BytesToBigInt(selfSimplex.TransferToPeer.Receiver.Amt)
@@ -105,7 +110,8 @@ func ComputeBalance(
 	peerFree.Sub(peerFree, fromPeerAmt)
 	peerFree.Sub(peerFree, peerLockedAmt)
 
-	if blkNum <= onChainBalance.PendingWithdrawal.Deadline+config.WithdrawTimeoutSafeMargin {
+	// Pending-withdraw deadline is now a unix timestamp (seconds).
+	if nowTs <= onChainBalance.PendingWithdrawal.Deadline+config.WithdrawTimeoutSafeMargin {
 		if onChainBalance.PendingWithdrawal.Receiver == myAddr {
 			myFree.Sub(myFree, onChainBalance.PendingWithdrawal.Amount)
 		} else {

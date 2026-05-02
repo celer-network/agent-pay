@@ -1006,7 +1006,7 @@ var File_osp_admin_proto protoreflect.FileDescriptor
 
 const file_osp_admin_proto_rawDesc = "" +
 	"\n" +
-	"\x0fosp_admin.proto\x12\x03rpc\x1a\x1cgoogle/api/annotations.proto\x1a\x19google/protobuf/any.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\fentity.proto\x1a\rmessage.proto\"k\n" +
+	"\x0fosp_admin.proto\x12\x03rpc\x1a\fentity.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x19google/protobuf/any.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\rmessage.proto\"k\n" +
 	"\x15RegisterStreamRequest\x12(\n" +
 	"\x10peer_rpc_address\x18\x01 \x01(\tR\x0epeerRpcAddress\x12(\n" +
 	"\x10peer_eth_address\x18\x02 \x01(\fR\x0epeerEthAddress\"\xad\x01\n" +

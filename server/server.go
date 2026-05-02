@@ -735,7 +735,7 @@ func (s *adminService) SendToken(ctx context.Context, in *rpc.SendTokenRequest) 
 			LogicType:   entity.TransferFunctionType_BOOLEAN_AND,
 			MaxTransfer: tokenTransfer,
 		},
-		ResolveDeadline: s.cNode.GetCurrentBlockNumber().Uint64() + config.AdminSendTokenTimeout,
+		ResolveDeadline: uint64(time.Now().Unix()) + config.AdminSendTokenTimeout,
 		ResolveTimeout:  config.PayResolveTimeout,
 	}
 

@@ -31,7 +31,7 @@ func (cb *mycb) HandleOpenChannelFinish(cid ctype.CidType) {
 	tokenAddr := cb.tokenAddr
 	log.Infoln("Opened channel for tokenAddr", tokenAddr.Hex(), "cid", cid.Hex())
 	if cb.dal != nil {
-		cb.setBlkNumTo0()
+		cb.resetOpenTs()
 	}
 	if cb.appcb != nil {
 		go cb.appcb.HandleChannelOpened(ctype.Addr2Hex(cb.tokenAddr), ctype.Cid2Hex(cid))
@@ -41,18 +41,20 @@ func (cb *mycb) HandleOpenChannelFinish(cid ctype.CidType) {
 func (cb *mycb) HandleOpenChannelErr(e *common.E) {
 	log.Error("Openchannel err:", *e)
 	if cb.dal != nil {
-		cb.setBlkNumTo0()
+		cb.resetOpenTs()
 	}
 	if cb.appcb != nil {
 		go cb.appcb.HandleOpenChannelError(ctype.Addr2Hex(cb.tokenAddr), e.Reason)
 	}
 }
 
-// set lastOpenChanReqBlkNum to 0
-func (cb *mycb) setBlkNumTo0() {
-	err := cb.dal.UpsertDestTokenOpenChanBlkNum(cb.svrEth, utils.GetTokenInfoFromAddress(cb.tokenAddr), 0)
+// resetOpenTs clears the open-channel timestamp for this client's
+// (peer, token), used when an open-channel request fails so the next
+// request gets a fresh timestamp.
+func (cb *mycb) resetOpenTs() {
+	err := cb.dal.UpsertDestTokenOpenTs(cb.svrEth, utils.GetTokenInfoFromAddress(cb.tokenAddr), 0)
 	if err != nil {
-		log.Warnln("setBlkNumTo0 err:", err)
+		log.Warnln("resetOpenTs err:", err)
 	}
 }
 
@@ -77,9 +79,9 @@ func (c *CelerClient) OpenChannel(
 		}
 		return nil
 	}
-	err := c.dal.UpsertDestTokenOpenChanBlkNum(c.svrEth, token, c.GetCurrentBlockNumberUint64())
+	err := c.dal.UpsertDestTokenOpenTs(c.svrEth, token, uint64(time.Now().Unix()))
 	if err != nil {
-		log.Warnln("OpenChannel: cannot save block number:", err)
+		log.Warnln("OpenChannel: cannot save open-channel timestamp:", err)
 	}
 	return c.cNode.OpenChannel(
 		c.svrEth,
@@ -131,7 +133,7 @@ func (c *CelerClient) AddBooleanPay(
 	if xfer == nil || xfer.Receiver == nil || xfer.Receiver.Account == nil {
 		return ctype.ZeroPayID, common.ErrInvalidArg
 	}
-	if resolveDeadline <= c.GetCurrentBlockNumber().Uint64() {
+	if resolveDeadline <= uint64(time.Now().Unix()) {
 		return ctype.ZeroPayID, common.ErrDeadlinePassed
 	}
 
