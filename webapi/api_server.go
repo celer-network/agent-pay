@@ -524,16 +524,10 @@ func (s *ApiServer) GetOnChainPaymentInfo(
 	return &rpc.OnChainPaymentInfo{Amount: info.Amount, ResolveDeadline: info.ResolveDeadline}, nil
 }
 
-// Keep the legacy helper name as a thin wrapper so the client WebAPI path and
-// the OSP WebAPI path share one PaymentInfo mapping implementation.
-func paymentInfoFromClientPayment(payment *celersdkintf.Payment) *rpc.PaymentInfo {
-	return paymentInfoFromPayment(payment)
-}
-
 func (s *ApiServer) SubscribeIncomingPayments(
 	empty *empty.Empty, stream rpc.WebApi_SubscribeIncomingPaymentsServer) error {
 	writeToStream := func(payment *celersdkintf.Payment) error {
-		return stream.Send(paymentInfoFromClientPayment(payment))
+		return stream.Send(paymentInfoFromPayment(payment))
 	}
 	callbackImpl := s.callbackImpl
 	for {
@@ -586,7 +580,7 @@ func (s *ApiServer) GetIncomingPaymentInfo(
 	if err != nil {
 		return nil, err
 	}
-	return paymentInfoFromClientPayment(payment), nil
+	return paymentInfoFromPayment(payment), nil
 }
 
 func (s *ApiServer) GetOutgoingPaymentStatus(

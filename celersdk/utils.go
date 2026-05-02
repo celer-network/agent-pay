@@ -54,21 +54,6 @@ func createXfer(tk *Token, receiver, amtWei string) *entity.TokenTransfer {
 	return xfer
 }
 
-func bc2c(bc *BooleanCondition) (*entity.Condition, error) {
-	if bc.OnChainDeployed {
-		return &entity.Condition{
-			ConditionType:           entity.ConditionType_DEPLOYED_CONTRACT,
-			DeployedContractAddress: ctype.Hex2Addr(bc.OnChainAddress).Bytes(),
-			ArgsQueryOutcome:        bc.ArgsForQueryOutcome,
-		}, nil
-	}
-	return &entity.Condition{
-		ConditionType:          entity.ConditionType_VIRTUAL_CONTRACT,
-		VirtualContractAddress: ctype.Hex2Bytes(bc.VirtualContractAddress),
-		ArgsQueryOutcome:       bc.ArgsForQueryOutcome,
-	}, nil
-}
-
 func sdkToken2entityToken(tk *Token) *entity.TokenInfo {
 	var token *entity.TokenInfo
 	if tk == nil { // ETH case

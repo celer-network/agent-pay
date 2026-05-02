@@ -1,14 +1,8 @@
 // Copyright 2018-2025 Celer Network
 
-// SDK APIs dealing with app sessions backed by stateless `IBooleanCond`
-// virtual condition contracts.
-//
-// Post-trim the legacy gaming surface (turn-based state-exchange protocol with
-// `SignAppData` / `HandleMatchData` / opcodes / seqnum tracking, on-chain
-// `applyAction` / introspection / oracle disputes, the `NewAppSessionOnDeployedContract`
-// path and its multisession dependencies) is gone. What remains is the thin
-// wrapper around `client.CelerClient`'s registration / outcome-query surface
-// for VIRTUAL_CONTRACT condition contracts.
+// SDK APIs for app sessions backed by stateless `IBooleanCond` virtual
+// condition contracts. Thin wrapper around `client.CelerClient`'s
+// registration and outcome-query surface for VIRTUAL_CONTRACT conditions.
 
 package celersdk
 

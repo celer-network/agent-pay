@@ -1,14 +1,15 @@
 // Copyright 2018-2025 Celer Network
 
-// Conditional-pay dispute coverage. After AS-B trimmed the gaming
-// state-machine machinery, the surviving "dispute" path is just:
+// Conditional-pay dispute coverage. The dispute path is:
 //
 //   1. send a conditional pay whose Condition references an IBooleanCond
 //      contract (either VIRTUAL_CONTRACT bytecode registered off-chain or
 //      a DEPLOYED_CONTRACT address);
-//   2. for VIRTUAL_CONTRACT only, ensure the contract is on-chain by
-//      calling `GetBooleanOutcomeForAppSession` (the surviving deploy-on-
-//      query path through `AppClient.deployIfNeeded`);
+//   2. for VIRTUAL_CONTRACT only, ensure the contract is on-chain — either
+//      by calling `GetBooleanOutcomeForAppSession` (deploy-on-query through
+//      `AppClient.deployIfNeeded`) or by relying on `ResolveCondPayOnChain`
+//      to auto-deploy locally-registered conditions before submitting the
+//      resolve tx;
 //   3. invoke `PayResolver.resolvePaymentByConditions`, which calls
 //      `IBooleanCond.isFinalized(argsQueryFinalization)` and (only if true)
 //      `IBooleanCond.getOutcome(argsQueryOutcome)` on the deployed

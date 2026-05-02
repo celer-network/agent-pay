@@ -45,33 +45,6 @@ func (mc *Client) SendToken(tk *Token, receiver string, amtWei string, noteTypeU
 	return ret, nil
 }
 
-func (mc *Client) SendETHWithCondition(receiver string, amtWei string, cond *BooleanCondition) (string, error) {
-	return mc.SendTokenWithCondition(nil, receiver, amtWei, cond)
-}
-
-// When should we call onSent? or do we need a new callback func?
-func (mc *Client) SendTokenWithCondition(tk *Token, receiver string, amtWei string, cond *BooleanCondition) (string, error) {
-	xfer := createXfer(tk, receiver, amtWei)
-	timeout := cPayTimeout
-	if cond.TimeoutSec > 0 {
-		timeout = cond.TimeoutSec
-	}
-	condition, err := bc2c(cond)
-	if err != nil {
-		log.Errorln("SendTokenWithCondition:", err)
-		return ctype.ZeroPayIDHex, err
-	}
-	payID, err := mc.c.AddBooleanPay(
-		xfer, []*entity.Condition{condition}, uint64(time.Now().Unix())+uint64(timeout), nil /*note*/, 0)
-	if err != nil {
-		log.Errorln("SendTokenWithCondition:", err)
-		return ctype.ZeroPayIDHex, err
-	}
-	ret := ctype.PayID2Hex(payID)
-	log.Debugln("Sent pay:", ret)
-	return ret, nil
-}
-
 // ConfirmPay settles the condpay, ie. actually paid to pay dest
 func (mc *Client) ConfirmPay(payID string) error {
 	return mc.c.ConfirmBooleanPay(ctype.Hex2PayID(payID))
