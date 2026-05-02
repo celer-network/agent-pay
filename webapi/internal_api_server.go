@@ -14,6 +14,7 @@ import (
 
 type InternalApiServer struct {
 	*ApiServer
+	register func(*grpc.Server)
 }
 
 func NewInternalApiServer(
@@ -26,11 +27,27 @@ func NewInternalApiServer(
 	config string,
 	extSigner bool) *InternalApiServer {
 	apiServer := NewApiServer(webPort, grpcPort, allowedOrigins, keystore, password, dataPath, config, extSigner)
-	return &InternalApiServer{apiServer}
+	return &InternalApiServer{ApiServer: apiServer}
+}
+
+func NewInternalApiServerWithExternalSigner(
+	addr string,
+	config string,
+	dataPath string,
+	webPort int,
+	grpcPort int,
+	allowedOrigins string,
+	cb celersdk.ExternalSignerCallback,
+	register func(*grpc.Server)) *InternalApiServer {
+	apiServer := NewApiServerWithExternalSigner(webPort, grpcPort, allowedOrigins, addr, dataPath, config, cb)
+	return &InternalApiServer{ApiServer: apiServer, register: register}
 }
 
 func (s *InternalApiServer) Start() {
 	gs := grpc.NewServer()
+	if s.register != nil {
+		s.register(gs)
+	}
 	rpc.RegisterWebApiServer(gs, s.ApiServer)
 	rpc.RegisterInternalWebApiServer(gs, s)
 	s.ApiServer.serve(gs)

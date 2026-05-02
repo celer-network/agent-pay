@@ -107,6 +107,35 @@ func NewApiServer(
 	return s
 }
 
+func NewApiServerWithExternalSigner(
+	webPort int,
+	grpcPort int,
+	allowedOrigins string,
+	addr string,
+	dataPath string,
+	config string,
+	signcb celersdk.ExternalSignerCallback) *ApiServer {
+	callbackImpl := NewCallbackImpl()
+	s := &ApiServer{
+		webPort:               webPort,
+		grpcPort:              grpcPort,
+		allowedOrigins:        allowedOrigins,
+		callbackImpl:          callbackImpl,
+		appSessionMap:         make(map[string]*celersdk.AppSession),
+		appSessionCallbackMap: make(map[string]*appSessionCallback),
+	}
+	go celersdk.InitClientWithSigner(addr, config, dataPath, callbackImpl, signcb)
+
+	select {
+	case client := <-callbackImpl.clientReady:
+		s.apiClient = client
+	case err := <-callbackImpl.clientInitErr:
+		log.Fatal(err)
+		return nil
+	}
+	return s
+}
+
 func (s *ApiServer) Start() {
 	gs := grpc.NewServer()
 	rpc.RegisterWebApiServer(gs, s)
