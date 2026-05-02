@@ -1,13 +1,8 @@
 // Copyright 2018-2025 Celer Network
 
-// Helpers for the surviving SimpleSingleSessionApp test fixture.
-// This file (and singlesessionapp.go) is kept for back-compat with
-// agent-pay-x402, which registers SimpleSingleSessionApp via
-// CreateAppSessionOnVirtualContract. See
-// docs/progress/app-session-simplification.md §7 for the coordinated x402
-// PR spec; both files retire when that PR lands and swaps the registered
-// bytecode to a stateless IBooleanCond impl (e.g. BooleanCondMock, next to
-// this file).
+// Helpers for the SimpleSingleSessionApp test fixture. New code should
+// prefer BooleanCondMock (in this same package) — a stateless IBooleanCond
+// implementation that doesn't carry the legacy session-state-machine surface.
 
 package testapp
 
@@ -23,19 +18,18 @@ import (
 var (
 	AppCode = ctype.Hex2Bytes(SimpleSingleSessionAppBin)
 	Nonce   = big.NewInt(666)
-	Timeout = big.NewInt(2)
+	timeout = big.NewInt(2)
 )
 
-// GetSingleSessionConstructor generates an abi-conforming constructor blob for
-// SimpleSingleSessionApp. Used by agent-pay e2e tests and by agent-pay-x402's
-// testinfra to register the app via CreateAppSessionOnVirtualContract.
+// GetSingleSessionConstructor generates an abi-conforming constructor blob
+// for SimpleSingleSessionApp.
 func GetSingleSessionConstructor(players []ctype.Addr) []byte {
 	parsedABI, err := abi.JSON(strings.NewReader(SimpleSingleSessionAppABI))
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
-	input, err := parsedABI.Pack("", players, Nonce, Timeout)
+	input, err := parsedABI.Pack("", players, Nonce, timeout)
 	if err != nil {
 		log.Error(err)
 		return nil

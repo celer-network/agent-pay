@@ -3,6 +3,7 @@
 package client
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"math/big"
@@ -25,7 +26,6 @@ import (
 	"github.com/celer-network/agent-pay/utils"
 	"github.com/celer-network/goutils/eth"
 	"github.com/celer-network/goutils/log"
-	"golang.org/x/net/context"
 	"google.golang.org/protobuf/types/known/anypb"
 )
 

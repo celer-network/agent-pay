@@ -114,7 +114,7 @@ The optional OSP WebAPI listener is intentionally narrower than the client-node 
 | [storage](../storage) | SQLite or SQL-backed persistence plus the DAL transaction boundary used by protocol handlers |
 | [deposit](../deposit) | Asynchronous deposit-job processing and batching |
 | [dispute](../dispute) | On-chain fallback for payment/channel disputes and registry queries |
-| [app](../app) | Bindings for the `IBooleanCond` condition-contract interface (`agent-pay-contracts/src/lib/interface/IBooleanCond.sol`) plus `AppClient` — registration of `VIRTUAL_CONTRACT` bytecode, lazy on-chain deployment via `VirtContractResolver`, and off-chain `IBooleanCond.{isFinalized,getOutcome}` query. Stateless: no session state machine, no oracle disputes — see [docs/progress/app-session-simplification.md](progress/app-session-simplification.md) §2 for the design rationale |
+| [app](../app) | Bindings for the `IBooleanCond` condition-contract interface (`agent-pay-contracts/src/lib/interface/IBooleanCond.sol`) plus `AppClient` — registration of `VIRTUAL_CONTRACT` bytecode, lazy on-chain deployment via `VirtContractResolver`, and off-chain `IBooleanCond.{isFinalized,getOutcome}` query. Stateless: no session state machine, no oracle disputes |
 | [client](../client) | Go client wrapper around `CNode` for edge/client nodes |
 | [celersdk](../celersdk) | Higher-level SDK interface intended for app/mobile integration |
 | [chain](../chain) and [ledgerview](../ledgerview) | Contract bindings and read helpers for on-chain state |
