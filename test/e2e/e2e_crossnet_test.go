@@ -4,6 +4,8 @@ package e2e
 
 import (
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -319,12 +321,39 @@ func updateCrossNetTables() {
 	names := []string{"o1", "o2", "o6", "o7", "o8", "o9"}
 
 	for i := 0; i < 6; i++ {
+		cfgPath := materializeXnetConfig(names[i])
 		tf.StartProcess(outRootDir+"ospcli",
 			"-profile", profiles[i],
 			"-storedir", sStoreDir+"/"+addrs[i],
 			"-dbupdate", "config-xnet",
-			"-file", xnetConfigDir+names[i]+".json",
+			"-file", cfgPath,
 			"-logcolor",
 			"-logprefix", "cli-"+names[i]).Wait()
 	}
+}
+
+// materializeXnetConfig reads the checked-in xnet config template and
+// substitutes the placeholder ERC20 token addresses with the actual deployed
+// addresses captured at SetupOnChain time. The template uses the deterministic
+// addresses that the original deployment order produced; once the deployer
+// nonce sequence shifts (e.g. when test-fixture contracts are added or
+// removed) the addresses no longer match, and routing lookup fails because
+// channels are opened against the freshly-deployed token while xnet
+// `net_token` mappings still point at stale addresses.
+func materializeXnetConfig(name string) string {
+	src := xnetConfigDir + name + ".json"
+	raw, err := os.ReadFile(src)
+	if err != nil {
+		log.Fatalf("read xnet config %s: %v", src, err)
+	}
+	rewritten := strings.NewReplacer(
+		"f3ccc0a86f8451ab193011fbb408db2e38eaf10a", strings.ToLower(tokenAddrErc20),
+		"d332b06d3d64c957bc2f4a6cbf379b007f5507e1", strings.ToLower(tokenAddrNet1),
+		"adaa1a9ce0c4fe2018e3054f78c73947d2927a01", strings.ToLower(tokenAddrNet2),
+	).Replace(string(raw))
+	dst := filepath.Join(outRootDir, "xnet-"+name+".json")
+	if err := os.WriteFile(dst, []byte(rewritten), 0644); err != nil {
+		log.Fatalf("write xnet config %s: %v", dst, err)
+	}
+	return dst
 }
