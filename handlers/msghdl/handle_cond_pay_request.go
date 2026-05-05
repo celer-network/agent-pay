@@ -707,6 +707,12 @@ func (h *CelerMsgHandler) crossNetPayInbound(
 	newPay.ResolveDeadline = uint64(time.Now().Unix()) + xnet.GetTimeout()
 	newPay.ResolveTimeout = config.PayResolveTimeout
 	newPay.PayResolver = h.nodeConfig.GetPayResolverContract().GetAddr().Bytes()
+	// Re-bind chain_id to this bridge's chain so on-chain resolve in the
+	// next net's PayResolver passes its `pay.chainId == block.chainid` check
+	// and downstream peers' chain-id check accepts the bridged pay. The
+	// destination still signs the receipt against `xnet.OriginalPay` (which
+	// keeps the source chain's id), so source-side verification is unaffected.
+	newPay.ChainId = config.ChainId.Uint64()
 	newPayID := ctype.Pay2PayID(newPay)
 	newPayBytes, err := proto.Marshal(newPay)
 	if err != nil {
@@ -771,6 +777,7 @@ func (h *CelerMsgHandler) verifyCrossNetPay(pay *entity.ConditionalPay, original
 		p.ResolveDeadline = 0
 		p.ResolveTimeout = 0
 		p.PayResolver = nil
+		p.ChainId = 0
 	}
 	normalize(payCopy)
 	normalize(&originalPay)
