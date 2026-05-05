@@ -161,6 +161,11 @@ func (p *openChannelProcessor) prepareChannelInitializer(
 		},
 		DisputeTimeout:   config.ChannelDisputeTimeout,
 		MsgValueReceiver: msgValueReceiver,
+		// chain id + ledger address bind the signed initializer to a specific
+		// (chain, CelerLedger) pair so it can't be replayed cross-chain or
+		// against a different ledger contract on the same chain.
+		ChainId:       config.ChainId.Uint64(),
+		LedgerAddress: p.nodeConfig.GetLedgerContract().GetAddr().Bytes(),
 	}
 	return initializer, nil
 }
@@ -686,6 +691,19 @@ func (p *openChannelProcessor) processOpenChannelRequest(req *rpc.OpenChannelReq
 	}
 	ocem.ReadableInitializer = utils.PrintChannelInitializer(&initializer)
 	log.Infoln("process openchannel request", utils.PrintChannelInitializer(&initializer))
+	// chain id + ledger address bind the signed initializer to a specific
+	// (chain, CelerLedger) pair. CelerLedger.openChannel does the same check
+	// on-chain; rejecting here closes off cross-chain and same-chain
+	// wrong-ledger replay before signing or forwarding.
+	if initializer.GetChainId() != config.ChainId.Uint64() {
+		return errResp, status.Errorf(codes.InvalidArgument,
+			"initializer chain id %d, my chain id %d", initializer.GetChainId(), config.ChainId.Uint64())
+	}
+	myLedger := p.nodeConfig.GetLedgerContract().GetAddr()
+	if !bytes.Equal(initializer.GetLedgerAddress(), myLedger.Bytes()) {
+		return errResp, status.Errorf(codes.InvalidArgument,
+			"initializer ledger %x, my ledger %x", initializer.GetLedgerAddress(), myLedger.Bytes())
+	}
 	// distribution is sorted based on address. So we need to figure out who's requester.
 	accnt0 := initializer.InitDistribution.Distribution[0].Account
 	accnt1 := initializer.InitDistribution.Distribution[1].Account
@@ -776,9 +794,15 @@ func (p *openChannelProcessor) processOpenChannelRequest(req *rpc.OpenChannelReq
 }
 func (p *openChannelProcessor) computePscID(
 	channelInitializerBytes []byte, ledgerAdr, walletAddr ctype.Addr) (ctype.CidType, error) {
+	// Mirror the on-chain CelerWallet.create derivation:
+	//   walletId = keccak256(abi.encodePacked(block.chainid, address(this), msg.sender, _nonce))
+	// where address(this) is the wallet contract and msg.sender is the
+	// CelerLedger calling create. _nonce is keccak256(channelInitializerBytes).
 	nonce := crypto.Keccak256(channelInitializerBytes)
-	// Does same thing as abi.encodePack in solidity.
-	packed := make([]byte, 0, len(walletAddr.Bytes())+len(ledgerAdr.Bytes())+len(nonce))
+	chainIdBytes := make([]byte, 32)
+	config.ChainId.FillBytes(chainIdBytes)
+	packed := make([]byte, 0, len(chainIdBytes)+len(walletAddr.Bytes())+len(ledgerAdr.Bytes())+len(nonce))
+	packed = append(packed, chainIdBytes...)
 	packed = append(packed, walletAddr.Bytes()...)
 	packed = append(packed, ledgerAdr.Bytes()...)
 	packed = append(packed, nonce...)
@@ -909,9 +933,9 @@ func (p *openChannelProcessor) emptySimplex(
 			},
 			Receiver: &entity.AccountAmtPair{Amt: zeroAmtBytes},
 		},
-		PendingPayIds:          &entity.PayIdList{},
-		LastPayResolveDeadline: 0,
-		TotalPendingAmount:     zeroAmtBytes,
+		PendingPayIds:      &entity.PayIdList{},
+		PayClearDeadline:   0,
+		TotalPendingAmount: zeroAmtBytes,
 	}
 	emptySimplexByte, err := proto.Marshal(emptySimplex)
 	if err != nil {

@@ -403,11 +403,14 @@ type SimplexPaymentChannel struct {
 	TransferToPeer *TokenTransfer `protobuf:"bytes,4,opt,name=transfer_to_peer,json=transferToPeer,proto3" json:"transfer_to_peer,omitempty"`
 	// head of the idlist chain of all pending conditional pays.
 	PendingPayIds *PayIdList `protobuf:"bytes,5,opt,name=pending_pay_ids,json=pendingPayIds,proto3" json:"pending_pay_ids,omitempty"`
-	// The last resolve deadline of all pending conditional pays.
-	// confirmSettle must be called after all pending pays have been finalized,
-	// namely all pending pays have been resolved in the pay registry,
-	// or after the last_pay_resolve_deadline.
-	LastPayResolveDeadline uint64 `protobuf:"varint,6,opt,name=last_pay_resolve_deadline,json=lastPayResolveDeadline,proto3" json:"last_pay_resolve_deadline,omitempty"`
+	// Unix timestamp (seconds) after which confirmSettle becomes unconditionally
+	// eligible — i.e. max(pay.resolveDeadline) + clearMargin. The clearMargin
+	// must be large enough that, after all pays are resolved in PayRegistry,
+	// recipient peers have time to call clearPays for every pay-list segment
+	// before confirmSettle can close the channel. Off-chain producers MUST
+	// include the margin; a literal "last resolve deadline" would race with
+	// uncleared multi-segment pay lists.
+	PayClearDeadline uint64 `protobuf:"varint,6,opt,name=pay_clear_deadline,json=payClearDeadline,proto3" json:"pay_clear_deadline,omitempty"`
 	// total amount of all pending pays.
 	TotalPendingAmount []byte `protobuf:"bytes,7,opt,name=total_pending_amount,json=totalPendingAmount,proto3" json:"total_pending_amount,omitempty"`
 	unknownFields      protoimpl.UnknownFields
@@ -479,9 +482,9 @@ func (x *SimplexPaymentChannel) GetPendingPayIds() *PayIdList {
 	return nil
 }
 
-func (x *SimplexPaymentChannel) GetLastPayResolveDeadline() uint64 {
+func (x *SimplexPaymentChannel) GetPayClearDeadline() uint64 {
 	if x != nil {
-		return x.LastPayResolveDeadline
+		return x.PayClearDeadline
 	}
 	return 0
 }
@@ -634,8 +637,11 @@ type ConditionalPay struct {
 	// resolve_timeout is the dispute window after a resolve payment request is submitted
 	ResolveTimeout uint64 `protobuf:"varint,7,opt,name=resolve_timeout,json=resolveTimeout,proto3" json:"resolve_timeout,omitempty"`
 	PayResolver    []byte `protobuf:"bytes,8,opt,name=pay_resolver,json=payResolver,proto3" json:"pay_resolver,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// chain id of the intended target chain; binds the signed pay (and any
+	// vouched result over it) against cross-chain replay
+	ChainId       uint64 `protobuf:"varint,9,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ConditionalPay) Reset() {
@@ -722,6 +728,13 @@ func (x *ConditionalPay) GetPayResolver() []byte {
 		return x.PayResolver
 	}
 	return nil
+}
+
+func (x *ConditionalPay) GetChainId() uint64 {
+	if x != nil {
+		return x.ChainId
+	}
+	return 0
 }
 
 // Next Tag: 3
@@ -1008,7 +1021,7 @@ func (x *CooperativeWithdrawInfo) GetRecipientChannelId() []byte {
 	return nil
 }
 
-// Next Tag: 5
+// Next Tag: 7
 type PaymentChannelInitializer struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// require an ascending order based on addresses of init_distribution.distribution[].account
@@ -1018,8 +1031,14 @@ type PaymentChannelInitializer struct {
 	// index of channel peer who receives the blockchain native token
 	// associated with the transaction (msg.value in case of ETH)
 	MsgValueReceiver uint64 `protobuf:"varint,4,opt,name=msg_value_receiver,json=msgValueReceiver,proto3" json:"msg_value_receiver,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// chain id of the intended target chain; binds the signed initializer
+	// against cross-chain replay
+	ChainId uint64 `protobuf:"varint,5,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
+	// address of the intended target CelerLedger; binds the signed initializer
+	// against same-chain wrong-ledger replay
+	LedgerAddress []byte `protobuf:"bytes,6,opt,name=ledger_address,json=ledgerAddress,proto3" json:"ledger_address,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PaymentChannelInitializer) Reset() {
@@ -1078,6 +1097,20 @@ func (x *PaymentChannelInitializer) GetMsgValueReceiver() uint64 {
 		return x.MsgValueReceiver
 	}
 	return 0
+}
+
+func (x *PaymentChannelInitializer) GetChainId() uint64 {
+	if x != nil {
+		return x.ChainId
+	}
+	return 0
+}
+
+func (x *PaymentChannelInitializer) GetLedgerAddress() []byte {
+	if x != nil {
+		return x.LedgerAddress
+	}
+	return nil
 }
 
 // Next Tag: 5
@@ -1257,7 +1290,7 @@ const file_entity_proto_rawDesc = "" +
 	"\fdistribution\x18\x02 \x03(\v2\x16.entity.AccountAmtPairR\fdistribution\"l\n" +
 	"\rTokenTransfer\x12'\n" +
 	"\x05token\x18\x01 \x01(\v2\x11.entity.TokenInfoR\x05token\x122\n" +
-	"\breceiver\x18\x02 \x01(\v2\x16.entity.AccountAmtPairR\breceiver\"\x8b\x03\n" +
+	"\breceiver\x18\x02 \x01(\v2\x16.entity.AccountAmtPairR\breceiver\"\xfe\x02\n" +
 	"\x15SimplexPaymentChannel\x12)\n" +
 	"\n" +
 	"channel_id\x18\x01 \x01(\fB\n" +
@@ -1266,8 +1299,8 @@ const file_entity_proto_rawDesc = "" +
 	"\xca>\aaddressR\bpeerFrom\x12 \n" +
 	"\aseq_num\x18\x03 \x01(\x04B\a\xca>\x04uintR\x06seqNum\x12?\n" +
 	"\x10transfer_to_peer\x18\x04 \x01(\v2\x15.entity.TokenTransferR\x0etransferToPeer\x129\n" +
-	"\x0fpending_pay_ids\x18\x05 \x01(\v2\x11.entity.PayIdListR\rpendingPayIds\x12B\n" +
-	"\x19last_pay_resolve_deadline\x18\x06 \x01(\x04B\a\xca>\x04uintR\x16lastPayResolveDeadline\x12<\n" +
+	"\x0fpending_pay_ids\x18\x05 \x01(\v2\x11.entity.PayIdListR\rpendingPayIds\x125\n" +
+	"\x12pay_clear_deadline\x18\x06 \x01(\x04B\a\xca>\x04uintR\x10payClearDeadline\x12<\n" +
 	"\x14total_pending_amount\x18\a \x01(\fB\n" +
 	"\xca>\auint256R\x12totalPendingAmount\"b\n" +
 	"\tPayIdList\x12#\n" +
@@ -1278,7 +1311,7 @@ const file_entity_proto_rawDesc = "" +
 	"\x10TransferFunction\x12;\n" +
 	"\n" +
 	"logic_type\x18\x01 \x01(\x0e2\x1c.entity.TransferFunctionTypeR\tlogicType\x128\n" +
-	"\fmax_transfer\x18\x02 \x01(\v2\x15.entity.TokenTransferR\vmaxTransfer\"\x85\x03\n" +
+	"\fmax_transfer\x18\x02 \x01(\v2\x15.entity.TokenTransferR\vmaxTransfer\"\xa9\x03\n" +
 	"\x0eConditionalPay\x12.\n" +
 	"\rpay_timestamp\x18\x01 \x01(\x04B\t\xca>\x04uint0\x01R\fpayTimestamp\x12\x1c\n" +
 	"\x03src\x18\x02 \x01(\fB\n" +
@@ -1292,7 +1325,8 @@ const file_entity_proto_rawDesc = "" +
 	"\x10resolve_deadline\x18\x06 \x01(\x04B\a\xca>\x04uintR\x0fresolveDeadline\x120\n" +
 	"\x0fresolve_timeout\x18\a \x01(\x04B\a\xca>\x04uintR\x0eresolveTimeout\x12-\n" +
 	"\fpay_resolver\x18\b \x01(\fB\n" +
-	"\xca>\aaddressR\vpayResolver\"N\n" +
+	"\xca>\aaddressR\vpayResolver\x12\"\n" +
+	"\bchain_id\x18\t \x01(\x04B\a\xca>\x04uintR\achainId\"N\n" +
 	"\rCondPayResult\x12\x19\n" +
 	"\bcond_pay\x18\x01 \x01(\fR\acondPay\x12\"\n" +
 	"\x06amount\x18\x02 \x01(\fB\n" +
@@ -1320,12 +1354,15 @@ const file_entity_proto_rawDesc = "" +
 	"\bwithdraw\x18\x03 \x01(\v2\x16.entity.AccountAmtPairR\bwithdraw\x124\n" +
 	"\x11withdraw_deadline\x18\x04 \x01(\x04B\a\xca>\x04uintR\x10withdrawDeadline\x12<\n" +
 	"\x14recipient_channel_id\x18\x05 \x01(\fB\n" +
-	"\xca>\abytes32R\x12recipientChannelId\"\xfa\x01\n" +
+	"\xca>\abytes32R\x12recipientChannelId\"\xd1\x02\n" +
 	"\x19PaymentChannelInitializer\x12F\n" +
 	"\x11init_distribution\x18\x01 \x01(\v2\x19.entity.TokenDistributionR\x10initDistribution\x12,\n" +
 	"\ropen_deadline\x18\x02 \x01(\x04B\a\xca>\x04uintR\fopenDeadline\x120\n" +
 	"\x0fdispute_timeout\x18\x03 \x01(\x04B\a\xca>\x04uintR\x0edisputeTimeout\x125\n" +
-	"\x12msg_value_receiver\x18\x04 \x01(\x04B\a\xca>\x04uintR\x10msgValueReceiver\"\xd5\x01\n" +
+	"\x12msg_value_receiver\x18\x04 \x01(\x04B\a\xca>\x04uintR\x10msgValueReceiver\x12\"\n" +
+	"\bchain_id\x18\x05 \x01(\x04B\a\xca>\x04uintR\achainId\x121\n" +
+	"\x0eledger_address\x18\x06 \x01(\fB\n" +
+	"\xca>\aaddressR\rledgerAddress\"\xd5\x01\n" +
 	"\x15CooperativeSettleInfo\x12)\n" +
 	"\n" +
 	"channel_id\x18\x01 \x01(\fB\n" +

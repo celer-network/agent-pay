@@ -153,6 +153,7 @@ func (m *DelegateManager) sendToken(dst ctype.Addr, lumpsum *lumpSum) error {
 		},
 		ResolveDeadline: uint64(time.Now().Unix()) + config.AdminSendTokenTimeout,
 		ResolveTimeout:  config.PayResolveTimeout,
+		ChainId:         config.ChainId.Uint64(),
 	}
 
 	payID, err := m.process.AddBooleanPay(pay, note, 0)

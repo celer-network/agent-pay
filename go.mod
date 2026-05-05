@@ -19,7 +19,6 @@ require (
 	github.com/shopspring/decimal v0.0.0-20180709203117-cd690d0c9e24
 	github.com/tevino/abool v0.0.0-20170917061928-9b9efcf221b5
 	go.opencensus.io v0.22.1
-	go.uber.org/atomic v1.4.0
 	golang.org/x/crypto v0.45.0
 	golang.org/x/net v0.47.0
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013
