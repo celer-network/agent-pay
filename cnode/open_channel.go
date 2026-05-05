@@ -505,6 +505,19 @@ func (p *openChannelProcessor) processTcbRequest(in *rpc.OpenChannelRequest, oce
 	}
 	ocem.ReadableInitializer = utils.PrintChannelInitializer(pscInitializer)
 	log.Infoln("process tcb openchannel request", utils.PrintChannelInitializer(pscInitializer))
+	// chain id + ledger address bind the signed initializer to a specific
+	// (chain, CelerLedger) pair. Same check as the regular open-channel
+	// path; without it a TCB approval could be replayed cross-chain or
+	// against a different ledger contract.
+	if pscInitializer.GetChainId() != config.ChainId.Uint64() {
+		return errTcbResponse, status.Errorf(codes.InvalidArgument,
+			"initializer chain id %d, my chain id %d", pscInitializer.GetChainId(), config.ChainId.Uint64())
+	}
+	myLedger := p.nodeConfig.GetLedgerContract().GetAddr()
+	if !bytes.Equal(pscInitializer.GetLedgerAddress(), myLedger.Bytes()) {
+		return errTcbResponse, status.Errorf(codes.InvalidArgument,
+			"initializer ledger %x, my ledger %x", pscInitializer.GetLedgerAddress(), myLedger.Bytes())
+	}
 	tokenInfo := pscInitializer.GetInitDistribution().GetToken()
 	tokenAddr := utils.GetTokenAddr(tokenInfo)
 	ocem.TokenAddr = ctype.Addr2Hex(tokenAddr)
