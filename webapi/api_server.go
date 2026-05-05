@@ -121,8 +121,7 @@ func NewApiServerWithExternalSigner(
 		grpcPort:              grpcPort,
 		allowedOrigins:        allowedOrigins,
 		callbackImpl:          callbackImpl,
-		appSessionMap:         make(map[string]*celersdk.AppSession),
-		appSessionCallbackMap: make(map[string]*appSessionCallback),
+		appSessionMap: make(map[string]*celersdk.AppSession),
 	}
 	go celersdk.InitClientWithSigner(addr, config, dataPath, callbackImpl, signcb)
 
