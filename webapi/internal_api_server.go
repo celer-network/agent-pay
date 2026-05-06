@@ -24,9 +24,8 @@ func NewInternalApiServer(
 	keystore string,
 	password string,
 	dataPath string,
-	config string,
-	extSigner bool) *InternalApiServer {
-	apiServer := NewApiServer(webPort, grpcPort, allowedOrigins, keystore, password, dataPath, config, extSigner)
+	config string) *InternalApiServer {
+	apiServer := NewApiServer(webPort, grpcPort, allowedOrigins, keystore, password, dataPath, config)
 	return &InternalApiServer{ApiServer: apiServer}
 }
 
