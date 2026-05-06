@@ -404,12 +404,11 @@ type SimplexPaymentChannel struct {
 	// head of the idlist chain of all pending conditional pays.
 	PendingPayIds *PayIdList `protobuf:"bytes,5,opt,name=pending_pay_ids,json=pendingPayIds,proto3" json:"pending_pay_ids,omitempty"`
 	// Unix timestamp (seconds) after which confirmSettle becomes unconditionally
-	// eligible — i.e. max(pay.resolveDeadline) + clearMargin. The clearMargin
-	// must be large enough that, after all pays are resolved in PayRegistry,
-	// recipient peers have time to call clearPays for every pay-list segment
-	// before confirmSettle can close the channel. Off-chain producers MUST
-	// include the margin; a literal "last resolve deadline" would race with
-	// uncleared multi-segment pay lists.
+	// eligible. Only consulted by the contract when pending_pay_ids has multiple
+	// segments (next_list_hash != 0); single-segment lists short-circuit and
+	// ignore this field. Multi-segment producers MUST stamp
+	// max(pay.resolveDeadline) + clearMargin, where clearMargin reserves time for
+	// recipients to call clearPays on every segment before confirmSettle.
 	PayClearDeadline uint64 `protobuf:"varint,6,opt,name=pay_clear_deadline,json=payClearDeadline,proto3" json:"pay_clear_deadline,omitempty"`
 	// total amount of all pending pays.
 	TotalPendingAmount []byte `protobuf:"bytes,7,opt,name=total_pending_amount,json=totalPendingAmount,proto3" json:"total_pending_amount,omitempty"`
