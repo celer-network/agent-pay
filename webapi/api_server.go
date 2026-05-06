@@ -70,21 +70,18 @@ func NewApiServer(
 	dataPath string,
 	config string,
 	useExtSigner bool) *ApiServer {
-	callbackImpl := NewCallbackImpl()
-	s := &ApiServer{
-		webPort:        webPort,
-		grpcPort:       grpcPort,
-		allowedOrigins: allowedOrigins,
-		callbackImpl:   callbackImpl,
-		appSessionMap:  make(map[string]*celersdk.AppSession),
-	}
 	if !useExtSigner {
-		go celersdk.InitClient(
-			&celersdk.Account{Keystore: keystore, Password: password},
-			config,
-			dataPath,
-			callbackImpl)
-	} else { // exercise external signer code path
+		return newApiServerWithClientInit(webPort, grpcPort, allowedOrigins, func(callbackImpl *callbackImpl) {
+			go celersdk.InitClient(
+				&celersdk.Account{Keystore: keystore, Password: password},
+				config,
+				dataPath,
+				callbackImpl)
+		})
+	}
+
+	// exercise external signer code path
+	return newApiServerWithClientInit(webPort, grpcPort, allowedOrigins, func(callbackImpl *callbackImpl) {
 		addr, priv, err := eth.GetAddrPrivKeyFromKeystore(keystore, password)
 		if err != nil {
 			log.Fatal(err)
@@ -95,16 +92,7 @@ func NewApiServer(
 			log.Fatal(err)
 		}
 		go celersdk.InitClientWithSigner(ctype.Addr2Hex(addr), config, dataPath, callbackImpl, &extSigner{signer})
-	}
-
-	select {
-	case client := <-callbackImpl.clientReady:
-		s.apiClient = client
-	case err := <-callbackImpl.clientInitErr:
-		log.Fatal(err)
-		return nil
-	}
-	return s
+	})
 }
 
 func NewApiServerWithExternalSigner(
@@ -115,15 +103,25 @@ func NewApiServerWithExternalSigner(
 	dataPath string,
 	config string,
 	signcb celersdk.ExternalSignerCallback) *ApiServer {
+	return newApiServerWithClientInit(webPort, grpcPort, allowedOrigins, func(callbackImpl *callbackImpl) {
+		go celersdk.InitClientWithSigner(addr, config, dataPath, callbackImpl, signcb)
+	})
+}
+
+func newApiServerWithClientInit(
+	webPort int,
+	grpcPort int,
+	allowedOrigins string,
+	initClient func(*callbackImpl)) *ApiServer {
 	callbackImpl := NewCallbackImpl()
 	s := &ApiServer{
-		webPort:               webPort,
-		grpcPort:              grpcPort,
-		allowedOrigins:        allowedOrigins,
-		callbackImpl:          callbackImpl,
-		appSessionMap: make(map[string]*celersdk.AppSession),
+		webPort:        webPort,
+		grpcPort:       grpcPort,
+		allowedOrigins: allowedOrigins,
+		callbackImpl:   callbackImpl,
+		appSessionMap:  make(map[string]*celersdk.AppSession),
 	}
-	go celersdk.InitClientWithSigner(addr, config, dataPath, callbackImpl, signcb)
+	initClient(callbackImpl)
 
 	select {
 	case client := <-callbackImpl.clientReady:

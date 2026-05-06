@@ -31,12 +31,12 @@ func NewInternalApiServer(
 }
 
 func NewInternalApiServerWithExternalSigner(
-	addr string,
-	config string,
-	dataPath string,
 	webPort int,
 	grpcPort int,
 	allowedOrigins string,
+	addr string,
+	dataPath string,
+	config string,
 	cb celersdk.ExternalSignerCallback,
 	register func(*grpc.Server)) *InternalApiServer {
 	apiServer := NewApiServerWithExternalSigner(webPort, grpcPort, allowedOrigins, addr, dataPath, config, cb)
