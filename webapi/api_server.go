@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"math/big"
 	"net"
 	"net/http"
 	"strconv"
@@ -17,12 +16,10 @@ import (
 
 	"github.com/celer-network/agent-pay/celersdk"
 	"github.com/celer-network/agent-pay/celersdkintf"
-	"github.com/celer-network/agent-pay/common"
 	"github.com/celer-network/agent-pay/ctype"
 	"github.com/celer-network/agent-pay/entity"
 	msgrpc "github.com/celer-network/agent-pay/rpc"
 	"github.com/celer-network/agent-pay/webapi/rpc"
-	"github.com/celer-network/goutils/eth"
 	"github.com/celer-network/goutils/log"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/rs/cors"
@@ -44,23 +41,6 @@ type ApiServer struct {
 	appSessionMapLock sync.Mutex
 }
 
-// implement celersdk.ExternalSignerCallback interface
-// also embed eth.Signer so celersdk.ExternalSignerManager can tell the difference and
-// avoid double hash
-type extSigner struct {
-	eth.Signer
-}
-
-func (es *extSigner) OnSignMessage(reqid int, msg []byte) {
-	res, _ := es.SignEthMessage(msg)
-	celersdk.PublishSignedResult(reqid, res)
-}
-
-func (es *extSigner) OnSignTransaction(reqid int, rawtx []byte) {
-	res, _ := es.SignEthTransaction(rawtx)
-	celersdk.PublishSignedResult(reqid, res)
-}
-
 func NewApiServer(
 	webPort int,
 	grpcPort int,
@@ -68,8 +48,34 @@ func NewApiServer(
 	keystore string,
 	password string,
 	dataPath string,
+	config string) *ApiServer {
+	return newApiServerWithClientInit(webPort, grpcPort, allowedOrigins, func(callbackImpl *callbackImpl) {
+		go celersdk.InitClient(
+			&celersdk.Account{Keystore: keystore, Password: password},
+			config,
+			dataPath,
+			callbackImpl)
+	})
+}
+
+func NewApiServerWithExternalSigner(
+	webPort int,
+	grpcPort int,
+	allowedOrigins string,
+	addr string,
+	dataPath string,
 	config string,
-	useExtSigner bool) *ApiServer {
+	signcb celersdk.ExternalSignerCallback) *ApiServer {
+	return newApiServerWithClientInit(webPort, grpcPort, allowedOrigins, func(callbackImpl *callbackImpl) {
+		go celersdk.InitClientWithSigner(addr, config, dataPath, callbackImpl, signcb)
+	})
+}
+
+func newApiServerWithClientInit(
+	webPort int,
+	grpcPort int,
+	allowedOrigins string,
+	initClient func(*callbackImpl)) *ApiServer {
 	callbackImpl := NewCallbackImpl()
 	s := &ApiServer{
 		webPort:        webPort,
@@ -78,24 +84,7 @@ func NewApiServer(
 		callbackImpl:   callbackImpl,
 		appSessionMap:  make(map[string]*celersdk.AppSession),
 	}
-	if !useExtSigner {
-		go celersdk.InitClient(
-			&celersdk.Account{Keystore: keystore, Password: password},
-			config,
-			dataPath,
-			callbackImpl)
-	} else { // exercise external signer code path
-		addr, priv, err := eth.GetAddrPrivKeyFromKeystore(keystore, password)
-		if err != nil {
-			log.Fatal(err)
-		}
-		p := common.Bytes2Profile([]byte(config))
-		signer, err := eth.NewSigner(priv, big.NewInt(p.ChainId))
-		if err != nil {
-			log.Fatal(err)
-		}
-		go celersdk.InitClientWithSigner(ctype.Addr2Hex(addr), config, dataPath, callbackImpl, &extSigner{signer})
-	}
+	initClient(callbackImpl)
 
 	select {
 	case client := <-callbackImpl.clientReady:

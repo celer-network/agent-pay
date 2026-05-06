@@ -73,5 +73,5 @@ func main() {
 		string(ksBytes[:]),
 		ksPasswordStr,
 		*dataPath,
-		string(cfg[:]), false).Start()
+		string(cfg[:])).Start()
 }
