@@ -33,13 +33,13 @@ func PrintPayIdList(paylist *entity.PayIdList) string {
 }
 
 func PrintSimplexChannel(simplex *entity.SimplexPaymentChannel) string {
-	return fmt.Sprintf("cid: %x, from: %x, seq: %d, transfer: [%s], %s last_pay_deadline: %d, pending_amount: %s",
+	return fmt.Sprintf("cid: %x, from: %x, seq: %d, transfer: [%s], %s pay_clear_deadline: %d, pending_amount: %s",
 		simplex.GetChannelId(),
 		simplex.GetPeerFrom(),
 		simplex.GetSeqNum(),
 		PrintTokenTransfer(simplex.GetTransferToPeer()),
 		PrintPayIdList(simplex.GetPendingPayIds()),
-		simplex.GetLastPayResolveDeadline(),
+		simplex.GetPayClearDeadline(),
 		big.NewInt(0).SetBytes(simplex.GetTotalPendingAmount()).String())
 }
 
@@ -75,11 +75,13 @@ func PrintTokenDistribution(dist *entity.TokenDistribution) string {
 }
 
 func PrintChannelInitializer(initializer *entity.PaymentChannelInitializer) string {
-	return fmt.Sprintf("init_distribution: [%s], open_deadline: %d, dispute_timeout: %d, msg_value_receiver: %d",
+	return fmt.Sprintf("init_distribution: [%s], open_deadline: %d, dispute_timeout: %d, msg_value_receiver: %d, chain_id: %d, ledger: %x",
 		PrintTokenDistribution(initializer.GetInitDistribution()),
 		initializer.GetOpenDeadline(),
 		initializer.GetDisputeTimeout(),
-		initializer.GetMsgValueReceiver())
+		initializer.GetMsgValueReceiver(),
+		initializer.GetChainId(),
+		initializer.GetLedgerAddress())
 }
 
 func PrintCondition(cond *entity.Condition) string {

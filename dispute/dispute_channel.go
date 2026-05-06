@@ -156,13 +156,13 @@ func formatSimplexSummary(simplex *entity.SimplexPaymentChannel, signedSimplex *
 	totalPendingAmt := new(big.Int).SetBytes(simplex.GetTotalPendingAmount()).String()
 
 	return fmt.Sprintf(
-		"{peer_from:%x seq:%d transfer_amt:%s total_pending:%s pending_pay_count:%d last_pay_deadline:%d sigs:%t/%t}",
+		"{peer_from:%x seq:%d transfer_amt:%s total_pending:%s pending_pay_count:%d pay_clear_deadline:%d sigs:%t/%t}",
 		simplex.GetPeerFrom(),
 		simplex.GetSeqNum(),
 		transferAmt,
 		totalPendingAmt,
 		len(simplex.GetPendingPayIds().GetPayIds()),
-		simplex.GetLastPayResolveDeadline(),
+		simplex.GetPayClearDeadline(),
 		signedSimplex != nil && len(signedSimplex.GetSigOfPeerFrom()) > 0,
 		signedSimplex != nil && len(signedSimplex.GetSigOfPeerTo()) > 0,
 	)

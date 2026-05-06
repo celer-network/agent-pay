@@ -313,12 +313,13 @@ func (h *CelerMsgHandler) processPaySettleRequestTx(tx *storage.DALTx, args ...i
 		return common.ErrInvalidPendingAmt // corrupted peer
 	}
 
-	// verify last pay resolve deadline
-	sDeadline := storedSimplex.GetLastPayResolveDeadline()
-	rDeadline := recvdSimplex.GetLastPayResolveDeadline()
+	// verify pay clear deadline (settle removes pays from the list, so it must
+	// not change — only sending a new pay can advance it).
+	sDeadline := storedSimplex.GetPayClearDeadline()
+	rDeadline := recvdSimplex.GetPayClearDeadline()
 	if sDeadline != rDeadline {
-		log.Errorln(common.ErrInvalidLastPayDeadline, rDeadline, sDeadline)
-		return common.ErrInvalidLastPayDeadline // corrupted peer
+		log.Errorln(common.ErrInvalidPayClearDeadline, rDeadline, sDeadline)
+		return common.ErrInvalidPayClearDeadline // corrupted peer
 	}
 
 	// verify settle reasons

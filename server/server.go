@@ -737,6 +737,7 @@ func (s *adminService) SendToken(ctx context.Context, in *rpc.SendTokenRequest) 
 		},
 		ResolveDeadline: uint64(time.Now().Unix()) + config.AdminSendTokenTimeout,
 		ResolveTimeout:  config.PayResolveTimeout,
+		ChainId:         config.ChainId.Uint64(),
 	}
 
 	noteType := ""
