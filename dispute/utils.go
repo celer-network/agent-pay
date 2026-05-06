@@ -49,7 +49,7 @@ func PrintSignedSimplexState(state *chain.SignedSimplexState) {
 	log.Infoln("---- token transfer addr", ctype.Bytes2Hex(simplex.TransferToPeer.Token.TokenAddress))
 	log.Infoln("---- token transfer amount", ctype.Bytes2Hex(simplex.TransferToPeer.Receiver.Amt))
 	log.Infoln("---- pending pay IDs", simplex.PendingPayIds)
-	log.Infoln("---- last resolve deadline", simplex.LastPayResolveDeadline)
+	log.Infoln("---- pay clear deadline", simplex.PayClearDeadline)
 	for _, sig := range state.Sigs {
 		signer, err := eth.RecoverSigner(state.SimplexState, sig)
 		if err != nil {

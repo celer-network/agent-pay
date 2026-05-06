@@ -287,8 +287,14 @@ func (m *Messager) runCondPayTx(tx *storage.DALTx, args ...interface{}) error {
 		totalPendingAmt := new(big.Int).SetBytes(workingSimplex.TotalPendingAmount)
 		workingSimplex.TotalPendingAmount = totalPendingAmt.Add(totalPendingAmt, sendAmt).Bytes()
 
-		if pay.GetResolveDeadline() > workingSimplex.GetLastPayResolveDeadline() {
-			workingSimplex.LastPayResolveDeadline = pay.ResolveDeadline
+		// pay_clear_deadline = max(pay.resolveDeadline). The contract only
+		// consults this field when nextPayIdListHash != 0; we always emit
+		// single-segment lists, so the literal max is sufficient. If
+		// multi-segment pay lists are ever introduced, fold in a clearMargin
+		// here that reserves wall-clock time for recipients to call
+		// CelerLedger.clearPays on every segment before confirmSettle.
+		if pay.GetResolveDeadline() > workingSimplex.GetPayClearDeadline() {
+			workingSimplex.PayClearDeadline = pay.GetResolveDeadline()
 		}
 	}
 

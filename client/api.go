@@ -149,6 +149,7 @@ func (c *CelerClient) AddBooleanPay(
 		},
 		ResolveDeadline: resolveDeadline,
 		ResolveTimeout:  config.PayResolveTimeout,
+		ChainId:         config.ChainId.Uint64(),
 	}
 
 	var payID ctype.PayIDType

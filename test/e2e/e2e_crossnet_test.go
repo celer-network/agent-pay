@@ -21,8 +21,6 @@ import (
 )
 
 const (
-	n0NetId = 1000
-	n1NetId = 1001
 	n2NetId = 1002
 )
 

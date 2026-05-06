@@ -188,6 +188,17 @@ func (h *CelerMsgHandler) processCondPayRequest(
 		// should not happen if peer has the same config
 		return fmt.Errorf("%w, deadline %d now %d", common.ErrInvalidPayDeadline, pay.GetResolveDeadline(), nowTs)
 	}
+
+	// verify chain id binds the pay to this chain (PayResolver does the same
+	// check on-chain; rejecting here closes off the cross-chain replay surface
+	// before the message is signed/forwarded).
+	if pay.GetChainId() != config.ChainId.Uint64() {
+		if seqErr := h.checkSeqNum(request, cid, recvdSimplex, logEntry); seqErr != nil {
+			return seqErr
+		}
+		return fmt.Errorf("%w, pay chain id %d, my chain id %d",
+			common.ErrInvalidPayChainId, pay.GetChainId(), config.ChainId.Uint64())
+	}
 	var routeLoop bool
 	err := h.dal.Transactional(
 		h.processCondPayRequestTx, request, cid, payID, pay, recvdState, recvdSimplex, logEntry, &routeLoop)
@@ -332,14 +343,15 @@ func (h *CelerMsgHandler) verifyCondPayRequest(
 		return common.ErrInvalidPendingPays // corrupted peer
 	}
 
-	// verify last pay resolve deadline
-	deadline := storedSimplex.GetLastPayResolveDeadline()
+	// verify pay clear deadline: max(prior, pay.ResolveDeadline). See sender
+	// comment in messager/send_cond_pay_request.go on the no-margin choice.
+	deadline := storedSimplex.GetPayClearDeadline()
 	if pay.GetResolveDeadline() > deadline {
 		deadline = pay.GetResolveDeadline()
 	}
-	if deadline != recvdSimplex.GetLastPayResolveDeadline() {
-		log.Errorln(common.ErrInvalidLastPayDeadline, recvdSimplex.LastPayResolveDeadline, deadline)
-		return common.ErrInvalidLastPayDeadline // corrupted peer
+	if deadline != recvdSimplex.GetPayClearDeadline() {
+		log.Errorln(common.ErrInvalidPayClearDeadline, recvdSimplex.PayClearDeadline, deadline)
+		return common.ErrInvalidPayClearDeadline // corrupted peer
 	}
 
 	// verify pay resolver address
@@ -695,6 +707,12 @@ func (h *CelerMsgHandler) crossNetPayInbound(
 	newPay.ResolveDeadline = uint64(time.Now().Unix()) + xnet.GetTimeout()
 	newPay.ResolveTimeout = config.PayResolveTimeout
 	newPay.PayResolver = h.nodeConfig.GetPayResolverContract().GetAddr().Bytes()
+	// Re-bind chain_id to this bridge's chain so on-chain resolve in the
+	// next net's PayResolver passes its `pay.chainId == block.chainid` check
+	// and downstream peers' chain-id check accepts the bridged pay. The
+	// destination still signs the receipt against `xnet.OriginalPay` (which
+	// keeps the source chain's id), so source-side verification is unaffected.
+	newPay.ChainId = config.ChainId.Uint64()
 	newPayID := ctype.Pay2PayID(newPay)
 	newPayBytes, err := proto.Marshal(newPay)
 	if err != nil {
@@ -759,6 +777,7 @@ func (h *CelerMsgHandler) verifyCrossNetPay(pay *entity.ConditionalPay, original
 		p.ResolveDeadline = 0
 		p.ResolveTimeout = 0
 		p.PayResolver = nil
+		p.ChainId = 0
 	}
 	normalize(payCopy)
 	normalize(&originalPay)
