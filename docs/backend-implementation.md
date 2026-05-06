@@ -247,6 +247,8 @@ The `RouterRegistry` contract stores `block.timestamp` (unix seconds) per regist
 
 This matches the protocol goal that relay nodes should stay simple in payment handling while still maintaining a network-level routing view.
 
+Cross-net forwarding (a payment that traverses multiple `(chainId, contractSet)` deployments via bridge OSPs) is a separate concern handled by the same `messager`/`handlers` packages plus the `xnet` envelope on the wire. See [Backend Cross-Net](./backend-crossnet.md) for the full design — net identity, bridge pair trust model, the receiver-side rewrite at `crossNetPayInbound`, and operator routing-table config.
+
 ## Storage and Transaction Boundaries
 
 `CNode.setupKVStore(...)` in [cnode/cnode.go](../cnode/cnode.go) selects the backend:
