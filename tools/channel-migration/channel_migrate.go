@@ -92,7 +92,7 @@ func main() {
 	config.SetGlobalConfigFromProfile(cp)
 
 	dal := toolsetup.NewDAL(cp)
-	client, err := ethclient.Dial(cp.ETHInstance)
+	client, err := ethclient.Dial(cp.ChainGateway)
 	if err != nil {
 		log.Fatalln(err)
 	}

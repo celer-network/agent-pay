@@ -185,11 +185,11 @@ From the repo root or from `test/manual` with the built CLI available:
 ```bash
 ./osp-cli -profile $AGENTPAY_MANUAL_ROOT/profile/o1_profile.json \
   -ks $AGENTPAY/testing/env/keystore/osp1.json \
-  -ethpooldeposit -amount 10000 -register -nopassword
+  -wrapdeposit -amount 10000 -register -nopassword
 
 ./osp-cli -profile $AGENTPAY_MANUAL_ROOT/profile/o2_profile.json \
   -ks $AGENTPAY/testing/env/keystore/osp2.json \
-  -ethpooldeposit -amount 10000 -register -nopassword
+  -wrapdeposit -amount 10000 -register -nopassword
 ```
 
 This is required if you want route-controller behavior that depends on on-chain router registration.

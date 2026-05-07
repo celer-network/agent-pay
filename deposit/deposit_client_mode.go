@@ -48,10 +48,10 @@ func (p *Processor) RemoveJob(jobID string) error {
 	return p.dal.DeleteDeposit(jobID)
 }
 
-// Depending on whether the deposit is for ETH or ERC20, and whether the account has enough
-// allowance for the ERC20 token, this function sends either a deposit() or an approve()
-// transaction. Upon successfully sending the transaction, a deposit job is initialized and
-// persisted.
+// Depending on whether the deposit is for native or ERC20, and whether the
+// account has enough allowance for the ERC20 token, this function sends
+// either a deposit() or an approve() transaction. Upon successfully sending
+// the transaction, a deposit job is initialized and persisted.
 func (p *Processor) prepareJob(amount *big.Int, cid ctype.CidType) (*structs.DepositJob, error) {
 	log.Infoln("Depositing", amount.String(), "wei into channel", cid.Hex())
 
@@ -66,7 +66,7 @@ func (p *Processor) prepareJob(amount *big.Int, cid ctype.CidType) (*structs.Dep
 		return nil, common.ErrInvalidChannelState
 	}
 	tokenAddr := utils.GetTokenAddr(token)
-	// Deposit ETH
+	// Deposit native
 	if tokenAddr == ctype.NativeTokenAddr {
 		depositTxHash, depositErr := p.sendDepositTx(cid, amount, big.NewInt(0))
 		if depositErr != nil {

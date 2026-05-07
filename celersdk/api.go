@@ -100,7 +100,7 @@ func (mc *Client) Destroy() {
 	mc.c = nil
 }
 
-func (mc *Client) OpenETHChannel(dep *Deposit, cb ClientCallback) {
+func (mc *Client) OpenNativeChannel(dep *Deposit, cb ClientCallback) {
 	mc.c.OpenChannel(&entity.TokenInfo{
 		TokenType:    entity.TokenType_NATIVE,
 		TokenAddress: ctype.NativeTokenAddr.Bytes(),
@@ -115,7 +115,7 @@ func (mc *Client) OpenTokenChannel(tk *Token, dep *Deposit, cb ClientCallback) {
 	}, utils.Wei2BigInt(dep.Myamtwei), utils.Wei2BigInt(dep.Peeramtwei), cb)
 }
 
-func (mc *Client) TcbOpenETHChannel(peerAmtWei string, cb ClientCallback) {
+func (mc *Client) TcbOpenNativeChannel(peerAmtWei string, cb ClientCallback) {
 	mc.c.TcbOpenChannel(&entity.TokenInfo{
 		TokenType: entity.TokenType_NATIVE,
 	}, utils.Wei2BigInt(peerAmtWei), cb)
@@ -134,7 +134,7 @@ func (mc *Client) InstantiateChannelForToken(tk *Token, cb ClientCallback) {
 	}, cb)
 }
 
-func (mc *Client) DepositETH(amount string, callback DepositCallback) (string, error) {
+func (mc *Client) DepositNative(amount string, callback DepositCallback) (string, error) {
 	amtInt, ok := new(big.Int).SetString(amount, 10)
 	if !ok {
 		return "", common.ErrInvalidArg
@@ -163,7 +163,7 @@ func (mc *Client) RemoveDepositJob(jobID string) {
 	mc.c.RemoveDepositJob(jobID)
 }
 
-func (mc *Client) WithdrawETH(amount string, callback CooperativeWithdrawCallback) (string, error) {
+func (mc *Client) WithdrawNative(amount string, callback CooperativeWithdrawCallback) (string, error) {
 	amtInt, ok := new(big.Int).SetString(amount, 10)
 	if !ok {
 		return "", common.ErrInvalidArg
@@ -243,7 +243,7 @@ func (mc *Client) QueryReceivingCapacityOnToken(tokenAddr string, addr string) (
 		FreeBalance: freeBalance}, err
 }
 
-// Get celer offchain ETH balance
+// Get celer offchain native-token balance
 func (mc *Client) GetBalance() (*Balance, error) {
 	return mc.GetBalanceERC20(ctype.NativeTokenAddrStr)
 }

@@ -20,9 +20,10 @@ where it interacts with the off-chain flow but does not restate it.
 
 A net is identified by `(chainId, CelerLedger)`. Given a `CelerLedger`
 deployment on a chain, every other contract in the net is derivable: the
-ledger's constructor binds `EthPool`, `PayRegistry`, and `CelerWallet`, and
-the `PayResolver` that feeds that `PayRegistry` (with its bound
-`VirtResolver`) is uniquely determined per deployment.
+ledger's constructor binds `NativeWrap` (the chain's WETH-style wrapped-
+native contract), `PayRegistry`, and `CelerWallet`, and the `PayResolver`
+that feeds that `PayRegistry` (with its bound `VirtResolver`) is uniquely
+determined per deployment.
 
 Two OSPs are in the same net iff they boot against the same `CelerLedger`
 address on the same chain. Channels can only be opened within a single net;

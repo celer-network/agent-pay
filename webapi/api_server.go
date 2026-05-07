@@ -147,7 +147,7 @@ func (s *ApiServer) SetDelegation(context context.Context, request *rpc.SetDeleg
 			Addr:    tk.GetTokenAddress(),
 		}
 		if tk.GetTokenAddress() == ctype.NativeTokenAddrStr {
-			token.Erctype = "ETH"
+			token.Erctype = "NATIVE"
 		}
 		tokens = append(tokens, token)
 	}
@@ -160,7 +160,7 @@ func (s *ApiServer) OpenPaymentChannel(
 	tokenInfo := request.TokenInfo
 	switch entity.TokenType(tokenInfo.TokenType) {
 	case entity.TokenType_NATIVE:
-		go s.apiClient.OpenETHChannel(
+		go s.apiClient.OpenNativeChannel(
 			&celersdk.Deposit{Myamtwei: request.Amount, Peeramtwei: request.PeerAmount},
 			s.callbackImpl)
 	case entity.TokenType_ERC20:
@@ -206,7 +206,7 @@ func (s *ApiServer) startDeposit(
 	tokenInfo := request.TokenInfo
 	switch entity.TokenType(tokenInfo.TokenType) {
 	case entity.TokenType_NATIVE:
-		return s.apiClient.DepositETH(request.Amount, cb)
+		return s.apiClient.DepositNative(request.Amount, cb)
 	case entity.TokenType_ERC20:
 		return s.apiClient.DepositERC20(
 			&celersdk.Token{Erctype: "ERC20", Addr: tokenInfo.TokenAddress},
@@ -293,7 +293,7 @@ func (s *ApiServer) startCooperativeWithdraw(
 	tokenInfo := request.TokenInfo
 	switch entity.TokenType(tokenInfo.TokenType) {
 	case entity.TokenType_NATIVE:
-		return s.apiClient.WithdrawETH(request.Amount, cb)
+		return s.apiClient.WithdrawNative(request.Amount, cb)
 	case entity.TokenType_ERC20:
 		return s.apiClient.WithdrawERC20(
 			&celersdk.Token{Erctype: "ERC20", Addr: tokenInfo.TokenAddress},
@@ -451,7 +451,7 @@ func (s *ApiServer) SendToken(
 	var err error
 	switch entity.TokenType(tokenInfo.TokenType) {
 	case entity.TokenType_NATIVE:
-		payID, err = s.apiClient.SendETH(request.Destination, request.Amount, noteTypeURL, noteValue)
+		payID, err = s.apiClient.SendNative(request.Destination, request.Amount, noteTypeURL, noteValue)
 	case entity.TokenType_ERC20:
 		payID, err = s.apiClient.SendToken(
 			&celersdk.Token{Erctype: "ERC20", Addr: tokenInfo.TokenAddress},

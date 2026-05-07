@@ -50,7 +50,7 @@ type ProfileSgn struct {
 func (pj *ProfileJSON) ToCProfile() *CProfile {
 	cp := &CProfile{
 		ChainId:            int64(pj.Ethereum.ChainId),
-		ETHInstance:        pj.Ethereum.Gateway,
+		ChainGateway:        pj.Ethereum.Gateway,
 		BlockDelayNum:      pj.Ethereum.BlockDelayNum,
 		PollingInterval:    pj.Ethereum.BlockIntervalSec,
 		DisputeTimeout:     pj.Ethereum.DisputeTimeout,

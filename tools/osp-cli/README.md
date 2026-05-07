@@ -65,8 +65,8 @@ Note: `chanstate` is enum integer, valid states for commands above include 3 for
 
 `osp-cli -profile [profile file] -ks [keystore file]` followed by:
 
-* `-ethpooldeposit -amount [amount]`: deposit ETH into EthPool and approve to CelerLedger
-* `-ethpoolwithdraw -amount [amount]`: withdraw ETH from EthPool
+* `-wrapdeposit -amount [amount]`: wrap native into the chain's wrapped-native (WETH-style) contract and approve CelerLedger to transferFrom the wrapped balance
+* `-wrapwithdraw -amount [amount]`: unwrap from the chain's wrapped-native contract back to native
 * `-register`: register OSP as a state channel router
 * `-deregister`: deregister OSP as a state channel router
 

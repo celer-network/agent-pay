@@ -58,7 +58,7 @@ func (s *InternalApiServer) OpenTrustedPaymentChannel(
 	tokenInfo := request.TokenInfo
 	switch entity.TokenType(tokenInfo.TokenType) {
 	case entity.TokenType_NATIVE:
-		go s.apiClient.TcbOpenETHChannel(
+		go s.apiClient.TcbOpenNativeChannel(
 			request.PeerAmount,
 			s.callbackImpl)
 	case entity.TokenType_ERC20:

@@ -420,7 +420,7 @@ func (p *Processor) checkRefillPool(ledgerAddr ctype.Addr, tokenSet map[ctype.Ad
 				metrics.IncDepositPoolAlertCnt()
 				p.lastAlertTime = now()
 			}
-			log.Warnf("Refiller's balance is low. Refiller: %x; token/ethpool: %x; balance: %s; threshold: %s",
+			log.Warnf("Refiller's balance is low. Refiller: %x; token/native-wrap: %x; balance: %s; threshold: %s",
 				p.transactor.Address(), tokenAddr, balance, poolThreshold)
 		}
 		allowance, err := erc20.Allowance(&bind.CallOpts{}, p.transactor.Address(), ledgerAddr)
@@ -435,7 +435,7 @@ func (p *Processor) checkRefillPool(ledgerAddr ctype.Addr, tokenSet map[ctype.Ad
 				metrics.IncDepositPoolAlertCnt()
 				p.lastAlertTime = now()
 			}
-			log.Warnf("Refiller's allowance to ledger %x is low. Refiller: %x; token/ethpool: %x; balance: %s; threshold: %s",
+			log.Warnf("Refiller's allowance to ledger %x is low. Refiller: %x; token/native-wrap: %x; balance: %s; threshold: %s",
 				ledgerAddr, p.transactor.Address(), tokenAddr, allowance, poolThreshold)
 		}
 	}

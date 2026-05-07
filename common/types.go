@@ -14,7 +14,7 @@ import (
 
 // CProfile contains configurations for CelerClient/OSP
 type CProfile struct {
-	ETHInstance        string            `json:"ethInstance"`
+	ChainGateway       string            `json:"chainGateway"`
 	SvrETHAddr         string            `json:"svrEthAddr"`
 	WalletAddr         string            `json:"walletAddr"`
 	LedgerAddr         string            `json:"ledgerAddr"`

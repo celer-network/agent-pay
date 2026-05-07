@@ -41,9 +41,9 @@ func ospDepositAndRefill(t *testing.T) {
 		return
 	}
 
-	ethRefillThreshold := rtconfig.GetRefillThreshold(tokenAddrNative)
-	ethRefillAmount, RefillMaxWait := rtconfig.GetRefillAmountAndMaxWait(tokenAddrNative)
-	log.Infoln("ETH refill threshold", ethRefillThreshold, "amount", ethRefillAmount, "maxWait", RefillMaxWait)
+	nativeRefillThreshold := rtconfig.GetRefillThreshold(tokenAddrNative)
+	nativeRefillAmount, RefillMaxWait := rtconfig.GetRefillAmountAndMaxWait(tokenAddrNative)
+	log.Infoln("native refill threshold", nativeRefillThreshold, "amount", nativeRefillAmount, "maxWait", RefillMaxWait)
 
 	erc20RefillThreshold := rtconfig.GetRefillThreshold(tokenAddrErc20)
 	erc20RefillAmount, RefillMaxWait := rtconfig.GetRefillAmountAndMaxWait(tokenAddrErc20)
@@ -87,19 +87,19 @@ func ospDepositAndRefill(t *testing.T) {
 	}
 	defer c2.Kill()
 
-	ethInitBalance := ethRefillThreshold.String()
-	cid, err := c1.OpenChannel(c1EthAddr, entity.TokenType_NATIVE, tokenAddrNative, ethInitBalance, ethInitBalance)
+	nativeInitBalance := nativeRefillThreshold.String()
+	cid, err := c1.OpenChannel(c1EthAddr, entity.TokenType_NATIVE, tokenAddrNative, nativeInitBalance, nativeInitBalance)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	log.Infoln("ETH channel with c1:", cid.ChannelId)
-	cid, err = c2.OpenChannel(c2EthAddr, entity.TokenType_NATIVE, tokenAddrNative, ethInitBalance, ethInitBalance)
+	log.Infoln("native channel with c1:", cid.ChannelId)
+	cid, err = c2.OpenChannel(c2EthAddr, entity.TokenType_NATIVE, tokenAddrNative, nativeInitBalance, nativeInitBalance)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	log.Infoln("ETH channel with c2:", cid.ChannelId)
+	log.Infoln("native channel with c2:", cid.ChannelId)
 
 	erc20InitBalance := erc20RefillThreshold.String()
 	cid, err = c1.OpenChannel(c1EthAddr, entity.TokenType_ERC20, tokenAddrErc20, erc20InitBalance, erc20InitBalance)
@@ -225,9 +225,9 @@ func ospDepositAndRefill(t *testing.T) {
 
 	err = c1.AssertBalance(
 		tokenAddrNative,
-		tf.AddAmtStr(ethInitBalance, "1"),
+		tf.AddAmtStr(nativeInitBalance, "1"),
 		"0",
-		tf.AddAmtStr(ethInitBalance, "2"))
+		tf.AddAmtStr(nativeInitBalance, "2"))
 	if err != nil {
 		t.Error(err)
 		return
@@ -245,9 +245,9 @@ func ospDepositAndRefill(t *testing.T) {
 
 	err = c2.AssertBalance(
 		tokenAddrNative,
-		tf.AddAmtStr(ethInitBalance, "4"),
+		tf.AddAmtStr(nativeInitBalance, "4"),
 		"0",
-		tf.AddAmtStr(ethInitBalance, "-3", ethRefillAmount.String()))
+		tf.AddAmtStr(nativeInitBalance, "-3", nativeRefillAmount.String()))
 	if err != nil {
 		t.Error(err)
 		return
@@ -257,7 +257,7 @@ func ospDepositAndRefill(t *testing.T) {
 		tokenAddrErc20,
 		tf.AddAmtStr(erc20InitBalance, "11"),
 		"0",
-		tf.AddAmtStr(erc20InitBalance, "-10", ethRefillAmount.String()))
+		tf.AddAmtStr(erc20InitBalance, "-10", nativeRefillAmount.String()))
 	if err != nil {
 		t.Error(err)
 		return
@@ -298,9 +298,9 @@ func ospDepositAndRefill(t *testing.T) {
 
 	err = c1.AssertBalance(
 		tokenAddrNative,
-		tf.AddAmtStr(ethInitBalance, "11"),
+		tf.AddAmtStr(nativeInitBalance, "11"),
 		"0",
-		tf.AddAmtStr(ethInitBalance, "-8"))
+		tf.AddAmtStr(nativeInitBalance, "-8"))
 	if err != nil {
 		t.Error(err)
 		return
@@ -325,9 +325,9 @@ func ospDepositAndRefill(t *testing.T) {
 
 	err = c1.AssertBalance(
 		tokenAddrNative,
-		tf.AddAmtStr(ethInitBalance, "11"),
+		tf.AddAmtStr(nativeInitBalance, "11"),
 		"0",
-		tf.AddAmtStr(ethInitBalance, "-8", ethRefillAmount.String()))
+		tf.AddAmtStr(nativeInitBalance, "-8", nativeRefillAmount.String()))
 	if err != nil {
 		t.Error(err)
 		return
@@ -337,14 +337,14 @@ func ospDepositAndRefill(t *testing.T) {
 		tokenAddrErc20,
 		tf.AddAmtStr(erc20InitBalance, "11"),
 		"0",
-		tf.AddAmtStr(erc20InitBalance, "-9", ethRefillAmount.String()))
+		tf.AddAmtStr(erc20InitBalance, "-9", nativeRefillAmount.String()))
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
 	log.Info("--------------- deposit eth to channel with c1 ---------------")
-	ospFreeEth := tf.AddAmtStr(ethInitBalance, "-8", ethRefillAmount.String())
+	ospFreeEth := tf.AddAmtStr(nativeInitBalance, "-8", nativeRefillAmount.String())
 	_, err = requestSvrDeposit(c1EthAddr, tokenAddrNative, "10", false, 0)
 	if err != nil {
 		t.Error(err)
@@ -361,7 +361,7 @@ func ospDepositAndRefill(t *testing.T) {
 	sleep(3)
 	err = c1.AssertBalance(
 		tokenAddrNative,
-		tf.AddAmtStr(ethInitBalance, "11", ospFreeEth, "5"),
+		tf.AddAmtStr(nativeInitBalance, "11", ospFreeEth, "5"),
 		"0",
 		"5")
 	if err != nil {

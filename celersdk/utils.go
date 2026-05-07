@@ -56,7 +56,7 @@ func createXfer(tk *Token, receiver, amtWei string) *entity.TokenTransfer {
 
 func sdkToken2entityToken(tk *Token) *entity.TokenInfo {
 	var token *entity.TokenInfo
-	if tk == nil { // ETH case
+	if tk == nil { // native-token case
 		token = &entity.TokenInfo{
 			TokenType: entity.TokenType_NATIVE,
 		}

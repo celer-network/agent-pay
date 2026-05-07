@@ -189,14 +189,14 @@ func GetTokenAddrStr(tokenInfo *entity.TokenInfo) string {
 
 func PrintToken(tokenInfo *entity.TokenInfo) string {
 	if tokenInfo.GetTokenType() == entity.TokenType_NATIVE {
-		return "ETH"
+		return "NATIVE"
 	}
 	return GetTokenAddrStr(tokenInfo)
 }
 
 func PrintTokenAddr(tkaddr ctype.Addr) string {
 	if tkaddr == ctype.NativeTokenAddr {
-		return "ETH"
+		return "NATIVE"
 	}
 	return ctype.Addr2Hex(tkaddr)
 }
