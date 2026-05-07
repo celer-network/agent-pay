@@ -41,7 +41,7 @@ func adminSendToken(t *testing.T) {
 	defer c1.Kill()
 
 	const c1PeerAmt = "800000000000000000"
-	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_ETH, tokenAddrEth, "0", c1PeerAmt)
+	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_NATIVE, tokenAddrNative, "0", c1PeerAmt)
 	if err != nil {
 		t.Error(err)
 		return
@@ -62,7 +62,7 @@ func adminSendToken(t *testing.T) {
 
 	// Expect the payment to be delivered to c1 after it restarts.
 	const c1BalanceBefore = "800000000000000000"
-	err = c1.AssertBalance(tokenAddrEth, "1", "0", tf.AddAmtStr(c1BalanceBefore, "-1"))
+	err = c1.AssertBalance(tokenAddrNative, "1", "0", tf.AddAmtStr(c1BalanceBefore, "-1"))
 	if err != nil {
 		t.Error(err)
 		return
@@ -83,7 +83,7 @@ func adminSendToken(t *testing.T) {
 		return
 	}
 
-	err = c1.AssertBalance(tokenAddrEth, "2", "0", tf.AddAmtStr(c1BalanceBefore, "-2"))
+	err = c1.AssertBalance(tokenAddrNative, "2", "0", tf.AddAmtStr(c1BalanceBefore, "-2"))
 	if err != nil {
 		t.Error(err)
 		return

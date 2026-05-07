@@ -50,7 +50,7 @@ func ospAdminTest(t *testing.T) {
 	sleep(3)
 
 	// check o1 balance
-	free, err := getEthBalance(localhost+o1Port, osp2EthAddr)
+	free, err := getNativeBalance(localhost+o1Port, osp2EthAddr)
 	if err != nil {
 		t.Error(err)
 		return
@@ -61,7 +61,7 @@ func ospAdminTest(t *testing.T) {
 	}
 
 	// check o2 balance
-	free, err = getEthBalance(localhost+o2Port, osp1EthAddr)
+	free, err = getNativeBalance(localhost+o2Port, osp1EthAddr)
 	if err != nil {
 		t.Error(err)
 		return
@@ -82,7 +82,7 @@ func ospAdminTest(t *testing.T) {
 	sleep(3)
 
 	// check o1 balance
-	free, err = getEthBalance(localhost+o1Port, osp2EthAddr)
+	free, err = getNativeBalance(localhost+o1Port, osp2EthAddr)
 	if err != nil {
 		t.Error(err)
 		return
@@ -93,7 +93,7 @@ func ospAdminTest(t *testing.T) {
 	}
 
 	// check o2 balance
-	free, err = getEthBalance(localhost+o2Port, osp1EthAddr)
+	free, err = getNativeBalance(localhost+o2Port, osp1EthAddr)
 	if err != nil {
 		t.Error(err)
 		return
@@ -114,7 +114,7 @@ func ospAdminTest(t *testing.T) {
 	sleep(5)
 
 	// check o1 balance
-	free, err = getEthBalance(localhost+o1Port, osp2EthAddr)
+	free, err = getNativeBalance(localhost+o1Port, osp2EthAddr)
 	if err != nil {
 		t.Error(err)
 		return

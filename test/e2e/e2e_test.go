@@ -55,15 +55,15 @@ func TestE2E(t *testing.T) {
 
 	t.Run("e2e-grp1", func(t *testing.T) {
 		t.Run("adminSendToken", adminSendToken)
-		t.Run("clientDepositEth", clientDepositEth)
+		t.Run("clientDepositNative", clientDepositNative)
 		t.Run("clientDepositErc20WithRestart", clientDepositErc20WithRestart)
 		t.Run("clientRecovery", clientRecovery)
 		t.Run("concurrentOpenChannel", concurrentOpenChannel)
 		t.Run("coldBootstrap", coldBootstrap)
-		t.Run("cooperativeWithdrawEth", cooperativeWithdrawEth)
+		t.Run("cooperativeWithdrawNative", cooperativeWithdrawNative)
 		t.Run("cooperativeWithdrawErc20", cooperativeWithdrawErc20)
-		t.Run("ospAdminCooperativeWithdrawEth", ospAdminCooperativeWithdrawEth)
-		t.Run("cooperativeWithdrawEthWithRestart", cooperativeWithdrawEthWithRestart)
+		t.Run("ospAdminCooperativeWithdrawNative", ospAdminCooperativeWithdrawNative)
+		t.Run("cooperativeWithdrawNativeWithRestart", cooperativeWithdrawNativeWithRestart)
 		t.Run("cooperativeWithdrawAfterSendPay", cooperativeWithdrawAfterSendPay)
 		t.Run("cooperativeWithdrawAndSendInvalidPay", cooperativeWithdrawAndSendInvalidPay)
 		t.Run("cooperativeWithdrawInsufficient", cooperativeWithdrawInsufficient)
@@ -74,24 +74,24 @@ func TestE2E(t *testing.T) {
 
 	t.Run("e2e-grp2", func(t *testing.T) {
 		t.Run("sendCondPayWithErc20", sendCondPayWithErc20)
-		t.Run("sendCondPayWithEth", sendCondPayWithEth)
-		t.Run("sendCondPayWithEthDstOffline", sendCondPayWithEthDstOffline)
-		t.Run("sendEthOnVirtualContractCondition", sendEthOnVirtualContractCondition)
+		t.Run("sendCondPayWithNative", sendCondPayWithNative)
+		t.Run("sendCondPayWithNativeDstOffline", sendCondPayWithNativeDstOffline)
+		t.Run("sendNativeOnVirtualContractCondition", sendNativeOnVirtualContractCondition)
 		t.Run("sendCondPayNoEnoughErc20AtSrc", sendCondPayNoEnoughErc20AtSrc)
 		t.Run("sendCondPayNoEnoughErc20AtOsp", sendCondPayNoEnoughErc20AtOsp)
 		t.Run("delegateSendEth", delegateSendEth)
 		t.Run("delegateSendErc20", delegateSendErc20)
 		t.Run("tcbOpenChannel", tcbOpenChannel)
-		t.Run("sendEthPayTimeout", sendEthPayTimeout)
-		t.Run("sendPaySettleWithEthDstReconnect", sendPaySettleWithEthDstReconnect)
-		t.Run("sendCondPayWithEthToOSP", sendCondPayWithEthToOSP)
-		t.Run("slidingWindowEth", slidingWindowEth)
+		t.Run("sendNativePayTimeout", sendNativePayTimeout)
+		t.Run("sendPaySettleWithNativeDstReconnect", sendPaySettleWithNativeDstReconnect)
+		t.Run("sendCondPayWithNativeToOSP", sendCondPayWithNativeToOSP)
+		t.Run("slidingWindowNative", slidingWindowNative)
 		t.Run("authSync", authSync)
 	})
 
 	t.Run("e2e-grp3", func(t *testing.T) {
-		t.Run("disputeEthPayWithVirtualContract", disputeEthPayWithVirtualContract)
-		t.Run("disputeEthPayWithDeployedContract", disputeEthPayWithDeployedContract)
+		t.Run("disputeNativePayWithVirtualContract", disputeNativePayWithVirtualContract)
+		t.Run("disputeNativePayWithDeployedContract", disputeNativePayWithDeployedContract)
 		t.Run("settleErc20ChannelEmpty", settleErc20ChannelEmpty)
 		t.Run("settleErc20ChannelOneSimplex", settleErc20ChannelOneSimplex)
 		t.Run("settleErc20ChannelFullDuplex", settleErc20ChannelFullDuplex)
@@ -103,7 +103,7 @@ func TestE2E(t *testing.T) {
 
 	/*// following tests for tools do not need to be run with CI
 	t.Run("e2e-tools", func(t *testing.T) {
-		t.Run("ethChannelView", ethChannelView)
+		t.Run("nativeChannelView", nativeChannelView)
 		t.Run("erc20ChannelView", erc20ChannelView)
 		t.Run("ospAdminTest", ospAdminTest)
 	})*/

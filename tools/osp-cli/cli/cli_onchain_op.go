@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/celer-network/agent-pay/chain/channel-eth-go/ethpool"
+	"github.com/celer-network/agent-pay/chain/channel-eth-go/nativewrap"
 	"github.com/celer-network/agent-pay/config"
 	"github.com/celer-network/agent-pay/ctype"
 	"github.com/celer-network/agent-pay/route/routerregistry"
@@ -17,24 +17,24 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
-func (p *Processor) EthPoolDeposit() {
-	// deposit ETH to EthPool contract
-	err := p.depositEthPool()
-	if err != nil {
+// NativeWrapDeposit wraps native (e.g., ETH) into the chain's
+// canonical wrapped-native (WETH-style) contract under the OSP's own
+// balance, then approves CelerLedger to transferFrom that wrapped balance
+// — the funding-flow shape CelerLedger expects when the OSP is the
+// non-msgValueReceiver peer of an open-channel call.
+func (p *Processor) NativeWrapDeposit() {
+	if err := p.depositNativeWrap(); err != nil {
 		return
 	}
-	// approve EthPool balance to Ledger contract
-	err = p.approveEthPoolToLedger()
-	if err != nil {
+	if err := p.approveNativeWrapToLedger(); err != nil {
 		return
 	}
-	p.queryEthPoolLedgerAllowance()
+	p.queryNativeWrapLedgerAllowance()
 }
 
-func (p *Processor) EthPoolWithdraw() {
-	// withdraw ETH from EthPool contract
-	err := p.withdrawEthPool()
-	if err != nil {
+// NativeWrapWithdraw unwraps the OSP's wrapped-native balance back to native.
+func (p *Processor) NativeWrapWithdraw() {
+	if err := p.withdrawNativeWrap(); err != nil {
 		return
 	}
 }
@@ -70,19 +70,20 @@ func (p *Processor) DeregisterRouter() {
 	p.deregisterRouter()
 }
 
-func (p *Processor) depositEthPool() error {
-	log.Infof("deposit %f ETH to EthPool and wait transaction to be mined...", *amount)
+func (p *Processor) depositNativeWrap() error {
+	log.Infof("wrap %f native into NativeWrap and wait transaction to be mined...", *amount)
 	amtWei := utils.Float2Wei(*amount)
-	ethPoolAddr := ctype.Hex2Addr(p.profile.EthPoolAddr)
+	nativeWrapAddr := ctype.Hex2Addr(p.profile.NativeWrapAddr)
 
 	receipt, err := p.transactor.TransactWaitMined(
-		"ethpool deposit",
+		"native-wrap deposit",
 		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
-			contract, err2 := ethpool.NewEthPoolTransactor(ethPoolAddr, transactor)
+			contract, err2 := nativewrap.NewNativeWrapTransactor(nativeWrapAddr, transactor)
 			if err2 != nil {
 				return nil, err2
 			}
-			return contract.Deposit(opts, p.myAddr)
+			// WETH.deposit() credits msg.sender; the OSP self-wraps.
+			return contract.Deposit(opts)
 		},
 		config.TransactOptions(eth.WithEthValue(amtWei))...)
 	if err != nil {
@@ -90,24 +91,24 @@ func (p *Processor) depositEthPool() error {
 		return err
 	}
 	if receipt.Status != types.ReceiptStatusSuccessful {
-		return fmt.Errorf("ethpool deposit transaction %x failed", receipt.TxHash)
+		return fmt.Errorf("native-wrap deposit transaction %x failed", receipt.TxHash)
 	}
 	return nil
 }
 
-func (p *Processor) approveEthPoolToLedger() error {
-	log.Info("approve EthPool balance to CelerLedger and wait transaction to be mined...")
-	balance, err := p.queryEthPoolBalance()
+func (p *Processor) approveNativeWrapToLedger() error {
+	log.Info("approve NativeWrap balance to CelerLedger and wait transaction to be mined...")
+	balance, err := p.queryNativeWrapBalance()
 	if err != nil {
 		return err
 	}
-	ethPoolAddr := ctype.Hex2Addr(p.profile.EthPoolAddr)
+	nativeWrapAddr := ctype.Hex2Addr(p.profile.NativeWrapAddr)
 	ledgerAddr := ctype.Hex2Addr(p.profile.LedgerAddr)
 
 	receipt, err := p.transactor.TransactWaitMined(
-		"ethpool approve",
+		"native-wrap approve",
 		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
-			contract, err2 := ethpool.NewEthPoolTransactor(ethPoolAddr, transactor)
+			contract, err2 := nativewrap.NewNativeWrapTransactor(nativeWrapAddr, transactor)
 			if err2 != nil {
 				return nil, err2
 			}
@@ -119,14 +120,14 @@ func (p *Processor) approveEthPoolToLedger() error {
 		return err
 	}
 	if receipt.Status != types.ReceiptStatusSuccessful {
-		return fmt.Errorf("ethpool approve transaction %x failed", receipt.TxHash)
+		return fmt.Errorf("native-wrap approve transaction %x failed", receipt.TxHash)
 	}
 	return nil
 }
 
-func (p *Processor) queryEthPoolBalance() (*big.Int, error) {
-	ethPoolAddr := ctype.Hex2Addr(p.profile.EthPoolAddr)
-	contract, err := ethpool.NewEthPoolCaller(ethPoolAddr, p.transactor.ContractCaller())
+func (p *Processor) queryNativeWrapBalance() (*big.Int, error) {
+	nativeWrapAddr := ctype.Hex2Addr(p.profile.NativeWrapAddr)
+	contract, err := nativewrap.NewNativeWrapCaller(nativeWrapAddr, p.transactor.ContractCaller())
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -136,14 +137,14 @@ func (p *Processor) queryEthPoolBalance() (*big.Int, error) {
 		log.Error(err)
 		return nil, err
 	}
-	log.Infoln("my balance at EthPool:", balance)
+	log.Infoln("my balance at NativeWrap:", balance)
 	return balance, nil
 }
 
-func (p *Processor) queryEthPoolLedgerAllowance() (*big.Int, error) {
-	ethPoolAddr := ctype.Hex2Addr(p.profile.EthPoolAddr)
+func (p *Processor) queryNativeWrapLedgerAllowance() (*big.Int, error) {
+	nativeWrapAddr := ctype.Hex2Addr(p.profile.NativeWrapAddr)
 	ledgerAddr := ctype.Hex2Addr(p.profile.LedgerAddr)
-	contract, err := ethpool.NewEthPoolCaller(ethPoolAddr, p.transactor.ContractCaller())
+	contract, err := nativewrap.NewNativeWrapCaller(nativeWrapAddr, p.transactor.ContractCaller())
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -153,19 +154,19 @@ func (p *Processor) queryEthPoolLedgerAllowance() (*big.Int, error) {
 		log.Error(err)
 		return nil, err
 	}
-	log.Infoln("allowance from EthPool to Ledger is:", allowance)
+	log.Infoln("allowance from NativeWrap to Ledger is:", allowance)
 	return allowance, nil
 }
 
-func (p *Processor) withdrawEthPool() error {
-	log.Infof("withdraw %f ETH from EthPool and wait transaction to be mined...", *amount)
+func (p *Processor) withdrawNativeWrap() error {
+	log.Infof("unwrap %f from NativeWrap to native and wait transaction to be mined...", *amount)
 	amtWei := utils.Float2Wei(*amount)
-	ethPoolAddr := ctype.Hex2Addr(p.profile.EthPoolAddr)
+	nativeWrapAddr := ctype.Hex2Addr(p.profile.NativeWrapAddr)
 
 	receipt, err := p.transactor.TransactWaitMined(
-		"ethpool withdraw",
+		"native-wrap withdraw",
 		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
-			contract, err2 := ethpool.NewEthPoolTransactor(ethPoolAddr, transactor)
+			contract, err2 := nativewrap.NewNativeWrapTransactor(nativeWrapAddr, transactor)
 			if err2 != nil {
 				return nil, err2
 			}
@@ -177,7 +178,7 @@ func (p *Processor) withdrawEthPool() error {
 		return err
 	}
 	if receipt.Status != types.ReceiptStatusSuccessful {
-		return fmt.Errorf("ethpool withdraw transaction %x failed", receipt.TxHash)
+		return fmt.Errorf("native-wrap withdraw transaction %x failed", receipt.TxHash)
 	}
 	return nil
 }

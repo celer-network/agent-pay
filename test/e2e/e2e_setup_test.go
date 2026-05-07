@@ -62,7 +62,7 @@ func TestMain(m *testing.M) {
 		// build binaries should take long enough for geth to be fully started
 		err = buildBins(outRootDir)
 		chkErr(err, "build binaries")
-		// deploy contracts and fund ethpool etc, also update appAddrMap
+		// deploy contracts and fund native-wrap and ERC20 etc, also update appAddrMap
 		tf.E2eProfile, tokenAddrErc20 = SetupOnChain(appAddrMap, 0, true)
 		// profile.json is the default OSP profile
 		noProxyProfile = outRootDir + "profile.json"

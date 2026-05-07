@@ -50,8 +50,8 @@ func PrintTokenTransfer(transfer *entity.TokenTransfer) string {
 }
 
 func PrintTokenInfo(token *entity.TokenInfo) string {
-	if token.GetTokenType() == entity.TokenType_ETH {
-		return "token_type: ETH"
+	if token.GetTokenType() == entity.TokenType_NATIVE {
+		return "token_type: NATIVE"
 	} else if token.GetTokenType() == entity.TokenType_ERC20 {
 		return fmt.Sprintf("token_address: %x", token.GetTokenAddress())
 	}

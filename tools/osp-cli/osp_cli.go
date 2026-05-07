@@ -23,8 +23,8 @@ var (
 	dbview          = flag.String("dbview", "", "database view command")
 	dbupdate        = flag.String("dbupdate", "", "database update command")
 	onchainview     = flag.String("onchainview", "", "onchain view command")
-	ethpooldeposit  = flag.Bool("ethpooldeposit", false, "deposit ETH to ethpool")
-	ethpoolwithdraw = flag.Bool("ethpoolwithdraw", false, "withdraw ETH from ethpool")
+	wrapdeposit  = flag.Bool("wrapdeposit", false, "wrap native into the chain's wrapped-native (WETH-style) contract")
+	wrapwithdraw = flag.Bool("wrapwithdraw", false, "unwrap from the chain's wrapped-native contract back to native")
 	register        = flag.Bool("register", false, "register OSP as a state channel router")
 	deregister      = flag.Bool("deregister", false, "deregister OSP as a state channel router")
 )
@@ -61,9 +61,9 @@ func main() {
 	var p cli.Processor
 	if *intendsettle || *confirmsettle || *intendwithdraw || *confirmwithdraw || *dbview != "" || *dbupdate != "" {
 		p.Setup(true, false, true) // connect to db, not enforcig osp keystore, set disputer if keystore is provided
-	} else if *ethpoolwithdraw || *register || *deregister {
+	} else if *wrapwithdraw || *register || *deregister {
 		p.Setup(false, true, false) // no db, enforce using osp keystore, no disputer
-	} else if *ethpooldeposit || *onchainview != "" {
+	} else if *wrapdeposit || *onchainview != "" {
 		p.Setup(false, false, false) // no db, not enforcig osp keystore, no disputer
 	} else {
 		return
@@ -138,10 +138,10 @@ func main() {
 		log.Fatalln("unsupported chainview command", *onchainview)
 	}
 
-	if *ethpooldeposit {
-		p.EthPoolDeposit()
-	} else if *ethpoolwithdraw {
-		p.EthPoolWithdraw()
+	if *wrapdeposit {
+		p.NativeWrapDeposit()
+	} else if *wrapwithdraw {
+		p.NativeWrapWithdraw()
 	}
 	if *register {
 		p.RegisterRouter()

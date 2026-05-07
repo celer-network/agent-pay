@@ -14,12 +14,12 @@ import (
 
 // CProfile contains configurations for CelerClient/OSP
 type CProfile struct {
-	ETHInstance        string            `json:"ethInstance"`
+	ChainGateway       string            `json:"chainGateway"`
 	SvrETHAddr         string            `json:"svrEthAddr"`
 	WalletAddr         string            `json:"walletAddr"`
 	LedgerAddr         string            `json:"ledgerAddr"`
 	VirtResolverAddr   string            `json:"virtResolverAddr"`
-	EthPoolAddr        string            `json:"ethPoolAddr"`
+	NativeWrapAddr     string            `json:"nativeWrapAddr"`
 	PayResolverAddr    string            `json:"payResolverAddr"`
 	PayRegistryAddr    string            `json:"payRegistryAddr"`
 	RouterRegistryAddr string            `json:"routerRegistryAddr"`
@@ -44,7 +44,7 @@ type CProfile struct {
 
 type GlobalNodeConfig interface {
 	GetOnChainAddr() ctype.Addr
-	GetEthPoolAddr() ctype.Addr
+	GetNativeWrapAddr() ctype.Addr
 	GetEthConn() *ethclient.Client
 	GetRPCAddr() string
 	GetSvrName() string

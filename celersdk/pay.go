@@ -22,11 +22,11 @@ const cPayTimeout = 600 // timeout in seconds for cpay ie. no app channel condit
 
 // noteTypeUrl should be type url of any.Any.
 // noteStr should be string representation of []byte in note (any.Any)
-func (mc *Client) SendETH(receiver string, amtWei string, noteTypeUrl string, noteValueByte []byte) (string, error) {
+func (mc *Client) SendNative(receiver string, amtWei string, noteTypeUrl string, noteValueByte []byte) (string, error) {
 	return mc.SendToken(nil, receiver, amtWei, noteTypeUrl, noteValueByte)
 }
 
-// SendETH sends ERC20/ETH token to receiver. Caller can optionally add a note in the pay.
+// SendToken sends an ERC20 or native token to receiver. Caller can optionally add a note in the pay.
 func (mc *Client) SendToken(tk *Token, receiver string, amtWei string, noteTypeUrl string, noteValueByte []byte) (string, error) {
 
 	xfer := createXfer(tk, receiver, amtWei)
@@ -55,7 +55,7 @@ func (mc *Client) RejectPay(payID string) error {
 	return mc.c.RejectBooleanPay(ctype.Hex2PayID(payID))
 }
 
-// RemoveExpiredPays clears pending pays that have expired, if tk is nil, means ETH
+// RemoveExpiredPays clears pending pays that have expired, if tk is nil, means native token
 func (mc *Client) RemoveExpiredPays(tk *Token) error {
 	token := sdkToken2entityToken(tk)
 	return mc.c.SettleExpiredPays(token)
@@ -76,7 +76,7 @@ func (mc *Client) ResolvePayOnChain(payID string) error {
 	return mc.c.SettleOnChainResolvedPay(ctype.Hex2PayID(payID))
 }
 
-// ConfirmOnChainResolvedPays confirms pays that have been onchain resolved, if tk is nil, means ETH
+// ConfirmOnChainResolvedPays confirms pays that have been onchain resolved, if tk is nil, means native token
 func (mc *Client) ConfirmOnChainResolvedPays(tk *Token) error {
 	token := sdkToken2entityToken(tk)
 	return mc.c.ConfirmOnChainResolvedPays(token)

@@ -8,7 +8,7 @@
     "contracts": {
       "ledger": "abcdef..",
       "resolver": "123456..",
-      "ethPool": "11111..",
+      "nativeWrap": "11111..",
       "payRegistry": "fedcba.."
     },
     "checkInterval": {

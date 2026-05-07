@@ -42,25 +42,25 @@ func NewEthClient(profile *common.CProfile) *ethclient.Client {
 	}
 	var rpcClient *ethrpc.Client
 	var err error
-	ethInstance := profile.ETHInstance
-	if strings.HasPrefix(ethInstance, "ws") {
-		rpcClient, err = ethrpc.DialWebsocket(ethCtx, ethInstance, wsOrigin)
+	chainGateway := profile.ChainGateway
+	if strings.HasPrefix(chainGateway, "ws") {
+		rpcClient, err = ethrpc.DialWebsocket(ethCtx, chainGateway, wsOrigin)
 		if err != nil {
 			// Retry once for stability.
 			time.Sleep(time.Second)
-			rpcClient, err = ethrpc.DialWebsocket(ethCtx, ethInstance, wsOrigin)
+			rpcClient, err = ethrpc.DialWebsocket(ethCtx, chainGateway, wsOrigin)
 			if err != nil {
-				log.Fatalf("DialETH failed: %s", err)
+				log.Fatalf("DialChain failed: %s", err)
 			}
 		}
 	} else {
-		rpcClient, err = ethrpc.Dial(ethInstance)
+		rpcClient, err = ethrpc.Dial(chainGateway)
 		if err != nil {
 			// Retry once for stability.
 			time.Sleep(time.Second)
-			rpcClient, err = ethrpc.Dial(ethInstance)
+			rpcClient, err = ethrpc.Dial(chainGateway)
 			if err != nil {
-				log.Fatalf("DialETH failed: %s", err)
+				log.Fatalf("DialChain failed: %s", err)
 			}
 		}
 	}

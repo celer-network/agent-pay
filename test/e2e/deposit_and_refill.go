@@ -16,11 +16,11 @@ import (
 	"github.com/celer-network/goutils/log"
 )
 
-func clientDepositEth(t *testing.T) {
-	log.Info("============== start test clientDepositEth ==============")
-	defer log.Info("============== end test clientDepositEth ==============")
+func clientDepositNative(t *testing.T) {
+	log.Info("============== start test clientDepositNative ==============")
+	defer log.Info("============== end test clientDepositNative ==============")
 	t.Parallel()
-	clientDeposit(t, entity.TokenType_ETH, tokenAddrEth)
+	clientDeposit(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 
 func clientDepositErc20WithRestart(t *testing.T) {
@@ -41,9 +41,9 @@ func ospDepositAndRefill(t *testing.T) {
 		return
 	}
 
-	ethRefillThreshold := rtconfig.GetRefillThreshold(tokenAddrEth)
-	ethRefillAmount, RefillMaxWait := rtconfig.GetRefillAmountAndMaxWait(tokenAddrEth)
-	log.Infoln("ETH refill threshold", ethRefillThreshold, "amount", ethRefillAmount, "maxWait", RefillMaxWait)
+	nativeRefillThreshold := rtconfig.GetRefillThreshold(tokenAddrNative)
+	nativeRefillAmount, RefillMaxWait := rtconfig.GetRefillAmountAndMaxWait(tokenAddrNative)
+	log.Infoln("native refill threshold", nativeRefillThreshold, "amount", nativeRefillAmount, "maxWait", RefillMaxWait)
 
 	erc20RefillThreshold := rtconfig.GetRefillThreshold(tokenAddrErc20)
 	erc20RefillAmount, RefillMaxWait := rtconfig.GetRefillAmountAndMaxWait(tokenAddrErc20)
@@ -87,19 +87,19 @@ func ospDepositAndRefill(t *testing.T) {
 	}
 	defer c2.Kill()
 
-	ethInitBalance := ethRefillThreshold.String()
-	cid, err := c1.OpenChannel(c1EthAddr, entity.TokenType_ETH, tokenAddrEth, ethInitBalance, ethInitBalance)
+	nativeInitBalance := nativeRefillThreshold.String()
+	cid, err := c1.OpenChannel(c1EthAddr, entity.TokenType_NATIVE, tokenAddrNative, nativeInitBalance, nativeInitBalance)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	log.Infoln("ETH channel with c1:", cid.ChannelId)
-	cid, err = c2.OpenChannel(c2EthAddr, entity.TokenType_ETH, tokenAddrEth, ethInitBalance, ethInitBalance)
+	log.Infoln("native channel with c1:", cid.ChannelId)
+	cid, err = c2.OpenChannel(c2EthAddr, entity.TokenType_NATIVE, tokenAddrNative, nativeInitBalance, nativeInitBalance)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	log.Infoln("ETH channel with c2:", cid.ChannelId)
+	log.Infoln("native channel with c2:", cid.ChannelId)
 
 	erc20InitBalance := erc20RefillThreshold.String()
 	cid, err = c1.OpenChannel(c1EthAddr, entity.TokenType_ERC20, tokenAddrErc20, erc20InitBalance, erc20InitBalance)
@@ -116,7 +116,7 @@ func ospDepositAndRefill(t *testing.T) {
 	log.Infoln("ERC20 channel with c2:", cid.ChannelId)
 
 	log.Info("--------------- deposit eth to channel with c1 ---------------")
-	depositID, err := requestSvrDeposit(c1EthAddr, tokenAddrEth, "1", true, 5)
+	depositID, err := requestSvrDeposit(c1EthAddr, tokenAddrNative, "1", true, 5)
 	if err != nil {
 		t.Error(err)
 		return
@@ -136,13 +136,13 @@ func ospDepositAndRefill(t *testing.T) {
 		return
 	}
 
-	depositID, err = requestSvrDeposit(c1EthAddr, tokenAddrEth, "1", false, 4)
+	depositID, err = requestSvrDeposit(c1EthAddr, tokenAddrNative, "1", false, 4)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	depositID, err = requestSvrDeposit(c1EthAddr, tokenAddrEth, "1", false, 0)
+	depositID, err = requestSvrDeposit(c1EthAddr, tokenAddrNative, "1", false, 0)
 	if err != nil {
 		t.Error(err)
 		return
@@ -162,24 +162,24 @@ func ospDepositAndRefill(t *testing.T) {
 	}
 
 	log.Info("--------------- deposit eth to channel with c2 ---------------")
-	depositID, err = requestSvrDeposit(c2EthAddr, tokenAddrEth, "1", true, 2)
+	depositID, err = requestSvrDeposit(c2EthAddr, tokenAddrNative, "1", true, 2)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
 	log.Info("--------------- send eth to c2, trigger refill ---------------")
-	_, err = requestSvrSendToken(c2EthAddr, "1", tokenAddrEth)
+	_, err = requestSvrSendToken(c2EthAddr, "1", tokenAddrNative)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	_, err = requestSvrSendToken(c2EthAddr, "1", tokenAddrEth)
+	_, err = requestSvrSendToken(c2EthAddr, "1", tokenAddrNative)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	_, err = requestSvrSendToken(c2EthAddr, "1", tokenAddrEth)
+	_, err = requestSvrSendToken(c2EthAddr, "1", tokenAddrNative)
 	if err != nil {
 		t.Error(err)
 		return
@@ -224,10 +224,10 @@ func ospDepositAndRefill(t *testing.T) {
 	}
 
 	err = c1.AssertBalance(
-		tokenAddrEth,
-		tf.AddAmtStr(ethInitBalance, "1"),
+		tokenAddrNative,
+		tf.AddAmtStr(nativeInitBalance, "1"),
 		"0",
-		tf.AddAmtStr(ethInitBalance, "2"))
+		tf.AddAmtStr(nativeInitBalance, "2"))
 	if err != nil {
 		t.Error(err)
 		return
@@ -244,10 +244,10 @@ func ospDepositAndRefill(t *testing.T) {
 	}
 
 	err = c2.AssertBalance(
-		tokenAddrEth,
-		tf.AddAmtStr(ethInitBalance, "4"),
+		tokenAddrNative,
+		tf.AddAmtStr(nativeInitBalance, "4"),
 		"0",
-		tf.AddAmtStr(ethInitBalance, "-3", ethRefillAmount.String()))
+		tf.AddAmtStr(nativeInitBalance, "-3", nativeRefillAmount.String()))
 	if err != nil {
 		t.Error(err)
 		return
@@ -257,7 +257,7 @@ func ospDepositAndRefill(t *testing.T) {
 		tokenAddrErc20,
 		tf.AddAmtStr(erc20InitBalance, "11"),
 		"0",
-		tf.AddAmtStr(erc20InitBalance, "-10", ethRefillAmount.String()))
+		tf.AddAmtStr(erc20InitBalance, "-10", nativeRefillAmount.String()))
 	if err != nil {
 		t.Error(err)
 		return
@@ -278,7 +278,7 @@ func ospDepositAndRefill(t *testing.T) {
 	}
 
 	log.Info("--------------- send eth and erc20 to c1, trigger refill ---------------")
-	_, err = requestSvrSendToken(c1EthAddr, "10", tokenAddrEth)
+	_, err = requestSvrSendToken(c1EthAddr, "10", tokenAddrNative)
 	if err != nil {
 		t.Error(err)
 		return
@@ -297,10 +297,10 @@ func ospDepositAndRefill(t *testing.T) {
 	sleep(5)
 
 	err = c1.AssertBalance(
-		tokenAddrEth,
-		tf.AddAmtStr(ethInitBalance, "11"),
+		tokenAddrNative,
+		tf.AddAmtStr(nativeInitBalance, "11"),
 		"0",
-		tf.AddAmtStr(ethInitBalance, "-8"))
+		tf.AddAmtStr(nativeInitBalance, "-8"))
 	if err != nil {
 		t.Error(err)
 		return
@@ -324,10 +324,10 @@ func ospDepositAndRefill(t *testing.T) {
 	}
 
 	err = c1.AssertBalance(
-		tokenAddrEth,
-		tf.AddAmtStr(ethInitBalance, "11"),
+		tokenAddrNative,
+		tf.AddAmtStr(nativeInitBalance, "11"),
 		"0",
-		tf.AddAmtStr(ethInitBalance, "-8", ethRefillAmount.String()))
+		tf.AddAmtStr(nativeInitBalance, "-8", nativeRefillAmount.String()))
 	if err != nil {
 		t.Error(err)
 		return
@@ -337,15 +337,15 @@ func ospDepositAndRefill(t *testing.T) {
 		tokenAddrErc20,
 		tf.AddAmtStr(erc20InitBalance, "11"),
 		"0",
-		tf.AddAmtStr(erc20InitBalance, "-9", ethRefillAmount.String()))
+		tf.AddAmtStr(erc20InitBalance, "-9", nativeRefillAmount.String()))
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
 	log.Info("--------------- deposit eth to channel with c1 ---------------")
-	ospFreeEth := tf.AddAmtStr(ethInitBalance, "-8", ethRefillAmount.String())
-	_, err = requestSvrDeposit(c1EthAddr, tokenAddrEth, "10", false, 0)
+	ospFreeEth := tf.AddAmtStr(nativeInitBalance, "-8", nativeRefillAmount.String())
+	_, err = requestSvrDeposit(c1EthAddr, tokenAddrNative, "10", false, 0)
 	if err != nil {
 		t.Error(err)
 		return
@@ -353,15 +353,15 @@ func ospDepositAndRefill(t *testing.T) {
 	sleep(5)
 
 	log.Info("--------------- send large amount of eth to c1, trigger c1 sync onchain ---------------")
-	_, err = requestSvrSendToken(c1EthAddr, tf.AddAmtStr(ospFreeEth, "5"), tokenAddrEth)
+	_, err = requestSvrSendToken(c1EthAddr, tf.AddAmtStr(ospFreeEth, "5"), tokenAddrNative)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 	sleep(3)
 	err = c1.AssertBalance(
-		tokenAddrEth,
-		tf.AddAmtStr(ethInitBalance, "11", ospFreeEth, "5"),
+		tokenAddrNative,
+		tf.AddAmtStr(nativeInitBalance, "11", ospFreeEth, "5"),
 		"0",
 		"5")
 	if err != nil {
@@ -371,7 +371,7 @@ func ospDepositAndRefill(t *testing.T) {
 }
 
 func syncOnChainStates(c *tf.ClientController) error {
-	err := c.SyncOnChainChannelStates(entity.TokenType_ETH, tokenAddrEth)
+	err := c.SyncOnChainChannelStates(entity.TokenType_NATIVE, tokenAddrNative)
 	if err != nil {
 		return err
 	}
@@ -404,7 +404,7 @@ func clientDeposit(t *testing.T, tokenType entity.TokenType, tokenAddr string) {
 	cKeyStore := ks[0]
 	cEthAddr := addrs[0]
 
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)
@@ -450,7 +450,7 @@ func clientDepositWithRestart(t *testing.T, tokenType entity.TokenType, tokenAdd
 	cKeyStore := ks[0]
 	cEthAddr := addrs[0]
 
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)

@@ -356,29 +356,29 @@ func (c *CNode) setupEthClient(profile *common.CProfile) error {
 	}
 	var err error
 	var rpcClient *ethrpc.Client
-	ethInstance := profile.ETHInstance
-	if strings.HasPrefix(ethInstance, "ws") {
-		rpcClient, err = ethrpc.DialWebsocket(ethCtx, ethInstance, wsOrigin)
+	chainGateway := profile.ChainGateway
+	if strings.HasPrefix(chainGateway, "ws") {
+		rpcClient, err = ethrpc.DialWebsocket(ethCtx, chainGateway, wsOrigin)
 		if err != nil {
 			// Retry once for stability.
 			time.Sleep(time.Second)
-			rpcClient, err = ethrpc.DialWebsocket(ethCtx, ethInstance, wsOrigin)
+			rpcClient, err = ethrpc.DialWebsocket(ethCtx, chainGateway, wsOrigin)
 			if err != nil {
-				log.Errorf("Dial ETHInstance WS failed. ethInstance=%q wsOrigin=%q err=%v", ethInstance, wsOrigin, err)
+				log.Errorf("Dial chain WS failed. chainGateway=%q wsOrigin=%q err=%v", chainGateway, wsOrigin, err)
 				c.Close()
-				return fmt.Errorf("DialETH failed: %w", err)
+				return fmt.Errorf("DialChain failed: %w", err)
 			}
 		}
 	} else {
-		rpcClient, err = ethrpc.Dial(ethInstance)
+		rpcClient, err = ethrpc.Dial(chainGateway)
 		if err != nil {
 			// Retry once for stability.
 			time.Sleep(time.Second)
-			rpcClient, err = ethrpc.Dial(ethInstance)
+			rpcClient, err = ethrpc.Dial(chainGateway)
 			if err != nil {
-				log.Errorf("Dial ETHInstance HTTP failed. ethInstance=%q err=%v", ethInstance, err)
+				log.Errorf("Dial chain HTTP failed. chainGateway=%q err=%v", chainGateway, err)
 				c.Close()
-				return fmt.Errorf("DialETH failed: %w", err)
+				return fmt.Errorf("DialChain failed: %w", err)
 			}
 		}
 	}

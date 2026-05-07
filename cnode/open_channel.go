@@ -1136,7 +1136,7 @@ func initDistributionBreaksPolicy(initDist *entity.TokenDistribution, myAddr []b
 		// 0-balance bootstrap
 		myMax := big.NewInt(0)
 		tokenType := initDist.Token.TokenType
-		if tokenType == entity.TokenType_ETH {
+		if tokenType == entity.TokenType_NATIVE {
 			myMax = rtconfig.GetEthColdBootstrapDeposit()
 		} else if tokenType == entity.TokenType_ERC20 {
 			myMax = rtconfig.GetErc20ColdBootstrapDeposit(initDist.GetToken().GetTokenAddress())

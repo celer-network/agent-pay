@@ -711,7 +711,7 @@ func (s *adminService) SendToken(ctx context.Context, in *rpc.SendTokenRequest) 
 	}
 	tokenTransfer := &entity.TokenTransfer{
 		Token: &entity.TokenInfo{
-			TokenType: entity.TokenType_ETH,
+			TokenType: entity.TokenType_NATIVE,
 		},
 		Receiver: &entity.AccountAmtPair{
 			Account: dstAddr,
@@ -723,7 +723,7 @@ func (s *adminService) SendToken(ctx context.Context, in *rpc.SendTokenRequest) 
 		if err2 != nil {
 			return &rpc.SendTokenResponse{Status: 1, Error: "Can't parse token address."}, status.Error(codes.InvalidArgument, "Can't parse token address")
 		}
-		if tokenAddr != ctype.EthTokenAddr {
+		if tokenAddr != ctype.NativeTokenAddr {
 			tokenTransfer.Token.TokenAddress = tokenAddr.Bytes()
 			tokenTransfer.Token.TokenType = entity.TokenType_ERC20
 		}
@@ -941,29 +941,29 @@ func (s *server) Initialize(
 	s.config = common.ParseProfile(*pjson)
 	overrideConfig(s.config)
 	// Early visibility into critical profile wiring for debugging
-	if s.config.ETHInstance == "" {
+	if s.config.ChainGateway == "" {
 		// Provide a safe fallback for test/dev runs to avoid hard failures when profile schema keys differ.
 		if gw := os.Getenv("E2E_ETH_GATEWAY"); gw != "" {
-			s.config.ETHInstance = gw
-			log.Warnf("ETHInstance empty in profile; defaulting to E2E_ETH_GATEWAY=%s", gw)
+			s.config.ChainGateway = gw
+			log.Warnf("ChainGateway empty in profile; defaulting to E2E_ETH_GATEWAY=%s", gw)
 		} else {
 			// Default to local geth dev endpoint
-			s.config.ETHInstance = "http://127.0.0.1:8545"
-			log.Warnln("ETHInstance empty in profile; defaulting to http://127.0.0.1:8545")
+			s.config.ChainGateway = "http://127.0.0.1:8545"
+			log.Warnln("ChainGateway empty in profile; defaulting to http://127.0.0.1:8545")
 		}
 	}
 	// If ChainId is missing/zero, detect from RPC
 	if s.config.ChainId == 0 {
 		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
-		if conn, err := ethclient.DialContext(ctx, s.config.ETHInstance); err == nil {
+		if conn, err := ethclient.DialContext(ctx, s.config.ChainGateway); err == nil {
 			if id, err2 := conn.NetworkID(ctx); err2 == nil {
 				s.config.ChainId = id.Int64()
 				log.Warnf("ChainId missing in profile; defaulting to runtime NetworkID=%d", s.config.ChainId)
 			}
 		}
 	}
-	log.Infof("Using ETHInstance: %s (chainId=%d)", s.config.ETHInstance, s.config.ChainId)
+	log.Infof("Using ChainGateway: %s (chainId=%d)", s.config.ChainGateway, s.config.ChainId)
 	var err error
 	s.cNode, err = cnode.NewCNode(
 		masterTxConfig,

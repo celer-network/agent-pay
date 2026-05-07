@@ -12,10 +12,10 @@ import (
 
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/balancelimit"
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/channel"
-	"github.com/celer-network/agent-pay/chain/channel-eth-go/ethpool"
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/ledger"
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/ledgerstruct"
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/migrate"
+	"github.com/celer-network/agent-pay/chain/channel-eth-go/nativewrap"
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/operation"
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/payregistry"
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/payresolver"
@@ -35,7 +35,7 @@ import (
 type CelerChannelAddrBundle struct {
 	BalanceLimitAddr  common.Address
 	LedgerChannelAddr common.Address
-	EthPoolAddr       common.Address
+	NativeWrapAddr    common.Address
 	CelerLedgerAddr   common.Address
 	OperationAddr     common.Address
 	MigrateAddr       common.Address
@@ -89,18 +89,21 @@ func DeployAll(
 	log.Infof("Transaction status: %x", receipt.Status)
 	log.Infof("Deployed VirtContractResolver contract at 0x%x\n", virtresolverAddr)
 
-	// Deploy EthPool contract
-	log.Infoln("Deploying EthPool contract...")
-	ethPoolAddr, tx, _, err := ethpool.DeployEthPool(auth, conn)
+	// Deploy NativeWrap (WETH-style) contract. In production this is the
+	// chain's canonical wrapped-native address (WETH on Ethereum); in this
+	// local-deploy path we deploy a minimal mock so tests can exercise the
+	// funding-flow path that CelerLedger uses internally for multi-party native deposits.
+	log.Infoln("Deploying NativeWrap (WETH-style mock) contract...")
+	nativeWrapAddr, tx, _, err := nativewrap.DeployNativeWrap(auth, conn)
 	if err != nil {
-		log.Fatalf("Failed to deploy EthPool contract: %v", err)
+		log.Fatalf("Failed to deploy NativeWrap contract: %v", err)
 	}
 	receipt, err = WaitMined(ctx, conn, tx, blockDelay)
 	if err != nil {
-		log.Fatalf("Failed to WaitMined EthPool: %v", err)
+		log.Fatalf("Failed to WaitMined NativeWrap: %v", err)
 	}
 	log.Infof("Transaction status: %x", receipt.Status)
-	log.Infof("Deployed EthPool contract at 0x%x\n", ethPoolAddr)
+	log.Infof("Deployed NativeWrap contract at 0x%x\n", nativeWrapAddr)
 
 	// Deploy PayRegistry contract
 	log.Infoln("Deploying PayRegistry contract...")
@@ -249,7 +252,7 @@ func DeployAll(
 			"LedgerBalanceLimit": balancelimitAddr,
 			"LedgerMigrate":      migrateAddr,
 		},
-		ethPoolAddr,
+		nativeWrapAddr,
 		payRegistryAddr,
 		walletAddr,
 	)
@@ -267,7 +270,7 @@ func DeployAll(
 	return CelerChannelAddrBundle{
 		BalanceLimitAddr:  balancelimitAddr,
 		LedgerChannelAddr: channelAddr,
-		EthPoolAddr:       ethPoolAddr,
+		NativeWrapAddr:    nativeWrapAddr,
 		CelerLedgerAddr:   ledgerAddr,
 		OperationAddr:     operationAddr,
 		MigrateAddr:       migrateAddr,

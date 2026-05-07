@@ -693,7 +693,7 @@ func (h *CelerMsgHandler) crossNetPayInbound(
 	if !ok {
 		return fmt.Errorf("unexpected pay type %T", pay)
 	}
-	if newPay.GetTransferFunc().GetMaxTransfer().GetToken().GetTokenType() != entity.TokenType_ETH {
+	if newPay.GetTransferFunc().GetMaxTransfer().GetToken().GetTokenType() != entity.TokenType_NATIVE {
 		localToken, found, err2 := h.dal.GetLocalToken(bridgeNetId, newPay.GetTransferFunc().GetMaxTransfer().GetToken())
 		if err2 != nil {
 			return fmt.Errorf("GetLocalToken err: %w", err2)
@@ -762,7 +762,7 @@ func (h *CelerMsgHandler) verifyCrossNetPay(pay *entity.ConditionalPay, original
 	if err != nil {
 		return err
 	}
-	if originalPay.GetTransferFunc().GetMaxTransfer().GetToken().GetTokenType() != entity.TokenType_ETH {
+	if originalPay.GetTransferFunc().GetMaxTransfer().GetToken().GetTokenType() != entity.TokenType_NATIVE {
 		token, found, err2 := h.dal.GetLocalToken(srcNetId, originalPay.GetTransferFunc().GetMaxTransfer().GetToken())
 		if err2 != nil {
 			return fmt.Errorf("GetLocalToken err: %w", err2)

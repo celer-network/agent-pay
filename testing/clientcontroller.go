@@ -485,8 +485,8 @@ func (cc *ClientController) InstantiateChannel(
 func (cc *ClientController) GetBalance(tokenAddress string) (string, string, string, error) {
 	tokenAddr := ctype.Hex2Addr(tokenAddress)
 	var tokenType entity.TokenType
-	if tokenAddr == ctype.Hex2Addr(ctype.EthTokenAddrStr) {
-		tokenType = entity.TokenType_ETH
+	if tokenAddr == ctype.Hex2Addr(ctype.NativeTokenAddrStr) {
+		tokenType = entity.TokenType_NATIVE
 	} else {
 		tokenType = entity.TokenType_ERC20
 	}
@@ -503,7 +503,7 @@ func (cc *ClientController) GetBalance(tokenAddress string) (string, string, str
 
 func (cc *ClientController) GetAccountBalance(
 	tokenAddr string, ownerAddr string, conn *ethclient.Client) (*big.Int, error) {
-	if tokenAddr != ctype.EthTokenAddrStr {
+	if tokenAddr != ctype.NativeTokenAddrStr {
 		// ERC20 token
 		erc20Contract, err := chain.NewERC20(ctype.Hex2Addr(tokenAddr), conn)
 		if err != nil {
@@ -525,8 +525,8 @@ func (cc *ClientController) SetDelegation(tokens []string, duration int64) error
 			TokenType:    entity.TokenType_ERC20,
 			TokenAddress: tk,
 		}
-		if tk == ctype.EthTokenAddrStr {
-			token.TokenType = entity.TokenType_ETH
+		if tk == ctype.NativeTokenAddrStr {
+			token.TokenType = entity.TokenType_NATIVE
 		}
 		tokenInfos = append(tokenInfos, token)
 	}
@@ -567,8 +567,8 @@ func (cc *ClientController) IsConnectedToCeler(
 	tokenAddress string, address string) (string, error) {
 	tokenAddr := ctype.Hex2Addr(tokenAddress)
 	var tokenType entity.TokenType
-	if tokenAddr == ctype.Hex2Addr(ctype.EthTokenAddrStr) {
-		tokenType = entity.TokenType_ETH
+	if tokenAddr == ctype.Hex2Addr(ctype.NativeTokenAddrStr) {
+		tokenType = entity.TokenType_NATIVE
 	} else {
 		tokenType = entity.TokenType_ERC20
 	}

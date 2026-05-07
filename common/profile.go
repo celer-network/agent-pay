@@ -34,8 +34,8 @@ type ProfileEthereum struct {
 }
 
 type ProfileContracts struct {
-	Wallet, Ledger, VirtResolver, EthPool, PayResolver, PayRegistry, RouterRegistry string
-	Ledgers                                                                         map[string]string
+	Wallet, Ledger, VirtResolver, NativeWrap, PayResolver, PayRegistry, RouterRegistry string
+	Ledgers                                                                            map[string]string
 }
 
 type ProfileOsp struct {
@@ -50,14 +50,14 @@ type ProfileSgn struct {
 func (pj *ProfileJSON) ToCProfile() *CProfile {
 	cp := &CProfile{
 		ChainId:            int64(pj.Ethereum.ChainId),
-		ETHInstance:        pj.Ethereum.Gateway,
+		ChainGateway:        pj.Ethereum.Gateway,
 		BlockDelayNum:      pj.Ethereum.BlockDelayNum,
 		PollingInterval:    pj.Ethereum.BlockIntervalSec,
 		DisputeTimeout:     pj.Ethereum.DisputeTimeout,
 		WalletAddr:         pj.Ethereum.Contracts.Wallet,
 		LedgerAddr:         pj.Ethereum.Contracts.Ledger,
 		VirtResolverAddr:   pj.Ethereum.Contracts.VirtResolver,
-		EthPoolAddr:        pj.Ethereum.Contracts.EthPool,
+		NativeWrapAddr:     pj.Ethereum.Contracts.NativeWrap,
 		PayResolverAddr:    pj.Ethereum.Contracts.PayResolver,
 		PayRegistryAddr:    pj.Ethereum.Contracts.PayRegistry,
 		RouterRegistryAddr: pj.Ethereum.Contracts.RouterRegistry,

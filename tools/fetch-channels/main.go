@@ -50,7 +50,7 @@ func main() {
 	}
 
 	cp := common.ParseProfile(*profile)
-	client, err := ethclient.Dial(cp.ETHInstance)
+	client, err := ethclient.Dial(cp.ChainGateway)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -126,16 +126,16 @@ func TestE2ECrossNet(t *testing.T) {
 	defer tearDownMultiSvr(toKill)
 
 	t.Run("e2e-crossnet", func(t *testing.T) {
-		t.Run("crossNetSendEth", crossNetSendEth)
+		t.Run("crossNetSendNative", crossNetSendNative)
 		t.Run("crossNetSendErc20", crossNetSendErc20)
 	})
 }
 
-func crossNetSendEth(t *testing.T) {
-	log.Info("============== start test crossNetSendEth ==============")
-	defer log.Info("============== end test crossNetSendEth ==============")
+func crossNetSendNative(t *testing.T) {
+	log.Info("============== start test crossNetSendNative ==============")
+	defer log.Info("============== end test crossNetSendNative ==============")
 	t.Parallel()
-	crossNetSendToken(t, entity.TokenType_ETH, tokenAddrEth)
+	crossNetSendToken(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 
 func crossNetSendErc20(t *testing.T) {

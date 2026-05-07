@@ -33,7 +33,7 @@ import (
 )
 
 const (
-	ethInstance = "http://127.0.0.1:8545"
+	chainGateway = "http://127.0.0.1:8545"
 )
 
 var (
@@ -98,7 +98,7 @@ func UpdateShadowStorage(storeDir, shadowDir string) {
 
 func prepareEthClient() (
 	*ethclient.Client, *bind.TransactOpts, context.Context, common.Address, error) {
-	conn, err := ethclient.Dial(ethInstance)
+	conn, err := ethclient.Dial(chainGateway)
 	if err != nil {
 		return nil, nil, nil, common.Address{}, err
 	}
@@ -240,7 +240,7 @@ func getAuthFor(ksfile string) (*bind.TransactOpts, error) {
 	}
 	log.Infoln(ksfile, ctype.Bytes2Hex(crypto.FromECDSA(key.PrivateKey)))
 	ksStr := string(ksBytes)
-	conn, err := ethclient.Dial(ethInstance)
+	conn, err := ethclient.Dial(chainGateway)
 	if err != nil {
 		return nil, err
 	}

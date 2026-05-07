@@ -12,11 +12,11 @@ import (
 	"github.com/celer-network/goutils/log"
 )
 
-func sendEthOnVirtualContractCondition(t *testing.T) {
-	log.Info("============== start test sendEthOnVirtualContractCondition ==============")
-	defer log.Info("============== end test sendEthOnVirtualContractCondition ==============")
+func sendNativeOnVirtualContractCondition(t *testing.T) {
+	log.Info("============== start test sendNativeOnVirtualContractCondition ==============")
+	defer log.Info("============== end test sendNativeOnVirtualContractCondition ==============")
 	t.Parallel()
-	sendPayOnVirtualContractCondition(t, entity.TokenType_ETH, tokenAddrEth)
+	sendPayOnVirtualContractCondition(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 
 func sendPayOnVirtualContractCondition(t *testing.T, tokenType entity.TokenType, tokenAddr string) {
@@ -26,7 +26,7 @@ func sendPayOnVirtualContractCondition(t *testing.T, tokenType entity.TokenType,
 		return
 	}
 	log.Infoln("create accounts for sendPayOnVirtualContractCondition token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)

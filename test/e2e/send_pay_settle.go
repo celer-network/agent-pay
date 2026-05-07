@@ -12,11 +12,11 @@ import (
 	"github.com/celer-network/goutils/log"
 )
 
-func sendPaySettleWithEthDstReconnect(t *testing.T) {
-	log.Info("============== start test sendPaySettleWithEthDstReconnect ==============")
-	defer log.Info("============== end test sendPaySettleWithEthDstReconnect ==============")
+func sendPaySettleWithNativeDstReconnect(t *testing.T) {
+	log.Info("============== start test sendPaySettleWithNativeDstReconnect ==============")
+	defer log.Info("============== end test sendPaySettleWithNativeDstReconnect ==============")
 	t.Parallel()
-	sendPaySettleDstReconnect(t, entity.TokenType_ETH, tokenAddrEth)
+	sendPaySettleDstReconnect(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 
 func sendPaySettleDstReconnect(t *testing.T, tokenType entity.TokenType, tokenAddr string) {
@@ -27,7 +27,7 @@ func sendPaySettleDstReconnect(t *testing.T, tokenType entity.TokenType, tokenAd
 	}
 	log.Infoln("create accounts for sendPaySettleDstReconnect token", tokenAddr, addrs)
 
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)

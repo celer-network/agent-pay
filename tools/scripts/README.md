@@ -12,7 +12,7 @@ Generated outputs covered by this script:
 
 - `chain/channel-eth-go/balancelimit/balancelimit.go`
 - `chain/channel-eth-go/channel/channel.go`
-- `chain/channel-eth-go/ethpool/ethpool.go`
+- `chain/channel-eth-go/nativewrap/nativewrap.go`
 - `chain/channel-eth-go/ledger/ledger.go`
 - `chain/channel-eth-go/ledgerstruct/ledgerstruct.go`
 - `chain/channel-eth-go/migrate/migrate.go`

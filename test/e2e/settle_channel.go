@@ -70,7 +70,7 @@ func settleChannel(t *testing.T, tokenType entity.TokenType, tokenAddr string, m
 		return
 	}
 	log.Infoln("create accounts for settleChannel token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)
@@ -286,7 +286,7 @@ func settleWithDispute(t *testing.T, tokenType entity.TokenType, tokenAddr strin
 		return
 	}
 	log.Infoln("create accounts for settleWithDispute token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)
@@ -474,7 +474,7 @@ func settleChannelWithReopen(t *testing.T, tokenType entity.TokenType, tokenAddr
 		return
 	}
 	log.Infoln("create accounts for settleChannelWithReopen token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)
@@ -657,7 +657,7 @@ func ospIntendSettleChannel(t *testing.T, tokenType entity.TokenType, tokenAddr 
 		return
 	}
 	log.Infoln("create accounts for ospIntendWithdraw token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)

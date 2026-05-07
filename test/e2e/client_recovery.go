@@ -39,19 +39,19 @@ func clientRecovery(t *testing.T) {
 		return
 	}
 
-	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	_, err = c2.OpenChannel(c2EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	_, err = c2.OpenChannel(c2EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
 	log.Info("===== Client-1 sends payment to client-2 =====")
-	p1, err := c1.SendPayment(c2EthAddr, sendAmt, entity.TokenType_ETH, tokenAddrEth)
+	p1, err := c1.SendPayment(c2EthAddr, sendAmt, entity.TokenType_NATIVE, tokenAddrNative)
 	if err != nil {
 		t.Error(err)
 		return
@@ -65,7 +65,7 @@ func clientRecovery(t *testing.T) {
 
 	const balanceBefore = "5000000000000000000"
 	err = c1.AssertBalance(
-		tokenAddrEth,
+		tokenAddrNative,
 		tf.AddAmtStr(balanceBefore, "-1"),
 		"0",
 		tf.AddAmtStr(balanceBefore, "1"))
@@ -75,7 +75,7 @@ func clientRecovery(t *testing.T) {
 	}
 
 	err = c2.AssertBalance(
-		tokenAddrEth,
+		tokenAddrNative,
 		tf.AddAmtStr(balanceBefore, "1"),
 		"0",
 		tf.AddAmtStr(balanceBefore, "-1"))
@@ -94,7 +94,7 @@ func clientRecovery(t *testing.T) {
 	}
 	defer c2New.Kill()
 
-	_, err = c2New.OpenChannel(c2EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	_, err = c2New.OpenChannel(c2EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 	if err != nil {
 		t.Error(err)
 		return
@@ -102,7 +102,7 @@ func clientRecovery(t *testing.T) {
 
 	log.Info("===== Client-2 restarted, sending payment to client-1 =====")
 	backAmt := "3"
-	p2, err := c2New.SendPayment(c1EthAddr, backAmt, entity.TokenType_ETH, tokenAddrEth)
+	p2, err := c2New.SendPayment(c1EthAddr, backAmt, entity.TokenType_NATIVE, tokenAddrNative)
 	if err != nil {
 		t.Error(err)
 		return
@@ -115,7 +115,7 @@ func clientRecovery(t *testing.T) {
 	}
 
 	err = c2New.AssertBalance(
-		tokenAddrEth,
+		tokenAddrNative,
 		tf.AddAmtStr(balanceBefore, "-2"),
 		"0",
 		tf.AddAmtStr(balanceBefore, "2"))
@@ -125,7 +125,7 @@ func clientRecovery(t *testing.T) {
 	}
 
 	err = c1.AssertBalance(
-		tokenAddrEth,
+		tokenAddrNative,
 		tf.AddAmtStr(balanceBefore, "2"),
 		"0",
 		tf.AddAmtStr(balanceBefore, "-2"))

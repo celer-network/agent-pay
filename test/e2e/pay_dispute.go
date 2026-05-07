@@ -70,18 +70,18 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
-func disputeEthPayWithVirtualContract(t *testing.T) {
-	log.Info("============== start test disputeEthPayWithVirtualContract ==============")
-	defer log.Info("============== end test disputeEthPayWithVirtualContract ==============")
+func disputeNativePayWithVirtualContract(t *testing.T) {
+	log.Info("============== start test disputeNativePayWithVirtualContract ==============")
+	defer log.Info("============== end test disputeNativePayWithVirtualContract ==============")
 	t.Parallel()
-	disputePayWithVirtualContract(t, entity.TokenType_ETH, tokenAddrEth)
+	disputePayWithVirtualContract(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 
-func disputeEthPayWithDeployedContract(t *testing.T) {
-	log.Info("============== start test disputeEthPayWithDeployedContract ==============")
-	defer log.Info("============== end test disputeEthPayWithDeployedContract ==============")
+func disputeNativePayWithDeployedContract(t *testing.T) {
+	log.Info("============== start test disputeNativePayWithDeployedContract ==============")
+	defer log.Info("============== end test disputeNativePayWithDeployedContract ==============")
 	t.Parallel()
-	disputePayWithDeployedContract(t, entity.TokenType_ETH, tokenAddrEth)
+	disputePayWithDeployedContract(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 
 // disputePayWithVirtualContract drives the VIRTUAL_CONTRACT path: register
@@ -579,7 +579,7 @@ func setupTwoClientChannels(tokenType entity.TokenType, tokenAddr string) (
 	if err != nil {
 		return nil, nil, "", "", nil, fmt.Errorf("CreateAccountsWithBalance: %w", err)
 	}
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		if err := tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance); err != nil {
 			return nil, nil, "", "", nil, fmt.Errorf("FundAccountsWithErc20: %w", err)
 		}

@@ -14,11 +14,11 @@ import (
 	"github.com/celer-network/goutils/log"
 )
 
-func ethChannelView(t *testing.T) {
-	log.Info("============== start test ethChannelView ==============")
-	defer log.Info("============== end test ethChannelView ==============")
+func nativeChannelView(t *testing.T) {
+	log.Info("============== start test nativeChannelView ==============")
+	defer log.Info("============== end test nativeChannelView ==============")
 	t.Parallel()
-	channelView(t, entity.TokenType_ETH, tokenAddrEth)
+	channelView(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 
 func erc20ChannelView(t *testing.T) {
@@ -35,7 +35,7 @@ func channelView(t *testing.T, tokenType entity.TokenType, tokenAddr string) {
 		return
 	}
 	log.Infoln("create accounts for channelView token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)

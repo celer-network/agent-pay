@@ -100,10 +100,10 @@ func (mc *Client) Destroy() {
 	mc.c = nil
 }
 
-func (mc *Client) OpenETHChannel(dep *Deposit, cb ClientCallback) {
+func (mc *Client) OpenNativeChannel(dep *Deposit, cb ClientCallback) {
 	mc.c.OpenChannel(&entity.TokenInfo{
-		TokenType:    entity.TokenType_ETH,
-		TokenAddress: ctype.EthTokenAddr.Bytes(),
+		TokenType:    entity.TokenType_NATIVE,
+		TokenAddress: ctype.NativeTokenAddr.Bytes(),
 	}, utils.Wei2BigInt(dep.Myamtwei), utils.Wei2BigInt(dep.Peeramtwei), cb)
 }
 
@@ -115,9 +115,9 @@ func (mc *Client) OpenTokenChannel(tk *Token, dep *Deposit, cb ClientCallback) {
 	}, utils.Wei2BigInt(dep.Myamtwei), utils.Wei2BigInt(dep.Peeramtwei), cb)
 }
 
-func (mc *Client) TcbOpenETHChannel(peerAmtWei string, cb ClientCallback) {
+func (mc *Client) TcbOpenNativeChannel(peerAmtWei string, cb ClientCallback) {
 	mc.c.TcbOpenChannel(&entity.TokenInfo{
-		TokenType: entity.TokenType_ETH,
+		TokenType: entity.TokenType_NATIVE,
 	}, utils.Wei2BigInt(peerAmtWei), cb)
 }
 
@@ -134,12 +134,12 @@ func (mc *Client) InstantiateChannelForToken(tk *Token, cb ClientCallback) {
 	}, cb)
 }
 
-func (mc *Client) DepositETH(amount string, callback DepositCallback) (string, error) {
+func (mc *Client) DepositNative(amount string, callback DepositCallback) (string, error) {
 	amtInt, ok := new(big.Int).SetString(amount, 10)
 	if !ok {
 		return "", common.ErrInvalidArg
 	}
-	return mc.c.Deposit(ctype.EthTokenAddr, amtInt, callback)
+	return mc.c.Deposit(ctype.NativeTokenAddr, amtInt, callback)
 }
 
 func (mc *Client) DepositERC20(
@@ -163,12 +163,12 @@ func (mc *Client) RemoveDepositJob(jobID string) {
 	mc.c.RemoveDepositJob(jobID)
 }
 
-func (mc *Client) WithdrawETH(amount string, callback CooperativeWithdrawCallback) (string, error) {
+func (mc *Client) WithdrawNative(amount string, callback CooperativeWithdrawCallback) (string, error) {
 	amtInt, ok := new(big.Int).SetString(amount, 10)
 	if !ok {
 		return "", common.ErrInvalidArg
 	}
-	return mc.c.CooperativeWithdraw(ctype.EthTokenAddr, amtInt, callback)
+	return mc.c.CooperativeWithdraw(ctype.NativeTokenAddr, amtInt, callback)
 }
 
 func (mc *Client) WithdrawERC20(
@@ -220,7 +220,7 @@ func (mc *Client) HasPendingOpenChanRequest(tk *Token) bool {
 // If the given address has not joined Celer, an empty string will
 // be returned.
 func (mc *Client) QueryReceivingCapacity(addr string) (*CelerStatus, error) {
-	joinStatus, freeBalance, err := mc.c.IsConnectedToCeler(ctype.EthTokenAddrStr, addr)
+	joinStatus, freeBalance, err := mc.c.IsConnectedToCeler(ctype.NativeTokenAddrStr, addr)
 	return &CelerStatus{
 		JoinStatus:  int32(joinStatus),
 		FreeBalance: freeBalance}, err
@@ -243,9 +243,9 @@ func (mc *Client) QueryReceivingCapacityOnToken(tokenAddr string, addr string) (
 		FreeBalance: freeBalance}, err
 }
 
-// Get celer offchain ETH balance
+// Get celer offchain native-token balance
 func (mc *Client) GetBalance() (*Balance, error) {
-	return mc.GetBalanceERC20(ctype.EthTokenAddrStr)
+	return mc.GetBalanceERC20(ctype.NativeTokenAddrStr)
 }
 
 // GetBalanceERC20 gets celer offchain tokenAddr balance

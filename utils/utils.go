@@ -174,8 +174,8 @@ func ValidateAndFormatAddress(address string) (ctype.Addr, error) {
 // GetTokenAddr returns token address
 func GetTokenAddr(tokenInfo *entity.TokenInfo) ctype.Addr {
 	switch tktype := tokenInfo.TokenType; tktype {
-	case entity.TokenType_ETH:
-		return ctype.EthTokenAddr
+	case entity.TokenType_NATIVE:
+		return ctype.NativeTokenAddr
 	case entity.TokenType_ERC20:
 		return ctype.Bytes2Addr(tokenInfo.TokenAddress)
 	}
@@ -188,15 +188,15 @@ func GetTokenAddrStr(tokenInfo *entity.TokenInfo) string {
 }
 
 func PrintToken(tokenInfo *entity.TokenInfo) string {
-	if tokenInfo.GetTokenType() == entity.TokenType_ETH {
-		return "ETH"
+	if tokenInfo.GetTokenType() == entity.TokenType_NATIVE {
+		return "NATIVE"
 	}
 	return GetTokenAddrStr(tokenInfo)
 }
 
 func PrintTokenAddr(tkaddr ctype.Addr) string {
-	if tkaddr == ctype.EthTokenAddr {
-		return "ETH"
+	if tkaddr == ctype.NativeTokenAddr {
+		return "NATIVE"
 	}
 	return ctype.Addr2Hex(tkaddr)
 }
@@ -205,8 +205,8 @@ func PrintTokenAddr(tkaddr ctype.Addr) string {
 // only support ERC20 for now
 func GetTokenInfoFromAddress(tkaddr ctype.Addr) *entity.TokenInfo {
 	tkInfo := new(entity.TokenInfo)
-	if tkaddr == ctype.EthTokenAddr {
-		tkInfo.TokenType = entity.TokenType_ETH
+	if tkaddr == ctype.NativeTokenAddr {
+		tkInfo.TokenType = entity.TokenType_NATIVE
 	} else {
 		tkInfo.TokenType = entity.TokenType_ERC20
 		tkInfo.TokenAddress = tkaddr.Bytes()

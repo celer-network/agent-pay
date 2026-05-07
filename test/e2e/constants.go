@@ -93,7 +93,7 @@ const (
 	oracleStoreDir          = "/tmp/oracleStore"
 
 	sendAmt      = "1"
-	tokenAddrEth = ctype.EthTokenAddrStr
+	tokenAddrNative = ctype.NativeTokenAddrStr
 
 	accountBalance      = "50000000000000000000" // 50 ETH
 	initialBalance      = "5000000000000000000"  // 5 ETH

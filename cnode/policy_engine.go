@@ -203,9 +203,12 @@ func increaseTcbCommittedTx(tx *storage.DALTx, args ...interface{}) error {
 func getDepositCapacity(nodeConfig common.GlobalNodeConfig, tokenAddr string) (*big.Int, error) {
 	conn := nodeConfig.GetEthConn()
 	tokenAddrToCheck := ctype.Hex2Addr(tokenAddr)
-	// ETH pool acts as a ERC20 for OSP. ETH capacity is on addr of Eth pool, not on OSP addr
-	if tokenAddr == ctype.EthTokenAddrStr {
-		tokenAddrToCheck = nodeConfig.GetEthPoolAddr()
+	// Native channels are funded via the chain's wrapped-native (WETH-style)
+	// contract — pre-approved WETH balance is what CelerLedger pulls when
+	// the OSP is the non-msgValueReceiver peer. Capacity therefore lives at
+	// the wrapped-native address's allowance row, not the OSP address.
+	if tokenAddr == ctype.NativeTokenAddrStr {
+		tokenAddrToCheck = nodeConfig.GetNativeWrapAddr()
 	}
 
 	erc20Contract, err := chain.NewERC20(tokenAddrToCheck, conn)

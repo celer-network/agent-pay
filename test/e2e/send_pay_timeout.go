@@ -13,11 +13,11 @@ import (
 	"github.com/celer-network/goutils/log"
 )
 
-func sendEthPayTimeout(t *testing.T) {
-	log.Info("============== start test sendEthPayTimeout ==============")
-	defer log.Info("============== end test sendEthPayTimeout ==============")
+func sendNativePayTimeout(t *testing.T) {
+	log.Info("============== start test sendNativePayTimeout ==============")
+	defer log.Info("============== end test sendNativePayTimeout ==============")
 	t.Parallel()
-	sendPayTimeout(t, entity.TokenType_ETH, tokenAddrEth)
+	sendPayTimeout(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 
 func sendPayTimeout(t *testing.T, tokenType entity.TokenType, tokenAddr string) {
@@ -27,7 +27,7 @@ func sendPayTimeout(t *testing.T, tokenType entity.TokenType, tokenAddr string) 
 		return
 	}
 	log.Infoln("create accounts for sendPayTimeout token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)

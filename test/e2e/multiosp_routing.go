@@ -28,41 +28,41 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 		o3---o1---o2
 		*/
 		// Let osp2 initiate openning channel with osp1.
-		err := ensureOpenChannel(o2AdminWeb, osp1EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrEth)
+		err := ensureOpenChannel(o2AdminWeb, osp1EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrNative)
 		if err != nil {
 			log.Warn(err)
 		}
 		// Let osp3 initiate openning channel with osp1.
-		err = ensureOpenChannel(o3AdminWeb, osp1EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrEth)
+		err = ensureOpenChannel(o3AdminWeb, osp1EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrNative)
 		if err != nil {
 			t.Error(err)
 			return
 		}
 		// Let osp4 initiate openning channel with osp1.
-		err = ensureOpenChannel(o4AdminWeb, osp1EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrEth)
+		err = ensureOpenChannel(o4AdminWeb, osp1EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrNative)
 		if err != nil {
 			t.Error(err)
 			return
 		}
 		// Let osp4 initiate openning channel with osp3.
-		err = ensureOpenChannel(o4AdminWeb, osp3EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrEth)
+		err = ensureOpenChannel(o4AdminWeb, osp3EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrNative)
 		if err != nil {
 			t.Error(err)
 			return
 		}
 		// Let osp4 initiate openning channel with osp5.
-		err = ensureOpenChannel(o4AdminWeb, osp5EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrEth)
+		err = ensureOpenChannel(o4AdminWeb, osp5EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrNative)
 		if err != nil {
 			t.Error(err)
 			return
 		}
 		// Let osp5 initiate openning channel with osp2.
-		err = ensureOpenChannel(o5AdminWeb, osp2EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrEth)
+		err = ensureOpenChannel(o5AdminWeb, osp2EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrNative)
 		if err != nil {
 			t.Error(err)
 			return
 		}
-		if err = buildRoutingTablesForEth(o1AdminWeb, o2AdminWeb, o3AdminWeb, o4AdminWeb, o5AdminWeb); err != nil {
+		if err = buildRoutingTablesForNative(o1AdminWeb, o2AdminWeb, o3AdminWeb, o4AdminWeb, o5AdminWeb); err != nil {
 			t.Error(err)
 			return
 		}
@@ -89,14 +89,14 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 			return
 		}
 		defer c5.Kill()
-		res, err := c3.OpenChannel(c3EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+		res, err := c3.OpenChannel(c3EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 		if err != nil {
 			t.Error(err)
 			return
 		}
 		c3cid := ctype.Hex2Cid(res.GetChannelId())
 		log.Infoln("channel id for c3:", ctype.Cid2Hex(c3cid))
-		res, err = c5.OpenChannel(c5EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+		res, err = c5.OpenChannel(c5EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 		if err != nil {
 			t.Error(err)
 			return
@@ -104,7 +104,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 		c5cid := ctype.Hex2Cid(res.GetChannelId())
 		log.Infoln("channel id for c5:", ctype.Cid2Hex(c5cid))
 		dal1, dal2, dal3, dal4, dal5 := getMultiOspDALs()
-		token := utils.GetTokenInfoFromAddress(ctype.Hex2Addr(tokenAddrEth))
+		token := utils.GetTokenInfoFromAddress(ctype.Hex2Addr(tokenAddrNative))
 		cid12, found, err := dal1.GetCidByPeerToken(ctype.Hex2Addr(osp2EthAddr), token)
 		if err != nil {
 			t.Error(err)
@@ -167,14 +167,14 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 		log.Infoln("channel id for o4 o5:", ctype.Cid2Hex(cid45))
 
 		sleep(8)
-		if err = buildRoutingTablesForEth(o1AdminWeb, o2AdminWeb, o3AdminWeb, o4AdminWeb, o5AdminWeb); err != nil {
+		if err = buildRoutingTablesForNative(o1AdminWeb, o2AdminWeb, o3AdminWeb, o4AdminWeb, o5AdminWeb); err != nil {
 			t.Error(err)
 			return
 		}
 		sleep(2)
 
 		log.Infoln("p1: c3 pay c5, should go through c3->o3->o4->o5->c5")
-		p1, err := c3.SendPayment(c5EthAddr, "1", entity.TokenType_ETH, tokenAddrEth)
+		p1, err := c3.SendPayment(c5EthAddr, "1", entity.TokenType_NATIVE, tokenAddrNative)
 		if err != nil {
 			t.Error(err)
 			return
@@ -185,7 +185,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 			return
 		}
 		err = c3.AssertBalance(
-			tokenAddrEth,
+			tokenAddrNative,
 			tf.AddAmtStr(initialBalance, "-1"),
 			"0",
 			tf.AddAmtStr(initialBalance, "1"))
@@ -194,7 +194,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 			return
 		}
 		err = c5.AssertBalance(
-			tokenAddrEth,
+			tokenAddrNative,
 			tf.AddAmtStr(initialBalance, "1"),
 			"0",
 			tf.AddAmtStr(initialBalance, "-1"))
@@ -227,7 +227,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 		sleep(12)
 
 		log.Infoln("p2: o3 pay o5, should go through o3->o1->o2->o5")
-		p2, err := requestSendToken(o3AdminWeb, osp5EthAddr, "1", tokenAddrEth)
+		p2, err := requestSendToken(o3AdminWeb, osp5EthAddr, "1", tokenAddrNative)
 		if err != nil {
 			t.Error(err)
 			return
@@ -258,7 +258,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 		}
 
 		log.Infoln("p3: c5 pay c3, should go through c5->o5->o2->o1->o3->c3")
-		p3, err := c5.SendPayment(c3EthAddr, "1", entity.TokenType_ETH, tokenAddrEth)
+		p3, err := c5.SendPayment(c3EthAddr, "1", entity.TokenType_NATIVE, tokenAddrNative)
 		if err != nil {
 			t.Error(err)
 			return
@@ -268,12 +268,12 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 			t.Error(err)
 			return
 		}
-		err = c3.AssertBalance(tokenAddrEth, initialBalance, "0", initialBalance)
+		err = c3.AssertBalance(tokenAddrNative, initialBalance, "0", initialBalance)
 		if err != nil {
 			t.Error(err)
 			return
 		}
-		err = c5.AssertBalance(tokenAddrEth, initialBalance, "0", initialBalance)
+		err = c5.AssertBalance(tokenAddrNative, initialBalance, "0", initialBalance)
 		if err != nil {
 			t.Error(err)
 			return
@@ -298,7 +298,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 
 		sleep(20)
 		log.Infoln("p4: o5 pay o3, should go through o5->o2->o1->o3, as o4 has not registered stream with o1 and o3")
-		p4, err := requestSendToken(o5AdminWeb, osp3EthAddr, "1", tokenAddrEth)
+		p4, err := requestSendToken(o5AdminWeb, osp3EthAddr, "1", tokenAddrNative)
 		if err != nil {
 			t.Error(err)
 			return
@@ -334,7 +334,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 
 		sleep(8)
 		log.Infoln("p5: c5 pay c3, should go through c5->o5->o4->o3->c3")
-		p5, err := c5.SendPayment(c3EthAddr, "1", entity.TokenType_ETH, tokenAddrEth)
+		p5, err := c5.SendPayment(c3EthAddr, "1", entity.TokenType_NATIVE, tokenAddrNative)
 		if err != nil {
 			t.Error(err)
 			return
@@ -345,7 +345,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 			return
 		}
 		err = c3.AssertBalance(
-			tokenAddrEth,
+			tokenAddrNative,
 			tf.AddAmtStr(initialBalance, "1"),
 			"0",
 			tf.AddAmtStr(initialBalance, "-1"))
@@ -354,7 +354,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 			return
 		}
 		err = c5.AssertBalance(
-			tokenAddrEth,
+			tokenAddrNative,
 			tf.AddAmtStr(initialBalance, "-1"),
 			"0",
 			tf.AddAmtStr(initialBalance, "1"))
@@ -372,7 +372,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 		log.Info("p6: c5 pay random addr, expect loop route c5->o5->o4->o1->o3->o4")
 		// Use the default route settings to create a pay loop.
 		randAddr := "7a6d2a97da1c453a4e099e8054865a0a59728863"
-		p6, err := c5.SendPayment(randAddr, "1", entity.TokenType_ETH, tokenAddrEth)
+		p6, err := c5.SendPayment(randAddr, "1", entity.TokenType_NATIVE, tokenAddrNative)
 		if err != nil {
 			t.Error(err)
 			return
@@ -385,7 +385,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 
 		// pay should be rolled back, remaining balance shouldn't change.
 		err = c5.AssertBalance(
-			tokenAddrEth,
+			tokenAddrNative,
 			tf.AddAmtStr(initialBalance, "-1"),
 			"0",
 			tf.AddAmtStr(initialBalance, "1"))
@@ -436,7 +436,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 		// Pay timeout in seconds. Short for fast CI.
 		timeout := uint64(5)
 		p7, err := c3.SendPaymentWithBooleanConditions(
-			c5EthAddr, sendAmt, entity.TokenType_ETH, tokenAddrEth, []*entity.Condition{c3Cond1}, timeout)
+			c5EthAddr, sendAmt, entity.TokenType_NATIVE, tokenAddrNative, []*entity.Condition{c3Cond1}, timeout)
 		if err != nil {
 			t.Error(err)
 			return
@@ -449,7 +449,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 			return
 		}
 		err = c3.AssertBalance(
-			tokenAddrEth,
+			tokenAddrNative,
 			tf.AddAmtStr(initialBalance, "0"),
 			"1",
 			tf.AddAmtStr(initialBalance, "-1"))
@@ -458,7 +458,7 @@ func multiOspRouting(args ...*tf.ServerController) func(*testing.T) {
 			return
 		}
 		err = c5.AssertBalance(
-			tokenAddrEth,
+			tokenAddrNative,
 			tf.AddAmtStr(initialBalance, "-1"),
 			"0",
 			tf.AddAmtStr(initialBalance, "0"))

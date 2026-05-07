@@ -42,7 +42,7 @@ type testNodeConfig struct {
 }
 
 func (c testNodeConfig) GetOnChainAddr() ctype.Addr                    { return c.self }
-func (testNodeConfig) GetEthPoolAddr() ctype.Addr                      { return ctype.ZeroAddr }
+func (testNodeConfig) GetNativeWrapAddr() ctype.Addr                      { return ctype.ZeroAddr }
 func (testNodeConfig) GetEthConn() *ethclient.Client                   { return nil }
 func (testNodeConfig) GetRPCAddr() string                              { return "" }
 func (testNodeConfig) GetSvrName() string                              { return "" }
@@ -104,7 +104,7 @@ func TestUpdateOnChainBalanceAdvancesJobForOsp(t *testing.T) {
 	cid := ctype.Hex2Cid("abc123")
 	dal := newTestDAL(t)
 
-	token := utils.GetTokenInfoFromAddress(ctype.EthTokenAddr)
+	token := utils.GetTokenInfoFromAddress(ctype.NativeTokenAddr)
 	openResp := &rpc.OpenChannelResponse{}
 	onChainBalance := &structs.OnChainBalance{}
 	simplex := &rpc.SignedSimplexState{}

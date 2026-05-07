@@ -61,7 +61,7 @@ func paymentFromCondPay(
 		PayNoteJSON:  payNoteJSON,
 		PayTimestamp: payTimestamp,
 	}
-	if maxTransfer.Token.TokenType == entity.TokenType_ETH {
+	if maxTransfer.Token.TokenType == entity.TokenType_NATIVE {
 		payment.TokenAddr = ""
 	}
 	return payment
@@ -70,8 +70,8 @@ func paymentFromCondPay(
 func paymentInfoFromPayment(payment *celersdkintf.Payment) *rpc.PaymentInfo {
 	tokenAddr := ctype.Hex2Addr(payment.TokenAddr)
 	var tokenType entity.TokenType
-	if tokenAddr == ctype.Hex2Addr(ctype.EthTokenAddrStr) {
-		tokenType = entity.TokenType_ETH
+	if tokenAddr == ctype.Hex2Addr(ctype.NativeTokenAddrStr) {
+		tokenType = entity.TokenType_NATIVE
 	} else {
 		tokenType = entity.TokenType_ERC20
 	}

@@ -15,11 +15,11 @@ import (
 	"github.com/celer-network/goutils/log"
 )
 
-func sendCondPayWithEth(t *testing.T) {
-	log.Info("============== start test sendCondPayWithEth ==============")
-	defer log.Info("============== end test sendCondPayWithEth ==============")
+func sendCondPayWithNative(t *testing.T) {
+	log.Info("============== start test sendCondPayWithNative ==============")
+	defer log.Info("============== end test sendCondPayWithNative ==============")
 	t.Parallel()
-	sendCondPay(t, entity.TokenType_ETH, tokenAddrEth)
+	sendCondPay(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 func sendCondPayWithErc20(t *testing.T) {
 	log.Info("============== start test sendCondPayWithErc20 ==============")
@@ -27,17 +27,17 @@ func sendCondPayWithErc20(t *testing.T) {
 	t.Parallel()
 	sendCondPay(t, entity.TokenType_ERC20, tokenAddrErc20)
 }
-func sendCondPayWithEthDstOffline(t *testing.T) {
-	log.Info("============== start test sendCondPayWithEthDstOffline ==============")
-	defer log.Info("============== end test sendCondPayWithEthDstOffline ==============")
+func sendCondPayWithNativeDstOffline(t *testing.T) {
+	log.Info("============== start test sendCondPayWithNativeDstOffline ==============")
+	defer log.Info("============== end test sendCondPayWithNativeDstOffline ==============")
 	t.Parallel()
-	sendCondPayDstOffline(t, entity.TokenType_ETH, tokenAddrEth)
+	sendCondPayDstOffline(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 func delegateSendEth(t *testing.T) {
 	log.Info("============== start test delegateSendEth ==============")
 	defer log.Info("============== end test delegateSendEth ==============")
 	t.Parallel()
-	delegateSendCondPay(t, entity.TokenType_ETH, tokenAddrEth)
+	delegateSendCondPay(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 func delegateSendErc20(t *testing.T) {
 	log.Info("============== start test delegateSendErc20 ==============")
@@ -45,11 +45,11 @@ func delegateSendErc20(t *testing.T) {
 	t.Parallel()
 	delegateSendCondPay(t, entity.TokenType_ERC20, tokenAddrErc20)
 }
-func sendCondPayWithEthToOSP(t *testing.T) {
-	log.Info("============== start test sendCondPayWithEthToOSP ==============")
-	defer log.Info("============== end test sendCondPayWithEthToOSP ==============")
+func sendCondPayWithNativeToOSP(t *testing.T) {
+	log.Info("============== start test sendCondPayWithNativeToOSP ==============")
+	defer log.Info("============== end test sendCondPayWithNativeToOSP ==============")
 	t.Parallel()
-	sendCondPayToOSP(t, entity.TokenType_ETH, tokenAddrEth)
+	sendCondPayToOSP(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 func sendCondPayNoEnoughErc20AtSrc(t *testing.T) {
 	log.Info("============== start test sendCondPayNoEnoughErc20AtSrc ==============")
@@ -74,7 +74,7 @@ func sendCondPayNoEnoughFundAtSrc(t *testing.T, tokenType entity.TokenType, toke
 		return
 	}
 	log.Infoln("create accounts for sendCondPayNoEnoughFundAtSrc token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)
@@ -135,7 +135,7 @@ func sendCondPayNoEnoughFundAtOsp(t *testing.T, tokenType entity.TokenType, toke
 		return
 	}
 	log.Infoln("create accounts for sendCondPayNoEnoughFundAtOsp token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)
@@ -236,7 +236,7 @@ func sendCondPayDstOffline(t *testing.T, tokenType entity.TokenType, tokenAddr s
 		return
 	}
 	log.Infoln("create accounts for sendCondPayDstOffline token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)
@@ -426,7 +426,7 @@ func delegateSendCondPay(t *testing.T, tokenType entity.TokenType, tokenAddr str
 		return
 	}
 	log.Infoln("create accounts for delegateSendCondPay token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)
@@ -545,7 +545,7 @@ func sendCondPay(t *testing.T, tokenType entity.TokenType, tokenAddr string) {
 		return
 	}
 	log.Infoln("create accounts for sendCondPay token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)
@@ -661,7 +661,7 @@ func sendCondPayToOSP(t *testing.T, tokenType entity.TokenType, tokenAddr string
 		return
 	}
 	log.Infoln("create accounts for sendCondPayToOSP token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)

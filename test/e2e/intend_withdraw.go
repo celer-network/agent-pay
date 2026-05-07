@@ -31,7 +31,7 @@ func ospIntendWithdraw(t *testing.T, tokenType entity.TokenType, tokenAddr strin
 		return
 	}
 	log.Infoln("create accounts for ospIntendWithdraw token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)
@@ -121,7 +121,7 @@ func clientIntendWithdraw(t *testing.T, tokenType entity.TokenType, tokenAddr st
 		return
 	}
 	log.Infoln("create accounts for clientIntendWithdraw token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)

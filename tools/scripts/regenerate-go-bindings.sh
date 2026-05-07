@@ -81,7 +81,7 @@ generate_binding() {
 
 generate_binding out/LedgerBalanceLimit.sol/LedgerBalanceLimit.json chain/channel-eth-go/balancelimit/balancelimit.go balancelimit LedgerBalanceLimit
 generate_binding out/LedgerChannel.sol/LedgerChannel.json chain/channel-eth-go/channel/channel.go channel LedgerChannel
-generate_binding out/EthPool.sol/EthPool.json chain/channel-eth-go/ethpool/ethpool.go ethpool EthPool
+generate_binding out/NativeWrapMock.sol/NativeWrapMock.json chain/channel-eth-go/nativewrap/nativewrap.go nativewrap NativeWrap
 generate_binding out/CelerLedger.sol/CelerLedger.json chain/channel-eth-go/ledger/ledger.go ledger CelerLedger
 generate_binding out/LedgerStruct.sol/LedgerStruct.json chain/channel-eth-go/ledgerstruct/ledgerstruct.go ledgerstruct LedgerStruct
 generate_binding out/LedgerMigrate.sol/LedgerMigrate.json chain/channel-eth-go/migrate/migrate.go migrate LedgerMigrate
