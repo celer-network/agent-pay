@@ -79,8 +79,8 @@ func RequestRegisterStream(adminHostPort string, peerAddr ctype.Addr, peerHostPo
 
 func RequestOpenChannel(adminHostPort string, peerAddr, tokenAddr ctype.Addr, peerDeposit, selfDeposit *big.Int) error {
 	tokenType := entity.TokenType_ERC20
-	if tokenAddr == ctype.EthTokenAddr {
-		tokenType = entity.TokenType_ETH
+	if tokenAddr == ctype.NativeTokenAddr {
+		tokenType = entity.TokenType_NATIVE
 	}
 	request := &rpc.OspOpenChannelRequest{
 		PeerEthAddress:    peerAddr.Bytes(),

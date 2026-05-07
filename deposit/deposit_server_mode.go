@@ -398,8 +398,8 @@ func (p *Processor) checkRefillPool(ledgerAddr ctype.Addr, tokenSet map[ctype.Ad
 			// no refill for this token
 			continue
 		}
-		if tokenAddr == ctype.EthTokenAddr {
-			tokenAddr = p.nodeConfig.GetEthPoolAddr()
+		if tokenAddr == ctype.NativeTokenAddr {
+			tokenAddr = p.nodeConfig.GetNativeWrapAddr()
 		}
 		erc20, err := chain.NewERC20Caller(tokenAddr, p.nodeConfig.GetEthConn())
 		if err != nil {

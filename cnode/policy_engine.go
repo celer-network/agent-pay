@@ -204,8 +204,8 @@ func getDepositCapacity(nodeConfig common.GlobalNodeConfig, tokenAddr string) (*
 	conn := nodeConfig.GetEthConn()
 	tokenAddrToCheck := ctype.Hex2Addr(tokenAddr)
 	// ETH pool acts as a ERC20 for OSP. ETH capacity is on addr of Eth pool, not on OSP addr
-	if tokenAddr == ctype.EthTokenAddrStr {
-		tokenAddrToCheck = nodeConfig.GetEthPoolAddr()
+	if tokenAddr == ctype.NativeTokenAddrStr {
+		tokenAddrToCheck = nodeConfig.GetNativeWrapAddr()
 	}
 
 	erc20Contract, err := chain.NewERC20(tokenAddrToCheck, conn)

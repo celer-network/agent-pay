@@ -57,7 +57,7 @@ func (s *InternalApiServer) OpenTrustedPaymentChannel(
 	callbackImpl := s.callbackImpl
 	tokenInfo := request.TokenInfo
 	switch entity.TokenType(tokenInfo.TokenType) {
-	case entity.TokenType_ETH:
+	case entity.TokenType_NATIVE:
 		go s.apiClient.TcbOpenETHChannel(
 			request.PeerAmount,
 			s.callbackImpl)
@@ -80,7 +80,7 @@ func (s *InternalApiServer) OpenTrustedPaymentChannel(
 func (s *InternalApiServer) InstantiateTrustedPaymentChannel(
 	context context.Context, request *rpc.TokenInfo) (*rpc.ChannelID, error) {
 	var ercType string
-	if request.TokenType == entity.TokenType_ETH {
+	if request.TokenType == entity.TokenType_NATIVE {
 		ercType = ""
 	} else {
 		ercType = "ERC20"

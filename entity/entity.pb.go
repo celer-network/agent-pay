@@ -28,7 +28,7 @@ type TokenType int32
 
 const (
 	TokenType_INVALID TokenType = 0
-	TokenType_ETH     TokenType = 1
+	TokenType_NATIVE  TokenType = 1
 	TokenType_ERC20   TokenType = 2
 )
 
@@ -36,12 +36,12 @@ const (
 var (
 	TokenType_name = map[int32]string{
 		0: "INVALID",
-		1: "ETH",
+		1: "NATIVE",
 		2: "ERC20",
 	}
 	TokenType_value = map[string]int32{
 		"INVALID": 0,
-		"ETH":     1,
+		"NATIVE":  1,
 		"ERC20":   2,
 	}
 )
@@ -1377,10 +1377,11 @@ const file_entity_proto_rawDesc = "" +
 	"\xca>\aaddressR\x11fromLedgerAddress\x126\n" +
 	"\x11to_ledger_address\x18\x03 \x01(\fB\n" +
 	"\xca>\aaddressR\x0ftoLedgerAddress\x126\n" +
-	"\x12migration_deadline\x18\x04 \x01(\x04B\a\xca>\x04uintR\x11migrationDeadline*,\n" +
+	"\x12migration_deadline\x18\x04 \x01(\x04B\a\xca>\x04uintR\x11migrationDeadline*/\n" +
 	"\tTokenType\x12\v\n" +
-	"\aINVALID\x10\x00\x12\a\n" +
-	"\x03ETH\x10\x01\x12\t\n" +
+	"\aINVALID\x10\x00\x12\n" +
+	"\n" +
+	"\x06NATIVE\x10\x01\x12\t\n" +
 	"\x05ERC20\x10\x02*\x7f\n" +
 	"\x14TransferFunctionType\x12\x0f\n" +
 	"\vBOOLEAN_AND\x10\x00\x12\x0e\n" +

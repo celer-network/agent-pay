@@ -711,7 +711,7 @@ func (s *adminService) SendToken(ctx context.Context, in *rpc.SendTokenRequest) 
 	}
 	tokenTransfer := &entity.TokenTransfer{
 		Token: &entity.TokenInfo{
-			TokenType: entity.TokenType_ETH,
+			TokenType: entity.TokenType_NATIVE,
 		},
 		Receiver: &entity.AccountAmtPair{
 			Account: dstAddr,
@@ -723,7 +723,7 @@ func (s *adminService) SendToken(ctx context.Context, in *rpc.SendTokenRequest) 
 		if err2 != nil {
 			return &rpc.SendTokenResponse{Status: 1, Error: "Can't parse token address."}, status.Error(codes.InvalidArgument, "Can't parse token address")
 		}
-		if tokenAddr != ctype.EthTokenAddr {
+		if tokenAddr != ctype.NativeTokenAddr {
 			tokenTransfer.Token.TokenAddress = tokenAddr.Bytes()
 			tokenTransfer.Token.TokenType = entity.TokenType_ERC20
 		}

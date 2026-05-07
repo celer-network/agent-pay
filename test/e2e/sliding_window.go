@@ -12,11 +12,11 @@ import (
 	"github.com/celer-network/goutils/log"
 )
 
-func slidingWindowEth(t *testing.T) {
+func slidingWindowNative(t *testing.T) {
 	log.Info("============== start test slidingWindow ==============")
 	defer log.Info("============== end test slidingWindow ==============")
 	t.Parallel()
-	slidingWindow(t, entity.TokenType_ETH, tokenAddrEth)
+	slidingWindow(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 
 func slidingWindow(t *testing.T, tokenType entity.TokenType, tokenAddr string) {
@@ -26,7 +26,7 @@ func slidingWindow(t *testing.T, tokenType entity.TokenType, tokenAddr string) {
 		return
 	}
 	log.Infoln("create accounts for slidingWindow token", tokenAddr, addrs)
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)

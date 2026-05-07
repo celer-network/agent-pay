@@ -87,7 +87,7 @@ func condPayToPayment(
 		PayNoteJSON:  payNoteJSON,
 		PayTimestamp: payTimestamp,
 	}
-	if maxTransfer.Token.TokenType == entity.TokenType_ETH {
+	if maxTransfer.Token.TokenType == entity.TokenType_NATIVE {
 		p.TokenAddr = ""
 	}
 	return p

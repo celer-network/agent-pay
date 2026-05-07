@@ -24,7 +24,7 @@ func authSync(t *testing.T) {
 
 // open eth channel and erc20 tcb
 func openchannel(c *tf.ClientController, eth string) error {
-	_, err := c.OpenChannel(eth, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	_, err := c.OpenChannel(eth, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 	if err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func authsynctest(t *testing.T) {
 		return
 	}
 	defer c1.Kill()
-	err = c1.AssertBalance(tokenAddrEth, initialBalance, "0", initialBalance)
+	err = c1.AssertBalance(tokenAddrNative, initialBalance, "0", initialBalance)
 	if err != nil {
 		t.Error(err)
 		return
@@ -122,7 +122,7 @@ func authsynctest(t *testing.T) {
 	// drop recv so cosign lost
 	c1.SetMsgDropper(true, false)
 	// direct pays
-	p1, err := c1.SendPayment(ospEthAddr, "1", entity.TokenType_ETH, tokenAddrEth)
+	p1, err := c1.SendPayment(ospEthAddr, "1", entity.TokenType_NATIVE, tokenAddrNative)
 	if err != nil {
 		t.Error(err)
 		return
@@ -175,7 +175,7 @@ func authsynctest(t *testing.T) {
 	}
 
 	err = c1.AssertBalance(
-		tokenAddrEth,
+		tokenAddrNative,
 		tf.AddAmtStr(initialBalance, "-1"),
 		"0",
 		tf.AddAmtStr(initialBalance, "1"))
@@ -200,7 +200,7 @@ func authsynctest(t *testing.T) {
 	c1, err = startNewC1(c1KeyStore)
 	defer c1.Kill()
 
-	p4, err := c1.SendPayment(ospEthAddr, "1", entity.TokenType_ETH, tokenAddrEth)
+	p4, err := c1.SendPayment(ospEthAddr, "1", entity.TokenType_NATIVE, tokenAddrNative)
 	if err != nil {
 		t.Error(err)
 		return
@@ -216,7 +216,7 @@ func authsynctest(t *testing.T) {
 	}
 
 	err = c1.AssertBalance(
-		tokenAddrEth,
+		tokenAddrNative,
 		tf.AddAmtStr(initialBalance, "-1", "-1"),
 		"0",
 		tf.AddAmtStr(initialBalance, "1", "1"))
@@ -240,10 +240,10 @@ func authsynctest(t *testing.T) {
 	log.Info("------------ set c1 to drop incomoing and outgoing payments --------")
 	c1.SetMsgDropper(true, true)
 
-	requestSvrSendToken(c1EthAddr, "10", tokenAddrEth)
-	requestSvrSendToken(c1EthAddr, "10", tokenAddrEth)
+	requestSvrSendToken(c1EthAddr, "10", tokenAddrNative)
+	requestSvrSendToken(c1EthAddr, "10", tokenAddrNative)
 
-	p5, err := c1.SendPayment(ospEthAddr, "99", entity.TokenType_ETH, tokenAddrEth)
+	p5, err := c1.SendPayment(ospEthAddr, "99", entity.TokenType_NATIVE, tokenAddrNative)
 	log.Infoln("send p5", p5, "which should be eventually canceled")
 	if !checkOutPayState(c1, p5, structs.PayState_ONESIG_PAID) {
 		t.Error("wrong paystate. payid: ", p5)
@@ -251,7 +251,7 @@ func authsynctest(t *testing.T) {
 	}
 
 	err = c1.AssertBalance(
-		tokenAddrEth,
+		tokenAddrNative,
 		tf.AddAmtStr(initialBalance, "-1", "-1", "-99"),
 		"0",
 		tf.AddAmtStr(initialBalance, "1", "1", "99"))
@@ -283,7 +283,7 @@ func authsynctest(t *testing.T) {
 	defer c1.Kill()
 
 	err = c1.AssertBalance(
-		tokenAddrEth,
+		tokenAddrNative,
 		tf.AddAmtStr(initialBalance, "-1", "-1", "20"),
 		"0",
 		tf.AddAmtStr(initialBalance, "1", "1", "-20"))
@@ -302,9 +302,9 @@ func authsynctest(t *testing.T) {
 		return
 	}
 
-	requestSvrSendToken(c1EthAddr, "2", tokenAddrEth)
+	requestSvrSendToken(c1EthAddr, "2", tokenAddrNative)
 
-	p6, err := c1.SendPayment(ospEthAddr, "5", entity.TokenType_ETH, tokenAddrEth)
+	p6, err := c1.SendPayment(ospEthAddr, "5", entity.TokenType_NATIVE, tokenAddrNative)
 	if err != nil {
 		t.Error(err)
 		return
@@ -320,7 +320,7 @@ func authsynctest(t *testing.T) {
 	}
 
 	err = c1.AssertBalance(
-		tokenAddrEth,
+		tokenAddrNative,
 		tf.AddAmtStr(initialBalance, "-1", "-1", "20", "2", "-5"),
 		"0",
 		tf.AddAmtStr(initialBalance, "1", "1", "-20", "-2", "5"))
@@ -360,7 +360,7 @@ func authsynctest(t *testing.T) {
 	defer c1.Kill()
 
 	err = c1.AssertBalance(
-		tokenAddrEth,
+		tokenAddrNative,
 		tf.AddAmtStr(initialBalance, "-1", "-1", "20", "2", "-5"),
 		"0",
 		tf.AddAmtStr(initialBalance, "1", "1", "-20", "-2", "5"))
@@ -382,7 +382,7 @@ func authsynctest(t *testing.T) {
 	// NOTE: p5 should be COSIGNED_CANCELED by the current stage, but is now set to COSIGNED_PAID due to
 	// current implementation limitation. see the WARNING comment at the begining of cnode/auth.go
 
-	p8, err := c1.SendPayment(ospEthAddr, "10", entity.TokenType_ETH, tokenAddrEth)
+	p8, err := c1.SendPayment(ospEthAddr, "10", entity.TokenType_NATIVE, tokenAddrNative)
 	if err != nil {
 		t.Error(err)
 		return
@@ -398,7 +398,7 @@ func authsynctest(t *testing.T) {
 	}
 
 	err = c1.AssertBalance(
-		tokenAddrEth,
+		tokenAddrNative,
 		tf.AddAmtStr(initialBalance, "-1", "-1", "20", "2", "-5", "-10"),
 		"0",
 		tf.AddAmtStr(initialBalance, "1", "1", "-20", "-2", "5", "10"))

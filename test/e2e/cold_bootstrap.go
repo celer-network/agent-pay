@@ -51,20 +51,20 @@ func coldBootstrap(t *testing.T) {
 	}
 	defer c2.Kill()
 
-	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 	const c2PeerAmt = "800000000000000000"
-	_, err = c2.OpenChannel(c2EthAddr, entity.TokenType_ETH, tokenAddrEth, "0", c2PeerAmt)
+	_, err = c2.OpenChannel(c2EthAddr, entity.TokenType_NATIVE, tokenAddrNative, "0", c2PeerAmt)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
 	log.Info("===== Client-1 sends payment to client-2 =====")
-	p1, err := c1.SendPayment(c2EthAddr, sendAmt, entity.TokenType_ETH, tokenAddrEth)
+	p1, err := c1.SendPayment(c2EthAddr, sendAmt, entity.TokenType_NATIVE, tokenAddrNative)
 	if err != nil {
 		t.Error(err)
 		return
@@ -78,7 +78,7 @@ func coldBootstrap(t *testing.T) {
 
 	const c2BalanceBefore = "800000000000000000"
 	err = c1.AssertBalance(
-		tokenAddrEth,
+		tokenAddrNative,
 		tf.AddAmtStr(initialBalance, "-1"),
 		"0",
 		tf.AddAmtStr(initialBalance, "1"))
@@ -86,7 +86,7 @@ func coldBootstrap(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	err = c2.AssertBalance(tokenAddrEth, "1", "0", tf.AddAmtStr(c2BalanceBefore, "-1"))
+	err = c2.AssertBalance(tokenAddrNative, "1", "0", tf.AddAmtStr(c2BalanceBefore, "-1"))
 	if err != nil {
 		t.Error(err)
 		return
@@ -295,10 +295,10 @@ func concurrentOpenChannel(t *testing.T) {
 	errCh := make(chan error)
 	go func() {
 		time.Sleep(100 * time.Millisecond)
-		_, err2 := c1.TcbOpenChannel(c1EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance)
+		_, err2 := c1.TcbOpenChannel(c1EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance)
 		errCh <- err2
 	}()
-	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_ETH, tokenAddrEth, "0", initialBalance)
+	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_NATIVE, tokenAddrNative, "0", initialBalance)
 	err2 := <-errCh
 	if err == nil && err2 == nil {
 		// Cannot both succeed.

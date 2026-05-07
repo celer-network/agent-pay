@@ -58,7 +58,7 @@ func sdkToken2entityToken(tk *Token) *entity.TokenInfo {
 	var token *entity.TokenInfo
 	if tk == nil { // ETH case
 		token = &entity.TokenInfo{
-			TokenType: entity.TokenType_ETH,
+			TokenType: entity.TokenType_NATIVE,
 		}
 	} else {
 		token = &entity.TokenInfo{

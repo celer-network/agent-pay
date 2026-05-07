@@ -67,7 +67,7 @@ func (p *Processor) prepareJob(amount *big.Int, cid ctype.CidType) (*structs.Dep
 	}
 	tokenAddr := utils.GetTokenAddr(token)
 	// Deposit ETH
-	if tokenAddr == ctype.EthTokenAddr {
+	if tokenAddr == ctype.NativeTokenAddr {
 		depositTxHash, depositErr := p.sendDepositTx(cid, amount, big.NewInt(0))
 		if depositErr != nil {
 			return nil, depositErr

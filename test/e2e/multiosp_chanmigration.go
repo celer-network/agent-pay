@@ -21,13 +21,13 @@ func migrateChannelBetweenOsps(args ...*tf.ServerController) func(*testing.T) {
 		o1 := args[0]
 		o2 := args[1]
 		// Let osp2 initiate openning channel with osp1.
-		err := ensureOpenChannel(o2AdminWeb, ospEthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrEth)
+		err := ensureOpenChannel(o2AdminWeb, ospEthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrNative)
 		if err != nil {
 			log.Warn(err)
 		}
 
-		tokenType := entity.TokenType_ETH
-		tokenAddr := tokenAddrEth
+		tokenType := entity.TokenType_NATIVE
+		tokenAddr := tokenAddrNative
 		ks, addrs, err := tf.CreateAccountsWithBalance(1, accountBalance)
 		if err != nil {
 			t.Error(err)

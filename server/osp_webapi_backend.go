@@ -180,8 +180,8 @@ func buildTokenTransfer(tokenInfo *webrpc.TokenInfo, destination string, amount 
 
 func webTokenToEntityToken(tokenInfo *webrpc.TokenInfo) (*entity.TokenInfo, error) {
 	switch tokenInfo.GetTokenType() {
-	case entity.TokenType_ETH:
-		return &entity.TokenInfo{TokenType: entity.TokenType_ETH}, nil
+	case entity.TokenType_NATIVE:
+		return &entity.TokenInfo{TokenType: entity.TokenType_NATIVE}, nil
 	case entity.TokenType_ERC20:
 		tokenAddr, err := utils.ValidateAndFormatAddress(tokenInfo.GetTokenAddress())
 		if err != nil {

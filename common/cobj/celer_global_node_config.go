@@ -18,7 +18,7 @@ type CelerGlobalNodeConfig struct {
 	onchainAddr            ctype.Addr
 	rpcAddr                string
 	svrName                string
-	ethPoolAddr            ctype.Addr
+	nativeWrapAddr         ctype.Addr
 	ethConn                *ethclient.Client
 	walletContract         chain.Contract
 	ledgerContract         chain.Contract
@@ -68,7 +68,7 @@ func NewCelerGlobalNodeConfig(
 		onchainAddr:            onchainAddr,
 		rpcAddr:                profile.SelfRPC,
 		svrName:                profile.SvrName,
-		ethPoolAddr:            ctype.Hex2Addr(profile.EthPoolAddr),
+		nativeWrapAddr:            ctype.Hex2Addr(profile.NativeWrapAddr),
 		ethConn:                ethconn,
 		walletContract:         walletContract,
 		ledgerContract:         ledgerContract,
@@ -85,8 +85,8 @@ func NewCelerGlobalNodeConfig(
 func (config *CelerGlobalNodeConfig) GetOnChainAddr() ctype.Addr {
 	return config.onchainAddr
 }
-func (config *CelerGlobalNodeConfig) GetEthPoolAddr() ctype.Addr {
-	return config.ethPoolAddr
+func (config *CelerGlobalNodeConfig) GetNativeWrapAddr() ctype.Addr {
+	return config.nativeWrapAddr
 }
 func (config *CelerGlobalNodeConfig) GetEthConn() *ethclient.Client {
 	return config.ethConn

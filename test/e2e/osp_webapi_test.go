@@ -60,13 +60,13 @@ func TestOSPWebApiRoutingBehavior(t *testing.T) {
 	}
 	defer c2.Kill()
 
-	if _, err = c1.OpenChannel(c1EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance); err != nil {
+	if _, err = c1.OpenChannel(c1EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance); err != nil {
 		t.Fatal(err)
 	}
-	if _, err = c2.OpenChannel(c2EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance); err != nil {
+	if _, err = c2.OpenChannel(c2EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance); err != nil {
 		t.Fatal(err)
 	}
-	if err = buildRoutingTablesForEth(o1AdminWeb, o2AdminWeb); err != nil {
+	if err = buildRoutingTablesForNative(o1AdminWeb, o2AdminWeb); err != nil {
 		t.Fatal(err)
 	}
 	time.Sleep(2 * time.Second)
@@ -78,7 +78,7 @@ func TestOSPWebApiRoutingBehavior(t *testing.T) {
 	defer conn.Close()
 
 	directResp, err := ospClient.SendToken(context.Background(), &webrpc.SendTokenRequest{
-		TokenInfo:   &webrpc.TokenInfo{TokenType: entity.TokenType_ETH, TokenAddress: tokenAddrEth},
+		TokenInfo:   &webrpc.TokenInfo{TokenType: entity.TokenType_NATIVE, TokenAddress: tokenAddrNative},
 		Destination: c1EthAddr,
 		Amount:      sendAmt,
 	})
@@ -93,7 +93,7 @@ func TestOSPWebApiRoutingBehavior(t *testing.T) {
 	}
 
 	routedResp, err := ospClient.SendToken(context.Background(), &webrpc.SendTokenRequest{
-		TokenInfo:   &webrpc.TokenInfo{TokenType: entity.TokenType_ETH, TokenAddress: tokenAddrEth},
+		TokenInfo:   &webrpc.TokenInfo{TokenType: entity.TokenType_NATIVE, TokenAddress: tokenAddrNative},
 		Destination: c2EthAddr,
 		Amount:      sendAmt,
 	})
@@ -125,7 +125,7 @@ func ospWebApiPaySubset(t *testing.T) {
 	}
 	defer c1.Kill()
 
-	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -152,7 +152,7 @@ func ospWebApiPaySubset(t *testing.T) {
 	}()
 
 	outgoingResp, err := ospClient.SendToken(context.Background(), &webrpc.SendTokenRequest{
-		TokenInfo:   &webrpc.TokenInfo{TokenType: entity.TokenType_ETH, TokenAddress: tokenAddrEth},
+		TokenInfo:   &webrpc.TokenInfo{TokenType: entity.TokenType_NATIVE, TokenAddress: tokenAddrNative},
 		Destination: c1EthAddr,
 		Amount:      sendAmt,
 	})
@@ -186,8 +186,8 @@ func ospWebApiPaySubset(t *testing.T) {
 	incomingPayID, err := c1.SendPaymentWithBooleanConditions(
 		ospEthAddr,
 		sendAmt,
-		entity.TokenType_ETH,
-		tokenAddrEth,
+		entity.TokenType_NATIVE,
+		tokenAddrNative,
 		[]*entity.Condition{cond},
 		100)
 	if err != nil {
@@ -226,7 +226,7 @@ func ospWebApiPaySubset(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, err = ospClient.GetBalance(context.Background(), &webrpc.TokenInfo{TokenType: entity.TokenType_ETH, TokenAddress: tokenAddrEth})
+	_, err = ospClient.GetBalance(context.Background(), &webrpc.TokenInfo{TokenType: entity.TokenType_NATIVE, TokenAddress: tokenAddrNative})
 	if status.Code(err) != codes.Unimplemented {
 		t.Fatalf("GetBalance error code = %v, want %v (err=%v)", status.Code(err), codes.Unimplemented, err)
 	}
@@ -249,7 +249,7 @@ func ospWebApiAppSessionSubset(t *testing.T) {
 	}
 	defer c1.Kill()
 
-	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -277,7 +277,7 @@ func ospWebApiAppSessionSubset(t *testing.T) {
 	}
 
 	payResp, err := ospClient.SendConditionalPayment(context.Background(), &webrpc.SendConditionalPaymentRequest{
-		TokenInfo:         &webrpc.TokenInfo{TokenType: entity.TokenType_ETH, TokenAddress: tokenAddrEth},
+		TokenInfo:         &webrpc.TokenInfo{TokenType: entity.TokenType_NATIVE, TokenAddress: tokenAddrNative},
 		Destination:       c1EthAddr,
 		Amount:            sendAmt,
 		TransferLogicType: entity.TransferFunctionType_BOOLEAN_AND,
@@ -463,10 +463,10 @@ func setUpOspWebApiRoutingOsps() ([]Killable, *storage.DAL, error) {
 	if err := registerStreamWithRetry(o2AdminWeb, ctype.Hex2Addr(ospEthAddr), localhost+o1Port); err != nil {
 		return cleanupErr(err)
 	}
-	if err := ensureOpenChannel(o2AdminWeb, osp1EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrEth); err != nil {
+	if err := ensureOpenChannel(o2AdminWeb, osp1EthAddr, initOspToOspBalance, initOspToOspBalance, tokenAddrNative); err != nil {
 		return cleanupErr(err)
 	}
-	if err := buildRoutingTablesForEth(o1AdminWeb, o2AdminWeb); err != nil {
+	if err := buildRoutingTablesForNative(o1AdminWeb, o2AdminWeb); err != nil {
 		return cleanupErr(err)
 	}
 	sleep(6)

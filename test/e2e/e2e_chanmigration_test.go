@@ -39,8 +39,8 @@ func TestE2EChannelMigrationTool(t *testing.T) {
 		"-logcolor")
 	defer o.Kill()
 
-	tokenType := entity.TokenType_ETH
-	tokenAddr := tokenAddrEth
+	tokenType := entity.TokenType_NATIVE
+	tokenAddr := tokenAddrNative
 
 	ks, addrs, err := tf.CreateAccountsWithBalance(2, accountBalance)
 	if err != nil {

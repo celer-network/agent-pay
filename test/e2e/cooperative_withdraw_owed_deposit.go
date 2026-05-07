@@ -40,19 +40,19 @@ func cooperativeWithdrawOwedDeposit(t *testing.T) {
 	defer c2.Kill()
 
 	initialBalance := "9"
-	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	_, err = c2.OpenChannel(c2EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	_, err = c2.OpenChannel(c2EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
 	sendAmt := "3"
-	p1, err := c1.SendPayment(c2EthAddr, sendAmt, entity.TokenType_ETH, tokenAddrEth)
+	p1, err := c1.SendPayment(c2EthAddr, sendAmt, entity.TokenType_NATIVE, tokenAddrNative)
 	if err != nil {
 		t.Error(err)
 		return
@@ -64,7 +64,7 @@ func cooperativeWithdrawOwedDeposit(t *testing.T) {
 		return
 	}
 
-	resp, err := c2.CooperativeWithdraw(entity.TokenType_ETH, tokenAddrEth, "10")
+	resp, err := c2.CooperativeWithdraw(entity.TokenType_NATIVE, tokenAddrNative, "10")
 	if err != nil {
 		t.Error(err)
 		return
@@ -72,7 +72,7 @@ func cooperativeWithdrawOwedDeposit(t *testing.T) {
 	if resp.TxHash == "" {
 		t.Error("CooperativeWithdraw TxHash empty")
 	}
-	err = c2.AssertBalance(tokenAddrEth, "2", "0", "6")
+	err = c2.AssertBalance(tokenAddrNative, "2", "0", "6")
 	if err != nil {
 		t.Error(err)
 		return

@@ -146,7 +146,7 @@ func (s *ApiServer) SetDelegation(context context.Context, request *rpc.SetDeleg
 			Erctype: "ERC20",
 			Addr:    tk.GetTokenAddress(),
 		}
-		if tk.GetTokenAddress() == ctype.EthTokenAddrStr {
+		if tk.GetTokenAddress() == ctype.NativeTokenAddrStr {
 			token.Erctype = "ETH"
 		}
 		tokens = append(tokens, token)
@@ -159,7 +159,7 @@ func (s *ApiServer) OpenPaymentChannel(
 	callbackImpl := s.callbackImpl
 	tokenInfo := request.TokenInfo
 	switch entity.TokenType(tokenInfo.TokenType) {
-	case entity.TokenType_ETH:
+	case entity.TokenType_NATIVE:
 		go s.apiClient.OpenETHChannel(
 			&celersdk.Deposit{Myamtwei: request.Amount, Peeramtwei: request.PeerAmount},
 			s.callbackImpl)
@@ -205,7 +205,7 @@ func (s *ApiServer) startDeposit(
 	}
 	tokenInfo := request.TokenInfo
 	switch entity.TokenType(tokenInfo.TokenType) {
-	case entity.TokenType_ETH:
+	case entity.TokenType_NATIVE:
 		return s.apiClient.DepositETH(request.Amount, cb)
 	case entity.TokenType_ERC20:
 		return s.apiClient.DepositERC20(
@@ -292,7 +292,7 @@ func (s *ApiServer) startCooperativeWithdraw(
 	}
 	tokenInfo := request.TokenInfo
 	switch entity.TokenType(tokenInfo.TokenType) {
-	case entity.TokenType_ETH:
+	case entity.TokenType_NATIVE:
 		return s.apiClient.WithdrawETH(request.Amount, cb)
 	case entity.TokenType_ERC20:
 		return s.apiClient.WithdrawERC20(
@@ -361,7 +361,7 @@ func (s *ApiServer) GetBalance(
 	var balance *celersdk.Balance
 	var err error
 	switch entity.TokenType(request.TokenType) {
-	case entity.TokenType_ETH:
+	case entity.TokenType_NATIVE:
 		balance, err = s.apiClient.GetBalance()
 	case entity.TokenType_ERC20:
 		balance, err =
@@ -385,7 +385,7 @@ func (s *ApiServer) GetPeerFreeBalance(
 	var status *celersdk.CelerStatus
 	tokenInfo := request.TokenInfo
 	switch tokenInfo.TokenType {
-	case entity.TokenType_ETH:
+	case entity.TokenType_NATIVE:
 		status, err = s.apiClient.QueryReceivingCapacity(request.PeerAddress)
 	case entity.TokenType_ERC20:
 		status, err = s.apiClient.QueryReceivingCapacityOnToken(tokenInfo.TokenAddress, request.PeerAddress)
@@ -402,7 +402,7 @@ func (s *ApiServer) SendConditionalPayment(
 	conditions := request.Conditions
 	tokenInfo := request.TokenInfo
 	tokenType := entity.TokenType(tokenInfo.TokenType)
-	if tokenType != entity.TokenType_ETH && tokenType != entity.TokenType_ERC20 {
+	if tokenType != entity.TokenType_NATIVE && tokenType != entity.TokenType_ERC20 {
 		return nil, errors.New("Unknown token type")
 	}
 	var payID string
@@ -450,7 +450,7 @@ func (s *ApiServer) SendToken(
 	var payID string
 	var err error
 	switch entity.TokenType(tokenInfo.TokenType) {
-	case entity.TokenType_ETH:
+	case entity.TokenType_NATIVE:
 		payID, err = s.apiClient.SendETH(request.Destination, request.Amount, noteTypeURL, noteValue)
 	case entity.TokenType_ERC20:
 		payID, err = s.apiClient.SendToken(
@@ -581,7 +581,7 @@ func (s *ApiServer) GetOutgoingPaymentStatus(
 func (s *ApiServer) ConfirmOnChainResolvedPayments(
 	context context.Context, request *rpc.TokenInfo) (*empty.Empty, error) {
 	var ercType string
-	if request.TokenType == entity.TokenType_ETH {
+	if request.TokenType == entity.TokenType_NATIVE {
 		ercType = ""
 	} else {
 		ercType = "ERC20"
@@ -702,7 +702,7 @@ func (s *ApiServer) GetPayHistory(
 func (s *ApiServer) SyncOnChainPaymentChannelStatus(
 	context context.Context, request *rpc.TokenInfo) (*empty.Empty, error) {
 	var ercType string
-	if request.TokenType == entity.TokenType_ETH {
+	if request.TokenType == entity.TokenType_NATIVE {
 		ercType = ""
 	} else {
 		ercType = "ERC20"

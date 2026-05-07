@@ -22,15 +22,19 @@ import (
 )
 
 const (
-	EthTokenAddrStr     = "0000000000000000000000000000000000000000"
+	// NativeTokenAddrStr is the address(0) sentinel used by every layer
+	// (entity.Condition, channel state, on-chain wallet balance map) to
+	// denote the chain's native gas token (e.g., ETH on Ethereum)
+	NativeTokenAddrStr  = "0000000000000000000000000000000000000000"
 	InvalidTokenAddrStr = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
 )
 
 var (
 	// ZeroAddr is all 0s
 	ZeroAddr Addr
-	// EthTokenAddr is all 0s
-	EthTokenAddr = Hex2Addr(EthTokenAddrStr)
+	// NativeTokenAddr is the address(0) sentinel for the chain's native
+	// gas token; see NativeTokenAddrStr for the cross-chain rationale.
+	NativeTokenAddr = Hex2Addr(NativeTokenAddrStr)
 	// InvalidTokenAddr is all Fs
 	InvalidTokenAddr = Hex2Addr(InvalidTokenAddrStr)
 

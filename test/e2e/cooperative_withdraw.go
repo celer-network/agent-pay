@@ -17,11 +17,11 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func cooperativeWithdrawEth(t *testing.T) {
-	log.Info("============== start test cooperativeWithdrawEth ==============")
-	defer log.Info("============== end test cooperativeWithdrawEth ==============")
+func cooperativeWithdrawNative(t *testing.T) {
+	log.Info("============== start test cooperativeWithdrawNative ==============")
+	defer log.Info("============== end test cooperativeWithdrawNative ==============")
 	t.Parallel()
-	cooperativeWithdraw(t, entity.TokenType_ETH, tokenAddrEth)
+	cooperativeWithdraw(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 
 func cooperativeWithdrawErc20(t *testing.T) {
@@ -31,18 +31,18 @@ func cooperativeWithdrawErc20(t *testing.T) {
 	cooperativeWithdraw(t, entity.TokenType_ERC20, tokenAddrErc20)
 }
 
-func cooperativeWithdrawEthWithRestart(t *testing.T) {
-	log.Info("============== start test cooperativeWithdrawEthWithRestart ==============")
-	defer log.Info("============== end test cooperativeWithdrawEthWithRestart ==============")
+func cooperativeWithdrawNativeWithRestart(t *testing.T) {
+	log.Info("============== start test cooperativeWithdrawNativeWithRestart ==============")
+	defer log.Info("============== end test cooperativeWithdrawNativeWithRestart ==============")
 	t.Parallel()
-	cooperativeWithdrawWithRestart(t, entity.TokenType_ETH, tokenAddrEth)
+	cooperativeWithdrawWithRestart(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 
-func ospAdminCooperativeWithdrawEth(t *testing.T) {
-	log.Info("============== start test ospAdminCooperativeWithdrawEth ==============")
-	defer log.Info("============== end test ospAdminCooperativeWithdrawEth ==============")
+func ospAdminCooperativeWithdrawNative(t *testing.T) {
+	log.Info("============== start test ospAdminCooperativeWithdrawNative ==============")
+	defer log.Info("============== end test ospAdminCooperativeWithdrawNative ==============")
 	t.Parallel()
-	ospAdminCooperativeWithdraw(t, entity.TokenType_ETH, tokenAddrEth)
+	ospAdminCooperativeWithdraw(t, entity.TokenType_NATIVE, tokenAddrNative)
 }
 
 func cooperativeWithdraw(t *testing.T, tokenType entity.TokenType, tokenAddr string) {
@@ -55,7 +55,7 @@ func cooperativeWithdraw(t *testing.T, tokenType entity.TokenType, tokenAddr str
 	cKeyStore := ks[0]
 	cEthAddr := addrs[0]
 
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)
@@ -124,7 +124,7 @@ func ospAdminCooperativeWithdraw(t *testing.T, tokenType entity.TokenType, token
 	cKeyStore := ks[0]
 	cEthAddr := addrs[0]
 
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)
@@ -186,7 +186,7 @@ func cooperativeWithdrawWithRestart(t *testing.T, tokenType entity.TokenType, to
 	cKeyStore := ks[0]
 	cEthAddr := addrs[0]
 
-	if tokenAddr != tokenAddrEth {
+	if tokenAddr != tokenAddrNative {
 		err = tf.FundAccountsWithErc20(tokenAddr, addrs, accountBalance)
 		if err != nil {
 			t.Error(err)
@@ -271,19 +271,19 @@ func cooperativeWithdrawAfterSendPay(t *testing.T) {
 	defer c2.Kill()
 
 	initialBalance := "900000000000000000"
-	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	_, err = c2.OpenChannel(c2EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	_, err = c2.OpenChannel(c2EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
 	sendAmt := "300000000000000000"
-	p1, err := c1.SendPayment(c2EthAddr, sendAmt, entity.TokenType_ETH, tokenAddrEth)
+	p1, err := c1.SendPayment(c2EthAddr, sendAmt, entity.TokenType_NATIVE, tokenAddrNative)
 	if err != nil {
 		t.Error(err)
 		return
@@ -295,7 +295,7 @@ func cooperativeWithdrawAfterSendPay(t *testing.T) {
 		return
 	}
 
-	resp, err := c2.CooperativeWithdraw(entity.TokenType_ETH, tokenAddrEth, "1000000000000000000")
+	resp, err := c2.CooperativeWithdraw(entity.TokenType_NATIVE, tokenAddrNative, "1000000000000000000")
 	if err != nil {
 		t.Error(err)
 		return
@@ -303,7 +303,7 @@ func cooperativeWithdrawAfterSendPay(t *testing.T) {
 	if resp.TxHash == "" {
 		t.Error("CooperativeWithdraw TxHash empty")
 	}
-	err = c2.AssertBalance(tokenAddrEth, "200000000000000000", "0", "600000000000000000")
+	err = c2.AssertBalance(tokenAddrNative, "200000000000000000", "0", "600000000000000000")
 	if err != nil {
 		t.Error(err)
 		return
@@ -340,31 +340,31 @@ func cooperativeWithdrawAndSendInvalidPay(t *testing.T) {
 	defer c2.Kill()
 
 	initialBalance := "900000000000000000"
-	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	_, err = c2.OpenChannel(c2EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	_, err = c2.OpenChannel(c2EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	_, err = c1.CooperativeWithdrawNonBlocking(entity.TokenType_ETH, tokenAddrEth, "600000000000000000")
+	_, err = c1.CooperativeWithdrawNonBlocking(entity.TokenType_NATIVE, tokenAddrNative, "600000000000000000")
 	if err != nil {
 		t.Error(err)
 		return
 	}
 	sendAmt := "400000000000000000"
-	_, err = c1.SendPayment(c2EthAddr, sendAmt, entity.TokenType_ETH, tokenAddrEth)
+	_, err = c1.SendPayment(c2EthAddr, sendAmt, entity.TokenType_NATIVE, tokenAddrNative)
 	if err == nil {
 		err2 := fmt.Errorf("should not able to send")
 		t.Error(err2)
 		return
 	}
 
-	err = c1.AssertBalance(tokenAddrEth, "300000000000000000", "0", "900000000000000000")
+	err = c1.AssertBalance(tokenAddrNative, "300000000000000000", "0", "900000000000000000")
 	if err != nil {
 		t.Error(err)
 		return
@@ -401,31 +401,31 @@ func cooperativeWithdrawInsufficient(t *testing.T) {
 	defer c2.Kill()
 
 	initialBalance := "900000000000000000"
-	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	_, err = c1.OpenChannel(c1EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	_, err = c2.OpenChannel(c2EthAddr, entity.TokenType_ETH, tokenAddrEth, initialBalance, initialBalance)
+	_, err = c2.OpenChannel(c2EthAddr, entity.TokenType_NATIVE, tokenAddrNative, initialBalance, initialBalance)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
 	sendAmt := "900000000000000000"
-	_, err = c1.SendPayment(c2EthAddr, sendAmt, entity.TokenType_ETH, tokenAddrEth)
+	_, err = c1.SendPayment(c2EthAddr, sendAmt, entity.TokenType_NATIVE, tokenAddrNative)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 	sleep(2)
-	err = c1.AssertBalance(tokenAddrEth, "0", "0", "1800000000000000000")
+	err = c1.AssertBalance(tokenAddrNative, "0", "0", "1800000000000000000")
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	_, err = c1.CooperativeWithdraw(entity.TokenType_ETH, tokenAddrEth, "600000000000000000")
+	_, err = c1.CooperativeWithdraw(entity.TokenType_NATIVE, tokenAddrNative, "600000000000000000")
 	if err == nil {
 		err2 := fmt.Errorf("Should not able to withdraw")
 		t.Error(err2)
