@@ -303,11 +303,13 @@ func runDisputeAndAssert(
 		}
 		// Contracts use custom errors (the require-string path is gone).
 		// Geth's dry-run JSON-RPC error carries the 4-byte selector in
-		// its `data` field; dispute_payment.go embeds it in the returned
-		// error message via `chain.WrapWithRevertSelector` so it survives
-		// the gRPC transport that otherwise flattens `rpc.DataError` to
-		// a plain string. Match against the canonical selector here so
-		// the assertion stays as precise as the previous string match.
+		// its `data` field; the `chain.SubmitWaitMined` transactor helper
+		// (used by dispute_payment.go for the on-chain resolve) embeds
+		// the selector in the returned error message before it crosses
+		// gRPC, so it survives the transport boundary that otherwise
+		// flattens `rpc.DataError` to a plain string. Match against the
+		// canonical selector here so the assertion stays as precise as
+		// the previous string match.
 		want := chain.ErrorSelectorHex("ConditionNotFinalized()")
 		if !strings.Contains(err.Error(), want) {
 			return fmt.Errorf("SettleConditionalPayOnChain error = %v, want revert selector %s (ConditionNotFinalized)", err, want)

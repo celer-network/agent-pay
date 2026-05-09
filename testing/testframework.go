@@ -283,9 +283,12 @@ func RegisterRouters(ksfiles []string) error {
 		}
 		tx, err2 := rrContract.RegisterRouter(auth)
 		if err2 != nil {
-			// RouterRegistry uses a custom error post-contracts-upgrade; match
-			// the selector via the wrap helper so this stays robust to future
-			// transport flattening.
+			// RouterRegistry uses a custom error (`RouterAlreadyRegistered()`)
+			// for the already-registered case. ParseRevertSelector recovers
+			// the 4-byte selector either from an in-process rpc.DataError or
+			// from a `revert selector: 0x...` token left by an upstream wrap
+			// helper after the error has crossed a transport that flattened
+			// the typed error to a string.
 			if sel, ok := chain.ParseRevertSelector(err2); ok && sel == chain.ErrorSelector("RouterAlreadyRegistered()") {
 				log.Warnln("router already registered, skipping", ksfile)
 				continue
