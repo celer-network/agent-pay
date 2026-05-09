@@ -52,7 +52,8 @@ func (p *Processor) IntendWithdraw(cidFrom ctype.CidType, amount *big.Int, cidTo
 		return fmt.Errorf("insufficient balance: %s", balance.MyFree)
 	}
 
-	receipt, err := p.transactor.TransactWaitMined(
+	receipt, err := chain.TransactWaitMined(
+		p.transactor,
 		fmt.Sprintf("IntendWithdraw from channel %x", cidFrom),
 		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
 			chanLedger := p.nodeConfig.GetLedgerContractOf(cidFrom)
@@ -101,7 +102,8 @@ func (p *Processor) ConfirmWithdraw(cid ctype.CidType) error {
 		return err2
 	}
 
-	receipt, err := p.transactor.TransactWaitMined(
+	receipt, err := chain.TransactWaitMined(
+		p.transactor,
 		fmt.Sprintf("ConfirmWithdraw from channel %x", cid),
 		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
 			chanLedger := p.nodeConfig.GetLedgerContractOf(cid)
@@ -133,7 +135,8 @@ func (p *Processor) ConfirmWithdraw(cid ctype.CidType) error {
 
 func (p *Processor) VetoWithdraw(cid ctype.CidType) error {
 	log.Infoln("Veto withdraw", cid.Hex())
-	receipt, err := p.transactor.TransactWaitMined(
+	receipt, err := chain.TransactWaitMined(
+		p.transactor,
 		fmt.Sprintf("VetoWithdraw from channel %x", cid),
 		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
 			chanLedger := p.nodeConfig.GetLedgerContractOf(cid)

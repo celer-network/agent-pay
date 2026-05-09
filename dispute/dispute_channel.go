@@ -98,7 +98,8 @@ func (p *Processor) IntendSettlePaymentChannel(cid ctype.CidType, waitMined bool
 }
 
 func (p *Processor) intendSettleAndWaitMined(cid ctype.CidType, stateArrayBytes []byte, logCtx settleLogContext) error {
-	receipt, err := p.transactorPool.SubmitWaitMined(
+	receipt, err := chain.SubmitWaitMined(
+		p.transactorPool,
 		fmt.Sprintf("intend settle payment channel %x", cid),
 		p.intendSettleTxMethod(cid, stateArrayBytes),
 		config.TransactOptions(eth.WithAddGasEstimateRatio(settleTxGasEstimateRatio))...)
@@ -197,7 +198,8 @@ func (p *Processor) ConfirmSettlePaymentChannel(cid ctype.CidType, waitMined boo
 }
 
 func (p *Processor) confirmSettleAndWaitMined(cid ctype.CidType) error {
-	receipt, err := p.transactorPool.SubmitWaitMined(
+	receipt, err := chain.SubmitWaitMined(
+		p.transactorPool,
 		fmt.Sprintf("confirm settle payment channel %x", cid),
 		p.confirmSettleTxMethod(cid),
 		config.TransactOptions(eth.WithAddGasEstimateRatio(settleTxGasEstimateRatio))...)
