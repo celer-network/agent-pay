@@ -101,6 +101,11 @@ func (p *Processor) resolvePaymentByConditions(payID ctype.PayIDType) error {
 		if amt.Cmp(maxAmt) == 0 {
 			return nil
 		}
+		// Surface the contract's custom-error selector in the returned
+		// error so callers (including the gRPC client side) can recover
+		// it after the rpc.DataError has been flattened to a string at
+		// the transport boundary.
+		err = chain.WrapWithRevertSelector(err)
 		log.Errorln("ResolvePaymentByConditions tx error", err, "pay:", utils.PrintConditionalPay(pay))
 		return err
 	}
