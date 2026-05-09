@@ -283,7 +283,10 @@ func RegisterRouters(ksfiles []string) error {
 		}
 		tx, err2 := rrContract.RegisterRouter(auth)
 		if err2 != nil {
-			if strings.Contains(err2.Error(), "Router address already exists") {
+			// RouterRegistry uses a custom error post-contracts-upgrade; match
+			// the selector via the wrap helper so this stays robust to future
+			// transport flattening.
+			if sel, ok := chain.ParseRevertSelector(err2); ok && sel == chain.ErrorSelector("RouterAlreadyRegistered()") {
 				log.Warnln("router already registered, skipping", ksfile)
 				continue
 			}

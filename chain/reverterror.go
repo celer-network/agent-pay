@@ -77,11 +77,19 @@ func ParseRevertSelector(err error) (selector [4]byte, ok bool) {
 // suffix when the error chain carries a custom-error revert payload. Use
 // this on the side that holds the original `rpc.DataError` (typically the
 // OSP) before returning across a transport boundary that flattens the
-// error to a string. If no selector is present in `err`, the original
-// error is returned unchanged.
+// error to a string. If no selector is present in `err`, or if the
+// message already carries the selector token (i.e. an upstream layer
+// already wrapped), the original error is returned unchanged.
 func WrapWithRevertSelector(err error) error {
 	if err == nil {
 		return nil
+	}
+	// Idempotent: if an upstream layer already embedded the token, don't
+	// duplicate it. This guards against double-wrap noise when the same
+	// error walks through several wrap-aware layers (e.g. helper at the
+	// transactor + helper at the dispute path) before crossing transport.
+	if strings.Contains(err.Error(), errorSelectorPrefix) {
+		return err
 	}
 	sel, ok := ParseRevertSelector(err)
 	if !ok {

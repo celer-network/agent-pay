@@ -116,6 +116,18 @@ func TestWrapWithRevertSelector_NoOpOnPlainError(t *testing.T) {
 	}
 }
 
+func TestWrapWithRevertSelector_Idempotent(t *testing.T) {
+	// Wrapping an already-wrapped error must not append a second selector
+	// token. Multiple wrap-aware layers (e.g. centralized helper at the
+	// transactor + a defensive wrap at the caller) shouldn't compound noise.
+	stub := &dataErrStub{msg: "execution reverted", data: ErrorSelectorHex("ConditionNotFinalized()")}
+	once := WrapWithRevertSelector(stub)
+	twice := WrapWithRevertSelector(once)
+	if once.Error() != twice.Error() {
+		t.Errorf("double-wrap produced different message:\nonce:  %q\ntwice: %q", once.Error(), twice.Error())
+	}
+}
+
 func TestWrapWithRevertSelector_NilSafe(t *testing.T) {
 	if got := WrapWithRevertSelector(nil); got != nil {
 		t.Errorf("WrapWithRevertSelector(nil) = %v, want nil", got)
