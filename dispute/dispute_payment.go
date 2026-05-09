@@ -82,8 +82,12 @@ func (p *Processor) resolvePaymentByConditions(payID ctype.PayIDType) error {
 		}
 	}
 	serializedRequest, err := proto.Marshal(request)
+	if err != nil {
+		return fmt.Errorf("marshal ResolvePayByConditionsRequest: %w", err)
+	}
 
-	receipt, err := p.transactorPool.SubmitWaitMined(
+	receipt, err := chain.SubmitWaitMined(
+		p.transactorPool,
 		fmt.Sprintf("resolve payment %x by conditions", payID),
 		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
 			contract, err2 :=

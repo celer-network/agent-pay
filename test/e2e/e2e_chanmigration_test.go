@@ -205,7 +205,7 @@ func TestE2EChannelMigrationTool(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	ledger, err := walletContract.GetOperator(&bind.CallOpts{}, cid1)
+	ledger, err := walletContract.WalletOperator(&bind.CallOpts{}, cid1)
 	if err != nil {
 		t.Error(err)
 		return
@@ -215,7 +215,7 @@ func TestE2EChannelMigrationTool(t *testing.T) {
 		return
 	}
 
-	ledger, err = walletContract.GetOperator(&bind.CallOpts{}, cid2)
+	ledger, err = walletContract.WalletOperator(&bind.CallOpts{}, cid2)
 	if err != nil {
 		t.Error(err)
 		return

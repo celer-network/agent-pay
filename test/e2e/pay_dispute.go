@@ -61,6 +61,7 @@ import (
 	"testing"
 
 	"github.com/celer-network/agent-pay/app"
+	"github.com/celer-network/agent-pay/chain"
 	"github.com/celer-network/agent-pay/chain/channel-eth-go/virtresolver"
 	"github.com/celer-network/agent-pay/ctype"
 	"github.com/celer-network/agent-pay/entity"
@@ -300,8 +301,18 @@ func runDisputeAndAssert(
 		if err == nil {
 			return fmt.Errorf("SettleConditionalPayOnChain unexpectedly succeeded for not-finalized condition (amount=%s)", amount)
 		}
-		if !strings.Contains(err.Error(), "Condition is not finalized") {
-			return fmt.Errorf("SettleConditionalPayOnChain error = %v, want substring %q", err, "Condition is not finalized")
+		// Contracts use custom errors (the require-string path is gone).
+		// Geth's dry-run JSON-RPC error carries the 4-byte selector in
+		// its `data` field; the `chain.SubmitWaitMined` transactor helper
+		// (used by dispute_payment.go for the on-chain resolve) embeds
+		// the selector in the returned error message before it crosses
+		// gRPC, so it survives the transport boundary that otherwise
+		// flattens `rpc.DataError` to a plain string. Match against the
+		// canonical selector here so the assertion stays as precise as
+		// the previous string match.
+		want := chain.ErrorSelectorHex("ConditionNotFinalized()")
+		if !strings.Contains(err.Error(), want) {
+			return fmt.Errorf("SettleConditionalPayOnChain error = %v, want revert selector %s (ConditionNotFinalized)", err, want)
 		}
 		return nil
 	}
