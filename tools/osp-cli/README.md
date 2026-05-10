@@ -45,7 +45,7 @@ Note: `chanstate` is enum integer, valid states for commands above include 3 for
 ### Query information from blockchain
 `osp-cli -profile [profile file]` followed by:
 
-* `-onchainview channel -cid [channel ID]`: get onchain channel info from CelerLedger contract
+* `-onchainview channel -cid [channel ID]`: get onchain channel info from AgentPayLedger contract
 * `-onchainview pay -payid [payment ID]`: get onchain payment info from PayRegistry contract
 * `-onchainview tx -txhash [transaction hash]`: get on-chain transaction information
 * `-onchainview app -appaddr [app contract addr] -outcome [arg for query outcome] -finalize [arg for query finalization]`: query an `IBooleanCond` condition contract on-chain (`isFinalized` and `getOutcome`)
@@ -65,7 +65,7 @@ Note: `chanstate` is enum integer, valid states for commands above include 3 for
 
 `osp-cli -profile [profile file] -ks [keystore file]` followed by:
 
-* `-wrapdeposit -amount [amount]`: wrap native into the chain's wrapped-native (WETH-style) contract and approve CelerLedger to transferFrom the wrapped balance
+* `-wrapdeposit -amount [amount]`: wrap native into the chain's wrapped-native (WETH-style) contract and approve AgentPayLedger to transferFrom the wrapped balance
 * `-wrapwithdraw -amount [amount]`: unwrap from the chain's wrapped-native contract back to native
 * `-register`: register OSP as a state channel router
 * `-deregister`: deregister OSP as a state channel router

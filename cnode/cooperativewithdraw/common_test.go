@@ -139,7 +139,7 @@ func TestUpdateOnChainBalanceAdvancesJobForOsp(t *testing.T) {
 	}
 	p.registerCallback(withdrawHash, cb)
 
-	event := &ledgerbinding.CelerLedgerCooperativeWithdraw{
+	event := &ledgerbinding.AgentPayLedgerCooperativeWithdraw{
 		ChannelId:       cid,
 		Receiver:        self,
 		Deposits:        [2]*big.Int{big.NewInt(5), big.NewInt(5)},

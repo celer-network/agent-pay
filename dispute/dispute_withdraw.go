@@ -61,7 +61,7 @@ func (p *Processor) IntendWithdraw(cidFrom ctype.CidType, amount *big.Int, cidTo
 				return nil, fmt.Errorf("Fail to get ledger for channel: %x", cidFrom)
 			}
 			contract, err2 :=
-				ledger.NewCelerLedgerTransactor(chanLedger.GetAddr(), transactor)
+				ledger.NewAgentPayLedgerTransactor(chanLedger.GetAddr(), transactor)
 			if err2 != nil {
 				return nil, err2
 			}
@@ -111,7 +111,7 @@ func (p *Processor) ConfirmWithdraw(cid ctype.CidType) error {
 				return nil, fmt.Errorf("Fail to get ledger for channel: %x", cid)
 			}
 			contract, err2 :=
-				ledger.NewCelerLedgerTransactor(chanLedger.GetAddr(), transactor)
+				ledger.NewAgentPayLedgerTransactor(chanLedger.GetAddr(), transactor)
 			if err2 != nil {
 				return nil, err2
 			}
@@ -144,7 +144,7 @@ func (p *Processor) VetoWithdraw(cid ctype.CidType) error {
 				return nil, fmt.Errorf("Fail to get ledger for channel: %x", cid)
 			}
 			contract, err2 :=
-				ledger.NewCelerLedgerTransactor(chanLedger.GetAddr(), transactor)
+				ledger.NewAgentPayLedgerTransactor(chanLedger.GetAddr(), transactor)
 			if err2 != nil {
 				return nil, err2
 			}
@@ -173,7 +173,7 @@ func (p *Processor) monitorNoncooperativeWithdrawEvent(ledgerContract chain.Cont
 		func(id monitor.CallbackID, eLog types.Log) bool {
 			// CAVEAT!!!: suppose we have the same struct of event.
 			// If event struct changes, this monitor does not work.
-			e := &ledger.CelerLedgerIntendWithdraw{}
+			e := &ledger.AgentPayLedgerIntendWithdraw{}
 			if err := ledgerContract.ParseEvent(event.IntendWithdraw, eLog, e); err != nil {
 				log.Error(err)
 				return false
@@ -213,7 +213,7 @@ func (p *Processor) monitorNoncooperativeWithdrawEvent(ledgerContract chain.Cont
 		func(id monitor.CallbackID, eLog types.Log) bool {
 			// CAVEAT!!!: suppose we have the same struct of event.
 			// If event struct changes, this monitor does not work.
-			e := &ledger.CelerLedgerConfirmWithdraw{}
+			e := &ledger.AgentPayLedgerConfirmWithdraw{}
 			if err := ledgerContract.ParseEvent(event.ConfirmWithdraw, eLog, e); err != nil {
 				log.Error(err)
 				return false

@@ -224,7 +224,7 @@ func (p *Processor) depositInBatch(chanDeposits []*channelDeposit, ledgerAddr ct
 		tx, err = p.transactor.Transact(
 			nil,
 			func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
-				contract, contractErr := ledger.NewCelerLedgerTransactor(ledgerAddr, transactor)
+				contract, contractErr := ledger.NewAgentPayLedgerTransactor(ledgerAddr, transactor)
 				if contractErr != nil {
 					return nil, contractErr
 				}
@@ -462,7 +462,7 @@ func (p *Processor) monitorEvent(ledgerContract chain.Contract) {
 	}
 	p.monitorService.Monitor(monitorCfg,
 		func(id monitor.CallbackID, eLog types.Log) bool {
-			e := &ledger.CelerLedgerDeposit{}
+			e := &ledger.AgentPayLedgerDeposit{}
 			err := ledgerContract.ParseEvent(event.Deposit, eLog, e)
 			if err != nil {
 				log.Error(err)
@@ -480,7 +480,7 @@ func (p *Processor) monitorEvent(ledgerContract chain.Contract) {
 }
 
 // Update balance and deposit jobs according to an on-chain Deposit event.
-func (p *Processor) handleEvent(event *ledger.CelerLedgerDeposit, txHash ctype.Hash) {
+func (p *Processor) handleEvent(event *ledger.AgentPayLedgerDeposit, txHash ctype.Hash) {
 	metrics.IncDepositEventCnt()
 	cid := ctype.CidType(event.ChannelId)
 	updateOnChainBalanceTx := func(tx *storage.DALTx, args ...interface{}) error {

@@ -46,7 +46,7 @@ func ChanStatusName(status uint8) string {
 }
 
 func GetOnChainChannelStatusOnLedger(cid ctype.CidType, nodeConfig common.GlobalNodeConfig, ledgerAddr ctype.Addr) (uint8, error) {
-	contract, err := ledger.NewCelerLedgerCaller(ledgerAddr, nodeConfig.GetEthConn())
+	contract, err := ledger.NewAgentPayLedgerCaller(ledgerAddr, nodeConfig.GetEthConn())
 	if err != nil {
 		return 0, fmt.Errorf("GetOnChainChannelStatusOnLedger new caller failed %w", err)
 	}
@@ -70,7 +70,7 @@ func GetOnChainSettleFinalizedTime(cid ctype.CidType, nodeConfig common.GlobalNo
 	if chanLedger == nil {
 		return big.NewInt(0), fmt.Errorf("Fail to get ledger for channel: %x", cid)
 	}
-	contract, err := ledger.NewCelerLedgerCaller(chanLedger.GetAddr(), nodeConfig.GetEthConn())
+	contract, err := ledger.NewAgentPayLedgerCaller(chanLedger.GetAddr(), nodeConfig.GetEthConn())
 	if err != nil {
 		return big.NewInt(0), fmt.Errorf("GetOnChainSettleFinalizedTime new caller failed %w", err)
 	}
@@ -87,7 +87,7 @@ func GetOnChainWithdrawIntent(cid ctype.CidType, nodeConfig common.GlobalNodeCon
 	if chanLedger == nil {
 		return ctype.ZeroAddr, big.NewInt(0), 0, ctype.ZeroCid, fmt.Errorf("Fail to get ledger for channel: %x", cid)
 	}
-	contract, err := ledger.NewCelerLedgerCaller(chanLedger.GetAddr(), nodeConfig.GetEthConn())
+	contract, err := ledger.NewAgentPayLedgerCaller(chanLedger.GetAddr(), nodeConfig.GetEthConn())
 	if err != nil {
 		return ctype.ZeroAddr, big.NewInt(0), 0, ctype.ZeroCid, fmt.Errorf("GetWithdrawIntent new caller failed %w", err)
 	}
@@ -103,7 +103,7 @@ func GetOnChainDisputeTimeout(cid ctype.CidType, nodeConfig common.GlobalNodeCon
 	if chanLedger == nil {
 		return 0, fmt.Errorf("Fail to get ledger for channel: %x", cid)
 	}
-	contract, err := ledger.NewCelerLedgerCaller(chanLedger.GetAddr(), nodeConfig.GetEthConn())
+	contract, err := ledger.NewAgentPayLedgerCaller(chanLedger.GetAddr(), nodeConfig.GetEthConn())
 	if err != nil {
 		return 0, fmt.Errorf("GetOnChainSettleFinalizedTime new caller failed %w", err)
 	}
@@ -169,7 +169,7 @@ func SyncOnChainBalanceTx(tx *storage.DALTx, cid ctype.CidType, nodeConfig commo
 // GetOnChainChannelBalance queries the ledger contract for channel balance
 func GetOnChainChannelBalance(cid ctype.CidType, ledgerAddr ctype.Addr, nodeConfig common.GlobalNodeConfig) (*structs.OnChainBalance, error) {
 	log.Debugln("query contract for channel balance", cid.Hex())
-	contract, err := ledger.NewCelerLedgerCaller(ledgerAddr, nodeConfig.GetEthConn())
+	contract, err := ledger.NewAgentPayLedgerCaller(ledgerAddr, nodeConfig.GetEthConn())
 	if err != nil {
 		return nil, err
 	}
@@ -212,7 +212,7 @@ func GetMigratedTo(dal *storage.DAL, cid ctype.CidType, nodeConfig common.Global
 		return ctype.ZeroAddr, common.ErrChannelNotFound
 	}
 	// Suppose all the ledger has compatible new caller function
-	contract, err := ledger.NewCelerLedgerCaller(currentLedger, nodeConfig.GetEthConn())
+	contract, err := ledger.NewAgentPayLedgerCaller(currentLedger, nodeConfig.GetEthConn())
 	if err != nil {
 		return ctype.ZeroAddr, fmt.Errorf("Fail to new ledger caller: %w", err)
 	}

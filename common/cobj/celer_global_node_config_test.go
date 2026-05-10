@@ -38,8 +38,8 @@ func TestGnrLedgers(t *testing.T) {
 		onchainAddr,
 		nil, /*ethconn*/
 		profile,
-		wallet.CelerWalletABI,
-		ledger.CelerLedgerABI,
+		wallet.AgentPayWalletABI,
+		ledger.AgentPayLedgerABI,
 		virtresolver.VirtContractResolverABI,
 		payresolver.PayResolverABI,
 		payregistry.PayRegistryABI,

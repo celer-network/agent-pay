@@ -112,7 +112,7 @@ func main() {
 	ksFile.Close()
 
 	latestLedger := ctype.Hex2Addr(cp.LedgerAddr)
-	ledgerContract, err := ledger.NewCelerLedger(latestLedger, client)
+	ledgerContract, err := ledger.NewAgentPayLedger(latestLedger, client)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -157,7 +157,7 @@ func handleSingleOnchainTx(
 	deadlines map[ctype.CidType]uint64,
 	auth *bind.TransactOpts,
 	client *ethclient.Client,
-	contract *ledger.CelerLedger,
+	contract *ledger.AgentPayLedger,
 	blockDelay uint64,
 	dal *storage.DAL,
 	latestLedger ctype.Addr,
@@ -234,7 +234,7 @@ func processChannelMigrationTx(tx *storage.DALTx, args ...interface{}) error {
 	return nil
 }
 
-func migrateChannelFrom(auth *bind.TransactOpts, onchainReq []byte, ledgerContract *ledger.CelerLedger) (*types.Transaction, error) {
+func migrateChannelFrom(auth *bind.TransactOpts, onchainReq []byte, ledgerContract *ledger.AgentPayLedger) (*types.Transaction, error) {
 	fromLedger, err := getFromLedger(onchainReq)
 	if err != nil {
 		return nil, err

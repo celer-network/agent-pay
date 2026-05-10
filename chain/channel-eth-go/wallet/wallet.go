@@ -30,23 +30,23 @@ var (
 	_ = abi.ConvertType
 )
 
-// CelerWalletMetaData contains all meta data concerning the CelerWallet contract.
-var CelerWalletMetaData = &bind.MetaData{
+// AgentPayWalletMetaData contains all meta data concerning the AgentPayWallet contract.
+var AgentPayWalletMetaData = &bind.MetaData{
 	ABI: "[{\"type\":\"constructor\",\"inputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"MAX_OWNERS\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"balanceOf\",\"inputs\":[{\"name\":\"_walletId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_tokenAddress\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"create\",\"inputs\":[{\"name\":\"_owners\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"_operator\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_nonce\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"depositERC20\",\"inputs\":[{\"name\":\"_walletId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_tokenAddress\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"depositNative\",\"inputs\":[{\"name\":\"_walletId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"payable\"},{\"type\":\"function\",\"name\":\"drainToken\",\"inputs\":[{\"name\":\"_tokenAddress\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_receiver\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"hasVoted\",\"inputs\":[{\"name\":\"_walletId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_owner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"owner\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"pause\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"paused\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"pendingOperator\",\"inputs\":[{\"name\":\"_walletId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"renounceOwnership\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"transferBetweenWallets\",\"inputs\":[{\"name\":\"_fromWalletId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_toWalletId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_tokenAddress\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_receiver\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"transferOperatorship\",\"inputs\":[{\"name\":\"_walletId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_newOperator\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"transferOwnership\",\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"unpause\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"voteForOperator\",\"inputs\":[{\"name\":\"_walletId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_candidate\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"walletCount\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"walletOperator\",\"inputs\":[{\"name\":\"_walletId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"walletOwners\",\"inputs\":[{\"name\":\"_walletId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[]\",\"internalType\":\"address[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"withdraw\",\"inputs\":[{\"name\":\"_walletId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_tokenAddress\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_receiver\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"Deposited\",\"inputs\":[{\"name\":\"walletId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"tokenAddress\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"OperatorChanged\",\"inputs\":[{\"name\":\"walletId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"oldOperator\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newOperator\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"OperatorVoted\",\"inputs\":[{\"name\":\"walletId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"candidate\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"voter\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"inputs\":[{\"name\":\"previousOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Paused\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"TokenDrained\",\"inputs\":[{\"name\":\"tokenAddress\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"receiver\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"TransferredBetweenWallets\",\"inputs\":[{\"name\":\"fromWalletId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"toWalletId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"tokenAddress\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"receiver\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Unpaused\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"WalletCreated\",\"inputs\":[{\"name\":\"walletId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"owners\",\"type\":\"address[]\",\"indexed\":true,\"internalType\":\"address[]\"},{\"name\":\"operator\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Withdrawn\",\"inputs\":[{\"name\":\"walletId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"tokenAddress\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"receiver\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"EnforcedPause\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"ExpectedPause\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"NativeTransferFailed\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"NotOperator\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"NotWalletOwner\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"OwnableInvalidOwner\",\"inputs\":[{\"name\":\"owner\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"OwnableUnauthorizedAccount\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"SafeERC20FailedOperation\",\"inputs\":[{\"name\":\"token\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"TooManyOwners\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"WalletIdOccupied\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"ZeroAddress\",\"inputs\":[]}]",
-	Bin: "0x6080604052348015600e575f5ffd5b503380603357604051631e4fbdf760e01b81525f600482015260240160405180910390fd5b603a81603f565b506097565b5f80546001600160a01b03838116610100818102610100600160a81b0319851617855560405193049190911692909183917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a35050565b61137d806100a45f395ff3fe608060405260043610610126575f3560e01c80638e0cc176116100a8578063bfa2c1d21161006d578063bfa2c1d214610324578063c108bb4014610343578063c203823614610362578063d23856f6146103a6578063e89a62ee146103c5578063f2fde38b146103e4575f5ffd5b80638e0cc176146102595780639dfaff8f14610278578063a0c89a8c146102af578063aadc3b72146102ce578063aee2e989146102ed575f5ffd5b80635c975abb116100ee5780635c975abb146101ae578063628c40eb146101d0578063715018a6146101fc5780638456cb59146102105780638da5cb5b14610224575f5ffd5b80630b8bb1461461012a5780630d63a1fd1461015157806329b57c69146101705780633f4ba83a1461018557806342ef5fbb1461019b575b5f5ffd5b348015610135575f5ffd5b5061013e600a81565b6040519081526020015b60405180910390f35b34801561015c575f5ffd5b5061013e61016b366004611093565b610403565b34801561017b575f5ffd5b5061013e60015481565b348015610190575f5ffd5b50610199610571565b005b6101996101a936600461111a565b610583565b3480156101b9575f5ffd5b505f5460ff165b6040519015158152602001610148565b3480156101db575f5ffd5b506101ef6101ea36600461111a565b6105f7565b6040516101489190611131565b348015610207575f5ffd5b50610199610660565b34801561021b575f5ffd5b50610199610671565b34801561022f575f5ffd5b505f5461010090046001600160a01b03165b6040516001600160a01b039091168152602001610148565b348015610264575f5ffd5b5061019961027336600461117c565b610681565b348015610283575f5ffd5b5061024161029236600461111a565b5f908152600260205260409020600301546001600160a01b031690565b3480156102ba575f5ffd5b506101996102c93660046111bd565b61073b565b3480156102d9575f5ffd5b506101c06102e83660046111bd565b61075c565b3480156102f8575f5ffd5b5061024161030736600461111a565b5f908152600260205260409020600101546001600160a01b031690565b34801561032f575f5ffd5b5061019961033e3660046111e7565b61078b565b34801561034e575f5ffd5b5061019961035d366004611221565b6107f3565b34801561036d575f5ffd5b5061013e61037c3660046111bd565b5f8281526002602081815260408084206001600160a01b0386168552909201905290205492915050565b3480156103b1575f5ffd5b506101996103c0366004611243565b610888565b3480156103d0575f5ffd5b506101996103df3660046111bd565b610978565b3480156103ef575f5ffd5b506101996103fe36600461128d565b610a63565b5f61040c610aa5565b6001600160a01b0383166104335760405163d92e233d60e01b815260040160405180910390fd5b600a84111561045557604051631785167360e21b815260040160405180910390fd5b60408051466020808301919091526bffffffffffffffffffffffff1930606090811b82168486015233901b166054830152606880830186905283518084039091018152608890920183528151918101919091205f818152600290925291902060018101546001600160a01b0316156104e057604051633ce274d560e21b815260040160405180910390fd5b6104eb818888611003565b50600181810180546001600160a01b0319166001600160a01b0388161790558054905f610517836112c1565b9190505550846001600160a01b031687876040516105369291906112d9565b6040519081900381209084907f8c665d417fd8d3d60d702a3d19dc8184b038e82487203ff32011555beb6cad90905f90a45095945050505050565b610579610ac8565b610581610afa565b565b61058b610aa5565b5f81815260026020818152604080842084805290920190528120805434928392916105b790849061130d565b90915550506040518181525f9083907f87d4c0b5e30d6808bc8a94ba1c4d839b29d664151551a31753387ee9ef48429b9060200160405180910390a35050565b5f8181526002602090815260409182902080548351818402810184019094528084526060939283018282801561065457602002820191905f5260205f20905b81546001600160a01b03168152600190910190602001808311610636575b50505050509050919050565b610668610ac8565b6105815f610b4b565b610679610ac8565b610581610ba3565b610689610aa5565b8361069381610bdf565b848361069f8282610c18565b5f8781526002602081815260408084206001600160a01b038b1685529092019052812080548692906106d2908490611320565b92505081905550846001600160a01b0316866001600160a01b0316887fa6786aab7dbbc48b4b0387488b407bd81448030ab207b50bea7dbb5fbc1cd9eb8760405161071f91815260200190565b60405180910390a4610732868686610c43565b50505050505050565b610743610aa5565b8161074d81610bdf565b6107578383610cdb565b505050565b5f8281526002602090815260408083206001600160a01b038516845260040190915290205460ff165b92915050565b610793610da1565b61079b610ac8565b816001600160a01b0316836001600160a01b03167fb9f4fab3dc87425962ebb52a84543eb50c90a808609ee6967a38308d6119c4bc836040516107e091815260200190565b60405180910390a3610757838383610c43565b6107fb610aa5565b5f8381526002602081815260408084206001600160a01b038716855290920190528120805483929061082e90849061130d565b90915550506040518181526001600160a01b0383169084907f87d4c0b5e30d6808bc8a94ba1c4d839b29d664151551a31753387ee9ef48429b9060200160405180910390a36107576001600160a01b038316333084610dc3565b610890610aa5565b8461089a81610bdf565b85836108a68282610c18565b86856108b28282610c18565b5f8a81526002602081815260408084206001600160a01b038d1685529092019052812080548892906108e5908490611320565b90915550505f8981526002602081815260408084206001600160a01b038d16855290920190528120805488929061091d90849061130d565b9091555050604080516001600160a01b038981168252602082018990528a16918b918d917f181fa219f874a081d83f85e8c9afdc32ede9e7cc757b9537f9cd04f3417a6130910160405180910390a450505050505050505050565b81336109848282610c18565b6001600160a01b0383166109ab5760405163d92e233d60e01b815260040160405180910390fd5b5f84815260026020526040902060038101546001600160a01b038581169116146109f6576109d881610e2a565b6003810180546001600160a01b0319166001600160a01b0386161790555b335f818152600483016020526040808220805460ff19166001179055516001600160a01b0387169188917f9797c1a8248e0833cb5344fa29eb39f2de9bd4824b8ffa5d85faaed75d24e9ef9190a4610a4d81610e8b565b15610a5c57610a5c8585610cdb565b5050505050565b610a6b610ac8565b6001600160a01b038116610a9957604051631e4fbdf760e01b81525f60048201526024015b60405180910390fd5b610aa281610b4b565b50565b5f5460ff16156105815760405163d93c066560e01b815260040160405180910390fd5b5f546001600160a01b036101009091041633146105815760405163118cdaa760e01b8152336004820152602401610a90565b610b02610da1565b5f805460ff191690557f5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa335b6040516001600160a01b03909116815260200160405180910390a1565b5f80546001600160a01b03838116610100818102610100600160a81b0319851617855560405193049190911692909183917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a35050565b610bab610aa5565b5f805460ff191660011790557f62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258610b2e3390565b5f818152600260205260409020600101546001600160a01b03163314610aa257604051631f0853c160e21b815260040160405180910390fd5b610c228282610efc565b610c3f57604051633101cebf60e21b815260040160405180910390fd5b5050565b6001600160a01b038316610cc7575f826001600160a01b0316826040515f6040518083038185875af1925050503d805f8114610c9a576040519150601f19603f3d011682016040523d82523d5f602084013e610c9f565b606091505b5050905080610cc157604051633d2cec6f60e21b815260040160405180910390fd5b50505050565b6107576001600160a01b0384168383610f66565b6001600160a01b038116610d025760405163d92e233d60e01b815260040160405180910390fd5b5f8281526002602052604090206001810180546001600160a01b038481166001600160a01b03198316179092556003830154908216911615610d5a57610d4782610e2a565b6003820180546001600160a01b03191690555b826001600160a01b0316816001600160a01b0316857fca740bd5cca56b72a44eb89e8a703e2e1269576576b5b5ce52a1ba317d20d78d60405160405180910390a450505050565b5f5460ff1661058157604051638dfc202b60e01b815260040160405180910390fd5b6040516001600160a01b038481166024830152838116604483015260648201839052610cc19186918216906323b872dd906084015b604051602081830303815290604052915060e01b6020820180516001600160e01b038381831617835250505050610f97565b80545f5b81811015610757575f836004015f855f018481548110610e5057610e50611333565b5f918252602080832091909101546001600160a01b031683528201929092526040019020805460ff1916911515919091179055600101610e2e565b80545f90815b81811015610ef257836004015f855f018381548110610eb257610eb2611333565b5f9182526020808320909101546001600160a01b0316835282019290925260400181205460ff1615159003610eea57505f9392505050565b600101610e91565b5060019392505050565b5f8281526002602052604081208054825b81811015610f5b57825f018181548110610f2957610f29611333565b5f918252602090912001546001600160a01b0390811690861603610f535760019350505050610785565b600101610f0d565b505f95945050505050565b6040516001600160a01b0383811660248301526044820183905261075791859182169063a9059cbb90606401610df8565b5f5f60205f8451602086015f885af180610fb6576040513d5f823e3d81fd5b50505f513d91508115610fcd578060011415610fda565b6001600160a01b0384163b155b15610cc157604051635274afe760e01b81526001600160a01b0385166004820152602401610a90565b828054828255905f5260205f20908101928215611054579160200282015b828111156110545781546001600160a01b0319166001600160a01b03843516178255602090920191600190910190611021565b50611060929150611064565b5090565b5b80821115611060575f8155600101611065565b80356001600160a01b038116811461108e575f5ffd5b919050565b5f5f5f5f606085870312156110a6575f5ffd5b843567ffffffffffffffff8111156110bc575f5ffd5b8501601f810187136110cc575f5ffd5b803567ffffffffffffffff8111156110e2575f5ffd5b8760208260051b84010111156110f6575f5ffd5b60209182019550935061110a908601611078565b9396929550929360400135925050565b5f6020828403121561112a575f5ffd5b5035919050565b602080825282518282018190525f918401906040840190835b818110156111715783516001600160a01b031683526020938401939092019160010161114a565b509095945050505050565b5f5f5f5f6080858703121561118f575f5ffd5b8435935061119f60208601611078565b92506111ad60408601611078565b9396929550929360600135925050565b5f5f604083850312156111ce575f5ffd5b823591506111de60208401611078565b90509250929050565b5f5f5f606084860312156111f9575f5ffd5b61120284611078565b925061121060208501611078565b929592945050506040919091013590565b5f5f5f60608486031215611233575f5ffd5b8335925061121060208501611078565b5f5f5f5f5f60a08688031215611257575f5ffd5b853594506020860135935061126e60408701611078565b925061127c60608701611078565b949793965091946080013592915050565b5f6020828403121561129d575f5ffd5b6112a682611078565b9392505050565b634e487b7160e01b5f52601160045260245ffd5b5f600182016112d2576112d26112ad565b5060010190565b5f8184825b85811015611171576001600160a01b036112f783611078565b16835260209283019291909101906001016112de565b80820180821115610785576107856112ad565b81810381811115610785576107856112ad565b634e487b7160e01b5f52603260045260245ffdfea2646970667358221220f158f0d308786b8493ebf4e58e90818aa0f3dc99af4c42bd0f995acd49590a5464736f6c634300081e0033",
+	Bin: "0x6080604052348015600e575f5ffd5b503380603357604051631e4fbdf760e01b81525f600482015260240160405180910390fd5b603a81603f565b506097565b5f80546001600160a01b03838116610100818102610100600160a81b0319851617855560405193049190911692909183917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a35050565b61137d806100a45f395ff3fe608060405260043610610126575f3560e01c80638e0cc176116100a8578063bfa2c1d21161006d578063bfa2c1d214610324578063c108bb4014610343578063c203823614610362578063d23856f6146103a6578063e89a62ee146103c5578063f2fde38b146103e4575f5ffd5b80638e0cc176146102595780639dfaff8f14610278578063a0c89a8c146102af578063aadc3b72146102ce578063aee2e989146102ed575f5ffd5b80635c975abb116100ee5780635c975abb146101ae578063628c40eb146101d0578063715018a6146101fc5780638456cb59146102105780638da5cb5b14610224575f5ffd5b80630b8bb1461461012a5780630d63a1fd1461015157806329b57c69146101705780633f4ba83a1461018557806342ef5fbb1461019b575b5f5ffd5b348015610135575f5ffd5b5061013e600a81565b6040519081526020015b60405180910390f35b34801561015c575f5ffd5b5061013e61016b366004611093565b610403565b34801561017b575f5ffd5b5061013e60015481565b348015610190575f5ffd5b50610199610571565b005b6101996101a936600461111a565b610583565b3480156101b9575f5ffd5b505f5460ff165b6040519015158152602001610148565b3480156101db575f5ffd5b506101ef6101ea36600461111a565b6105f7565b6040516101489190611131565b348015610207575f5ffd5b50610199610660565b34801561021b575f5ffd5b50610199610671565b34801561022f575f5ffd5b505f5461010090046001600160a01b03165b6040516001600160a01b039091168152602001610148565b348015610264575f5ffd5b5061019961027336600461117c565b610681565b348015610283575f5ffd5b5061024161029236600461111a565b5f908152600260205260409020600301546001600160a01b031690565b3480156102ba575f5ffd5b506101996102c93660046111bd565b61073b565b3480156102d9575f5ffd5b506101c06102e83660046111bd565b61075c565b3480156102f8575f5ffd5b5061024161030736600461111a565b5f908152600260205260409020600101546001600160a01b031690565b34801561032f575f5ffd5b5061019961033e3660046111e7565b61078b565b34801561034e575f5ffd5b5061019961035d366004611221565b6107f3565b34801561036d575f5ffd5b5061013e61037c3660046111bd565b5f8281526002602081815260408084206001600160a01b0386168552909201905290205492915050565b3480156103b1575f5ffd5b506101996103c0366004611243565b610888565b3480156103d0575f5ffd5b506101996103df3660046111bd565b610978565b3480156103ef575f5ffd5b506101996103fe36600461128d565b610a63565b5f61040c610aa5565b6001600160a01b0383166104335760405163d92e233d60e01b815260040160405180910390fd5b600a84111561045557604051631785167360e21b815260040160405180910390fd5b60408051466020808301919091526bffffffffffffffffffffffff1930606090811b82168486015233901b166054830152606880830186905283518084039091018152608890920183528151918101919091205f818152600290925291902060018101546001600160a01b0316156104e057604051633ce274d560e21b815260040160405180910390fd5b6104eb818888611003565b50600181810180546001600160a01b0319166001600160a01b0388161790558054905f610517836112c1565b9190505550846001600160a01b031687876040516105369291906112d9565b6040519081900381209084907f8c665d417fd8d3d60d702a3d19dc8184b038e82487203ff32011555beb6cad90905f90a45095945050505050565b610579610ac8565b610581610afa565b565b61058b610aa5565b5f81815260026020818152604080842084805290920190528120805434928392916105b790849061130d565b90915550506040518181525f9083907f87d4c0b5e30d6808bc8a94ba1c4d839b29d664151551a31753387ee9ef48429b9060200160405180910390a35050565b5f8181526002602090815260409182902080548351818402810184019094528084526060939283018282801561065457602002820191905f5260205f20905b81546001600160a01b03168152600190910190602001808311610636575b50505050509050919050565b610668610ac8565b6105815f610b4b565b610679610ac8565b610581610ba3565b610689610aa5565b8361069381610bdf565b848361069f8282610c18565b5f8781526002602081815260408084206001600160a01b038b1685529092019052812080548692906106d2908490611320565b92505081905550846001600160a01b0316866001600160a01b0316887fa6786aab7dbbc48b4b0387488b407bd81448030ab207b50bea7dbb5fbc1cd9eb8760405161071f91815260200190565b60405180910390a4610732868686610c43565b50505050505050565b610743610aa5565b8161074d81610bdf565b6107578383610cdb565b505050565b5f8281526002602090815260408083206001600160a01b038516845260040190915290205460ff165b92915050565b610793610da1565b61079b610ac8565b816001600160a01b0316836001600160a01b03167fb9f4fab3dc87425962ebb52a84543eb50c90a808609ee6967a38308d6119c4bc836040516107e091815260200190565b60405180910390a3610757838383610c43565b6107fb610aa5565b5f8381526002602081815260408084206001600160a01b038716855290920190528120805483929061082e90849061130d565b90915550506040518181526001600160a01b0383169084907f87d4c0b5e30d6808bc8a94ba1c4d839b29d664151551a31753387ee9ef48429b9060200160405180910390a36107576001600160a01b038316333084610dc3565b610890610aa5565b8461089a81610bdf565b85836108a68282610c18565b86856108b28282610c18565b5f8a81526002602081815260408084206001600160a01b038d1685529092019052812080548892906108e5908490611320565b90915550505f8981526002602081815260408084206001600160a01b038d16855290920190528120805488929061091d90849061130d565b9091555050604080516001600160a01b038981168252602082018990528a16918b918d917f181fa219f874a081d83f85e8c9afdc32ede9e7cc757b9537f9cd04f3417a6130910160405180910390a450505050505050505050565b81336109848282610c18565b6001600160a01b0383166109ab5760405163d92e233d60e01b815260040160405180910390fd5b5f84815260026020526040902060038101546001600160a01b038581169116146109f6576109d881610e2a565b6003810180546001600160a01b0319166001600160a01b0386161790555b335f818152600483016020526040808220805460ff19166001179055516001600160a01b0387169188917f9797c1a8248e0833cb5344fa29eb39f2de9bd4824b8ffa5d85faaed75d24e9ef9190a4610a4d81610e8b565b15610a5c57610a5c8585610cdb565b5050505050565b610a6b610ac8565b6001600160a01b038116610a9957604051631e4fbdf760e01b81525f60048201526024015b60405180910390fd5b610aa281610b4b565b50565b5f5460ff16156105815760405163d93c066560e01b815260040160405180910390fd5b5f546001600160a01b036101009091041633146105815760405163118cdaa760e01b8152336004820152602401610a90565b610b02610da1565b5f805460ff191690557f5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa335b6040516001600160a01b03909116815260200160405180910390a1565b5f80546001600160a01b03838116610100818102610100600160a81b0319851617855560405193049190911692909183917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a35050565b610bab610aa5565b5f805460ff191660011790557f62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258610b2e3390565b5f818152600260205260409020600101546001600160a01b03163314610aa257604051631f0853c160e21b815260040160405180910390fd5b610c228282610efc565b610c3f57604051633101cebf60e21b815260040160405180910390fd5b5050565b6001600160a01b038316610cc7575f826001600160a01b0316826040515f6040518083038185875af1925050503d805f8114610c9a576040519150601f19603f3d011682016040523d82523d5f602084013e610c9f565b606091505b5050905080610cc157604051633d2cec6f60e21b815260040160405180910390fd5b50505050565b6107576001600160a01b0384168383610f66565b6001600160a01b038116610d025760405163d92e233d60e01b815260040160405180910390fd5b5f8281526002602052604090206001810180546001600160a01b038481166001600160a01b03198316179092556003830154908216911615610d5a57610d4782610e2a565b6003820180546001600160a01b03191690555b826001600160a01b0316816001600160a01b0316857fca740bd5cca56b72a44eb89e8a703e2e1269576576b5b5ce52a1ba317d20d78d60405160405180910390a450505050565b5f5460ff1661058157604051638dfc202b60e01b815260040160405180910390fd5b6040516001600160a01b038481166024830152838116604483015260648201839052610cc19186918216906323b872dd906084015b604051602081830303815290604052915060e01b6020820180516001600160e01b038381831617835250505050610f97565b80545f5b81811015610757575f836004015f855f018481548110610e5057610e50611333565b5f918252602080832091909101546001600160a01b031683528201929092526040019020805460ff1916911515919091179055600101610e2e565b80545f90815b81811015610ef257836004015f855f018381548110610eb257610eb2611333565b5f9182526020808320909101546001600160a01b0316835282019290925260400181205460ff1615159003610eea57505f9392505050565b600101610e91565b5060019392505050565b5f8281526002602052604081208054825b81811015610f5b57825f018181548110610f2957610f29611333565b5f918252602090912001546001600160a01b0390811690861603610f535760019350505050610785565b600101610f0d565b505f95945050505050565b6040516001600160a01b0383811660248301526044820183905261075791859182169063a9059cbb90606401610df8565b5f5f60205f8451602086015f885af180610fb6576040513d5f823e3d81fd5b50505f513d91508115610fcd578060011415610fda565b6001600160a01b0384163b155b15610cc157604051635274afe760e01b81526001600160a01b0385166004820152602401610a90565b828054828255905f5260205f20908101928215611054579160200282015b828111156110545781546001600160a01b0319166001600160a01b03843516178255602090920191600190910190611021565b50611060929150611064565b5090565b5b80821115611060575f8155600101611065565b80356001600160a01b038116811461108e575f5ffd5b919050565b5f5f5f5f606085870312156110a6575f5ffd5b843567ffffffffffffffff8111156110bc575f5ffd5b8501601f810187136110cc575f5ffd5b803567ffffffffffffffff8111156110e2575f5ffd5b8760208260051b84010111156110f6575f5ffd5b60209182019550935061110a908601611078565b9396929550929360400135925050565b5f6020828403121561112a575f5ffd5b5035919050565b602080825282518282018190525f918401906040840190835b818110156111715783516001600160a01b031683526020938401939092019160010161114a565b509095945050505050565b5f5f5f5f6080858703121561118f575f5ffd5b8435935061119f60208601611078565b92506111ad60408601611078565b9396929550929360600135925050565b5f5f604083850312156111ce575f5ffd5b823591506111de60208401611078565b90509250929050565b5f5f5f606084860312156111f9575f5ffd5b61120284611078565b925061121060208501611078565b929592945050506040919091013590565b5f5f5f60608486031215611233575f5ffd5b8335925061121060208501611078565b5f5f5f5f5f60a08688031215611257575f5ffd5b853594506020860135935061126e60408701611078565b925061127c60608701611078565b949793965091946080013592915050565b5f6020828403121561129d575f5ffd5b6112a682611078565b9392505050565b634e487b7160e01b5f52601160045260245ffd5b5f600182016112d2576112d26112ad565b5060010190565b5f8184825b85811015611171576001600160a01b036112f783611078565b16835260209283019291909101906001016112de565b80820180821115610785576107856112ad565b81810381811115610785576107856112ad565b634e487b7160e01b5f52603260045260245ffdfea2646970667358221220045c53c17643da6f79ff0e699d955a0f9697d96453e23d01cd2a87354438f42064736f6c634300081e0033",
 }
 
-// CelerWalletABI is the input ABI used to generate the binding from.
-// Deprecated: Use CelerWalletMetaData.ABI instead.
-var CelerWalletABI = CelerWalletMetaData.ABI
+// AgentPayWalletABI is the input ABI used to generate the binding from.
+// Deprecated: Use AgentPayWalletMetaData.ABI instead.
+var AgentPayWalletABI = AgentPayWalletMetaData.ABI
 
-// CelerWalletBin is the compiled bytecode used for deploying new contracts.
-// Deprecated: Use CelerWalletMetaData.Bin instead.
-var CelerWalletBin = CelerWalletMetaData.Bin
+// AgentPayWalletBin is the compiled bytecode used for deploying new contracts.
+// Deprecated: Use AgentPayWalletMetaData.Bin instead.
+var AgentPayWalletBin = AgentPayWalletMetaData.Bin
 
-// DeployCelerWallet deploys a new Ethereum contract, binding an instance of CelerWallet to it.
-func DeployCelerWallet(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *CelerWallet, error) {
-	parsed, err := CelerWalletMetaData.GetAbi()
+// DeployAgentPayWallet deploys a new Ethereum contract, binding an instance of AgentPayWallet to it.
+func DeployAgentPayWallet(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *AgentPayWallet, error) {
+	parsed, err := AgentPayWalletMetaData.GetAbi()
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -54,111 +54,111 @@ func DeployCelerWallet(auth *bind.TransactOpts, backend bind.ContractBackend) (c
 		return common.Address{}, nil, nil, errors.New("GetABI returned nil")
 	}
 
-	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(CelerWalletBin), backend)
+	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(AgentPayWalletBin), backend)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	return address, tx, &CelerWallet{CelerWalletCaller: CelerWalletCaller{contract: contract}, CelerWalletTransactor: CelerWalletTransactor{contract: contract}, CelerWalletFilterer: CelerWalletFilterer{contract: contract}}, nil
+	return address, tx, &AgentPayWallet{AgentPayWalletCaller: AgentPayWalletCaller{contract: contract}, AgentPayWalletTransactor: AgentPayWalletTransactor{contract: contract}, AgentPayWalletFilterer: AgentPayWalletFilterer{contract: contract}}, nil
 }
 
-// CelerWallet is an auto generated Go binding around an Ethereum contract.
-type CelerWallet struct {
-	CelerWalletCaller     // Read-only binding to the contract
-	CelerWalletTransactor // Write-only binding to the contract
-	CelerWalletFilterer   // Log filterer for contract events
+// AgentPayWallet is an auto generated Go binding around an Ethereum contract.
+type AgentPayWallet struct {
+	AgentPayWalletCaller     // Read-only binding to the contract
+	AgentPayWalletTransactor // Write-only binding to the contract
+	AgentPayWalletFilterer   // Log filterer for contract events
 }
 
-// CelerWalletCaller is an auto generated read-only Go binding around an Ethereum contract.
-type CelerWalletCaller struct {
+// AgentPayWalletCaller is an auto generated read-only Go binding around an Ethereum contract.
+type AgentPayWalletCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// CelerWalletTransactor is an auto generated write-only Go binding around an Ethereum contract.
-type CelerWalletTransactor struct {
+// AgentPayWalletTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type AgentPayWalletTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// CelerWalletFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type CelerWalletFilterer struct {
+// AgentPayWalletFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type AgentPayWalletFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// CelerWalletSession is an auto generated Go binding around an Ethereum contract,
+// AgentPayWalletSession is an auto generated Go binding around an Ethereum contract,
 // with pre-set call and transact options.
-type CelerWalletSession struct {
-	Contract     *CelerWallet      // Generic contract binding to set the session for
+type AgentPayWalletSession struct {
+	Contract     *AgentPayWallet   // Generic contract binding to set the session for
 	CallOpts     bind.CallOpts     // Call options to use throughout this session
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// CelerWalletCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// AgentPayWalletCallerSession is an auto generated read-only Go binding around an Ethereum contract,
 // with pre-set call options.
-type CelerWalletCallerSession struct {
-	Contract *CelerWalletCaller // Generic contract caller binding to set the session for
-	CallOpts bind.CallOpts      // Call options to use throughout this session
+type AgentPayWalletCallerSession struct {
+	Contract *AgentPayWalletCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts         // Call options to use throughout this session
 }
 
-// CelerWalletTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// AgentPayWalletTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
 // with pre-set transact options.
-type CelerWalletTransactorSession struct {
-	Contract     *CelerWalletTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts      // Transaction auth options to use throughout this session
+type AgentPayWalletTransactorSession struct {
+	Contract     *AgentPayWalletTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts         // Transaction auth options to use throughout this session
 }
 
-// CelerWalletRaw is an auto generated low-level Go binding around an Ethereum contract.
-type CelerWalletRaw struct {
-	Contract *CelerWallet // Generic contract binding to access the raw methods on
+// AgentPayWalletRaw is an auto generated low-level Go binding around an Ethereum contract.
+type AgentPayWalletRaw struct {
+	Contract *AgentPayWallet // Generic contract binding to access the raw methods on
 }
 
-// CelerWalletCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type CelerWalletCallerRaw struct {
-	Contract *CelerWalletCaller // Generic read-only contract binding to access the raw methods on
+// AgentPayWalletCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type AgentPayWalletCallerRaw struct {
+	Contract *AgentPayWalletCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// CelerWalletTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type CelerWalletTransactorRaw struct {
-	Contract *CelerWalletTransactor // Generic write-only contract binding to access the raw methods on
+// AgentPayWalletTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type AgentPayWalletTransactorRaw struct {
+	Contract *AgentPayWalletTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-// NewCelerWallet creates a new instance of CelerWallet, bound to a specific deployed contract.
-func NewCelerWallet(address common.Address, backend bind.ContractBackend) (*CelerWallet, error) {
-	contract, err := bindCelerWallet(address, backend, backend, backend)
+// NewAgentPayWallet creates a new instance of AgentPayWallet, bound to a specific deployed contract.
+func NewAgentPayWallet(address common.Address, backend bind.ContractBackend) (*AgentPayWallet, error) {
+	contract, err := bindAgentPayWallet(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerWallet{CelerWalletCaller: CelerWalletCaller{contract: contract}, CelerWalletTransactor: CelerWalletTransactor{contract: contract}, CelerWalletFilterer: CelerWalletFilterer{contract: contract}}, nil
+	return &AgentPayWallet{AgentPayWalletCaller: AgentPayWalletCaller{contract: contract}, AgentPayWalletTransactor: AgentPayWalletTransactor{contract: contract}, AgentPayWalletFilterer: AgentPayWalletFilterer{contract: contract}}, nil
 }
 
-// NewCelerWalletCaller creates a new read-only instance of CelerWallet, bound to a specific deployed contract.
-func NewCelerWalletCaller(address common.Address, caller bind.ContractCaller) (*CelerWalletCaller, error) {
-	contract, err := bindCelerWallet(address, caller, nil, nil)
+// NewAgentPayWalletCaller creates a new read-only instance of AgentPayWallet, bound to a specific deployed contract.
+func NewAgentPayWalletCaller(address common.Address, caller bind.ContractCaller) (*AgentPayWalletCaller, error) {
+	contract, err := bindAgentPayWallet(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerWalletCaller{contract: contract}, nil
+	return &AgentPayWalletCaller{contract: contract}, nil
 }
 
-// NewCelerWalletTransactor creates a new write-only instance of CelerWallet, bound to a specific deployed contract.
-func NewCelerWalletTransactor(address common.Address, transactor bind.ContractTransactor) (*CelerWalletTransactor, error) {
-	contract, err := bindCelerWallet(address, nil, transactor, nil)
+// NewAgentPayWalletTransactor creates a new write-only instance of AgentPayWallet, bound to a specific deployed contract.
+func NewAgentPayWalletTransactor(address common.Address, transactor bind.ContractTransactor) (*AgentPayWalletTransactor, error) {
+	contract, err := bindAgentPayWallet(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerWalletTransactor{contract: contract}, nil
+	return &AgentPayWalletTransactor{contract: contract}, nil
 }
 
-// NewCelerWalletFilterer creates a new log filterer instance of CelerWallet, bound to a specific deployed contract.
-func NewCelerWalletFilterer(address common.Address, filterer bind.ContractFilterer) (*CelerWalletFilterer, error) {
-	contract, err := bindCelerWallet(address, nil, nil, filterer)
+// NewAgentPayWalletFilterer creates a new log filterer instance of AgentPayWallet, bound to a specific deployed contract.
+func NewAgentPayWalletFilterer(address common.Address, filterer bind.ContractFilterer) (*AgentPayWalletFilterer, error) {
+	contract, err := bindAgentPayWallet(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerWalletFilterer{contract: contract}, nil
+	return &AgentPayWalletFilterer{contract: contract}, nil
 }
 
-// bindCelerWallet binds a generic wrapper to an already deployed contract.
-func bindCelerWallet(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := CelerWalletMetaData.GetAbi()
+// bindAgentPayWallet binds a generic wrapper to an already deployed contract.
+func bindAgentPayWallet(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := AgentPayWalletMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
@@ -169,46 +169,46 @@ func bindCelerWallet(address common.Address, caller bind.ContractCaller, transac
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_CelerWallet *CelerWalletRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _CelerWallet.Contract.CelerWalletCaller.contract.Call(opts, result, method, params...)
+func (_AgentPayWallet *AgentPayWalletRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _AgentPayWallet.Contract.AgentPayWalletCaller.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_CelerWallet *CelerWalletRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _CelerWallet.Contract.CelerWalletTransactor.contract.Transfer(opts)
+func (_AgentPayWallet *AgentPayWalletRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.AgentPayWalletTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_CelerWallet *CelerWalletRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _CelerWallet.Contract.CelerWalletTransactor.contract.Transact(opts, method, params...)
+func (_AgentPayWallet *AgentPayWalletRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.AgentPayWalletTransactor.contract.Transact(opts, method, params...)
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_CelerWallet *CelerWalletCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _CelerWallet.Contract.contract.Call(opts, result, method, params...)
+func (_AgentPayWallet *AgentPayWalletCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _AgentPayWallet.Contract.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_CelerWallet *CelerWalletTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _CelerWallet.Contract.contract.Transfer(opts)
+func (_AgentPayWallet *AgentPayWalletTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_CelerWallet *CelerWalletTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _CelerWallet.Contract.contract.Transact(opts, method, params...)
+func (_AgentPayWallet *AgentPayWalletTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.contract.Transact(opts, method, params...)
 }
 
 // MAXOWNERS is a free data retrieval call binding the contract method 0x0b8bb146.
 //
 // Solidity: function MAX_OWNERS() view returns(uint256)
-func (_CelerWallet *CelerWalletCaller) MAXOWNERS(opts *bind.CallOpts) (*big.Int, error) {
+func (_AgentPayWallet *AgentPayWalletCaller) MAXOWNERS(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
-	err := _CelerWallet.contract.Call(opts, &out, "MAX_OWNERS")
+	err := _AgentPayWallet.contract.Call(opts, &out, "MAX_OWNERS")
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -223,23 +223,23 @@ func (_CelerWallet *CelerWalletCaller) MAXOWNERS(opts *bind.CallOpts) (*big.Int,
 // MAXOWNERS is a free data retrieval call binding the contract method 0x0b8bb146.
 //
 // Solidity: function MAX_OWNERS() view returns(uint256)
-func (_CelerWallet *CelerWalletSession) MAXOWNERS() (*big.Int, error) {
-	return _CelerWallet.Contract.MAXOWNERS(&_CelerWallet.CallOpts)
+func (_AgentPayWallet *AgentPayWalletSession) MAXOWNERS() (*big.Int, error) {
+	return _AgentPayWallet.Contract.MAXOWNERS(&_AgentPayWallet.CallOpts)
 }
 
 // MAXOWNERS is a free data retrieval call binding the contract method 0x0b8bb146.
 //
 // Solidity: function MAX_OWNERS() view returns(uint256)
-func (_CelerWallet *CelerWalletCallerSession) MAXOWNERS() (*big.Int, error) {
-	return _CelerWallet.Contract.MAXOWNERS(&_CelerWallet.CallOpts)
+func (_AgentPayWallet *AgentPayWalletCallerSession) MAXOWNERS() (*big.Int, error) {
+	return _AgentPayWallet.Contract.MAXOWNERS(&_AgentPayWallet.CallOpts)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0xc2038236.
 //
 // Solidity: function balanceOf(bytes32 _walletId, address _tokenAddress) view returns(uint256)
-func (_CelerWallet *CelerWalletCaller) BalanceOf(opts *bind.CallOpts, _walletId [32]byte, _tokenAddress common.Address) (*big.Int, error) {
+func (_AgentPayWallet *AgentPayWalletCaller) BalanceOf(opts *bind.CallOpts, _walletId [32]byte, _tokenAddress common.Address) (*big.Int, error) {
 	var out []interface{}
-	err := _CelerWallet.contract.Call(opts, &out, "balanceOf", _walletId, _tokenAddress)
+	err := _AgentPayWallet.contract.Call(opts, &out, "balanceOf", _walletId, _tokenAddress)
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -254,23 +254,23 @@ func (_CelerWallet *CelerWalletCaller) BalanceOf(opts *bind.CallOpts, _walletId 
 // BalanceOf is a free data retrieval call binding the contract method 0xc2038236.
 //
 // Solidity: function balanceOf(bytes32 _walletId, address _tokenAddress) view returns(uint256)
-func (_CelerWallet *CelerWalletSession) BalanceOf(_walletId [32]byte, _tokenAddress common.Address) (*big.Int, error) {
-	return _CelerWallet.Contract.BalanceOf(&_CelerWallet.CallOpts, _walletId, _tokenAddress)
+func (_AgentPayWallet *AgentPayWalletSession) BalanceOf(_walletId [32]byte, _tokenAddress common.Address) (*big.Int, error) {
+	return _AgentPayWallet.Contract.BalanceOf(&_AgentPayWallet.CallOpts, _walletId, _tokenAddress)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0xc2038236.
 //
 // Solidity: function balanceOf(bytes32 _walletId, address _tokenAddress) view returns(uint256)
-func (_CelerWallet *CelerWalletCallerSession) BalanceOf(_walletId [32]byte, _tokenAddress common.Address) (*big.Int, error) {
-	return _CelerWallet.Contract.BalanceOf(&_CelerWallet.CallOpts, _walletId, _tokenAddress)
+func (_AgentPayWallet *AgentPayWalletCallerSession) BalanceOf(_walletId [32]byte, _tokenAddress common.Address) (*big.Int, error) {
+	return _AgentPayWallet.Contract.BalanceOf(&_AgentPayWallet.CallOpts, _walletId, _tokenAddress)
 }
 
 // HasVoted is a free data retrieval call binding the contract method 0xaadc3b72.
 //
 // Solidity: function hasVoted(bytes32 _walletId, address _owner) view returns(bool)
-func (_CelerWallet *CelerWalletCaller) HasVoted(opts *bind.CallOpts, _walletId [32]byte, _owner common.Address) (bool, error) {
+func (_AgentPayWallet *AgentPayWalletCaller) HasVoted(opts *bind.CallOpts, _walletId [32]byte, _owner common.Address) (bool, error) {
 	var out []interface{}
-	err := _CelerWallet.contract.Call(opts, &out, "hasVoted", _walletId, _owner)
+	err := _AgentPayWallet.contract.Call(opts, &out, "hasVoted", _walletId, _owner)
 
 	if err != nil {
 		return *new(bool), err
@@ -285,23 +285,23 @@ func (_CelerWallet *CelerWalletCaller) HasVoted(opts *bind.CallOpts, _walletId [
 // HasVoted is a free data retrieval call binding the contract method 0xaadc3b72.
 //
 // Solidity: function hasVoted(bytes32 _walletId, address _owner) view returns(bool)
-func (_CelerWallet *CelerWalletSession) HasVoted(_walletId [32]byte, _owner common.Address) (bool, error) {
-	return _CelerWallet.Contract.HasVoted(&_CelerWallet.CallOpts, _walletId, _owner)
+func (_AgentPayWallet *AgentPayWalletSession) HasVoted(_walletId [32]byte, _owner common.Address) (bool, error) {
+	return _AgentPayWallet.Contract.HasVoted(&_AgentPayWallet.CallOpts, _walletId, _owner)
 }
 
 // HasVoted is a free data retrieval call binding the contract method 0xaadc3b72.
 //
 // Solidity: function hasVoted(bytes32 _walletId, address _owner) view returns(bool)
-func (_CelerWallet *CelerWalletCallerSession) HasVoted(_walletId [32]byte, _owner common.Address) (bool, error) {
-	return _CelerWallet.Contract.HasVoted(&_CelerWallet.CallOpts, _walletId, _owner)
+func (_AgentPayWallet *AgentPayWalletCallerSession) HasVoted(_walletId [32]byte, _owner common.Address) (bool, error) {
+	return _AgentPayWallet.Contract.HasVoted(&_AgentPayWallet.CallOpts, _walletId, _owner)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() view returns(address)
-func (_CelerWallet *CelerWalletCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
+func (_AgentPayWallet *AgentPayWalletCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
-	err := _CelerWallet.contract.Call(opts, &out, "owner")
+	err := _AgentPayWallet.contract.Call(opts, &out, "owner")
 
 	if err != nil {
 		return *new(common.Address), err
@@ -316,23 +316,23 @@ func (_CelerWallet *CelerWalletCaller) Owner(opts *bind.CallOpts) (common.Addres
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() view returns(address)
-func (_CelerWallet *CelerWalletSession) Owner() (common.Address, error) {
-	return _CelerWallet.Contract.Owner(&_CelerWallet.CallOpts)
+func (_AgentPayWallet *AgentPayWalletSession) Owner() (common.Address, error) {
+	return _AgentPayWallet.Contract.Owner(&_AgentPayWallet.CallOpts)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() view returns(address)
-func (_CelerWallet *CelerWalletCallerSession) Owner() (common.Address, error) {
-	return _CelerWallet.Contract.Owner(&_CelerWallet.CallOpts)
+func (_AgentPayWallet *AgentPayWalletCallerSession) Owner() (common.Address, error) {
+	return _AgentPayWallet.Contract.Owner(&_AgentPayWallet.CallOpts)
 }
 
 // Paused is a free data retrieval call binding the contract method 0x5c975abb.
 //
 // Solidity: function paused() view returns(bool)
-func (_CelerWallet *CelerWalletCaller) Paused(opts *bind.CallOpts) (bool, error) {
+func (_AgentPayWallet *AgentPayWalletCaller) Paused(opts *bind.CallOpts) (bool, error) {
 	var out []interface{}
-	err := _CelerWallet.contract.Call(opts, &out, "paused")
+	err := _AgentPayWallet.contract.Call(opts, &out, "paused")
 
 	if err != nil {
 		return *new(bool), err
@@ -347,23 +347,23 @@ func (_CelerWallet *CelerWalletCaller) Paused(opts *bind.CallOpts) (bool, error)
 // Paused is a free data retrieval call binding the contract method 0x5c975abb.
 //
 // Solidity: function paused() view returns(bool)
-func (_CelerWallet *CelerWalletSession) Paused() (bool, error) {
-	return _CelerWallet.Contract.Paused(&_CelerWallet.CallOpts)
+func (_AgentPayWallet *AgentPayWalletSession) Paused() (bool, error) {
+	return _AgentPayWallet.Contract.Paused(&_AgentPayWallet.CallOpts)
 }
 
 // Paused is a free data retrieval call binding the contract method 0x5c975abb.
 //
 // Solidity: function paused() view returns(bool)
-func (_CelerWallet *CelerWalletCallerSession) Paused() (bool, error) {
-	return _CelerWallet.Contract.Paused(&_CelerWallet.CallOpts)
+func (_AgentPayWallet *AgentPayWalletCallerSession) Paused() (bool, error) {
+	return _AgentPayWallet.Contract.Paused(&_AgentPayWallet.CallOpts)
 }
 
 // PendingOperator is a free data retrieval call binding the contract method 0x9dfaff8f.
 //
 // Solidity: function pendingOperator(bytes32 _walletId) view returns(address)
-func (_CelerWallet *CelerWalletCaller) PendingOperator(opts *bind.CallOpts, _walletId [32]byte) (common.Address, error) {
+func (_AgentPayWallet *AgentPayWalletCaller) PendingOperator(opts *bind.CallOpts, _walletId [32]byte) (common.Address, error) {
 	var out []interface{}
-	err := _CelerWallet.contract.Call(opts, &out, "pendingOperator", _walletId)
+	err := _AgentPayWallet.contract.Call(opts, &out, "pendingOperator", _walletId)
 
 	if err != nil {
 		return *new(common.Address), err
@@ -378,23 +378,23 @@ func (_CelerWallet *CelerWalletCaller) PendingOperator(opts *bind.CallOpts, _wal
 // PendingOperator is a free data retrieval call binding the contract method 0x9dfaff8f.
 //
 // Solidity: function pendingOperator(bytes32 _walletId) view returns(address)
-func (_CelerWallet *CelerWalletSession) PendingOperator(_walletId [32]byte) (common.Address, error) {
-	return _CelerWallet.Contract.PendingOperator(&_CelerWallet.CallOpts, _walletId)
+func (_AgentPayWallet *AgentPayWalletSession) PendingOperator(_walletId [32]byte) (common.Address, error) {
+	return _AgentPayWallet.Contract.PendingOperator(&_AgentPayWallet.CallOpts, _walletId)
 }
 
 // PendingOperator is a free data retrieval call binding the contract method 0x9dfaff8f.
 //
 // Solidity: function pendingOperator(bytes32 _walletId) view returns(address)
-func (_CelerWallet *CelerWalletCallerSession) PendingOperator(_walletId [32]byte) (common.Address, error) {
-	return _CelerWallet.Contract.PendingOperator(&_CelerWallet.CallOpts, _walletId)
+func (_AgentPayWallet *AgentPayWalletCallerSession) PendingOperator(_walletId [32]byte) (common.Address, error) {
+	return _AgentPayWallet.Contract.PendingOperator(&_AgentPayWallet.CallOpts, _walletId)
 }
 
 // WalletCount is a free data retrieval call binding the contract method 0x29b57c69.
 //
 // Solidity: function walletCount() view returns(uint256)
-func (_CelerWallet *CelerWalletCaller) WalletCount(opts *bind.CallOpts) (*big.Int, error) {
+func (_AgentPayWallet *AgentPayWalletCaller) WalletCount(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
-	err := _CelerWallet.contract.Call(opts, &out, "walletCount")
+	err := _AgentPayWallet.contract.Call(opts, &out, "walletCount")
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -409,23 +409,23 @@ func (_CelerWallet *CelerWalletCaller) WalletCount(opts *bind.CallOpts) (*big.In
 // WalletCount is a free data retrieval call binding the contract method 0x29b57c69.
 //
 // Solidity: function walletCount() view returns(uint256)
-func (_CelerWallet *CelerWalletSession) WalletCount() (*big.Int, error) {
-	return _CelerWallet.Contract.WalletCount(&_CelerWallet.CallOpts)
+func (_AgentPayWallet *AgentPayWalletSession) WalletCount() (*big.Int, error) {
+	return _AgentPayWallet.Contract.WalletCount(&_AgentPayWallet.CallOpts)
 }
 
 // WalletCount is a free data retrieval call binding the contract method 0x29b57c69.
 //
 // Solidity: function walletCount() view returns(uint256)
-func (_CelerWallet *CelerWalletCallerSession) WalletCount() (*big.Int, error) {
-	return _CelerWallet.Contract.WalletCount(&_CelerWallet.CallOpts)
+func (_AgentPayWallet *AgentPayWalletCallerSession) WalletCount() (*big.Int, error) {
+	return _AgentPayWallet.Contract.WalletCount(&_AgentPayWallet.CallOpts)
 }
 
 // WalletOperator is a free data retrieval call binding the contract method 0xaee2e989.
 //
 // Solidity: function walletOperator(bytes32 _walletId) view returns(address)
-func (_CelerWallet *CelerWalletCaller) WalletOperator(opts *bind.CallOpts, _walletId [32]byte) (common.Address, error) {
+func (_AgentPayWallet *AgentPayWalletCaller) WalletOperator(opts *bind.CallOpts, _walletId [32]byte) (common.Address, error) {
 	var out []interface{}
-	err := _CelerWallet.contract.Call(opts, &out, "walletOperator", _walletId)
+	err := _AgentPayWallet.contract.Call(opts, &out, "walletOperator", _walletId)
 
 	if err != nil {
 		return *new(common.Address), err
@@ -440,23 +440,23 @@ func (_CelerWallet *CelerWalletCaller) WalletOperator(opts *bind.CallOpts, _wall
 // WalletOperator is a free data retrieval call binding the contract method 0xaee2e989.
 //
 // Solidity: function walletOperator(bytes32 _walletId) view returns(address)
-func (_CelerWallet *CelerWalletSession) WalletOperator(_walletId [32]byte) (common.Address, error) {
-	return _CelerWallet.Contract.WalletOperator(&_CelerWallet.CallOpts, _walletId)
+func (_AgentPayWallet *AgentPayWalletSession) WalletOperator(_walletId [32]byte) (common.Address, error) {
+	return _AgentPayWallet.Contract.WalletOperator(&_AgentPayWallet.CallOpts, _walletId)
 }
 
 // WalletOperator is a free data retrieval call binding the contract method 0xaee2e989.
 //
 // Solidity: function walletOperator(bytes32 _walletId) view returns(address)
-func (_CelerWallet *CelerWalletCallerSession) WalletOperator(_walletId [32]byte) (common.Address, error) {
-	return _CelerWallet.Contract.WalletOperator(&_CelerWallet.CallOpts, _walletId)
+func (_AgentPayWallet *AgentPayWalletCallerSession) WalletOperator(_walletId [32]byte) (common.Address, error) {
+	return _AgentPayWallet.Contract.WalletOperator(&_AgentPayWallet.CallOpts, _walletId)
 }
 
 // WalletOwners is a free data retrieval call binding the contract method 0x628c40eb.
 //
 // Solidity: function walletOwners(bytes32 _walletId) view returns(address[])
-func (_CelerWallet *CelerWalletCaller) WalletOwners(opts *bind.CallOpts, _walletId [32]byte) ([]common.Address, error) {
+func (_AgentPayWallet *AgentPayWalletCaller) WalletOwners(opts *bind.CallOpts, _walletId [32]byte) ([]common.Address, error) {
 	var out []interface{}
-	err := _CelerWallet.contract.Call(opts, &out, "walletOwners", _walletId)
+	err := _AgentPayWallet.contract.Call(opts, &out, "walletOwners", _walletId)
 
 	if err != nil {
 		return *new([]common.Address), err
@@ -471,272 +471,272 @@ func (_CelerWallet *CelerWalletCaller) WalletOwners(opts *bind.CallOpts, _wallet
 // WalletOwners is a free data retrieval call binding the contract method 0x628c40eb.
 //
 // Solidity: function walletOwners(bytes32 _walletId) view returns(address[])
-func (_CelerWallet *CelerWalletSession) WalletOwners(_walletId [32]byte) ([]common.Address, error) {
-	return _CelerWallet.Contract.WalletOwners(&_CelerWallet.CallOpts, _walletId)
+func (_AgentPayWallet *AgentPayWalletSession) WalletOwners(_walletId [32]byte) ([]common.Address, error) {
+	return _AgentPayWallet.Contract.WalletOwners(&_AgentPayWallet.CallOpts, _walletId)
 }
 
 // WalletOwners is a free data retrieval call binding the contract method 0x628c40eb.
 //
 // Solidity: function walletOwners(bytes32 _walletId) view returns(address[])
-func (_CelerWallet *CelerWalletCallerSession) WalletOwners(_walletId [32]byte) ([]common.Address, error) {
-	return _CelerWallet.Contract.WalletOwners(&_CelerWallet.CallOpts, _walletId)
+func (_AgentPayWallet *AgentPayWalletCallerSession) WalletOwners(_walletId [32]byte) ([]common.Address, error) {
+	return _AgentPayWallet.Contract.WalletOwners(&_AgentPayWallet.CallOpts, _walletId)
 }
 
 // Create is a paid mutator transaction binding the contract method 0x0d63a1fd.
 //
 // Solidity: function create(address[] _owners, address _operator, bytes32 _nonce) returns(bytes32)
-func (_CelerWallet *CelerWalletTransactor) Create(opts *bind.TransactOpts, _owners []common.Address, _operator common.Address, _nonce [32]byte) (*types.Transaction, error) {
-	return _CelerWallet.contract.Transact(opts, "create", _owners, _operator, _nonce)
+func (_AgentPayWallet *AgentPayWalletTransactor) Create(opts *bind.TransactOpts, _owners []common.Address, _operator common.Address, _nonce [32]byte) (*types.Transaction, error) {
+	return _AgentPayWallet.contract.Transact(opts, "create", _owners, _operator, _nonce)
 }
 
 // Create is a paid mutator transaction binding the contract method 0x0d63a1fd.
 //
 // Solidity: function create(address[] _owners, address _operator, bytes32 _nonce) returns(bytes32)
-func (_CelerWallet *CelerWalletSession) Create(_owners []common.Address, _operator common.Address, _nonce [32]byte) (*types.Transaction, error) {
-	return _CelerWallet.Contract.Create(&_CelerWallet.TransactOpts, _owners, _operator, _nonce)
+func (_AgentPayWallet *AgentPayWalletSession) Create(_owners []common.Address, _operator common.Address, _nonce [32]byte) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.Create(&_AgentPayWallet.TransactOpts, _owners, _operator, _nonce)
 }
 
 // Create is a paid mutator transaction binding the contract method 0x0d63a1fd.
 //
 // Solidity: function create(address[] _owners, address _operator, bytes32 _nonce) returns(bytes32)
-func (_CelerWallet *CelerWalletTransactorSession) Create(_owners []common.Address, _operator common.Address, _nonce [32]byte) (*types.Transaction, error) {
-	return _CelerWallet.Contract.Create(&_CelerWallet.TransactOpts, _owners, _operator, _nonce)
+func (_AgentPayWallet *AgentPayWalletTransactorSession) Create(_owners []common.Address, _operator common.Address, _nonce [32]byte) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.Create(&_AgentPayWallet.TransactOpts, _owners, _operator, _nonce)
 }
 
 // DepositERC20 is a paid mutator transaction binding the contract method 0xc108bb40.
 //
 // Solidity: function depositERC20(bytes32 _walletId, address _tokenAddress, uint256 _amount) returns()
-func (_CelerWallet *CelerWalletTransactor) DepositERC20(opts *bind.TransactOpts, _walletId [32]byte, _tokenAddress common.Address, _amount *big.Int) (*types.Transaction, error) {
-	return _CelerWallet.contract.Transact(opts, "depositERC20", _walletId, _tokenAddress, _amount)
+func (_AgentPayWallet *AgentPayWalletTransactor) DepositERC20(opts *bind.TransactOpts, _walletId [32]byte, _tokenAddress common.Address, _amount *big.Int) (*types.Transaction, error) {
+	return _AgentPayWallet.contract.Transact(opts, "depositERC20", _walletId, _tokenAddress, _amount)
 }
 
 // DepositERC20 is a paid mutator transaction binding the contract method 0xc108bb40.
 //
 // Solidity: function depositERC20(bytes32 _walletId, address _tokenAddress, uint256 _amount) returns()
-func (_CelerWallet *CelerWalletSession) DepositERC20(_walletId [32]byte, _tokenAddress common.Address, _amount *big.Int) (*types.Transaction, error) {
-	return _CelerWallet.Contract.DepositERC20(&_CelerWallet.TransactOpts, _walletId, _tokenAddress, _amount)
+func (_AgentPayWallet *AgentPayWalletSession) DepositERC20(_walletId [32]byte, _tokenAddress common.Address, _amount *big.Int) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.DepositERC20(&_AgentPayWallet.TransactOpts, _walletId, _tokenAddress, _amount)
 }
 
 // DepositERC20 is a paid mutator transaction binding the contract method 0xc108bb40.
 //
 // Solidity: function depositERC20(bytes32 _walletId, address _tokenAddress, uint256 _amount) returns()
-func (_CelerWallet *CelerWalletTransactorSession) DepositERC20(_walletId [32]byte, _tokenAddress common.Address, _amount *big.Int) (*types.Transaction, error) {
-	return _CelerWallet.Contract.DepositERC20(&_CelerWallet.TransactOpts, _walletId, _tokenAddress, _amount)
+func (_AgentPayWallet *AgentPayWalletTransactorSession) DepositERC20(_walletId [32]byte, _tokenAddress common.Address, _amount *big.Int) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.DepositERC20(&_AgentPayWallet.TransactOpts, _walletId, _tokenAddress, _amount)
 }
 
 // DepositNative is a paid mutator transaction binding the contract method 0x42ef5fbb.
 //
 // Solidity: function depositNative(bytes32 _walletId) payable returns()
-func (_CelerWallet *CelerWalletTransactor) DepositNative(opts *bind.TransactOpts, _walletId [32]byte) (*types.Transaction, error) {
-	return _CelerWallet.contract.Transact(opts, "depositNative", _walletId)
+func (_AgentPayWallet *AgentPayWalletTransactor) DepositNative(opts *bind.TransactOpts, _walletId [32]byte) (*types.Transaction, error) {
+	return _AgentPayWallet.contract.Transact(opts, "depositNative", _walletId)
 }
 
 // DepositNative is a paid mutator transaction binding the contract method 0x42ef5fbb.
 //
 // Solidity: function depositNative(bytes32 _walletId) payable returns()
-func (_CelerWallet *CelerWalletSession) DepositNative(_walletId [32]byte) (*types.Transaction, error) {
-	return _CelerWallet.Contract.DepositNative(&_CelerWallet.TransactOpts, _walletId)
+func (_AgentPayWallet *AgentPayWalletSession) DepositNative(_walletId [32]byte) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.DepositNative(&_AgentPayWallet.TransactOpts, _walletId)
 }
 
 // DepositNative is a paid mutator transaction binding the contract method 0x42ef5fbb.
 //
 // Solidity: function depositNative(bytes32 _walletId) payable returns()
-func (_CelerWallet *CelerWalletTransactorSession) DepositNative(_walletId [32]byte) (*types.Transaction, error) {
-	return _CelerWallet.Contract.DepositNative(&_CelerWallet.TransactOpts, _walletId)
+func (_AgentPayWallet *AgentPayWalletTransactorSession) DepositNative(_walletId [32]byte) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.DepositNative(&_AgentPayWallet.TransactOpts, _walletId)
 }
 
 // DrainToken is a paid mutator transaction binding the contract method 0xbfa2c1d2.
 //
 // Solidity: function drainToken(address _tokenAddress, address _receiver, uint256 _amount) returns()
-func (_CelerWallet *CelerWalletTransactor) DrainToken(opts *bind.TransactOpts, _tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
-	return _CelerWallet.contract.Transact(opts, "drainToken", _tokenAddress, _receiver, _amount)
+func (_AgentPayWallet *AgentPayWalletTransactor) DrainToken(opts *bind.TransactOpts, _tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
+	return _AgentPayWallet.contract.Transact(opts, "drainToken", _tokenAddress, _receiver, _amount)
 }
 
 // DrainToken is a paid mutator transaction binding the contract method 0xbfa2c1d2.
 //
 // Solidity: function drainToken(address _tokenAddress, address _receiver, uint256 _amount) returns()
-func (_CelerWallet *CelerWalletSession) DrainToken(_tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
-	return _CelerWallet.Contract.DrainToken(&_CelerWallet.TransactOpts, _tokenAddress, _receiver, _amount)
+func (_AgentPayWallet *AgentPayWalletSession) DrainToken(_tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.DrainToken(&_AgentPayWallet.TransactOpts, _tokenAddress, _receiver, _amount)
 }
 
 // DrainToken is a paid mutator transaction binding the contract method 0xbfa2c1d2.
 //
 // Solidity: function drainToken(address _tokenAddress, address _receiver, uint256 _amount) returns()
-func (_CelerWallet *CelerWalletTransactorSession) DrainToken(_tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
-	return _CelerWallet.Contract.DrainToken(&_CelerWallet.TransactOpts, _tokenAddress, _receiver, _amount)
+func (_AgentPayWallet *AgentPayWalletTransactorSession) DrainToken(_tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.DrainToken(&_AgentPayWallet.TransactOpts, _tokenAddress, _receiver, _amount)
 }
 
 // Pause is a paid mutator transaction binding the contract method 0x8456cb59.
 //
 // Solidity: function pause() returns()
-func (_CelerWallet *CelerWalletTransactor) Pause(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _CelerWallet.contract.Transact(opts, "pause")
+func (_AgentPayWallet *AgentPayWalletTransactor) Pause(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AgentPayWallet.contract.Transact(opts, "pause")
 }
 
 // Pause is a paid mutator transaction binding the contract method 0x8456cb59.
 //
 // Solidity: function pause() returns()
-func (_CelerWallet *CelerWalletSession) Pause() (*types.Transaction, error) {
-	return _CelerWallet.Contract.Pause(&_CelerWallet.TransactOpts)
+func (_AgentPayWallet *AgentPayWalletSession) Pause() (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.Pause(&_AgentPayWallet.TransactOpts)
 }
 
 // Pause is a paid mutator transaction binding the contract method 0x8456cb59.
 //
 // Solidity: function pause() returns()
-func (_CelerWallet *CelerWalletTransactorSession) Pause() (*types.Transaction, error) {
-	return _CelerWallet.Contract.Pause(&_CelerWallet.TransactOpts)
+func (_AgentPayWallet *AgentPayWalletTransactorSession) Pause() (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.Pause(&_AgentPayWallet.TransactOpts)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
-func (_CelerWallet *CelerWalletTransactor) RenounceOwnership(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _CelerWallet.contract.Transact(opts, "renounceOwnership")
+func (_AgentPayWallet *AgentPayWalletTransactor) RenounceOwnership(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AgentPayWallet.contract.Transact(opts, "renounceOwnership")
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
-func (_CelerWallet *CelerWalletSession) RenounceOwnership() (*types.Transaction, error) {
-	return _CelerWallet.Contract.RenounceOwnership(&_CelerWallet.TransactOpts)
+func (_AgentPayWallet *AgentPayWalletSession) RenounceOwnership() (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.RenounceOwnership(&_AgentPayWallet.TransactOpts)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
-func (_CelerWallet *CelerWalletTransactorSession) RenounceOwnership() (*types.Transaction, error) {
-	return _CelerWallet.Contract.RenounceOwnership(&_CelerWallet.TransactOpts)
+func (_AgentPayWallet *AgentPayWalletTransactorSession) RenounceOwnership() (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.RenounceOwnership(&_AgentPayWallet.TransactOpts)
 }
 
 // TransferBetweenWallets is a paid mutator transaction binding the contract method 0xd23856f6.
 //
 // Solidity: function transferBetweenWallets(bytes32 _fromWalletId, bytes32 _toWalletId, address _tokenAddress, address _receiver, uint256 _amount) returns()
-func (_CelerWallet *CelerWalletTransactor) TransferBetweenWallets(opts *bind.TransactOpts, _fromWalletId [32]byte, _toWalletId [32]byte, _tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
-	return _CelerWallet.contract.Transact(opts, "transferBetweenWallets", _fromWalletId, _toWalletId, _tokenAddress, _receiver, _amount)
+func (_AgentPayWallet *AgentPayWalletTransactor) TransferBetweenWallets(opts *bind.TransactOpts, _fromWalletId [32]byte, _toWalletId [32]byte, _tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
+	return _AgentPayWallet.contract.Transact(opts, "transferBetweenWallets", _fromWalletId, _toWalletId, _tokenAddress, _receiver, _amount)
 }
 
 // TransferBetweenWallets is a paid mutator transaction binding the contract method 0xd23856f6.
 //
 // Solidity: function transferBetweenWallets(bytes32 _fromWalletId, bytes32 _toWalletId, address _tokenAddress, address _receiver, uint256 _amount) returns()
-func (_CelerWallet *CelerWalletSession) TransferBetweenWallets(_fromWalletId [32]byte, _toWalletId [32]byte, _tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
-	return _CelerWallet.Contract.TransferBetweenWallets(&_CelerWallet.TransactOpts, _fromWalletId, _toWalletId, _tokenAddress, _receiver, _amount)
+func (_AgentPayWallet *AgentPayWalletSession) TransferBetweenWallets(_fromWalletId [32]byte, _toWalletId [32]byte, _tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.TransferBetweenWallets(&_AgentPayWallet.TransactOpts, _fromWalletId, _toWalletId, _tokenAddress, _receiver, _amount)
 }
 
 // TransferBetweenWallets is a paid mutator transaction binding the contract method 0xd23856f6.
 //
 // Solidity: function transferBetweenWallets(bytes32 _fromWalletId, bytes32 _toWalletId, address _tokenAddress, address _receiver, uint256 _amount) returns()
-func (_CelerWallet *CelerWalletTransactorSession) TransferBetweenWallets(_fromWalletId [32]byte, _toWalletId [32]byte, _tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
-	return _CelerWallet.Contract.TransferBetweenWallets(&_CelerWallet.TransactOpts, _fromWalletId, _toWalletId, _tokenAddress, _receiver, _amount)
+func (_AgentPayWallet *AgentPayWalletTransactorSession) TransferBetweenWallets(_fromWalletId [32]byte, _toWalletId [32]byte, _tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.TransferBetweenWallets(&_AgentPayWallet.TransactOpts, _fromWalletId, _toWalletId, _tokenAddress, _receiver, _amount)
 }
 
 // TransferOperatorship is a paid mutator transaction binding the contract method 0xa0c89a8c.
 //
 // Solidity: function transferOperatorship(bytes32 _walletId, address _newOperator) returns()
-func (_CelerWallet *CelerWalletTransactor) TransferOperatorship(opts *bind.TransactOpts, _walletId [32]byte, _newOperator common.Address) (*types.Transaction, error) {
-	return _CelerWallet.contract.Transact(opts, "transferOperatorship", _walletId, _newOperator)
+func (_AgentPayWallet *AgentPayWalletTransactor) TransferOperatorship(opts *bind.TransactOpts, _walletId [32]byte, _newOperator common.Address) (*types.Transaction, error) {
+	return _AgentPayWallet.contract.Transact(opts, "transferOperatorship", _walletId, _newOperator)
 }
 
 // TransferOperatorship is a paid mutator transaction binding the contract method 0xa0c89a8c.
 //
 // Solidity: function transferOperatorship(bytes32 _walletId, address _newOperator) returns()
-func (_CelerWallet *CelerWalletSession) TransferOperatorship(_walletId [32]byte, _newOperator common.Address) (*types.Transaction, error) {
-	return _CelerWallet.Contract.TransferOperatorship(&_CelerWallet.TransactOpts, _walletId, _newOperator)
+func (_AgentPayWallet *AgentPayWalletSession) TransferOperatorship(_walletId [32]byte, _newOperator common.Address) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.TransferOperatorship(&_AgentPayWallet.TransactOpts, _walletId, _newOperator)
 }
 
 // TransferOperatorship is a paid mutator transaction binding the contract method 0xa0c89a8c.
 //
 // Solidity: function transferOperatorship(bytes32 _walletId, address _newOperator) returns()
-func (_CelerWallet *CelerWalletTransactorSession) TransferOperatorship(_walletId [32]byte, _newOperator common.Address) (*types.Transaction, error) {
-	return _CelerWallet.Contract.TransferOperatorship(&_CelerWallet.TransactOpts, _walletId, _newOperator)
+func (_AgentPayWallet *AgentPayWalletTransactorSession) TransferOperatorship(_walletId [32]byte, _newOperator common.Address) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.TransferOperatorship(&_AgentPayWallet.TransactOpts, _walletId, _newOperator)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
 // Solidity: function transferOwnership(address newOwner) returns()
-func (_CelerWallet *CelerWalletTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
-	return _CelerWallet.contract.Transact(opts, "transferOwnership", newOwner)
+func (_AgentPayWallet *AgentPayWalletTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
+	return _AgentPayWallet.contract.Transact(opts, "transferOwnership", newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
 // Solidity: function transferOwnership(address newOwner) returns()
-func (_CelerWallet *CelerWalletSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
-	return _CelerWallet.Contract.TransferOwnership(&_CelerWallet.TransactOpts, newOwner)
+func (_AgentPayWallet *AgentPayWalletSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.TransferOwnership(&_AgentPayWallet.TransactOpts, newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
 // Solidity: function transferOwnership(address newOwner) returns()
-func (_CelerWallet *CelerWalletTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
-	return _CelerWallet.Contract.TransferOwnership(&_CelerWallet.TransactOpts, newOwner)
+func (_AgentPayWallet *AgentPayWalletTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.TransferOwnership(&_AgentPayWallet.TransactOpts, newOwner)
 }
 
 // Unpause is a paid mutator transaction binding the contract method 0x3f4ba83a.
 //
 // Solidity: function unpause() returns()
-func (_CelerWallet *CelerWalletTransactor) Unpause(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _CelerWallet.contract.Transact(opts, "unpause")
+func (_AgentPayWallet *AgentPayWalletTransactor) Unpause(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AgentPayWallet.contract.Transact(opts, "unpause")
 }
 
 // Unpause is a paid mutator transaction binding the contract method 0x3f4ba83a.
 //
 // Solidity: function unpause() returns()
-func (_CelerWallet *CelerWalletSession) Unpause() (*types.Transaction, error) {
-	return _CelerWallet.Contract.Unpause(&_CelerWallet.TransactOpts)
+func (_AgentPayWallet *AgentPayWalletSession) Unpause() (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.Unpause(&_AgentPayWallet.TransactOpts)
 }
 
 // Unpause is a paid mutator transaction binding the contract method 0x3f4ba83a.
 //
 // Solidity: function unpause() returns()
-func (_CelerWallet *CelerWalletTransactorSession) Unpause() (*types.Transaction, error) {
-	return _CelerWallet.Contract.Unpause(&_CelerWallet.TransactOpts)
+func (_AgentPayWallet *AgentPayWalletTransactorSession) Unpause() (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.Unpause(&_AgentPayWallet.TransactOpts)
 }
 
 // VoteForOperator is a paid mutator transaction binding the contract method 0xe89a62ee.
 //
 // Solidity: function voteForOperator(bytes32 _walletId, address _candidate) returns()
-func (_CelerWallet *CelerWalletTransactor) VoteForOperator(opts *bind.TransactOpts, _walletId [32]byte, _candidate common.Address) (*types.Transaction, error) {
-	return _CelerWallet.contract.Transact(opts, "voteForOperator", _walletId, _candidate)
+func (_AgentPayWallet *AgentPayWalletTransactor) VoteForOperator(opts *bind.TransactOpts, _walletId [32]byte, _candidate common.Address) (*types.Transaction, error) {
+	return _AgentPayWallet.contract.Transact(opts, "voteForOperator", _walletId, _candidate)
 }
 
 // VoteForOperator is a paid mutator transaction binding the contract method 0xe89a62ee.
 //
 // Solidity: function voteForOperator(bytes32 _walletId, address _candidate) returns()
-func (_CelerWallet *CelerWalletSession) VoteForOperator(_walletId [32]byte, _candidate common.Address) (*types.Transaction, error) {
-	return _CelerWallet.Contract.VoteForOperator(&_CelerWallet.TransactOpts, _walletId, _candidate)
+func (_AgentPayWallet *AgentPayWalletSession) VoteForOperator(_walletId [32]byte, _candidate common.Address) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.VoteForOperator(&_AgentPayWallet.TransactOpts, _walletId, _candidate)
 }
 
 // VoteForOperator is a paid mutator transaction binding the contract method 0xe89a62ee.
 //
 // Solidity: function voteForOperator(bytes32 _walletId, address _candidate) returns()
-func (_CelerWallet *CelerWalletTransactorSession) VoteForOperator(_walletId [32]byte, _candidate common.Address) (*types.Transaction, error) {
-	return _CelerWallet.Contract.VoteForOperator(&_CelerWallet.TransactOpts, _walletId, _candidate)
+func (_AgentPayWallet *AgentPayWalletTransactorSession) VoteForOperator(_walletId [32]byte, _candidate common.Address) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.VoteForOperator(&_AgentPayWallet.TransactOpts, _walletId, _candidate)
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0x8e0cc176.
 //
 // Solidity: function withdraw(bytes32 _walletId, address _tokenAddress, address _receiver, uint256 _amount) returns()
-func (_CelerWallet *CelerWalletTransactor) Withdraw(opts *bind.TransactOpts, _walletId [32]byte, _tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
-	return _CelerWallet.contract.Transact(opts, "withdraw", _walletId, _tokenAddress, _receiver, _amount)
+func (_AgentPayWallet *AgentPayWalletTransactor) Withdraw(opts *bind.TransactOpts, _walletId [32]byte, _tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
+	return _AgentPayWallet.contract.Transact(opts, "withdraw", _walletId, _tokenAddress, _receiver, _amount)
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0x8e0cc176.
 //
 // Solidity: function withdraw(bytes32 _walletId, address _tokenAddress, address _receiver, uint256 _amount) returns()
-func (_CelerWallet *CelerWalletSession) Withdraw(_walletId [32]byte, _tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
-	return _CelerWallet.Contract.Withdraw(&_CelerWallet.TransactOpts, _walletId, _tokenAddress, _receiver, _amount)
+func (_AgentPayWallet *AgentPayWalletSession) Withdraw(_walletId [32]byte, _tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.Withdraw(&_AgentPayWallet.TransactOpts, _walletId, _tokenAddress, _receiver, _amount)
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0x8e0cc176.
 //
 // Solidity: function withdraw(bytes32 _walletId, address _tokenAddress, address _receiver, uint256 _amount) returns()
-func (_CelerWallet *CelerWalletTransactorSession) Withdraw(_walletId [32]byte, _tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
-	return _CelerWallet.Contract.Withdraw(&_CelerWallet.TransactOpts, _walletId, _tokenAddress, _receiver, _amount)
+func (_AgentPayWallet *AgentPayWalletTransactorSession) Withdraw(_walletId [32]byte, _tokenAddress common.Address, _receiver common.Address, _amount *big.Int) (*types.Transaction, error) {
+	return _AgentPayWallet.Contract.Withdraw(&_AgentPayWallet.TransactOpts, _walletId, _tokenAddress, _receiver, _amount)
 }
 
-// CelerWalletDepositedIterator is returned from FilterDeposited and is used to iterate over the raw logs and unpacked data for Deposited events raised by the CelerWallet contract.
-type CelerWalletDepositedIterator struct {
-	Event *CelerWalletDeposited // Event containing the contract specifics and raw log
+// AgentPayWalletDepositedIterator is returned from FilterDeposited and is used to iterate over the raw logs and unpacked data for Deposited events raised by the AgentPayWallet contract.
+type AgentPayWalletDepositedIterator struct {
+	Event *AgentPayWalletDeposited // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -750,7 +750,7 @@ type CelerWalletDepositedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerWalletDepositedIterator) Next() bool {
+func (it *AgentPayWalletDepositedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -759,7 +759,7 @@ func (it *CelerWalletDepositedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerWalletDeposited)
+			it.Event = new(AgentPayWalletDeposited)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -774,7 +774,7 @@ func (it *CelerWalletDepositedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerWalletDeposited)
+		it.Event = new(AgentPayWalletDeposited)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -790,19 +790,19 @@ func (it *CelerWalletDepositedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerWalletDepositedIterator) Error() error {
+func (it *AgentPayWalletDepositedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerWalletDepositedIterator) Close() error {
+func (it *AgentPayWalletDepositedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerWalletDeposited represents a Deposited event raised by the CelerWallet contract.
-type CelerWalletDeposited struct {
+// AgentPayWalletDeposited represents a Deposited event raised by the AgentPayWallet contract.
+type AgentPayWalletDeposited struct {
 	WalletId     [32]byte
 	TokenAddress common.Address
 	Amount       *big.Int
@@ -812,7 +812,7 @@ type CelerWalletDeposited struct {
 // FilterDeposited is a free log retrieval operation binding the contract event 0x87d4c0b5e30d6808bc8a94ba1c4d839b29d664151551a31753387ee9ef48429b.
 //
 // Solidity: event Deposited(bytes32 indexed walletId, address indexed tokenAddress, uint256 amount)
-func (_CelerWallet *CelerWalletFilterer) FilterDeposited(opts *bind.FilterOpts, walletId [][32]byte, tokenAddress []common.Address) (*CelerWalletDepositedIterator, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) FilterDeposited(opts *bind.FilterOpts, walletId [][32]byte, tokenAddress []common.Address) (*AgentPayWalletDepositedIterator, error) {
 
 	var walletIdRule []interface{}
 	for _, walletIdItem := range walletId {
@@ -823,17 +823,17 @@ func (_CelerWallet *CelerWalletFilterer) FilterDeposited(opts *bind.FilterOpts, 
 		tokenAddressRule = append(tokenAddressRule, tokenAddressItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.FilterLogs(opts, "Deposited", walletIdRule, tokenAddressRule)
+	logs, sub, err := _AgentPayWallet.contract.FilterLogs(opts, "Deposited", walletIdRule, tokenAddressRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerWalletDepositedIterator{contract: _CelerWallet.contract, event: "Deposited", logs: logs, sub: sub}, nil
+	return &AgentPayWalletDepositedIterator{contract: _AgentPayWallet.contract, event: "Deposited", logs: logs, sub: sub}, nil
 }
 
 // WatchDeposited is a free log subscription operation binding the contract event 0x87d4c0b5e30d6808bc8a94ba1c4d839b29d664151551a31753387ee9ef48429b.
 //
 // Solidity: event Deposited(bytes32 indexed walletId, address indexed tokenAddress, uint256 amount)
-func (_CelerWallet *CelerWalletFilterer) WatchDeposited(opts *bind.WatchOpts, sink chan<- *CelerWalletDeposited, walletId [][32]byte, tokenAddress []common.Address) (event.Subscription, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) WatchDeposited(opts *bind.WatchOpts, sink chan<- *AgentPayWalletDeposited, walletId [][32]byte, tokenAddress []common.Address) (event.Subscription, error) {
 
 	var walletIdRule []interface{}
 	for _, walletIdItem := range walletId {
@@ -844,7 +844,7 @@ func (_CelerWallet *CelerWalletFilterer) WatchDeposited(opts *bind.WatchOpts, si
 		tokenAddressRule = append(tokenAddressRule, tokenAddressItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.WatchLogs(opts, "Deposited", walletIdRule, tokenAddressRule)
+	logs, sub, err := _AgentPayWallet.contract.WatchLogs(opts, "Deposited", walletIdRule, tokenAddressRule)
 	if err != nil {
 		return nil, err
 	}
@@ -854,8 +854,8 @@ func (_CelerWallet *CelerWalletFilterer) WatchDeposited(opts *bind.WatchOpts, si
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerWalletDeposited)
-				if err := _CelerWallet.contract.UnpackLog(event, "Deposited", log); err != nil {
+				event := new(AgentPayWalletDeposited)
+				if err := _AgentPayWallet.contract.UnpackLog(event, "Deposited", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -879,18 +879,18 @@ func (_CelerWallet *CelerWalletFilterer) WatchDeposited(opts *bind.WatchOpts, si
 // ParseDeposited is a log parse operation binding the contract event 0x87d4c0b5e30d6808bc8a94ba1c4d839b29d664151551a31753387ee9ef48429b.
 //
 // Solidity: event Deposited(bytes32 indexed walletId, address indexed tokenAddress, uint256 amount)
-func (_CelerWallet *CelerWalletFilterer) ParseDeposited(log types.Log) (*CelerWalletDeposited, error) {
-	event := new(CelerWalletDeposited)
-	if err := _CelerWallet.contract.UnpackLog(event, "Deposited", log); err != nil {
+func (_AgentPayWallet *AgentPayWalletFilterer) ParseDeposited(log types.Log) (*AgentPayWalletDeposited, error) {
+	event := new(AgentPayWalletDeposited)
+	if err := _AgentPayWallet.contract.UnpackLog(event, "Deposited", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerWalletOperatorChangedIterator is returned from FilterOperatorChanged and is used to iterate over the raw logs and unpacked data for OperatorChanged events raised by the CelerWallet contract.
-type CelerWalletOperatorChangedIterator struct {
-	Event *CelerWalletOperatorChanged // Event containing the contract specifics and raw log
+// AgentPayWalletOperatorChangedIterator is returned from FilterOperatorChanged and is used to iterate over the raw logs and unpacked data for OperatorChanged events raised by the AgentPayWallet contract.
+type AgentPayWalletOperatorChangedIterator struct {
+	Event *AgentPayWalletOperatorChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -904,7 +904,7 @@ type CelerWalletOperatorChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerWalletOperatorChangedIterator) Next() bool {
+func (it *AgentPayWalletOperatorChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -913,7 +913,7 @@ func (it *CelerWalletOperatorChangedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerWalletOperatorChanged)
+			it.Event = new(AgentPayWalletOperatorChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -928,7 +928,7 @@ func (it *CelerWalletOperatorChangedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerWalletOperatorChanged)
+		it.Event = new(AgentPayWalletOperatorChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -944,19 +944,19 @@ func (it *CelerWalletOperatorChangedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerWalletOperatorChangedIterator) Error() error {
+func (it *AgentPayWalletOperatorChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerWalletOperatorChangedIterator) Close() error {
+func (it *AgentPayWalletOperatorChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerWalletOperatorChanged represents a OperatorChanged event raised by the CelerWallet contract.
-type CelerWalletOperatorChanged struct {
+// AgentPayWalletOperatorChanged represents a OperatorChanged event raised by the AgentPayWallet contract.
+type AgentPayWalletOperatorChanged struct {
 	WalletId    [32]byte
 	OldOperator common.Address
 	NewOperator common.Address
@@ -966,7 +966,7 @@ type CelerWalletOperatorChanged struct {
 // FilterOperatorChanged is a free log retrieval operation binding the contract event 0xca740bd5cca56b72a44eb89e8a703e2e1269576576b5b5ce52a1ba317d20d78d.
 //
 // Solidity: event OperatorChanged(bytes32 indexed walletId, address indexed oldOperator, address indexed newOperator)
-func (_CelerWallet *CelerWalletFilterer) FilterOperatorChanged(opts *bind.FilterOpts, walletId [][32]byte, oldOperator []common.Address, newOperator []common.Address) (*CelerWalletOperatorChangedIterator, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) FilterOperatorChanged(opts *bind.FilterOpts, walletId [][32]byte, oldOperator []common.Address, newOperator []common.Address) (*AgentPayWalletOperatorChangedIterator, error) {
 
 	var walletIdRule []interface{}
 	for _, walletIdItem := range walletId {
@@ -981,17 +981,17 @@ func (_CelerWallet *CelerWalletFilterer) FilterOperatorChanged(opts *bind.Filter
 		newOperatorRule = append(newOperatorRule, newOperatorItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.FilterLogs(opts, "OperatorChanged", walletIdRule, oldOperatorRule, newOperatorRule)
+	logs, sub, err := _AgentPayWallet.contract.FilterLogs(opts, "OperatorChanged", walletIdRule, oldOperatorRule, newOperatorRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerWalletOperatorChangedIterator{contract: _CelerWallet.contract, event: "OperatorChanged", logs: logs, sub: sub}, nil
+	return &AgentPayWalletOperatorChangedIterator{contract: _AgentPayWallet.contract, event: "OperatorChanged", logs: logs, sub: sub}, nil
 }
 
 // WatchOperatorChanged is a free log subscription operation binding the contract event 0xca740bd5cca56b72a44eb89e8a703e2e1269576576b5b5ce52a1ba317d20d78d.
 //
 // Solidity: event OperatorChanged(bytes32 indexed walletId, address indexed oldOperator, address indexed newOperator)
-func (_CelerWallet *CelerWalletFilterer) WatchOperatorChanged(opts *bind.WatchOpts, sink chan<- *CelerWalletOperatorChanged, walletId [][32]byte, oldOperator []common.Address, newOperator []common.Address) (event.Subscription, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) WatchOperatorChanged(opts *bind.WatchOpts, sink chan<- *AgentPayWalletOperatorChanged, walletId [][32]byte, oldOperator []common.Address, newOperator []common.Address) (event.Subscription, error) {
 
 	var walletIdRule []interface{}
 	for _, walletIdItem := range walletId {
@@ -1006,7 +1006,7 @@ func (_CelerWallet *CelerWalletFilterer) WatchOperatorChanged(opts *bind.WatchOp
 		newOperatorRule = append(newOperatorRule, newOperatorItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.WatchLogs(opts, "OperatorChanged", walletIdRule, oldOperatorRule, newOperatorRule)
+	logs, sub, err := _AgentPayWallet.contract.WatchLogs(opts, "OperatorChanged", walletIdRule, oldOperatorRule, newOperatorRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1016,8 +1016,8 @@ func (_CelerWallet *CelerWalletFilterer) WatchOperatorChanged(opts *bind.WatchOp
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerWalletOperatorChanged)
-				if err := _CelerWallet.contract.UnpackLog(event, "OperatorChanged", log); err != nil {
+				event := new(AgentPayWalletOperatorChanged)
+				if err := _AgentPayWallet.contract.UnpackLog(event, "OperatorChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1041,18 +1041,18 @@ func (_CelerWallet *CelerWalletFilterer) WatchOperatorChanged(opts *bind.WatchOp
 // ParseOperatorChanged is a log parse operation binding the contract event 0xca740bd5cca56b72a44eb89e8a703e2e1269576576b5b5ce52a1ba317d20d78d.
 //
 // Solidity: event OperatorChanged(bytes32 indexed walletId, address indexed oldOperator, address indexed newOperator)
-func (_CelerWallet *CelerWalletFilterer) ParseOperatorChanged(log types.Log) (*CelerWalletOperatorChanged, error) {
-	event := new(CelerWalletOperatorChanged)
-	if err := _CelerWallet.contract.UnpackLog(event, "OperatorChanged", log); err != nil {
+func (_AgentPayWallet *AgentPayWalletFilterer) ParseOperatorChanged(log types.Log) (*AgentPayWalletOperatorChanged, error) {
+	event := new(AgentPayWalletOperatorChanged)
+	if err := _AgentPayWallet.contract.UnpackLog(event, "OperatorChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerWalletOperatorVotedIterator is returned from FilterOperatorVoted and is used to iterate over the raw logs and unpacked data for OperatorVoted events raised by the CelerWallet contract.
-type CelerWalletOperatorVotedIterator struct {
-	Event *CelerWalletOperatorVoted // Event containing the contract specifics and raw log
+// AgentPayWalletOperatorVotedIterator is returned from FilterOperatorVoted and is used to iterate over the raw logs and unpacked data for OperatorVoted events raised by the AgentPayWallet contract.
+type AgentPayWalletOperatorVotedIterator struct {
+	Event *AgentPayWalletOperatorVoted // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1066,7 +1066,7 @@ type CelerWalletOperatorVotedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerWalletOperatorVotedIterator) Next() bool {
+func (it *AgentPayWalletOperatorVotedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1075,7 +1075,7 @@ func (it *CelerWalletOperatorVotedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerWalletOperatorVoted)
+			it.Event = new(AgentPayWalletOperatorVoted)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1090,7 +1090,7 @@ func (it *CelerWalletOperatorVotedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerWalletOperatorVoted)
+		it.Event = new(AgentPayWalletOperatorVoted)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1106,19 +1106,19 @@ func (it *CelerWalletOperatorVotedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerWalletOperatorVotedIterator) Error() error {
+func (it *AgentPayWalletOperatorVotedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerWalletOperatorVotedIterator) Close() error {
+func (it *AgentPayWalletOperatorVotedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerWalletOperatorVoted represents a OperatorVoted event raised by the CelerWallet contract.
-type CelerWalletOperatorVoted struct {
+// AgentPayWalletOperatorVoted represents a OperatorVoted event raised by the AgentPayWallet contract.
+type AgentPayWalletOperatorVoted struct {
 	WalletId  [32]byte
 	Candidate common.Address
 	Voter     common.Address
@@ -1128,7 +1128,7 @@ type CelerWalletOperatorVoted struct {
 // FilterOperatorVoted is a free log retrieval operation binding the contract event 0x9797c1a8248e0833cb5344fa29eb39f2de9bd4824b8ffa5d85faaed75d24e9ef.
 //
 // Solidity: event OperatorVoted(bytes32 indexed walletId, address indexed candidate, address indexed voter)
-func (_CelerWallet *CelerWalletFilterer) FilterOperatorVoted(opts *bind.FilterOpts, walletId [][32]byte, candidate []common.Address, voter []common.Address) (*CelerWalletOperatorVotedIterator, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) FilterOperatorVoted(opts *bind.FilterOpts, walletId [][32]byte, candidate []common.Address, voter []common.Address) (*AgentPayWalletOperatorVotedIterator, error) {
 
 	var walletIdRule []interface{}
 	for _, walletIdItem := range walletId {
@@ -1143,17 +1143,17 @@ func (_CelerWallet *CelerWalletFilterer) FilterOperatorVoted(opts *bind.FilterOp
 		voterRule = append(voterRule, voterItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.FilterLogs(opts, "OperatorVoted", walletIdRule, candidateRule, voterRule)
+	logs, sub, err := _AgentPayWallet.contract.FilterLogs(opts, "OperatorVoted", walletIdRule, candidateRule, voterRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerWalletOperatorVotedIterator{contract: _CelerWallet.contract, event: "OperatorVoted", logs: logs, sub: sub}, nil
+	return &AgentPayWalletOperatorVotedIterator{contract: _AgentPayWallet.contract, event: "OperatorVoted", logs: logs, sub: sub}, nil
 }
 
 // WatchOperatorVoted is a free log subscription operation binding the contract event 0x9797c1a8248e0833cb5344fa29eb39f2de9bd4824b8ffa5d85faaed75d24e9ef.
 //
 // Solidity: event OperatorVoted(bytes32 indexed walletId, address indexed candidate, address indexed voter)
-func (_CelerWallet *CelerWalletFilterer) WatchOperatorVoted(opts *bind.WatchOpts, sink chan<- *CelerWalletOperatorVoted, walletId [][32]byte, candidate []common.Address, voter []common.Address) (event.Subscription, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) WatchOperatorVoted(opts *bind.WatchOpts, sink chan<- *AgentPayWalletOperatorVoted, walletId [][32]byte, candidate []common.Address, voter []common.Address) (event.Subscription, error) {
 
 	var walletIdRule []interface{}
 	for _, walletIdItem := range walletId {
@@ -1168,7 +1168,7 @@ func (_CelerWallet *CelerWalletFilterer) WatchOperatorVoted(opts *bind.WatchOpts
 		voterRule = append(voterRule, voterItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.WatchLogs(opts, "OperatorVoted", walletIdRule, candidateRule, voterRule)
+	logs, sub, err := _AgentPayWallet.contract.WatchLogs(opts, "OperatorVoted", walletIdRule, candidateRule, voterRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1178,8 +1178,8 @@ func (_CelerWallet *CelerWalletFilterer) WatchOperatorVoted(opts *bind.WatchOpts
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerWalletOperatorVoted)
-				if err := _CelerWallet.contract.UnpackLog(event, "OperatorVoted", log); err != nil {
+				event := new(AgentPayWalletOperatorVoted)
+				if err := _AgentPayWallet.contract.UnpackLog(event, "OperatorVoted", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1203,18 +1203,18 @@ func (_CelerWallet *CelerWalletFilterer) WatchOperatorVoted(opts *bind.WatchOpts
 // ParseOperatorVoted is a log parse operation binding the contract event 0x9797c1a8248e0833cb5344fa29eb39f2de9bd4824b8ffa5d85faaed75d24e9ef.
 //
 // Solidity: event OperatorVoted(bytes32 indexed walletId, address indexed candidate, address indexed voter)
-func (_CelerWallet *CelerWalletFilterer) ParseOperatorVoted(log types.Log) (*CelerWalletOperatorVoted, error) {
-	event := new(CelerWalletOperatorVoted)
-	if err := _CelerWallet.contract.UnpackLog(event, "OperatorVoted", log); err != nil {
+func (_AgentPayWallet *AgentPayWalletFilterer) ParseOperatorVoted(log types.Log) (*AgentPayWalletOperatorVoted, error) {
+	event := new(AgentPayWalletOperatorVoted)
+	if err := _AgentPayWallet.contract.UnpackLog(event, "OperatorVoted", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerWalletOwnershipTransferredIterator is returned from FilterOwnershipTransferred and is used to iterate over the raw logs and unpacked data for OwnershipTransferred events raised by the CelerWallet contract.
-type CelerWalletOwnershipTransferredIterator struct {
-	Event *CelerWalletOwnershipTransferred // Event containing the contract specifics and raw log
+// AgentPayWalletOwnershipTransferredIterator is returned from FilterOwnershipTransferred and is used to iterate over the raw logs and unpacked data for OwnershipTransferred events raised by the AgentPayWallet contract.
+type AgentPayWalletOwnershipTransferredIterator struct {
+	Event *AgentPayWalletOwnershipTransferred // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1228,7 +1228,7 @@ type CelerWalletOwnershipTransferredIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerWalletOwnershipTransferredIterator) Next() bool {
+func (it *AgentPayWalletOwnershipTransferredIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1237,7 +1237,7 @@ func (it *CelerWalletOwnershipTransferredIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerWalletOwnershipTransferred)
+			it.Event = new(AgentPayWalletOwnershipTransferred)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1252,7 +1252,7 @@ func (it *CelerWalletOwnershipTransferredIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerWalletOwnershipTransferred)
+		it.Event = new(AgentPayWalletOwnershipTransferred)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1268,19 +1268,19 @@ func (it *CelerWalletOwnershipTransferredIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerWalletOwnershipTransferredIterator) Error() error {
+func (it *AgentPayWalletOwnershipTransferredIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerWalletOwnershipTransferredIterator) Close() error {
+func (it *AgentPayWalletOwnershipTransferredIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerWalletOwnershipTransferred represents a OwnershipTransferred event raised by the CelerWallet contract.
-type CelerWalletOwnershipTransferred struct {
+// AgentPayWalletOwnershipTransferred represents a OwnershipTransferred event raised by the AgentPayWallet contract.
+type AgentPayWalletOwnershipTransferred struct {
 	PreviousOwner common.Address
 	NewOwner      common.Address
 	Raw           types.Log // Blockchain specific contextual infos
@@ -1289,7 +1289,7 @@ type CelerWalletOwnershipTransferred struct {
 // FilterOwnershipTransferred is a free log retrieval operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
 // Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-func (_CelerWallet *CelerWalletFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*CelerWalletOwnershipTransferredIterator, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*AgentPayWalletOwnershipTransferredIterator, error) {
 
 	var previousOwnerRule []interface{}
 	for _, previousOwnerItem := range previousOwner {
@@ -1300,17 +1300,17 @@ func (_CelerWallet *CelerWalletFilterer) FilterOwnershipTransferred(opts *bind.F
 		newOwnerRule = append(newOwnerRule, newOwnerItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.FilterLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
+	logs, sub, err := _AgentPayWallet.contract.FilterLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerWalletOwnershipTransferredIterator{contract: _CelerWallet.contract, event: "OwnershipTransferred", logs: logs, sub: sub}, nil
+	return &AgentPayWalletOwnershipTransferredIterator{contract: _AgentPayWallet.contract, event: "OwnershipTransferred", logs: logs, sub: sub}, nil
 }
 
 // WatchOwnershipTransferred is a free log subscription operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
 // Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-func (_CelerWallet *CelerWalletFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *CelerWalletOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *AgentPayWalletOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error) {
 
 	var previousOwnerRule []interface{}
 	for _, previousOwnerItem := range previousOwner {
@@ -1321,7 +1321,7 @@ func (_CelerWallet *CelerWalletFilterer) WatchOwnershipTransferred(opts *bind.Wa
 		newOwnerRule = append(newOwnerRule, newOwnerItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.WatchLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
+	logs, sub, err := _AgentPayWallet.contract.WatchLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1331,8 +1331,8 @@ func (_CelerWallet *CelerWalletFilterer) WatchOwnershipTransferred(opts *bind.Wa
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerWalletOwnershipTransferred)
-				if err := _CelerWallet.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+				event := new(AgentPayWalletOwnershipTransferred)
+				if err := _AgentPayWallet.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1356,18 +1356,18 @@ func (_CelerWallet *CelerWalletFilterer) WatchOwnershipTransferred(opts *bind.Wa
 // ParseOwnershipTransferred is a log parse operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
 // Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-func (_CelerWallet *CelerWalletFilterer) ParseOwnershipTransferred(log types.Log) (*CelerWalletOwnershipTransferred, error) {
-	event := new(CelerWalletOwnershipTransferred)
-	if err := _CelerWallet.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+func (_AgentPayWallet *AgentPayWalletFilterer) ParseOwnershipTransferred(log types.Log) (*AgentPayWalletOwnershipTransferred, error) {
+	event := new(AgentPayWalletOwnershipTransferred)
+	if err := _AgentPayWallet.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerWalletPausedIterator is returned from FilterPaused and is used to iterate over the raw logs and unpacked data for Paused events raised by the CelerWallet contract.
-type CelerWalletPausedIterator struct {
-	Event *CelerWalletPaused // Event containing the contract specifics and raw log
+// AgentPayWalletPausedIterator is returned from FilterPaused and is used to iterate over the raw logs and unpacked data for Paused events raised by the AgentPayWallet contract.
+type AgentPayWalletPausedIterator struct {
+	Event *AgentPayWalletPaused // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1381,7 +1381,7 @@ type CelerWalletPausedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerWalletPausedIterator) Next() bool {
+func (it *AgentPayWalletPausedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1390,7 +1390,7 @@ func (it *CelerWalletPausedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerWalletPaused)
+			it.Event = new(AgentPayWalletPaused)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1405,7 +1405,7 @@ func (it *CelerWalletPausedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerWalletPaused)
+		it.Event = new(AgentPayWalletPaused)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1421,19 +1421,19 @@ func (it *CelerWalletPausedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerWalletPausedIterator) Error() error {
+func (it *AgentPayWalletPausedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerWalletPausedIterator) Close() error {
+func (it *AgentPayWalletPausedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerWalletPaused represents a Paused event raised by the CelerWallet contract.
-type CelerWalletPaused struct {
+// AgentPayWalletPaused represents a Paused event raised by the AgentPayWallet contract.
+type AgentPayWalletPaused struct {
 	Account common.Address
 	Raw     types.Log // Blockchain specific contextual infos
 }
@@ -1441,21 +1441,21 @@ type CelerWalletPaused struct {
 // FilterPaused is a free log retrieval operation binding the contract event 0x62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258.
 //
 // Solidity: event Paused(address account)
-func (_CelerWallet *CelerWalletFilterer) FilterPaused(opts *bind.FilterOpts) (*CelerWalletPausedIterator, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) FilterPaused(opts *bind.FilterOpts) (*AgentPayWalletPausedIterator, error) {
 
-	logs, sub, err := _CelerWallet.contract.FilterLogs(opts, "Paused")
+	logs, sub, err := _AgentPayWallet.contract.FilterLogs(opts, "Paused")
 	if err != nil {
 		return nil, err
 	}
-	return &CelerWalletPausedIterator{contract: _CelerWallet.contract, event: "Paused", logs: logs, sub: sub}, nil
+	return &AgentPayWalletPausedIterator{contract: _AgentPayWallet.contract, event: "Paused", logs: logs, sub: sub}, nil
 }
 
 // WatchPaused is a free log subscription operation binding the contract event 0x62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258.
 //
 // Solidity: event Paused(address account)
-func (_CelerWallet *CelerWalletFilterer) WatchPaused(opts *bind.WatchOpts, sink chan<- *CelerWalletPaused) (event.Subscription, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) WatchPaused(opts *bind.WatchOpts, sink chan<- *AgentPayWalletPaused) (event.Subscription, error) {
 
-	logs, sub, err := _CelerWallet.contract.WatchLogs(opts, "Paused")
+	logs, sub, err := _AgentPayWallet.contract.WatchLogs(opts, "Paused")
 	if err != nil {
 		return nil, err
 	}
@@ -1465,8 +1465,8 @@ func (_CelerWallet *CelerWalletFilterer) WatchPaused(opts *bind.WatchOpts, sink 
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerWalletPaused)
-				if err := _CelerWallet.contract.UnpackLog(event, "Paused", log); err != nil {
+				event := new(AgentPayWalletPaused)
+				if err := _AgentPayWallet.contract.UnpackLog(event, "Paused", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1490,18 +1490,18 @@ func (_CelerWallet *CelerWalletFilterer) WatchPaused(opts *bind.WatchOpts, sink 
 // ParsePaused is a log parse operation binding the contract event 0x62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258.
 //
 // Solidity: event Paused(address account)
-func (_CelerWallet *CelerWalletFilterer) ParsePaused(log types.Log) (*CelerWalletPaused, error) {
-	event := new(CelerWalletPaused)
-	if err := _CelerWallet.contract.UnpackLog(event, "Paused", log); err != nil {
+func (_AgentPayWallet *AgentPayWalletFilterer) ParsePaused(log types.Log) (*AgentPayWalletPaused, error) {
+	event := new(AgentPayWalletPaused)
+	if err := _AgentPayWallet.contract.UnpackLog(event, "Paused", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerWalletTokenDrainedIterator is returned from FilterTokenDrained and is used to iterate over the raw logs and unpacked data for TokenDrained events raised by the CelerWallet contract.
-type CelerWalletTokenDrainedIterator struct {
-	Event *CelerWalletTokenDrained // Event containing the contract specifics and raw log
+// AgentPayWalletTokenDrainedIterator is returned from FilterTokenDrained and is used to iterate over the raw logs and unpacked data for TokenDrained events raised by the AgentPayWallet contract.
+type AgentPayWalletTokenDrainedIterator struct {
+	Event *AgentPayWalletTokenDrained // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1515,7 +1515,7 @@ type CelerWalletTokenDrainedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerWalletTokenDrainedIterator) Next() bool {
+func (it *AgentPayWalletTokenDrainedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1524,7 +1524,7 @@ func (it *CelerWalletTokenDrainedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerWalletTokenDrained)
+			it.Event = new(AgentPayWalletTokenDrained)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1539,7 +1539,7 @@ func (it *CelerWalletTokenDrainedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerWalletTokenDrained)
+		it.Event = new(AgentPayWalletTokenDrained)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1555,19 +1555,19 @@ func (it *CelerWalletTokenDrainedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerWalletTokenDrainedIterator) Error() error {
+func (it *AgentPayWalletTokenDrainedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerWalletTokenDrainedIterator) Close() error {
+func (it *AgentPayWalletTokenDrainedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerWalletTokenDrained represents a TokenDrained event raised by the CelerWallet contract.
-type CelerWalletTokenDrained struct {
+// AgentPayWalletTokenDrained represents a TokenDrained event raised by the AgentPayWallet contract.
+type AgentPayWalletTokenDrained struct {
 	TokenAddress common.Address
 	Receiver     common.Address
 	Amount       *big.Int
@@ -1577,7 +1577,7 @@ type CelerWalletTokenDrained struct {
 // FilterTokenDrained is a free log retrieval operation binding the contract event 0xb9f4fab3dc87425962ebb52a84543eb50c90a808609ee6967a38308d6119c4bc.
 //
 // Solidity: event TokenDrained(address indexed tokenAddress, address indexed receiver, uint256 amount)
-func (_CelerWallet *CelerWalletFilterer) FilterTokenDrained(opts *bind.FilterOpts, tokenAddress []common.Address, receiver []common.Address) (*CelerWalletTokenDrainedIterator, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) FilterTokenDrained(opts *bind.FilterOpts, tokenAddress []common.Address, receiver []common.Address) (*AgentPayWalletTokenDrainedIterator, error) {
 
 	var tokenAddressRule []interface{}
 	for _, tokenAddressItem := range tokenAddress {
@@ -1588,17 +1588,17 @@ func (_CelerWallet *CelerWalletFilterer) FilterTokenDrained(opts *bind.FilterOpt
 		receiverRule = append(receiverRule, receiverItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.FilterLogs(opts, "TokenDrained", tokenAddressRule, receiverRule)
+	logs, sub, err := _AgentPayWallet.contract.FilterLogs(opts, "TokenDrained", tokenAddressRule, receiverRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerWalletTokenDrainedIterator{contract: _CelerWallet.contract, event: "TokenDrained", logs: logs, sub: sub}, nil
+	return &AgentPayWalletTokenDrainedIterator{contract: _AgentPayWallet.contract, event: "TokenDrained", logs: logs, sub: sub}, nil
 }
 
 // WatchTokenDrained is a free log subscription operation binding the contract event 0xb9f4fab3dc87425962ebb52a84543eb50c90a808609ee6967a38308d6119c4bc.
 //
 // Solidity: event TokenDrained(address indexed tokenAddress, address indexed receiver, uint256 amount)
-func (_CelerWallet *CelerWalletFilterer) WatchTokenDrained(opts *bind.WatchOpts, sink chan<- *CelerWalletTokenDrained, tokenAddress []common.Address, receiver []common.Address) (event.Subscription, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) WatchTokenDrained(opts *bind.WatchOpts, sink chan<- *AgentPayWalletTokenDrained, tokenAddress []common.Address, receiver []common.Address) (event.Subscription, error) {
 
 	var tokenAddressRule []interface{}
 	for _, tokenAddressItem := range tokenAddress {
@@ -1609,7 +1609,7 @@ func (_CelerWallet *CelerWalletFilterer) WatchTokenDrained(opts *bind.WatchOpts,
 		receiverRule = append(receiverRule, receiverItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.WatchLogs(opts, "TokenDrained", tokenAddressRule, receiverRule)
+	logs, sub, err := _AgentPayWallet.contract.WatchLogs(opts, "TokenDrained", tokenAddressRule, receiverRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1619,8 +1619,8 @@ func (_CelerWallet *CelerWalletFilterer) WatchTokenDrained(opts *bind.WatchOpts,
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerWalletTokenDrained)
-				if err := _CelerWallet.contract.UnpackLog(event, "TokenDrained", log); err != nil {
+				event := new(AgentPayWalletTokenDrained)
+				if err := _AgentPayWallet.contract.UnpackLog(event, "TokenDrained", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1644,18 +1644,18 @@ func (_CelerWallet *CelerWalletFilterer) WatchTokenDrained(opts *bind.WatchOpts,
 // ParseTokenDrained is a log parse operation binding the contract event 0xb9f4fab3dc87425962ebb52a84543eb50c90a808609ee6967a38308d6119c4bc.
 //
 // Solidity: event TokenDrained(address indexed tokenAddress, address indexed receiver, uint256 amount)
-func (_CelerWallet *CelerWalletFilterer) ParseTokenDrained(log types.Log) (*CelerWalletTokenDrained, error) {
-	event := new(CelerWalletTokenDrained)
-	if err := _CelerWallet.contract.UnpackLog(event, "TokenDrained", log); err != nil {
+func (_AgentPayWallet *AgentPayWalletFilterer) ParseTokenDrained(log types.Log) (*AgentPayWalletTokenDrained, error) {
+	event := new(AgentPayWalletTokenDrained)
+	if err := _AgentPayWallet.contract.UnpackLog(event, "TokenDrained", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerWalletTransferredBetweenWalletsIterator is returned from FilterTransferredBetweenWallets and is used to iterate over the raw logs and unpacked data for TransferredBetweenWallets events raised by the CelerWallet contract.
-type CelerWalletTransferredBetweenWalletsIterator struct {
-	Event *CelerWalletTransferredBetweenWallets // Event containing the contract specifics and raw log
+// AgentPayWalletTransferredBetweenWalletsIterator is returned from FilterTransferredBetweenWallets and is used to iterate over the raw logs and unpacked data for TransferredBetweenWallets events raised by the AgentPayWallet contract.
+type AgentPayWalletTransferredBetweenWalletsIterator struct {
+	Event *AgentPayWalletTransferredBetweenWallets // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1669,7 +1669,7 @@ type CelerWalletTransferredBetweenWalletsIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerWalletTransferredBetweenWalletsIterator) Next() bool {
+func (it *AgentPayWalletTransferredBetweenWalletsIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1678,7 +1678,7 @@ func (it *CelerWalletTransferredBetweenWalletsIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerWalletTransferredBetweenWallets)
+			it.Event = new(AgentPayWalletTransferredBetweenWallets)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1693,7 +1693,7 @@ func (it *CelerWalletTransferredBetweenWalletsIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerWalletTransferredBetweenWallets)
+		it.Event = new(AgentPayWalletTransferredBetweenWallets)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1709,19 +1709,19 @@ func (it *CelerWalletTransferredBetweenWalletsIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerWalletTransferredBetweenWalletsIterator) Error() error {
+func (it *AgentPayWalletTransferredBetweenWalletsIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerWalletTransferredBetweenWalletsIterator) Close() error {
+func (it *AgentPayWalletTransferredBetweenWalletsIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerWalletTransferredBetweenWallets represents a TransferredBetweenWallets event raised by the CelerWallet contract.
-type CelerWalletTransferredBetweenWallets struct {
+// AgentPayWalletTransferredBetweenWallets represents a TransferredBetweenWallets event raised by the AgentPayWallet contract.
+type AgentPayWalletTransferredBetweenWallets struct {
 	FromWalletId [32]byte
 	ToWalletId   [32]byte
 	TokenAddress common.Address
@@ -1733,7 +1733,7 @@ type CelerWalletTransferredBetweenWallets struct {
 // FilterTransferredBetweenWallets is a free log retrieval operation binding the contract event 0x181fa219f874a081d83f85e8c9afdc32ede9e7cc757b9537f9cd04f3417a6130.
 //
 // Solidity: event TransferredBetweenWallets(bytes32 indexed fromWalletId, bytes32 indexed toWalletId, address indexed tokenAddress, address receiver, uint256 amount)
-func (_CelerWallet *CelerWalletFilterer) FilterTransferredBetweenWallets(opts *bind.FilterOpts, fromWalletId [][32]byte, toWalletId [][32]byte, tokenAddress []common.Address) (*CelerWalletTransferredBetweenWalletsIterator, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) FilterTransferredBetweenWallets(opts *bind.FilterOpts, fromWalletId [][32]byte, toWalletId [][32]byte, tokenAddress []common.Address) (*AgentPayWalletTransferredBetweenWalletsIterator, error) {
 
 	var fromWalletIdRule []interface{}
 	for _, fromWalletIdItem := range fromWalletId {
@@ -1748,17 +1748,17 @@ func (_CelerWallet *CelerWalletFilterer) FilterTransferredBetweenWallets(opts *b
 		tokenAddressRule = append(tokenAddressRule, tokenAddressItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.FilterLogs(opts, "TransferredBetweenWallets", fromWalletIdRule, toWalletIdRule, tokenAddressRule)
+	logs, sub, err := _AgentPayWallet.contract.FilterLogs(opts, "TransferredBetweenWallets", fromWalletIdRule, toWalletIdRule, tokenAddressRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerWalletTransferredBetweenWalletsIterator{contract: _CelerWallet.contract, event: "TransferredBetweenWallets", logs: logs, sub: sub}, nil
+	return &AgentPayWalletTransferredBetweenWalletsIterator{contract: _AgentPayWallet.contract, event: "TransferredBetweenWallets", logs: logs, sub: sub}, nil
 }
 
 // WatchTransferredBetweenWallets is a free log subscription operation binding the contract event 0x181fa219f874a081d83f85e8c9afdc32ede9e7cc757b9537f9cd04f3417a6130.
 //
 // Solidity: event TransferredBetweenWallets(bytes32 indexed fromWalletId, bytes32 indexed toWalletId, address indexed tokenAddress, address receiver, uint256 amount)
-func (_CelerWallet *CelerWalletFilterer) WatchTransferredBetweenWallets(opts *bind.WatchOpts, sink chan<- *CelerWalletTransferredBetweenWallets, fromWalletId [][32]byte, toWalletId [][32]byte, tokenAddress []common.Address) (event.Subscription, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) WatchTransferredBetweenWallets(opts *bind.WatchOpts, sink chan<- *AgentPayWalletTransferredBetweenWallets, fromWalletId [][32]byte, toWalletId [][32]byte, tokenAddress []common.Address) (event.Subscription, error) {
 
 	var fromWalletIdRule []interface{}
 	for _, fromWalletIdItem := range fromWalletId {
@@ -1773,7 +1773,7 @@ func (_CelerWallet *CelerWalletFilterer) WatchTransferredBetweenWallets(opts *bi
 		tokenAddressRule = append(tokenAddressRule, tokenAddressItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.WatchLogs(opts, "TransferredBetweenWallets", fromWalletIdRule, toWalletIdRule, tokenAddressRule)
+	logs, sub, err := _AgentPayWallet.contract.WatchLogs(opts, "TransferredBetweenWallets", fromWalletIdRule, toWalletIdRule, tokenAddressRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1783,8 +1783,8 @@ func (_CelerWallet *CelerWalletFilterer) WatchTransferredBetweenWallets(opts *bi
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerWalletTransferredBetweenWallets)
-				if err := _CelerWallet.contract.UnpackLog(event, "TransferredBetweenWallets", log); err != nil {
+				event := new(AgentPayWalletTransferredBetweenWallets)
+				if err := _AgentPayWallet.contract.UnpackLog(event, "TransferredBetweenWallets", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1808,18 +1808,18 @@ func (_CelerWallet *CelerWalletFilterer) WatchTransferredBetweenWallets(opts *bi
 // ParseTransferredBetweenWallets is a log parse operation binding the contract event 0x181fa219f874a081d83f85e8c9afdc32ede9e7cc757b9537f9cd04f3417a6130.
 //
 // Solidity: event TransferredBetweenWallets(bytes32 indexed fromWalletId, bytes32 indexed toWalletId, address indexed tokenAddress, address receiver, uint256 amount)
-func (_CelerWallet *CelerWalletFilterer) ParseTransferredBetweenWallets(log types.Log) (*CelerWalletTransferredBetweenWallets, error) {
-	event := new(CelerWalletTransferredBetweenWallets)
-	if err := _CelerWallet.contract.UnpackLog(event, "TransferredBetweenWallets", log); err != nil {
+func (_AgentPayWallet *AgentPayWalletFilterer) ParseTransferredBetweenWallets(log types.Log) (*AgentPayWalletTransferredBetweenWallets, error) {
+	event := new(AgentPayWalletTransferredBetweenWallets)
+	if err := _AgentPayWallet.contract.UnpackLog(event, "TransferredBetweenWallets", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerWalletUnpausedIterator is returned from FilterUnpaused and is used to iterate over the raw logs and unpacked data for Unpaused events raised by the CelerWallet contract.
-type CelerWalletUnpausedIterator struct {
-	Event *CelerWalletUnpaused // Event containing the contract specifics and raw log
+// AgentPayWalletUnpausedIterator is returned from FilterUnpaused and is used to iterate over the raw logs and unpacked data for Unpaused events raised by the AgentPayWallet contract.
+type AgentPayWalletUnpausedIterator struct {
+	Event *AgentPayWalletUnpaused // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1833,7 +1833,7 @@ type CelerWalletUnpausedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerWalletUnpausedIterator) Next() bool {
+func (it *AgentPayWalletUnpausedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1842,7 +1842,7 @@ func (it *CelerWalletUnpausedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerWalletUnpaused)
+			it.Event = new(AgentPayWalletUnpaused)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1857,7 +1857,7 @@ func (it *CelerWalletUnpausedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerWalletUnpaused)
+		it.Event = new(AgentPayWalletUnpaused)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1873,19 +1873,19 @@ func (it *CelerWalletUnpausedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerWalletUnpausedIterator) Error() error {
+func (it *AgentPayWalletUnpausedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerWalletUnpausedIterator) Close() error {
+func (it *AgentPayWalletUnpausedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerWalletUnpaused represents a Unpaused event raised by the CelerWallet contract.
-type CelerWalletUnpaused struct {
+// AgentPayWalletUnpaused represents a Unpaused event raised by the AgentPayWallet contract.
+type AgentPayWalletUnpaused struct {
 	Account common.Address
 	Raw     types.Log // Blockchain specific contextual infos
 }
@@ -1893,21 +1893,21 @@ type CelerWalletUnpaused struct {
 // FilterUnpaused is a free log retrieval operation binding the contract event 0x5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa.
 //
 // Solidity: event Unpaused(address account)
-func (_CelerWallet *CelerWalletFilterer) FilterUnpaused(opts *bind.FilterOpts) (*CelerWalletUnpausedIterator, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) FilterUnpaused(opts *bind.FilterOpts) (*AgentPayWalletUnpausedIterator, error) {
 
-	logs, sub, err := _CelerWallet.contract.FilterLogs(opts, "Unpaused")
+	logs, sub, err := _AgentPayWallet.contract.FilterLogs(opts, "Unpaused")
 	if err != nil {
 		return nil, err
 	}
-	return &CelerWalletUnpausedIterator{contract: _CelerWallet.contract, event: "Unpaused", logs: logs, sub: sub}, nil
+	return &AgentPayWalletUnpausedIterator{contract: _AgentPayWallet.contract, event: "Unpaused", logs: logs, sub: sub}, nil
 }
 
 // WatchUnpaused is a free log subscription operation binding the contract event 0x5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa.
 //
 // Solidity: event Unpaused(address account)
-func (_CelerWallet *CelerWalletFilterer) WatchUnpaused(opts *bind.WatchOpts, sink chan<- *CelerWalletUnpaused) (event.Subscription, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) WatchUnpaused(opts *bind.WatchOpts, sink chan<- *AgentPayWalletUnpaused) (event.Subscription, error) {
 
-	logs, sub, err := _CelerWallet.contract.WatchLogs(opts, "Unpaused")
+	logs, sub, err := _AgentPayWallet.contract.WatchLogs(opts, "Unpaused")
 	if err != nil {
 		return nil, err
 	}
@@ -1917,8 +1917,8 @@ func (_CelerWallet *CelerWalletFilterer) WatchUnpaused(opts *bind.WatchOpts, sin
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerWalletUnpaused)
-				if err := _CelerWallet.contract.UnpackLog(event, "Unpaused", log); err != nil {
+				event := new(AgentPayWalletUnpaused)
+				if err := _AgentPayWallet.contract.UnpackLog(event, "Unpaused", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1942,18 +1942,18 @@ func (_CelerWallet *CelerWalletFilterer) WatchUnpaused(opts *bind.WatchOpts, sin
 // ParseUnpaused is a log parse operation binding the contract event 0x5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa.
 //
 // Solidity: event Unpaused(address account)
-func (_CelerWallet *CelerWalletFilterer) ParseUnpaused(log types.Log) (*CelerWalletUnpaused, error) {
-	event := new(CelerWalletUnpaused)
-	if err := _CelerWallet.contract.UnpackLog(event, "Unpaused", log); err != nil {
+func (_AgentPayWallet *AgentPayWalletFilterer) ParseUnpaused(log types.Log) (*AgentPayWalletUnpaused, error) {
+	event := new(AgentPayWalletUnpaused)
+	if err := _AgentPayWallet.contract.UnpackLog(event, "Unpaused", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerWalletWalletCreatedIterator is returned from FilterWalletCreated and is used to iterate over the raw logs and unpacked data for WalletCreated events raised by the CelerWallet contract.
-type CelerWalletWalletCreatedIterator struct {
-	Event *CelerWalletWalletCreated // Event containing the contract specifics and raw log
+// AgentPayWalletWalletCreatedIterator is returned from FilterWalletCreated and is used to iterate over the raw logs and unpacked data for WalletCreated events raised by the AgentPayWallet contract.
+type AgentPayWalletWalletCreatedIterator struct {
+	Event *AgentPayWalletWalletCreated // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1967,7 +1967,7 @@ type CelerWalletWalletCreatedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerWalletWalletCreatedIterator) Next() bool {
+func (it *AgentPayWalletWalletCreatedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1976,7 +1976,7 @@ func (it *CelerWalletWalletCreatedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerWalletWalletCreated)
+			it.Event = new(AgentPayWalletWalletCreated)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1991,7 +1991,7 @@ func (it *CelerWalletWalletCreatedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerWalletWalletCreated)
+		it.Event = new(AgentPayWalletWalletCreated)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2007,19 +2007,19 @@ func (it *CelerWalletWalletCreatedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerWalletWalletCreatedIterator) Error() error {
+func (it *AgentPayWalletWalletCreatedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerWalletWalletCreatedIterator) Close() error {
+func (it *AgentPayWalletWalletCreatedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerWalletWalletCreated represents a WalletCreated event raised by the CelerWallet contract.
-type CelerWalletWalletCreated struct {
+// AgentPayWalletWalletCreated represents a WalletCreated event raised by the AgentPayWallet contract.
+type AgentPayWalletWalletCreated struct {
 	WalletId [32]byte
 	Owners   []common.Address
 	Operator common.Address
@@ -2029,7 +2029,7 @@ type CelerWalletWalletCreated struct {
 // FilterWalletCreated is a free log retrieval operation binding the contract event 0x8c665d417fd8d3d60d702a3d19dc8184b038e82487203ff32011555beb6cad90.
 //
 // Solidity: event WalletCreated(bytes32 indexed walletId, address[] indexed owners, address indexed operator)
-func (_CelerWallet *CelerWalletFilterer) FilterWalletCreated(opts *bind.FilterOpts, walletId [][32]byte, owners [][]common.Address, operator []common.Address) (*CelerWalletWalletCreatedIterator, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) FilterWalletCreated(opts *bind.FilterOpts, walletId [][32]byte, owners [][]common.Address, operator []common.Address) (*AgentPayWalletWalletCreatedIterator, error) {
 
 	var walletIdRule []interface{}
 	for _, walletIdItem := range walletId {
@@ -2044,17 +2044,17 @@ func (_CelerWallet *CelerWalletFilterer) FilterWalletCreated(opts *bind.FilterOp
 		operatorRule = append(operatorRule, operatorItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.FilterLogs(opts, "WalletCreated", walletIdRule, ownersRule, operatorRule)
+	logs, sub, err := _AgentPayWallet.contract.FilterLogs(opts, "WalletCreated", walletIdRule, ownersRule, operatorRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerWalletWalletCreatedIterator{contract: _CelerWallet.contract, event: "WalletCreated", logs: logs, sub: sub}, nil
+	return &AgentPayWalletWalletCreatedIterator{contract: _AgentPayWallet.contract, event: "WalletCreated", logs: logs, sub: sub}, nil
 }
 
 // WatchWalletCreated is a free log subscription operation binding the contract event 0x8c665d417fd8d3d60d702a3d19dc8184b038e82487203ff32011555beb6cad90.
 //
 // Solidity: event WalletCreated(bytes32 indexed walletId, address[] indexed owners, address indexed operator)
-func (_CelerWallet *CelerWalletFilterer) WatchWalletCreated(opts *bind.WatchOpts, sink chan<- *CelerWalletWalletCreated, walletId [][32]byte, owners [][]common.Address, operator []common.Address) (event.Subscription, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) WatchWalletCreated(opts *bind.WatchOpts, sink chan<- *AgentPayWalletWalletCreated, walletId [][32]byte, owners [][]common.Address, operator []common.Address) (event.Subscription, error) {
 
 	var walletIdRule []interface{}
 	for _, walletIdItem := range walletId {
@@ -2069,7 +2069,7 @@ func (_CelerWallet *CelerWalletFilterer) WatchWalletCreated(opts *bind.WatchOpts
 		operatorRule = append(operatorRule, operatorItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.WatchLogs(opts, "WalletCreated", walletIdRule, ownersRule, operatorRule)
+	logs, sub, err := _AgentPayWallet.contract.WatchLogs(opts, "WalletCreated", walletIdRule, ownersRule, operatorRule)
 	if err != nil {
 		return nil, err
 	}
@@ -2079,8 +2079,8 @@ func (_CelerWallet *CelerWalletFilterer) WatchWalletCreated(opts *bind.WatchOpts
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerWalletWalletCreated)
-				if err := _CelerWallet.contract.UnpackLog(event, "WalletCreated", log); err != nil {
+				event := new(AgentPayWalletWalletCreated)
+				if err := _AgentPayWallet.contract.UnpackLog(event, "WalletCreated", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2104,18 +2104,18 @@ func (_CelerWallet *CelerWalletFilterer) WatchWalletCreated(opts *bind.WatchOpts
 // ParseWalletCreated is a log parse operation binding the contract event 0x8c665d417fd8d3d60d702a3d19dc8184b038e82487203ff32011555beb6cad90.
 //
 // Solidity: event WalletCreated(bytes32 indexed walletId, address[] indexed owners, address indexed operator)
-func (_CelerWallet *CelerWalletFilterer) ParseWalletCreated(log types.Log) (*CelerWalletWalletCreated, error) {
-	event := new(CelerWalletWalletCreated)
-	if err := _CelerWallet.contract.UnpackLog(event, "WalletCreated", log); err != nil {
+func (_AgentPayWallet *AgentPayWalletFilterer) ParseWalletCreated(log types.Log) (*AgentPayWalletWalletCreated, error) {
+	event := new(AgentPayWalletWalletCreated)
+	if err := _AgentPayWallet.contract.UnpackLog(event, "WalletCreated", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerWalletWithdrawnIterator is returned from FilterWithdrawn and is used to iterate over the raw logs and unpacked data for Withdrawn events raised by the CelerWallet contract.
-type CelerWalletWithdrawnIterator struct {
-	Event *CelerWalletWithdrawn // Event containing the contract specifics and raw log
+// AgentPayWalletWithdrawnIterator is returned from FilterWithdrawn and is used to iterate over the raw logs and unpacked data for Withdrawn events raised by the AgentPayWallet contract.
+type AgentPayWalletWithdrawnIterator struct {
+	Event *AgentPayWalletWithdrawn // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2129,7 +2129,7 @@ type CelerWalletWithdrawnIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerWalletWithdrawnIterator) Next() bool {
+func (it *AgentPayWalletWithdrawnIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2138,7 +2138,7 @@ func (it *CelerWalletWithdrawnIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerWalletWithdrawn)
+			it.Event = new(AgentPayWalletWithdrawn)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2153,7 +2153,7 @@ func (it *CelerWalletWithdrawnIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerWalletWithdrawn)
+		it.Event = new(AgentPayWalletWithdrawn)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2169,19 +2169,19 @@ func (it *CelerWalletWithdrawnIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerWalletWithdrawnIterator) Error() error {
+func (it *AgentPayWalletWithdrawnIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerWalletWithdrawnIterator) Close() error {
+func (it *AgentPayWalletWithdrawnIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerWalletWithdrawn represents a Withdrawn event raised by the CelerWallet contract.
-type CelerWalletWithdrawn struct {
+// AgentPayWalletWithdrawn represents a Withdrawn event raised by the AgentPayWallet contract.
+type AgentPayWalletWithdrawn struct {
 	WalletId     [32]byte
 	TokenAddress common.Address
 	Receiver     common.Address
@@ -2192,7 +2192,7 @@ type CelerWalletWithdrawn struct {
 // FilterWithdrawn is a free log retrieval operation binding the contract event 0xa6786aab7dbbc48b4b0387488b407bd81448030ab207b50bea7dbb5fbc1cd9eb.
 //
 // Solidity: event Withdrawn(bytes32 indexed walletId, address indexed tokenAddress, address indexed receiver, uint256 amount)
-func (_CelerWallet *CelerWalletFilterer) FilterWithdrawn(opts *bind.FilterOpts, walletId [][32]byte, tokenAddress []common.Address, receiver []common.Address) (*CelerWalletWithdrawnIterator, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) FilterWithdrawn(opts *bind.FilterOpts, walletId [][32]byte, tokenAddress []common.Address, receiver []common.Address) (*AgentPayWalletWithdrawnIterator, error) {
 
 	var walletIdRule []interface{}
 	for _, walletIdItem := range walletId {
@@ -2207,17 +2207,17 @@ func (_CelerWallet *CelerWalletFilterer) FilterWithdrawn(opts *bind.FilterOpts, 
 		receiverRule = append(receiverRule, receiverItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.FilterLogs(opts, "Withdrawn", walletIdRule, tokenAddressRule, receiverRule)
+	logs, sub, err := _AgentPayWallet.contract.FilterLogs(opts, "Withdrawn", walletIdRule, tokenAddressRule, receiverRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerWalletWithdrawnIterator{contract: _CelerWallet.contract, event: "Withdrawn", logs: logs, sub: sub}, nil
+	return &AgentPayWalletWithdrawnIterator{contract: _AgentPayWallet.contract, event: "Withdrawn", logs: logs, sub: sub}, nil
 }
 
 // WatchWithdrawn is a free log subscription operation binding the contract event 0xa6786aab7dbbc48b4b0387488b407bd81448030ab207b50bea7dbb5fbc1cd9eb.
 //
 // Solidity: event Withdrawn(bytes32 indexed walletId, address indexed tokenAddress, address indexed receiver, uint256 amount)
-func (_CelerWallet *CelerWalletFilterer) WatchWithdrawn(opts *bind.WatchOpts, sink chan<- *CelerWalletWithdrawn, walletId [][32]byte, tokenAddress []common.Address, receiver []common.Address) (event.Subscription, error) {
+func (_AgentPayWallet *AgentPayWalletFilterer) WatchWithdrawn(opts *bind.WatchOpts, sink chan<- *AgentPayWalletWithdrawn, walletId [][32]byte, tokenAddress []common.Address, receiver []common.Address) (event.Subscription, error) {
 
 	var walletIdRule []interface{}
 	for _, walletIdItem := range walletId {
@@ -2232,7 +2232,7 @@ func (_CelerWallet *CelerWalletFilterer) WatchWithdrawn(opts *bind.WatchOpts, si
 		receiverRule = append(receiverRule, receiverItem)
 	}
 
-	logs, sub, err := _CelerWallet.contract.WatchLogs(opts, "Withdrawn", walletIdRule, tokenAddressRule, receiverRule)
+	logs, sub, err := _AgentPayWallet.contract.WatchLogs(opts, "Withdrawn", walletIdRule, tokenAddressRule, receiverRule)
 	if err != nil {
 		return nil, err
 	}
@@ -2242,8 +2242,8 @@ func (_CelerWallet *CelerWalletFilterer) WatchWithdrawn(opts *bind.WatchOpts, si
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerWalletWithdrawn)
-				if err := _CelerWallet.contract.UnpackLog(event, "Withdrawn", log); err != nil {
+				event := new(AgentPayWalletWithdrawn)
+				if err := _AgentPayWallet.contract.UnpackLog(event, "Withdrawn", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2267,9 +2267,9 @@ func (_CelerWallet *CelerWalletFilterer) WatchWithdrawn(opts *bind.WatchOpts, si
 // ParseWithdrawn is a log parse operation binding the contract event 0xa6786aab7dbbc48b4b0387488b407bd81448030ab207b50bea7dbb5fbc1cd9eb.
 //
 // Solidity: event Withdrawn(bytes32 indexed walletId, address indexed tokenAddress, address indexed receiver, uint256 amount)
-func (_CelerWallet *CelerWalletFilterer) ParseWithdrawn(log types.Log) (*CelerWalletWithdrawn, error) {
-	event := new(CelerWalletWithdrawn)
-	if err := _CelerWallet.contract.UnpackLog(event, "Withdrawn", log); err != nil {
+func (_AgentPayWallet *AgentPayWalletFilterer) ParseWithdrawn(log types.Log) (*AgentPayWalletWithdrawn, error) {
+	event := new(AgentPayWalletWithdrawn)
+	if err := _AgentPayWallet.contract.UnpackLog(event, "Withdrawn", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log

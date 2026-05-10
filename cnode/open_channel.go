@@ -162,7 +162,7 @@ func (p *openChannelProcessor) prepareChannelInitializer(
 		DisputeTimeout:   config.ChannelDisputeTimeout,
 		MsgValueReceiver: msgValueReceiver,
 		// chain id + ledger address bind the signed initializer to a specific
-		// (chain, CelerLedger) pair so it can't be replayed cross-chain or
+		// (chain, AgentPayLedger) pair so it can't be replayed cross-chain or
 		// against a different ledger contract on the same chain.
 		ChainId:       config.ChainId.Uint64(),
 		LedgerAddress: p.nodeConfig.GetLedgerContract().GetAddr().Bytes(),
@@ -472,7 +472,7 @@ func (p *openChannelProcessor) sendOpenChannelTransaction(
 			},
 		},
 		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
-			contract, err2 := ledger.NewCelerLedgerTransactor(ledgerAddr, transactor)
+			contract, err2 := ledger.NewAgentPayLedgerTransactor(ledgerAddr, transactor)
 			if err2 != nil {
 				p.processOpenError(openCallback, ledgerAddr, err2)
 				return nil, err2
@@ -506,7 +506,7 @@ func (p *openChannelProcessor) processTcbRequest(in *rpc.OpenChannelRequest, oce
 	ocem.ReadableInitializer = utils.PrintChannelInitializer(pscInitializer)
 	log.Infoln("process tcb openchannel request", utils.PrintChannelInitializer(pscInitializer))
 	// chain id + ledger address bind the signed initializer to a specific
-	// (chain, CelerLedger) pair. Same check as the regular open-channel
+	// (chain, AgentPayLedger) pair. Same check as the regular open-channel
 	// path; without it a TCB approval could be replayed cross-chain or
 	// against a different ledger contract.
 	if pscInitializer.GetChainId() != config.ChainId.Uint64() {
@@ -705,7 +705,7 @@ func (p *openChannelProcessor) processOpenChannelRequest(req *rpc.OpenChannelReq
 	ocem.ReadableInitializer = utils.PrintChannelInitializer(&initializer)
 	log.Infoln("process openchannel request", utils.PrintChannelInitializer(&initializer))
 	// chain id + ledger address bind the signed initializer to a specific
-	// (chain, CelerLedger) pair. CelerLedger.openChannel does the same check
+	// (chain, AgentPayLedger) pair. AgentPayLedger.openChannel does the same check
 	// on-chain; rejecting here closes off cross-chain and same-chain
 	// wrong-ledger replay before signing or forwarding.
 	if initializer.GetChainId() != config.ChainId.Uint64() {
@@ -807,10 +807,10 @@ func (p *openChannelProcessor) processOpenChannelRequest(req *rpc.OpenChannelReq
 }
 func (p *openChannelProcessor) computePscID(
 	channelInitializerBytes []byte, ledgerAdr, walletAddr ctype.Addr) (ctype.CidType, error) {
-	// Mirror the on-chain CelerWallet.create derivation:
+	// Mirror the on-chain AgentPayWallet.create derivation:
 	//   walletId = keccak256(abi.encodePacked(block.chainid, address(this), msg.sender, _nonce))
 	// where address(this) is the wallet contract and msg.sender is the
-	// CelerLedger calling create. _nonce is keccak256(channelInitializerBytes).
+	// AgentPayLedger calling create. _nonce is keccak256(channelInitializerBytes).
 	nonce := crypto.Keccak256(channelInitializerBytes)
 	chainIdBytes := make([]byte, 32)
 	config.ChainId.FillBytes(chainIdBytes)
@@ -1016,7 +1016,7 @@ func (p *openChannelProcessor) monitorEvent(ledgerContract chain.Contract) {
 		func(id monitor.CallbackID, eLog types.Log) bool {
 			ocem := pem.NewOcem(p.nodeConfig.GetRPCAddr())
 			ocem.Type = pem.OpenChannelEventType_CHANNEL_MINED
-			e := &ledger.CelerLedgerOpenChannel{}
+			e := &ledger.AgentPayLedgerOpenChannel{}
 			if err := ledgerContract.ParseEvent(event.OpenChannel, eLog, e); err != nil {
 				log.Error(err)
 				return false
@@ -1080,7 +1080,7 @@ func (p *openChannelProcessor) monitorSingleEvent(ledgerContract chain.Contract,
 		func(id monitor.CallbackID, eLog types.Log) bool {
 			ocem := pem.NewOcem(p.nodeConfig.GetRPCAddr())
 			ocem.Type = pem.OpenChannelEventType_CHANNEL_MINED
-			e := &ledger.CelerLedgerOpenChannel{}
+			e := &ledger.AgentPayLedgerOpenChannel{}
 			if err := ledgerContract.ParseEvent(event.OpenChannel, eLog, e); err != nil {
 				log.Error(err)
 				return false

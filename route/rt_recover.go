@@ -125,7 +125,7 @@ func (p *Controller) startRoutingRecoverProcess(
 	for _, eLog := range logs {
 		switch eLog.Topics[0].Hex() {
 		case openChanString:
-			e := &ledger.CelerLedgerOpenChannel{}
+			e := &ledger.AgentPayLedgerOpenChannel{}
 			if err := contract.ParseEvent(event.OpenChannel, eLog, e); err != nil {
 				log.Errorln(err)
 				return err
@@ -138,7 +138,7 @@ func (p *Controller) startRoutingRecoverProcess(
 				}
 			}
 		case settleChanString:
-			e := &ledger.CelerLedgerConfirmSettle{}
+			e := &ledger.AgentPayLedgerConfirmSettle{}
 			if err := contract.ParseEvent(event.ConfirmSettle, eLog, e); err != nil {
 				log.Errorln(err)
 				return err

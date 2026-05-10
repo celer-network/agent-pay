@@ -82,7 +82,7 @@ generate_binding() {
 generate_binding out/LedgerBalanceLimit.sol/LedgerBalanceLimit.json chain/channel-eth-go/balancelimit/balancelimit.go balancelimit LedgerBalanceLimit
 generate_binding out/LedgerChannel.sol/LedgerChannel.json chain/channel-eth-go/channel/channel.go channel LedgerChannel
 generate_binding out/NativeWrapMock.sol/NativeWrapMock.json chain/channel-eth-go/nativewrap/nativewrap.go nativewrap NativeWrap
-generate_binding out/CelerLedger.sol/CelerLedger.json chain/channel-eth-go/ledger/ledger.go ledger CelerLedger
+generate_binding out/AgentPayLedger.sol/AgentPayLedger.json chain/channel-eth-go/ledger/ledger.go ledger AgentPayLedger
 generate_binding out/LedgerStruct.sol/LedgerStruct.json chain/channel-eth-go/ledgerstruct/ledgerstruct.go ledgerstruct LedgerStruct
 generate_binding out/LedgerMigrate.sol/LedgerMigrate.json chain/channel-eth-go/migrate/migrate.go migrate LedgerMigrate
 generate_binding out/LedgerOperation.sol/LedgerOperation.json chain/channel-eth-go/operation/operation.go operation LedgerOperation
@@ -90,7 +90,7 @@ generate_binding out/PayRegistry.sol/PayRegistry.json chain/channel-eth-go/payre
 generate_binding out/PayResolver.sol/PayResolver.json chain/channel-eth-go/payresolver/payresolver.go payresolver PayResolver
 generate_binding out/RouterRegistry.sol/RouterRegistry.json chain/channel-eth-go/routerregistry/routerregistry.go routerregistry RouterRegistry
 generate_binding out/VirtContractResolver.sol/VirtContractResolver.json chain/channel-eth-go/virtresolver/virtresolver.go virtresolver VirtContractResolver
-generate_binding out/CelerWallet.sol/CelerWallet.json chain/channel-eth-go/wallet/wallet.go wallet CelerWallet
+generate_binding out/AgentPayWallet.sol/AgentPayWallet.json chain/channel-eth-go/wallet/wallet.go wallet AgentPayWallet
 generate_binding out/ERC20ExampleToken.sol/ERC20ExampleToken.json chain/erc20.go chain ERC20
 generate_binding out/RouterRegistry.sol/RouterRegistry.json route/routerregistry/routerregistry.go routerregistry RouterRegistry
 generate_binding out/IBooleanCond.sol/IBooleanCond.json app/booleancond.go app IBooleanCond

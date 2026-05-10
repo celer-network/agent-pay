@@ -292,7 +292,7 @@ func (m *Messager) runCondPayTx(tx *storage.DALTx, args ...interface{}) error {
 		// single-segment lists, so the literal max is sufficient. If
 		// multi-segment pay lists are ever introduced, fold in a clearMargin
 		// here that reserves wall-clock time for recipients to call
-		// CelerLedger.clearPays on every segment before confirmSettle.
+		// AgentPayLedger.clearPays on every segment before confirmSettle.
 		if pay.GetResolveDeadline() > workingSimplex.GetPayClearDeadline() {
 			workingSimplex.PayClearDeadline = pay.GetResolveDeadline()
 		}

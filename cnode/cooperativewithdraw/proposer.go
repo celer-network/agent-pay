@@ -77,9 +77,9 @@ func (p *Processor) prepareJob(cid ctype.CidType, amount *big.Int) (*structs.Coo
 		return nil, fmt.Errorf("Fail to get ledger for channel: %x", cid)
 	}
 	contract, err :=
-		ledger.NewCelerLedgerCaller(chanLedger.GetAddr(), p.transactorPool.ContractCaller())
+		ledger.NewAgentPayLedgerCaller(chanLedger.GetAddr(), p.transactorPool.ContractCaller())
 	if err != nil {
-		return nil, fmt.Errorf("NewCelerLedgerCaller err: %w", err)
+		return nil, fmt.Errorf("NewAgentPayLedgerCaller err: %w", err)
 	}
 	seqNum, err := contract.GetCooperativeWithdrawSeqNum(&bind.CallOpts{}, cid)
 	if err != nil {
@@ -230,7 +230,7 @@ func (p *Processor) sendCooperativeWithdrawTx(
 				return nil, fmt.Errorf("Fail to get ledger for channel: %x", cid)
 			}
 			contract, contractErr :=
-				ledger.NewCelerLedgerTransactor(chanLedger.GetAddr(), transactor)
+				ledger.NewAgentPayLedgerTransactor(chanLedger.GetAddr(), transactor)
 			if contractErr != nil {
 				return nil, contractErr
 			}

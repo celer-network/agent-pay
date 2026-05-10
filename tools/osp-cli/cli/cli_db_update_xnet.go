@@ -13,12 +13,12 @@ import (
 
 // XnetConfig is the operator-supplied cross-net routing configuration.
 //
-// A "net" is identified by (chainId, CelerLedger): the CelerLedger's
+// A "net" is identified by (chainId, AgentPayLedger): the AgentPayLedger's
 // constructor binds NativeWrap (the chain's WETH-style wrapped-native
-// contract), PayRegistry, and CelerWallet, and the PayResolver feeding that
+// contract), PayRegistry, and AgentPayWallet, and the PayResolver feeding that
 // PayRegistry (with its bound VirtResolver) is uniquely determined per
 // deployment, so the full contract set is derivable from the ledger. Two
-// OSPs sharing a netId must boot against the same CelerLedger address on
+// OSPs sharing a netId must boot against the same AgentPayLedger address on
 // the same chain; otherwise channels and signed messages won't validate
 // across them.
 //

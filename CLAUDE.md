@@ -26,7 +26,7 @@ The protocol-and-contract design lives in the companion `agent-pay-docs` repo (`
 `.mcp.json` is gitignored per-developer — each contributor wires their own absolute paths. The current wiring exposes three filesystem MCP roots:
 
 - **agent-pay-docs** — protocol architecture + SGN docs. Read `agentpay-architecture/`. Skip `state-guardian-network/` unless the task is explicitly about SGN behavior or SGN-related profile wiring.
-- **agent-pay-contracts** — Solidity contracts (CelerLedger, PayResolver, PayRegistry, RouterRegistry, Wallet, plus the chain-canonical wrapped-native / WETH-style contract that CelerLedger references for native-token funding flows). Foundry project. Read only when the task touches on-chain contract logic, event semantics, or generated bindings under [chain/channel-eth-go/](chain/channel-eth-go/).
+- **agent-pay-contracts** — Solidity contracts (AgentPayLedger, PayResolver, PayRegistry, RouterRegistry, Wallet, plus the chain-canonical wrapped-native / WETH-style contract that AgentPayLedger references for native-token funding flows). Foundry project. Read only when the task touches on-chain contract logic, event semantics, or generated bindings under [chain/channel-eth-go/](chain/channel-eth-go/).
 - **agent-pay-x402** — downstream Go integration that layers x402 HTTP payment over AgentPay state channels. Useful as an "external consumer" reference: it talks to this repo's WebAPI gRPC (clients) and Admin HTTP (OSP) only, never `CelerStream` directly. Friction observed there is logged in that repo's `docs/agent-pay-feedback.md`.
 
 If a path is unavailable in your MCP roots, ask the user before guessing — do not silently proceed on protocol-sensitive work.

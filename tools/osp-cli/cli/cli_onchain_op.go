@@ -19,8 +19,8 @@ import (
 
 // NativeWrapDeposit wraps native (e.g., ETH) into the chain's
 // canonical wrapped-native (WETH-style) contract under the OSP's own
-// balance, then approves CelerLedger to transferFrom that wrapped balance
-// — the funding-flow shape CelerLedger expects when the OSP is the
+// balance, then approves AgentPayLedger to transferFrom that wrapped balance
+// — the funding-flow shape AgentPayLedger expects when the OSP is the
 // non-msgValueReceiver peer of an open-channel call.
 func (p *Processor) NativeWrapDeposit() {
 	if err := p.depositNativeWrap(); err != nil {
@@ -97,7 +97,7 @@ func (p *Processor) depositNativeWrap() error {
 }
 
 func (p *Processor) approveNativeWrapToLedger() error {
-	log.Info("approve NativeWrap balance to CelerLedger and wait transaction to be mined...")
+	log.Info("approve NativeWrap balance to AgentPayLedger and wait transaction to be mined...")
 	balance, err := p.queryNativeWrapBalance()
 	if err != nil {
 		return err

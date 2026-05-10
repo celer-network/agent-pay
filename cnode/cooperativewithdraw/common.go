@@ -110,7 +110,7 @@ func (p *Processor) maybeHandleEvent(eLog *types.Log) bool {
 	if ledgerContract == nil {
 		return false
 	}
-	e := &ledger.CelerLedgerCooperativeWithdraw{}
+	e := &ledger.AgentPayLedgerCooperativeWithdraw{}
 	err := ledgerContract.ParseEvent(event.CooperativeWithdraw, *eLog, e)
 	if err != nil {
 		if strings.Contains(err.Error(), "event signature mismatch") {
@@ -204,7 +204,7 @@ func (p *Processor) updateOnChainBalance(
 	cid ctype.CidType,
 	self ctype.Addr,
 	peer ctype.Addr,
-	e *ledger.CelerLedgerCooperativeWithdraw,
+	e *ledger.AgentPayLedgerCooperativeWithdraw,
 	txHash string) {
 	if len(e.Deposits) != 2 || len(e.Withdrawals) != 2 {
 		log.Error("on chain balances length not match")
