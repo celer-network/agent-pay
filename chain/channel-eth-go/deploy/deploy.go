@@ -33,17 +33,17 @@ import (
 )
 
 type CelerChannelAddrBundle struct {
-	BalanceLimitAddr  common.Address
-	LedgerChannelAddr common.Address
-	NativeWrapAddr    common.Address
-	AgentPayLedgerAddr   common.Address
-	OperationAddr     common.Address
-	MigrateAddr       common.Address
-	PayRegistryAddr   common.Address
-	PayResolverAddr   common.Address
-	VirtResolverAddr  common.Address
-	LedgerStructAddr  common.Address
-	AgentPayWalletAddr   common.Address
+	BalanceLimitAddr   common.Address
+	LedgerChannelAddr  common.Address
+	NativeWrapAddr     common.Address
+	AgentPayLedgerAddr common.Address
+	OperationAddr      common.Address
+	MigrateAddr        common.Address
+	PayRegistryAddr    common.Address
+	PayResolverAddr    common.Address
+	VirtResolverAddr   common.Address
+	LedgerStructAddr   common.Address
+	AgentPayWalletAddr common.Address
 }
 
 // DeployRouterRegistry deploys router registry contract
@@ -268,17 +268,17 @@ func DeployAll(
 
 	// return addresses of deployed contracts
 	return CelerChannelAddrBundle{
-		BalanceLimitAddr:  balancelimitAddr,
-		LedgerChannelAddr: channelAddr,
-		NativeWrapAddr:    nativeWrapAddr,
-		AgentPayLedgerAddr:   ledgerAddr,
-		OperationAddr:     operationAddr,
-		MigrateAddr:       migrateAddr,
-		PayRegistryAddr:   payRegistryAddr,
-		PayResolverAddr:   payResolverAddr,
-		VirtResolverAddr:  virtresolverAddr,
-		LedgerStructAddr:  ledgerstructAddr,
-		AgentPayWalletAddr:   walletAddr,
+		BalanceLimitAddr:   balancelimitAddr,
+		LedgerChannelAddr:  channelAddr,
+		NativeWrapAddr:     nativeWrapAddr,
+		AgentPayLedgerAddr: ledgerAddr,
+		OperationAddr:      operationAddr,
+		MigrateAddr:        migrateAddr,
+		PayRegistryAddr:    payRegistryAddr,
+		PayResolverAddr:    payResolverAddr,
+		VirtResolverAddr:   virtresolverAddr,
+		LedgerStructAddr:   ledgerstructAddr,
+		AgentPayWalletAddr: walletAddr,
 	}
 }
 
