@@ -18,7 +18,7 @@ This repository implements the off-chain backend of AgentPay. Before changing co
 Companion repos are wired in via the filesystem MCP server. The canonical roots are:
 
 - `agent-pay-docs` — protocol architecture (`agentpay-architecture/`). Required reading for protocol-sensitive work. The `state-guardian-network/` subtree is **not** required background; read it only when the task is explicitly about SGN behavior or SGN-related profile wiring.
-- `agent-pay-contracts` — Solidity contracts (CelerLedger, PayResolver, PayRegistry, RouterRegistry, Wallet, plus the chain-canonical wrapped-native / WETH-style contract that CelerLedger references for native-token funding flows). Optional background; read only when the task touches on-chain contract logic, event semantics, generated bindings under `chain/channel-eth-go/`, or profile/address wiring that depends on contract behavior.
+- `agent-pay-contracts` — Solidity contracts (AgentPayLedger, PayResolver, PayRegistry, RouterRegistry, Wallet, plus the chain-canonical wrapped-native / WETH-style contract that AgentPayLedger references for native-token funding flows). Optional background; read only when the task touches on-chain contract logic, event semantics, generated bindings under `chain/channel-eth-go/`, or profile/address wiring that depends on contract behavior.
 - `agent-pay-x402` — downstream integration that consumes this repo via WebAPI gRPC + Admin HTTP. Useful as an "external consumer" reference, not required reading.
 
 `.mcp.json` is gitignored per-developer. Copy `.mcp.json.example` to `.mcp.json` and fill in absolute paths to your local sibling clones. If a path is unavailable when needed, ask the user before guessing on protocol-sensitive work.

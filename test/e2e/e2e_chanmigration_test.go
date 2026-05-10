@@ -200,7 +200,7 @@ func TestE2EChannelMigrationTool(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	walletContract, err := wallet.NewCelerWalletCaller(ctype.Hex2Addr(tf.E2eProfile.Ethereum.Contracts.Wallet), conn)
+	walletContract, err := wallet.NewAgentPayWalletCaller(ctype.Hex2Addr(tf.E2eProfile.Ethereum.Contracts.Wallet), conn)
 	if err != nil {
 		t.Error(err)
 		return

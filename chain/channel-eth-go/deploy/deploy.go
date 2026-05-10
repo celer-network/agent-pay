@@ -36,14 +36,14 @@ type CelerChannelAddrBundle struct {
 	BalanceLimitAddr  common.Address
 	LedgerChannelAddr common.Address
 	NativeWrapAddr    common.Address
-	CelerLedgerAddr   common.Address
+	AgentPayLedgerAddr   common.Address
 	OperationAddr     common.Address
 	MigrateAddr       common.Address
 	PayRegistryAddr   common.Address
 	PayResolverAddr   common.Address
 	VirtResolverAddr  common.Address
 	LedgerStructAddr  common.Address
-	CelerWalletAddr   common.Address
+	AgentPayWalletAddr   common.Address
 }
 
 // DeployRouterRegistry deploys router registry contract
@@ -92,7 +92,7 @@ func DeployAll(
 	// Deploy NativeWrap (WETH-style) contract. In production this is the
 	// chain's canonical wrapped-native address (WETH on Ethereum); in this
 	// local-deploy path we deploy a minimal mock so tests can exercise the
-	// funding-flow path that CelerLedger uses internally for multi-party native deposits.
+	// funding-flow path that AgentPayLedger uses internally for multi-party native deposits.
 	log.Infoln("Deploying NativeWrap (WETH-style mock) contract...")
 	nativeWrapAddr, tx, _, err := nativewrap.DeployNativeWrap(auth, conn)
 	if err != nil {
@@ -131,18 +131,18 @@ func DeployAll(
 	log.Infof("Transaction status: %x", receipt.Status)
 	log.Infof("Deployed PayResolver contract at 0x%x\n", payResolverAddr)
 
-	// Deploy CelerWallet contract
-	log.Infoln("Deploying CelerWallet contract...")
-	walletAddr, tx, _, err := wallet.DeployCelerWallet(auth, conn)
+	// Deploy AgentPayWallet contract
+	log.Infoln("Deploying AgentPayWallet contract...")
+	walletAddr, tx, _, err := wallet.DeployAgentPayWallet(auth, conn)
 	if err != nil {
-		log.Fatalf("Failed to deploy CelerWallet contract: %v", err)
+		log.Fatalf("Failed to deploy AgentPayWallet contract: %v", err)
 	}
 	receipt, err = WaitMined(ctx, conn, tx, blockDelay)
 	if err != nil {
-		log.Fatalf("Failed to WaitMined CelerWallet: %v", err)
+		log.Fatalf("Failed to WaitMined AgentPayWallet: %v", err)
 	}
 	log.Infof("Transaction status: %x", receipt.Status)
-	log.Infof("Deployed CelerWallet contract at 0x%x\n", walletAddr)
+	log.Infof("Deployed AgentPayWallet contract at 0x%x\n", walletAddr)
 
 	// Deploy LedgerStruct contract
 	log.Infoln("Deploying LedgerStruct contract...")
@@ -238,13 +238,13 @@ func DeployAll(
 	log.Infof("Transaction status: %x", receipt.Status)
 	log.Infof("Deployed LedgerMigrate contract at 0x%x\n", migrateAddr)
 
-	// Deploy CelerLedger contract
-	log.Infoln("Deploying CelerLedger contract...")
+	// Deploy AgentPayLedger contract
+	log.Infoln("Deploying AgentPayLedger contract...")
 	ledgerAddr, tx, _, err := DeployContractWithLinks(
 		auth,
 		conn,
-		ledger.CelerLedgerABI,
-		ledger.CelerLedgerBin,
+		ledger.AgentPayLedgerABI,
+		ledger.AgentPayLedgerBin,
 		map[string]common.Address{
 			"LedgerStruct":       ledgerstructAddr,
 			"LedgerOperation":    operationAddr,
@@ -257,28 +257,28 @@ func DeployAll(
 		walletAddr,
 	)
 	if err != nil {
-		log.Fatalf("Failed to deploy CelerLedger contract: %v", err)
+		log.Fatalf("Failed to deploy AgentPayLedger contract: %v", err)
 	}
 	receipt, err = WaitMined(ctx, conn, tx, blockDelay)
 	if err != nil {
-		log.Fatalf("Failed to WaitMined CelerLedger: %v", err)
+		log.Fatalf("Failed to WaitMined AgentPayLedger: %v", err)
 	}
 	log.Infof("Transaction status: %x", receipt.Status)
-	log.Infof("Deployed CelerLedger contract at 0x%x\n", ledgerAddr)
+	log.Infof("Deployed AgentPayLedger contract at 0x%x\n", ledgerAddr)
 
 	// return addresses of deployed contracts
 	return CelerChannelAddrBundle{
 		BalanceLimitAddr:  balancelimitAddr,
 		LedgerChannelAddr: channelAddr,
 		NativeWrapAddr:    nativeWrapAddr,
-		CelerLedgerAddr:   ledgerAddr,
+		AgentPayLedgerAddr:   ledgerAddr,
 		OperationAddr:     operationAddr,
 		MigrateAddr:       migrateAddr,
 		PayRegistryAddr:   payRegistryAddr,
 		PayResolverAddr:   payResolverAddr,
 		VirtResolverAddr:  virtresolverAddr,
 		LedgerStructAddr:  ledgerstructAddr,
-		CelerWalletAddr:   walletAddr,
+		AgentPayWalletAddr:   walletAddr,
 	}
 }
 

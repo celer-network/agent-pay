@@ -56,7 +56,7 @@ func main() {
 	}
 
 	// prepare the contract related objects
-	ledgerABI := ledger.CelerLedgerABI
+	ledgerABI := ledger.AgentPayLedgerABI
 	ledgerAddr := ctype.Hex2Addr(cp.LedgerAddr)
 	parsedABI, err := abi.JSON(strings.NewReader(ledgerABI))
 	if err != nil {
@@ -124,13 +124,13 @@ func main() {
 		for _, eLog := range logs {
 			switch eLog.Topics[0].Hex() {
 			case openChanString:
-				e := &ledger.CelerLedgerOpenChannel{}
+				e := &ledger.AgentPayLedgerOpenChannel{}
 				if err = contract.ParseEvent(event.OpenChannel, eLog, e); err != nil {
 					log.Error(err)
 				}
 				handleOpenChannel(e)
 			case settleChanString:
-				e := &ledger.CelerLedgerConfirmSettle{}
+				e := &ledger.AgentPayLedgerConfirmSettle{}
 				if err = contract.ParseEvent(event.ConfirmSettle, eLog, e); err != nil {
 					log.Error(err)
 				}
@@ -176,7 +176,7 @@ func keepValidChannel() {
 	data.Channels = channels
 }
 
-func handleOpenChannel(e *ledger.CelerLedgerOpenChannel) {
+func handleOpenChannel(e *ledger.AgentPayLedgerOpenChannel) {
 	cid := ctype.CidType(e.ChannelId).Hex()
 	edge := &route.Channel{
 		P1:    e.PeerAddrs[0],
@@ -188,14 +188,14 @@ func handleOpenChannel(e *ledger.CelerLedgerOpenChannel) {
 	openChannelNum++
 }
 
-func handleSettleChannel(e *ledger.CelerLedgerConfirmSettle) {
+func handleSettleChannel(e *ledger.AgentPayLedgerConfirmSettle) {
 	cid := ctype.CidType(e.ChannelId).Hex()
 	settleChannelInfo[cid] = true
 	settleChannelNum++
 }
 
 func bindLedgerContract(conn *ethclient.Client, address ec.Address) *chain.BoundContract {
-	ledgerABI := ledger.CelerLedgerABI
+	ledgerABI := ledger.AgentPayLedgerABI
 	contract, _ := chain.NewBoundContract(conn, address, ledgerABI)
 
 	return contract

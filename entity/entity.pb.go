@@ -1033,7 +1033,7 @@ type PaymentChannelInitializer struct {
 	// chain id of the intended target chain; binds the signed initializer
 	// against cross-chain replay
 	ChainId uint64 `protobuf:"varint,5,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
-	// address of the intended target CelerLedger; binds the signed initializer
+	// address of the intended target AgentPayLedger; binds the signed initializer
 	// against same-chain wrong-ledger replay
 	LedgerAddress []byte `protobuf:"bytes,6,opt,name=ledger_address,json=ledgerAddress,proto3" json:"ledger_address,omitempty"`
 	unknownFields protoimpl.UnknownFields

@@ -74,7 +74,7 @@ func SetupOnChain(appMap map[string]ctype.Addr, groupId uint64, autofund bool) (
 	routerRegistryAddr := deploy.DeployRouterRegistry(ctx, etherBaseAuth, conclient, 0)
 
 	// NativeWrap (WETH-style) is used later when each OSP wraps its own
-	// native balance and pre-approves CelerLedger so the open-channel /
+	// native balance and pre-approves AgentPayLedger so the open-channel /
 	// deposit funding-flow path can pull pre-wrapped native via
 	// `WETH.transferFrom` + `WETH.withdraw` for the non-msgValueReceiver peer.
 	nativeWrapContract, err = nativewrap.NewNativeWrap(channelAddrBundle.NativeWrapAddr, conclient)
@@ -83,7 +83,7 @@ func SetupOnChain(appMap map[string]ctype.Addr, groupId uint64, autofund bool) (
 	}
 
 	// Disable channel deposit limit
-	ledgerContract, err := ledger.NewCelerLedger(channelAddrBundle.CelerLedgerAddr, conclient)
+	ledgerContract, err := ledger.NewAgentPayLedger(channelAddrBundle.AgentPayLedgerAddr, conclient)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -124,13 +124,13 @@ func SetupOnChain(appMap map[string]ctype.Addr, groupId uint64, autofund bool) (
 	chkTxStatus(receipt.Status, "Deploy BooleanCondMock "+ctype.Addr2Hex(appAddr1))
 	appMap["BooleanCondMock"] = appAddr1
 
-	// Deploy a new Celer Ledger for channel migration test
-	log.Infoln("Deploying new CelerLedger contract...")
+	// Deploy a new AgentPayLedger for channel migration test
+	log.Infoln("Deploying new AgentPayLedger contract...")
 	newLedgerAddr, tx6, _, err := deploy.DeployContractWithLinks(
 		etherBaseAuth,
 		conclient,
-		ledger.CelerLedgerABI,
-		ledger.CelerLedgerBin,
+		ledger.AgentPayLedgerABI,
+		ledger.AgentPayLedgerBin,
 		map[string]ctype.Addr{
 			"LedgerStruct":       channelAddrBundle.LedgerStructAddr,
 			"LedgerOperation":    channelAddrBundle.OperationAddr,
@@ -140,14 +140,14 @@ func SetupOnChain(appMap map[string]ctype.Addr, groupId uint64, autofund bool) (
 		},
 		channelAddrBundle.NativeWrapAddr,
 		channelAddrBundle.PayRegistryAddr,
-		channelAddrBundle.CelerWalletAddr,
+		channelAddrBundle.AgentPayWalletAddr,
 	)
 	if err != nil {
-		log.Fatalf("Failed to deploy new CelerLedger contract: %v", err)
+		log.Fatalf("Failed to deploy new AgentPayLedger contract: %v", err)
 	}
 	receipt, err = eth.WaitMined(ctx, conclient, tx6, eth.WithPollingInterval(time.Second))
 	if err != nil {
-		log.Fatalf("Failed to WaitMined v2 CelerLedger: %v", err)
+		log.Fatalf("Failed to WaitMined v2 AgentPayLedger: %v", err)
 	}
 	chkTxStatus(receipt.Status, "Deploy v2 Ledger contract at "+ctype.Addr2Hex(newLedgerAddr))
 
@@ -158,13 +158,13 @@ func SetupOnChain(appMap map[string]ctype.Addr, groupId uint64, autofund bool) (
 
 	// contruct ledger map
 	ledgers := map[string]string{
-		ctype.Addr2Hex(channelAddrBundle.CelerLedgerAddr): "ledger1",
+		ctype.Addr2Hex(channelAddrBundle.AgentPayLedgerAddr): "ledger1",
 		ctype.Addr2Hex(newLedgerAddr):                     "ledger2",
 	}
 
 	profileContracts := common.ProfileContracts{
-		Wallet:         ctype.Addr2Hex(channelAddrBundle.CelerWalletAddr),
-		Ledger:         ctype.Addr2Hex(channelAddrBundle.CelerLedgerAddr),
+		Wallet:         ctype.Addr2Hex(channelAddrBundle.AgentPayWalletAddr),
+		Ledger:         ctype.Addr2Hex(channelAddrBundle.AgentPayLedgerAddr),
 		VirtResolver:   ctype.Addr2Hex(channelAddrBundle.VirtResolverAddr),
 		NativeWrap:     ctype.Addr2Hex(channelAddrBundle.NativeWrapAddr),
 		PayResolver:    ctype.Addr2Hex(channelAddrBundle.PayResolverAddr),
@@ -270,8 +270,8 @@ func fundEthAddrStep1(addrStr string) *ethtypes.Transaction {
 //     msg.sender, so the OSP must self-wrap — the contract's funding-flow
 //     path requires WETH already in place when the OSP is the
 //     non-msgValueReceiver peer);
-//   - approves CelerLedger to transferFrom the OSP's WETH balance;
-//   - approves CelerLedger to transferFrom the OSP's MOON ERC20 balance.
+//   - approves AgentPayLedger to transferFrom the OSP's WETH balance;
+//   - approves AgentPayLedger to transferFrom the OSP's MOON ERC20 balance.
 func fundEthAddrStep2(addrStr, privKeyStr string) (*ethtypes.Transaction, *ethtypes.Transaction, *ethtypes.Transaction) {
 	privKey, err := crypto.HexToECDSA(privKeyStr)
 	if err != nil {
@@ -299,16 +299,16 @@ func fundEthAddrStep2(addrStr, privKeyStr string) (*ethtypes.Transaction, *ethty
 
 	wrapAmt := new(big.Int)
 	wrapAmt.SetString("999000000000000000000000", 10) // 999_000 wrapped native
-	tx2, err := nativeWrapContract.Approve(auth, channelAddrBundle.CelerLedgerAddr, wrapAmt)
+	tx2, err := nativeWrapContract.Approve(auth, channelAddrBundle.AgentPayLedgerAddr, wrapAmt)
 	if err != nil {
-		log.Fatalln("failed to approve native-wrap to celerLedger for", addrStr, err)
+		log.Fatalln("failed to approve native-wrap to AgentPayLedger for", addrStr, err)
 	}
 
 	moonAmt := new(big.Int)
 	moonAmt.SetString("1000000000000000000000000000", 10) // 1 billion Moon
-	tx3, err := erc20Contract.Approve(auth, channelAddrBundle.CelerLedgerAddr, moonAmt)
+	tx3, err := erc20Contract.Approve(auth, channelAddrBundle.AgentPayLedgerAddr, moonAmt)
 	if err != nil {
-		log.Fatalln("failed to approve MOON to celerLedger for", addrStr, err)
+		log.Fatalln("failed to approve MOON to AgentPayLedger for", addrStr, err)
 	}
 
 	return tx1, tx2, tx3

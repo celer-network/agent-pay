@@ -249,7 +249,7 @@ func (p *Processor) intendSettleTxMethod(cid ctype.CidType, stateArrayBytes []by
 		if chanLedger == nil {
 			return nil, fmt.Errorf("Fail to get ledger for channel: %x", cid)
 		}
-		contract, err2 := ledger.NewCelerLedgerTransactor(chanLedger.GetAddr(), transactor)
+		contract, err2 := ledger.NewAgentPayLedgerTransactor(chanLedger.GetAddr(), transactor)
 		if err2 != nil {
 			return nil, err2
 		}
@@ -263,7 +263,7 @@ func (p *Processor) confirmSettleTxMethod(cid ctype.CidType) eth.TxMethod {
 		if chanLedger == nil {
 			return nil, fmt.Errorf("Fail to get ledger for channel: %x", cid)
 		}
-		contract, err2 := ledger.NewCelerLedgerTransactor(chanLedger.GetAddr(), transactor)
+		contract, err2 := ledger.NewAgentPayLedgerTransactor(chanLedger.GetAddr(), transactor)
 		if err2 != nil {
 			return nil, err2
 		}
@@ -370,7 +370,7 @@ func (p *Processor) monitorPaymentChannelSettleEvent(ledgerContract chain.Contra
 		func(id monitor.CallbackID, eLog types.Log) bool {
 			// CAVEAT!!!: suppose we have the same struct of event.
 			// If event struct changes, this monitor does not work.
-			e := &ledger.CelerLedgerIntendSettle{}
+			e := &ledger.AgentPayLedgerIntendSettle{}
 			if err := ledgerContract.ParseEvent(event.IntendSettle, eLog, e); err != nil {
 				log.Error(err)
 				return false
@@ -409,7 +409,7 @@ func (p *Processor) monitorPaymentChannelSettleEvent(ledgerContract chain.Contra
 		func(id monitor.CallbackID, eLog types.Log) bool {
 			// CAVEAT!!!: suppose we have the same struct of event.
 			// If event struct changes, this monitor does not work.
-			e := &ledger.CelerLedgerConfirmSettle{}
+			e := &ledger.AgentPayLedgerConfirmSettle{}
 			if err := ledgerContract.ParseEvent(event.ConfirmSettle, eLog, e); err != nil {
 				log.Error(err)
 				return false

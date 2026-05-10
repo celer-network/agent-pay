@@ -204,7 +204,7 @@ func getDepositCapacity(nodeConfig common.GlobalNodeConfig, tokenAddr string) (*
 	conn := nodeConfig.GetEthConn()
 	tokenAddrToCheck := ctype.Hex2Addr(tokenAddr)
 	// Native channels are funded via the chain's wrapped-native (WETH-style)
-	// contract — pre-approved WETH balance is what CelerLedger pulls when
+	// contract — pre-approved WETH balance is what AgentPayLedger pulls when
 	// the OSP is the non-msgValueReceiver peer. Capacity therefore lives at
 	// the wrapped-native address's allowance row, not the OSP address.
 	if tokenAddr == ctype.NativeTokenAddrStr {

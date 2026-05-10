@@ -53,9 +53,9 @@ func (p *Processor) printChannelLedgerInfo(cid ctype.CidType) {
 	fmt.Println("")
 	fmt.Println("-- channel ID:", ctype.Cid2Hex(cid))
 	chanLedger := p.nodeConfig.GetLedgerContract()
-	contract, err := ledger.NewCelerLedgerCaller(chanLedger.GetAddr(), p.nodeConfig.GetEthConn())
+	contract, err := ledger.NewAgentPayLedgerCaller(chanLedger.GetAddr(), p.nodeConfig.GetEthConn())
 	if err != nil {
-		log.Fatal("NewCelerLedgerCaller error", err)
+		log.Fatal("NewAgentPayLedgerCaller error", err)
 	}
 	status, err := contract.GetChannelStatus(&bind.CallOpts{}, cid)
 	if err != nil {

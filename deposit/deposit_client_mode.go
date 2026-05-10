@@ -210,7 +210,7 @@ func (p *Processor) sendDepositTx(
 				return nil, fmt.Errorf("no channel found: %x", cid)
 			}
 			contract, contractErr :=
-				ledger.NewCelerLedgerTransactor(ledgerAddr, transactor)
+				ledger.NewAgentPayLedgerTransactor(ledgerAddr, transactor)
 			if contractErr != nil {
 				return nil, contractErr
 			}

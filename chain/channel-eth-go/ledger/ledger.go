@@ -30,23 +30,23 @@ var (
 	_ = abi.ConvertType
 )
 
-// CelerLedgerMetaData contains all meta data concerning the CelerLedger contract.
-var CelerLedgerMetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"_nativeWrap\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_payRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_celerWallet\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"receive\",\"stateMutability\":\"payable\"},{\"type\":\"function\",\"name\":\"clearPays\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_peerFrom\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_payIdList\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"confirmSettle\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"confirmWithdraw\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"cooperativeSettle\",\"inputs\":[{\"name\":\"_settleRequest\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"cooperativeWithdraw\",\"inputs\":[{\"name\":\"_cooperativeWithdrawRequest\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"deposit\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_receiver\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_transferFromAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"payable\"},{\"type\":\"function\",\"name\":\"depositInBatch\",\"inputs\":[{\"name\":\"_channelIds\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"_receivers\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"_transferFromAmounts\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"disableBalanceLimits\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"enableBalanceLimits\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"getBalanceLimit\",\"inputs\":[{\"name\":\"_tokenAddr\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getBalanceLimitsEnabled\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getBalanceMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getCelerWallet\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getChannelMigrationArgs\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getChannelStatus\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"enumLedgerStruct.ChannelStatus\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getChannelStatusNum\",\"inputs\":[{\"name\":\"_channelStatus\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getCooperativeWithdrawSeqNum\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getDisputeTimeout\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getMigratedTo\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getNativeWrap\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getNextPayIdListHashMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"bytes32[2]\",\"internalType\":\"bytes32[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getPayClearDeadlineMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getPayRegistry\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getPeersMigrationInfo\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getPendingPayOutMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getSettleFinalizedTime\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getStateSeqNumMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getTokenContract\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getTokenType\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"enumPbEntity.TokenType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getTotalBalance\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getTransferOutMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getWithdrawIntent\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"intendSettle\",\"inputs\":[{\"name\":\"_signedSimplexStateArray\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"intendWithdraw\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_recipientChannelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"migrateChannelFrom\",\"inputs\":[{\"name\":\"_fromLedgerAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_migrationRequest\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"migrateChannelTo\",\"inputs\":[{\"name\":\"_migrationRequest\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"openChannel\",\"inputs\":[{\"name\":\"_openRequest\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"payable\"},{\"type\":\"function\",\"name\":\"owner\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"renounceOwnership\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setBalanceLimits\",\"inputs\":[{\"name\":\"_tokenAddrs\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"_limits\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"snapshotStates\",\"inputs\":[{\"name\":\"_signedSimplexStateArray\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"transferOwnership\",\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"vetoWithdraw\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"ClearOnePay\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"payId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"peerFrom\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ConfirmSettle\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"settleBalance\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ConfirmSettleFail\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ConfirmWithdraw\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"withdrawnAmount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"receiver\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"recipientChannelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"deposits\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"},{\"name\":\"withdrawals\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"CooperativeSettle\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"settleBalance\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"CooperativeWithdraw\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"withdrawnAmount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"receiver\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"recipientChannelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"deposits\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"},{\"name\":\"withdrawals\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"},{\"name\":\"seqNum\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Deposit\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"peerAddrs\",\"type\":\"address[2]\",\"indexed\":false,\"internalType\":\"address[2]\"},{\"name\":\"deposits\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"},{\"name\":\"withdrawals\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"IntendSettle\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"seqNums\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"IntendWithdraw\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"receiver\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"MigrateChannelFrom\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"oldLedgerAddr\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"MigrateChannelTo\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"newLedgerAddr\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"OpenChannel\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"tokenType\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"tokenAddress\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"peerAddrs\",\"type\":\"address[2]\",\"indexed\":false,\"internalType\":\"address[2]\"},{\"name\":\"initialDeposits\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"inputs\":[{\"name\":\"previousOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"SnapshotStates\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"seqNums\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"VetoWithdraw\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"CallerNotNativeWrap\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"LengthMismatch\",\"inputs\":[{\"name\":\"a\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"b\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"NativeWrapNotContract\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"OwnableInvalidOwner\",\"inputs\":[{\"name\":\"owner\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"OwnableUnauthorizedAccount\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"ZeroAddress\",\"inputs\":[]}]",
-	Bin: "0x608060405234801561000f575f5ffd5b5060405161223338038061223383398101604081905261002e91610167565b338061005357604051631e4fbdf760e01b81525f600482015260240160405180910390fd5b61005c816100fd565b506001600160a01b0383166100845760405163d92e233d60e01b815260040160405180910390fd5b5f836001600160a01b03163b116100ae576040516337bf1fcf60e21b815260040160405180910390fd5b600280546001600160a01b039485166001600160a01b0319918216179091556003805493851693821693909317909255600480549190931691161790556006805460ff191660011790556101a7565b5f80546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80516001600160a01b0381168114610162575f5ffd5b919050565b5f5f5f60608486031215610179575f5ffd5b6101828461014c565b92506101906020850161014c565b915061019e6040850161014c565b90509250925092565b61207f806101b45f395ff3fe608060405260043610610257575f3560e01c80638da5cb5b1161013f578063d757abd2116100b3578063e5780db211610078578063e5780db2146107a8578063e6322df7146107c7578063ec7c637d146107e6578063f0c73d701461081a578063f2fde38b14610839578063fd0a1a6114610858575f5ffd5b8063d757abd214610724578063d927bfc414610743578063d954863c14610762578063e063913c14610775578063e0a515b714610789575f5ffd5b8063bd480cb711610104578063bd480cb714610640578063c06d5ff51461066e578063c38a325d1461068d578063c7ff8625146106ac578063cc0b94b7146106cb578063cd3a1be6146106f7575f5ffd5b80638da5cb5b146105a957806393b7b3ce146105c5578063979a9b5e146105d8578063a099a39f14610604578063a8580cab14610621575f5ffd5b8063312ea2c6116101d6578063715018a61161019b578063715018a6146104c957806376bff117146104dd5780637e9a7a3e1461052657806383c8f8b81461054557806388f41465146105595780638942ecb21461058a575f5ffd5b8063312ea2c6146104325780634102b9a81461044f57806361fb19a01461046e578063666a6d651461048b57806369d5dd67146104aa575f5ffd5b80632b559ecc1161021c5780632b559ecc1461034d5780632e2a5a021461036f5780632e3c517a146103a65780632f0ac304146103c5578063307d6f9614610413575f5ffd5b80630165cef81461028d57806309683c03146102c357806309b65d86146102e2578063130d33fe1461030f578063255aab591461032e575f5ffd5b36610289576002546001600160a01b031633146102875760405163e1b71f7760e01b815260040160405180910390fd5b005b5f5ffd5b348015610298575f5ffd5b506102ac6102a73660046117df565b610877565b6040516102ba929190611849565b60405180910390f35b3480156102ce575f5ffd5b506102876102dd3660046118a9565b610912565b3480156102ed575f5ffd5b506103016102fc3660046117df565b61097e565b6040519081526020016102ba565b34801561031a575f5ffd5b506102876103293660046118a9565b610a05565b348015610339575f5ffd5b506102876103483660046117df565b610a41565b348015610358575f5ffd5b5060065460ff1660405190151581526020016102ba565b34801561037a575f5ffd5b5061038e6103893660046117df565b610aab565b6040516001600160a01b0390911681526020016102ba565b3480156103b1575f5ffd5b506102876103c03660046118fc565b610b2b565b3480156103d0575f5ffd5b506103e46103df3660046117df565b610b9a565b6040516102ba949392919093845260208401929092526001600160a01b03166040830152606082015260800190565b34801561041e575f5ffd5b5061030161042d3660046117df565b610c30565b34801561043d575f5ffd5b506003546001600160a01b031661038e565b34801561045a575f5ffd5b506102876104693660046118a9565b610cb1565b348015610479575f5ffd5b506002546001600160a01b031661038e565b348015610496575f5ffd5b506102ac6104a53660046117df565b610ced565b3480156104b5575f5ffd5b506103016104c43660046117df565b610d43565b3480156104d4575f5ffd5b50610287610d88565b3480156104e8575f5ffd5b506104fc6104f73660046117df565b610d9b565b604080516001600160a01b03909516855260208501939093529183015260608201526080016102ba565b348015610531575f5ffd5b506102876105403660046117df565b610e21565b348015610550575f5ffd5b50610287610e60565b348015610564575f5ffd5b506105786105733660046117df565b610e77565b6040516102ba9695949392919061194d565b348015610595575f5ffd5b506102876105a43660046119aa565b610f3d565b3480156105b4575f5ffd5b505f546001600160a01b031661038e565b6102876105d33660046118a9565b610f8a565b3480156105e3575f5ffd5b506105f76105f23660046117df565b610fc6565b6040516102ba91906119e7565b34801561060f575f5ffd5b506004546001600160a01b031661038e565b34801561062c575f5ffd5b5061028761063b366004611a42565b611045565b34801561064b575f5ffd5b5061065f61065a3660046117df565b6110f1565b6040516102ba93929190611aae565b348015610679575f5ffd5b506102ac6106883660046117df565b611197565b348015610698575f5ffd5b5061038e6106a73660046117df565b6111ed565b3480156106b7575f5ffd5b506102876106c63660046117df565b611232565b3480156106d6575f5ffd5b506106ea6106e53660046117df565b611271565b6040516102ba9190611ade565b348015610702575f5ffd5b506107166107113660046117df565b6112f0565b6040516102ba929190611af2565b34801561072f575f5ffd5b5061028761073e3660046118a9565b611380565b34801561074e575f5ffd5b506102ac61075d3660046117df565b6113bc565b610287610770366004611b30565b611412565b348015610780575f5ffd5b50610287611467565b348015610794575f5ffd5b506103016107a33660046118a9565b61147b565b3480156107b3575f5ffd5b506102876107c2366004611b65565b6114b9565b3480156107d2575f5ffd5b506103016107e13660046117df565b61160a565b3480156107f1575f5ffd5b50610301610800366004611c04565b6001600160a01b03165f9081526005602052604090205490565b348015610825575f5ffd5b506103016108343660046117df565b61164f565b348015610844575f5ffd5b50610287610853366004611c04565b611694565b348015610863575f5ffd5b50610287610872366004611c1f565b6116d1565b61087f6117c1565b6108876117c1565b5f8381526007602052604090819020905163bcdf4ebb60e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063bcdf4ebb906024015b608060405180830381865af41580156108e4573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906109089190611d44565b9250925050915091565b6040516379e9008760e01b815273__$c617d6f30a3108b63ce4034547dfec5d71$__906379e900879061094e9060019086908690600401611d9f565b5f6040518083038186803b158015610964575f5ffd5b505af4158015610976573d5f5f3e3d5ffd5b505050505050565b5f81815260076020526040808220905163418ec10160e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063418ec101906024015b602060405180830381865af41580156109da573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906109fe9190611dc1565b9392505050565b604051630bdc541160e01b815273__$c617d6f30a3108b63ce4034547dfec5d71$__90630bdc54119061094e9060019086908690600401611d9f565b60405163eb4de33760e01b8152600160048201526024810182905273__$c617d6f30a3108b63ce4034547dfec5d71$__9063eb4de337906044015b5f6040518083038186803b158015610a92575f5ffd5b505af4158015610aa4573d5f5f3e3d5ffd5b5050505050565b5f818152600760205260408082209051630fea54e160e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__90631fd4a9c2906024015b602060405180830381865af4158015610b07573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906109fe9190611dd8565b60405163415a19c560e11b815273__$2da4c1bc7831bce59d8f8d9cf5a8504e33$__906382b4338a90610b6990600190879087908790600401611df3565b5f6040518083038186803b158015610b7f575f5ffd5b505af4158015610b91573d5f5f3e3d5ffd5b50505050505050565b5f81815260076020526040808220905163c2f8816b60e01b8152600481018290528291829182919073__$13d4168a6482a4756bee5acfadcccc5f1f$__9063c2f8816b90602401608060405180830381865af4158015610bfc573d5f5f3e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610c209190611e27565b9450945094509450509193509193565b6040516360297df360e01b815260016004820152602481018290525f9073__$c617d6f30a3108b63ce4034547dfec5d71$__906360297df390604401602060405180830381865af4158015610c87573d5f5f3e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610cab9190611dc1565b92915050565b6040516372cf9b4360e11b815273__$c617d6f30a3108b63ce4034547dfec5d71$__9063e59f36869061094e9060019086908690600401611d9f565b610cf56117c1565b610cfd6117c1565b5f8381526007602052604090819020905163640a694760e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063c814d28e906024016108c9565b5f818152600760205260408082209051636b5c4f1d60e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063d6b89e3a906024016109bf565b610d90611746565b610d995f611772565b565b5f81815260076020526040808220905163c46dd9dd60e01b8152600481018290528291829182919073__$13d4168a6482a4756bee5acfadcccc5f1f$__9063c46dd9dd90602401608060405180830381865af4158015610dfd573d5f5f3e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610c209190611e64565b6040516383e0fef560e01b8152600160048201526024810182905273__$c617d6f30a3108b63ce4034547dfec5d71$__906383e0fef590604401610a7c565b610e68611746565b6006805460ff19166001179055565b610e7f6117c1565b610e876117c1565b610e8f6117c1565b610e976117c1565b610e9f6117c1565b610ea76117c1565b5f8781526007602052604090819020905163b325312760e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063b32531279060240161018060405180830381865af4158015610f04573d5f5f3e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610f289190611ea0565b949d939c50919a509850965090945092505050565b604051637a2654ed60e01b81526001600482015260248101849052604481018390526064810182905273__$c617d6f30a3108b63ce4034547dfec5d71$__90637a2654ed90608401610b69565b60405163594db6e360e01b815273__$c617d6f30a3108b63ce4034547dfec5d71$__9063594db6e39061094e9060019086908690600401611d9f565b5f8181526007602052604080822090516312bb8c8160e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__906312bb8c8190602401602060405180830381865af4158015611021573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906109fe9190611f19565b61104d611746565b828181811461107d576040516355c5b3e360e11b8152600481019290925260248201526044015b60405180910390fd5b505f90505b83811015610aa45782828281811061109c5761109c611f37565b9050602002013560016004015f8787858181106110bb576110bb611f37565b90506020020160208101906110d09190611c04565b6001600160a01b0316815260208101919091526040015f2055600101611082565b6110f96117c1565b6111016117c1565b6111096117c1565b5f848152600760205260409081902090516364768a4f60e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063c8ed149e9060240160c060405180830381865af4158015611165573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906111899190611f4b565b935093509350509193909250565b61119f6117c1565b6111a76117c1565b5f83815260076020526040908190209051630c1f1c7360e31b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__906360f8e398906024016108c9565b5f818152600760205260408082209051638970f8a560e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__90638970f8a590602401610aec565b60405163bb3d0f2b60e01b8152600160048201526024810182905273__$c617d6f30a3108b63ce4034547dfec5d71$__9063bb3d0f2b90604401610a7c565b5f81815260076020526040808220905163565aebdb60e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063565aebdb90602401602060405180830381865af41580156112cc573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906109fe9190611f8e565b6112f86117c1565b6113006117c1565b5f83815260076020526040908190209051636bedb2e760e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063d7db65ce90602401608060405180830381865af415801561135c573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906109089190611fac565b60405163742fb50760e01b815273__$c617d6f30a3108b63ce4034547dfec5d71$__9063742fb5079061094e9060019086908690600401611d9f565b6113c46117c1565b6113cc6117c1565b5f8381526007602052604090819020905163c2c3f21f60e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063c2c3f21f906024016108c9565b60405163bd9d315760e01b815260016004820152602481018490526001600160a01b03831660448201526064810182905273__$c617d6f30a3108b63ce4034547dfec5d71$__9063bd9d315790608401610b69565b61146f611746565b6006805460ff19169055565b604051631e28763960e11b81525f9073__$2da4c1bc7831bce59d8f8d9cf5a8504e33$__90633c50ec72906109bf9060019087908790600401611d9f565b84838181146114e4576040516355c5b3e360e11b815260048101929092526024820152604401611074565b5083905081818114611512576040516355c5b3e360e11b815260048101929092526024820152604401611074565b505f90505b85811015610b915773__$c617d6f30a3108b63ce4034547dfec5d71$__63bd9d3157600189898581811061154d5761154d611f37565b9050602002013588888681811061156657611566611f37565b905060200201602081019061157b9190611c04565b87878781811061158d5761158d611f37565b905060200201356040518563ffffffff1660e01b81526004016115d2949392919093845260208401929092526001600160a01b03166040830152606082015260800190565b5f6040518083038186803b1580156115e8575f5ffd5b505af41580156115fa573d5f5f3e3d5ffd5b5050600190920191506115179050565b5f818152600760205260408082209051635c06efbf60e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063b80ddf7e906024016109bf565b5f8181526007602052604080822090516377ffc62360e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__906377ffc623906024016109bf565b61169c611746565b6001600160a01b0381166116c557604051631e4fbdf760e01b81525f6004820152602401611074565b6116ce81611772565b50565b604051600162804bef60e01b0319815273__$c617d6f30a3108b63ce4034547dfec5d71$__9063ff7fb4119061171490600190889088908890889060040161201c565b5f6040518083038186803b15801561172a575f5ffd5b505af415801561173c573d5f5f3e3d5ffd5b5050505050505050565b5f546001600160a01b03163314610d995760405163118cdaa760e01b8152336004820152602401611074565b5f80546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b60405180604001604052806002906020820280368337509192915050565b5f602082840312156117ef575f5ffd5b5035919050565b805f5b60028110156118215781516001600160a01b03168452602093840193909101906001016117f9565b50505050565b805f5b600281101561182157815184526020938401939091019060010161182a565b6080810161185782856117f6565b6109fe6040830184611827565b5f5f83601f840112611874575f5ffd5b50813567ffffffffffffffff81111561188b575f5ffd5b6020830191508360208285010111156118a2575f5ffd5b9250929050565b5f5f602083850312156118ba575f5ffd5b823567ffffffffffffffff8111156118d0575f5ffd5b6118dc85828601611864565b90969095509350505050565b6001600160a01b03811681146116ce575f5ffd5b5f5f5f6040848603121561190e575f5ffd5b8335611919816118e8565b9250602084013567ffffffffffffffff811115611934575f5ffd5b61194086828701611864565b9497909650939450505050565b610180810161195c82896117f6565b6119696040830188611827565b6119766080830187611827565b61198360c0830186611827565b611991610100830185611827565b61199f610140830184611827565b979650505050505050565b5f5f5f606084860312156119bc575f5ffd5b505081359360208301359350604090920135919050565b634e487b7160e01b5f52602160045260245ffd5b60208101600383106119fb576119fb6119d3565b91905290565b5f5f83601f840112611a11575f5ffd5b50813567ffffffffffffffff811115611a28575f5ffd5b6020830191508360208260051b85010111156118a2575f5ffd5b5f5f5f5f60408587031215611a55575f5ffd5b843567ffffffffffffffff811115611a6b575f5ffd5b611a7787828801611a01565b909550935050602085013567ffffffffffffffff811115611a96575f5ffd5b611aa287828801611a01565b95989497509550505050565b60c08101611abc82866117f6565b611ac96040830185611827565b611ad66080830184611827565b949350505050565b60208101600583106119fb576119fb6119d3565b60808101611b0082856117f6565b60408201835f5b6002811015611b26578151835260209283019290910190600101611b07565b5050509392505050565b5f5f5f60608486031215611b42575f5ffd5b833592506020840135611b54816118e8565b929592945050506040919091013590565b5f5f5f5f5f5f60608789031215611b7a575f5ffd5b863567ffffffffffffffff811115611b90575f5ffd5b611b9c89828a01611a01565b909750955050602087013567ffffffffffffffff811115611bbb575f5ffd5b611bc789828a01611a01565b909550935050604087013567ffffffffffffffff811115611be6575f5ffd5b611bf289828a01611a01565b979a9699509497509295939492505050565b5f60208284031215611c14575f5ffd5b81356109fe816118e8565b5f5f5f5f60608587031215611c32575f5ffd5b843593506020850135611c44816118e8565b9250604085013567ffffffffffffffff811115611c5f575f5ffd5b611aa287828801611864565b604051601f8201601f1916810167ffffffffffffffff81118282101715611ca057634e487b7160e01b5f52604160045260245ffd5b604052919050565b5f82601f830112611cb7575f5ffd5b611cc16040611c6b565b806040840185811115611cd2575f5ffd5b845b81811015611cf5578051611ce7816118e8565b845260209384019301611cd4565b509095945050505050565b5f82601f830112611d0f575f5ffd5b611d196040611c6b565b806040840185811115611d2a575f5ffd5b845b81811015611cf5578051845260209384019301611d2c565b5f5f60808385031215611d55575f5ffd5b611d5f8484611ca8565b9150611d6e8460408501611d00565b90509250929050565b81835281816020850137505f828201602090810191909152601f909101601f19169091010190565b838152604060208201525f611db8604083018486611d77565b95945050505050565b5f60208284031215611dd1575f5ffd5b5051919050565b5f60208284031215611de8575f5ffd5b81516109fe816118e8565b8481526001600160a01b03841660208201526060604082018190525f90611e1d9083018486611d77565b9695505050505050565b5f5f5f5f60808587031215611e3a575f5ffd5b8451602086015160408701519195509350611e54816118e8565b6060959095015193969295505050565b5f5f5f5f60808587031215611e77575f5ffd5b8451611e82816118e8565b60208601516040870151606090970151919890975090945092505050565b5f5f5f5f5f5f6101808789031215611eb6575f5ffd5b611ec08888611ca8565b9550611ecf8860408901611d00565b9450611ede8860808901611d00565b9350611eed8860c08901611d00565b9250611efd886101008901611d00565b9150611f0d886101408901611d00565b90509295509295509295565b5f60208284031215611f29575f5ffd5b8151600381106109fe575f5ffd5b634e487b7160e01b5f52603260045260245ffd5b5f5f5f60c08486031215611f5d575f5ffd5b611f678585611ca8565b9250611f768560408601611d00565b9150611f858560808601611d00565b90509250925092565b5f60208284031215611f9e575f5ffd5b8151600581106109fe575f5ffd5b5f5f60808385031215611fbd575f5ffd5b611fc78484611ca8565b915083605f840112611fd7575f5ffd5b611fe16040611c6b565b806080850186811115611ff2575f5ffd5b604086015b8181101561200f578051845260209384019301611ff7565b5093969095509350505050565b85815284602082015260018060a01b0384166040820152608060608201525f61199f608083018486611d7756fea264697066735822122075305fd887422e28ac96fe0aeb44bacb2850242b47467200acfd1b496f86f56764736f6c634300081e0033",
+// AgentPayLedgerMetaData contains all meta data concerning the AgentPayLedger contract.
+var AgentPayLedgerMetaData = &bind.MetaData{
+	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"_nativeWrap\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_payRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_wallet\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"receive\",\"stateMutability\":\"payable\"},{\"type\":\"function\",\"name\":\"clearPays\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_peerFrom\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_payIdList\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"confirmSettle\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"confirmWithdraw\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"cooperativeSettle\",\"inputs\":[{\"name\":\"_settleRequest\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"cooperativeWithdraw\",\"inputs\":[{\"name\":\"_cooperativeWithdrawRequest\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"deposit\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_receiver\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_transferFromAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"payable\"},{\"type\":\"function\",\"name\":\"depositInBatch\",\"inputs\":[{\"name\":\"_channelIds\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"_receivers\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"_transferFromAmounts\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"disableBalanceLimits\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"enableBalanceLimits\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"getAgentPayWallet\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getBalanceLimit\",\"inputs\":[{\"name\":\"_tokenAddr\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getBalanceLimitsEnabled\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getBalanceMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getChannelMigrationArgs\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getChannelStatus\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"enumLedgerStruct.ChannelStatus\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getChannelStatusNum\",\"inputs\":[{\"name\":\"_channelStatus\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getCooperativeWithdrawSeqNum\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getDisputeTimeout\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getMigratedTo\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getNativeWrap\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getNextPayIdListHashMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"bytes32[2]\",\"internalType\":\"bytes32[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getPayClearDeadlineMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getPayRegistry\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getPeersMigrationInfo\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getPendingPayOutMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getSettleFinalizedTime\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getStateSeqNumMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getTokenContract\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getTokenType\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"enumPbEntity.TokenType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getTotalBalance\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getTransferOutMap\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[2]\",\"internalType\":\"address[2]\"},{\"name\":\"\",\"type\":\"uint256[2]\",\"internalType\":\"uint256[2]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getWithdrawIntent\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"intendSettle\",\"inputs\":[{\"name\":\"_signedSimplexStateArray\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"intendWithdraw\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_recipientChannelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"migrateChannelFrom\",\"inputs\":[{\"name\":\"_fromLedgerAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_migrationRequest\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"migrateChannelTo\",\"inputs\":[{\"name\":\"_migrationRequest\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"openChannel\",\"inputs\":[{\"name\":\"_openRequest\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"payable\"},{\"type\":\"function\",\"name\":\"owner\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"renounceOwnership\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setBalanceLimits\",\"inputs\":[{\"name\":\"_tokenAddrs\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"_limits\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"snapshotStates\",\"inputs\":[{\"name\":\"_signedSimplexStateArray\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"transferOwnership\",\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"vetoWithdraw\",\"inputs\":[{\"name\":\"_channelId\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"ClearOnePay\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"payId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"peerFrom\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ConfirmSettle\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"settleBalance\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ConfirmSettleFail\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ConfirmWithdraw\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"withdrawnAmount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"receiver\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"recipientChannelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"deposits\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"},{\"name\":\"withdrawals\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"CooperativeSettle\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"settleBalance\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"CooperativeWithdraw\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"withdrawnAmount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"receiver\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"recipientChannelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"deposits\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"},{\"name\":\"withdrawals\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"},{\"name\":\"seqNum\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Deposit\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"peerAddrs\",\"type\":\"address[2]\",\"indexed\":false,\"internalType\":\"address[2]\"},{\"name\":\"deposits\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"},{\"name\":\"withdrawals\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"IntendSettle\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"seqNums\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"IntendWithdraw\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"receiver\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"MigrateChannelFrom\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"oldLedgerAddr\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"MigrateChannelTo\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"newLedgerAddr\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"OpenChannel\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"tokenType\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"tokenAddress\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"peerAddrs\",\"type\":\"address[2]\",\"indexed\":false,\"internalType\":\"address[2]\"},{\"name\":\"initialDeposits\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"inputs\":[{\"name\":\"previousOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"SnapshotStates\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"seqNums\",\"type\":\"uint256[2]\",\"indexed\":false,\"internalType\":\"uint256[2]\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"VetoWithdraw\",\"inputs\":[{\"name\":\"channelId\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"CallerNotNativeWrap\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"LengthMismatch\",\"inputs\":[{\"name\":\"a\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"b\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"NativeWrapNotContract\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"OwnableInvalidOwner\",\"inputs\":[{\"name\":\"owner\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"OwnableUnauthorizedAccount\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"ZeroAddress\",\"inputs\":[]}]",
+	Bin: "0x608060405234801561000f575f5ffd5b5060405161223338038061223383398101604081905261002e91610167565b338061005357604051631e4fbdf760e01b81525f600482015260240160405180910390fd5b61005c816100fd565b506001600160a01b0383166100845760405163d92e233d60e01b815260040160405180910390fd5b5f836001600160a01b03163b116100ae576040516337bf1fcf60e21b815260040160405180910390fd5b600280546001600160a01b039485166001600160a01b0319918216179091556003805493851693821693909317909255600480549190931691161790556006805460ff191660011790556101a7565b5f80546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80516001600160a01b0381168114610162575f5ffd5b919050565b5f5f5f60608486031215610179575f5ffd5b6101828461014c565b92506101906020850161014c565b915061019e6040850161014c565b90509250925092565b61207f806101b45f395ff3fe608060405260043610610257575f3560e01c80638da5cb5b1161013f578063d757abd2116100b3578063e5780db211610078578063e5780db2146107a8578063e6322df7146107c7578063ec7c637d146107e6578063f0c73d701461081a578063f2fde38b14610839578063fd0a1a6114610858575f5ffd5b8063d757abd214610724578063d927bfc414610743578063d954863c14610762578063e063913c14610775578063e0a515b714610789575f5ffd5b8063bd480cb711610104578063bd480cb714610640578063c06d5ff51461066e578063c38a325d1461068d578063c7ff8625146106ac578063cc0b94b7146106cb578063cd3a1be6146106f7575f5ffd5b80638da5cb5b146105a957806393b7b3ce146105c5578063979a9b5e146105d8578063a8580cab14610604578063b08a52c714610623575f5ffd5b8063312ea2c6116101d6578063715018a61161019b578063715018a6146104c957806376bff117146104dd5780637e9a7a3e1461052657806383c8f8b81461054557806388f41465146105595780638942ecb21461058a575f5ffd5b8063312ea2c6146104325780634102b9a81461044f57806361fb19a01461046e578063666a6d651461048b57806369d5dd67146104aa575f5ffd5b80632b559ecc1161021c5780632b559ecc1461034d5780632e2a5a021461036f5780632e3c517a146103a65780632f0ac304146103c5578063307d6f9614610413575f5ffd5b80630165cef81461028d57806309683c03146102c357806309b65d86146102e2578063130d33fe1461030f578063255aab591461032e575f5ffd5b36610289576002546001600160a01b031633146102875760405163e1b71f7760e01b815260040160405180910390fd5b005b5f5ffd5b348015610298575f5ffd5b506102ac6102a73660046117df565b610877565b6040516102ba929190611849565b60405180910390f35b3480156102ce575f5ffd5b506102876102dd3660046118a9565b610912565b3480156102ed575f5ffd5b506103016102fc3660046117df565b61097e565b6040519081526020016102ba565b34801561031a575f5ffd5b506102876103293660046118a9565b610a05565b348015610339575f5ffd5b506102876103483660046117df565b610a41565b348015610358575f5ffd5b5060065460ff1660405190151581526020016102ba565b34801561037a575f5ffd5b5061038e6103893660046117df565b610aab565b6040516001600160a01b0390911681526020016102ba565b3480156103b1575f5ffd5b506102876103c03660046118fc565b610b2b565b3480156103d0575f5ffd5b506103e46103df3660046117df565b610b9a565b6040516102ba949392919093845260208401929092526001600160a01b03166040830152606082015260800190565b34801561041e575f5ffd5b5061030161042d3660046117df565b610c30565b34801561043d575f5ffd5b506003546001600160a01b031661038e565b34801561045a575f5ffd5b506102876104693660046118a9565b610cb1565b348015610479575f5ffd5b506002546001600160a01b031661038e565b348015610496575f5ffd5b506102ac6104a53660046117df565b610ced565b3480156104b5575f5ffd5b506103016104c43660046117df565b610d43565b3480156104d4575f5ffd5b50610287610d88565b3480156104e8575f5ffd5b506104fc6104f73660046117df565b610d9b565b604080516001600160a01b03909516855260208501939093529183015260608201526080016102ba565b348015610531575f5ffd5b506102876105403660046117df565b610e21565b348015610550575f5ffd5b50610287610e60565b348015610564575f5ffd5b506105786105733660046117df565b610e77565b6040516102ba9695949392919061194d565b348015610595575f5ffd5b506102876105a43660046119aa565b610f3d565b3480156105b4575f5ffd5b505f546001600160a01b031661038e565b6102876105d33660046118a9565b610f8a565b3480156105e3575f5ffd5b506105f76105f23660046117df565b610fc6565b6040516102ba91906119e7565b34801561060f575f5ffd5b5061028761061e366004611a42565b611045565b34801561062e575f5ffd5b506004546001600160a01b031661038e565b34801561064b575f5ffd5b5061065f61065a3660046117df565b6110f1565b6040516102ba93929190611aae565b348015610679575f5ffd5b506102ac6106883660046117df565b611197565b348015610698575f5ffd5b5061038e6106a73660046117df565b6111ed565b3480156106b7575f5ffd5b506102876106c63660046117df565b611232565b3480156106d6575f5ffd5b506106ea6106e53660046117df565b611271565b6040516102ba9190611ade565b348015610702575f5ffd5b506107166107113660046117df565b6112f0565b6040516102ba929190611af2565b34801561072f575f5ffd5b5061028761073e3660046118a9565b611380565b34801561074e575f5ffd5b506102ac61075d3660046117df565b6113bc565b610287610770366004611b30565b611412565b348015610780575f5ffd5b50610287611467565b348015610794575f5ffd5b506103016107a33660046118a9565b61147b565b3480156107b3575f5ffd5b506102876107c2366004611b65565b6114b9565b3480156107d2575f5ffd5b506103016107e13660046117df565b61160a565b3480156107f1575f5ffd5b50610301610800366004611c04565b6001600160a01b03165f9081526005602052604090205490565b348015610825575f5ffd5b506103016108343660046117df565b61164f565b348015610844575f5ffd5b50610287610853366004611c04565b611694565b348015610863575f5ffd5b50610287610872366004611c1f565b6116d1565b61087f6117c1565b6108876117c1565b5f8381526007602052604090819020905163bcdf4ebb60e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063bcdf4ebb906024015b608060405180830381865af41580156108e4573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906109089190611d44565b9250925050915091565b6040516379e9008760e01b815273__$c617d6f30a3108b63ce4034547dfec5d71$__906379e900879061094e9060019086908690600401611d9f565b5f6040518083038186803b158015610964575f5ffd5b505af4158015610976573d5f5f3e3d5ffd5b505050505050565b5f81815260076020526040808220905163418ec10160e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063418ec101906024015b602060405180830381865af41580156109da573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906109fe9190611dc1565b9392505050565b604051630bdc541160e01b815273__$c617d6f30a3108b63ce4034547dfec5d71$__90630bdc54119061094e9060019086908690600401611d9f565b60405163eb4de33760e01b8152600160048201526024810182905273__$c617d6f30a3108b63ce4034547dfec5d71$__9063eb4de337906044015b5f6040518083038186803b158015610a92575f5ffd5b505af4158015610aa4573d5f5f3e3d5ffd5b5050505050565b5f818152600760205260408082209051630fea54e160e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__90631fd4a9c2906024015b602060405180830381865af4158015610b07573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906109fe9190611dd8565b60405163415a19c560e11b815273__$2da4c1bc7831bce59d8f8d9cf5a8504e33$__906382b4338a90610b6990600190879087908790600401611df3565b5f6040518083038186803b158015610b7f575f5ffd5b505af4158015610b91573d5f5f3e3d5ffd5b50505050505050565b5f81815260076020526040808220905163c2f8816b60e01b8152600481018290528291829182919073__$13d4168a6482a4756bee5acfadcccc5f1f$__9063c2f8816b90602401608060405180830381865af4158015610bfc573d5f5f3e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610c209190611e27565b9450945094509450509193509193565b6040516360297df360e01b815260016004820152602481018290525f9073__$c617d6f30a3108b63ce4034547dfec5d71$__906360297df390604401602060405180830381865af4158015610c87573d5f5f3e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610cab9190611dc1565b92915050565b6040516372cf9b4360e11b815273__$c617d6f30a3108b63ce4034547dfec5d71$__9063e59f36869061094e9060019086908690600401611d9f565b610cf56117c1565b610cfd6117c1565b5f8381526007602052604090819020905163640a694760e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063c814d28e906024016108c9565b5f818152600760205260408082209051636b5c4f1d60e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063d6b89e3a906024016109bf565b610d90611746565b610d995f611772565b565b5f81815260076020526040808220905163c46dd9dd60e01b8152600481018290528291829182919073__$13d4168a6482a4756bee5acfadcccc5f1f$__9063c46dd9dd90602401608060405180830381865af4158015610dfd573d5f5f3e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610c209190611e64565b6040516383e0fef560e01b8152600160048201526024810182905273__$c617d6f30a3108b63ce4034547dfec5d71$__906383e0fef590604401610a7c565b610e68611746565b6006805460ff19166001179055565b610e7f6117c1565b610e876117c1565b610e8f6117c1565b610e976117c1565b610e9f6117c1565b610ea76117c1565b5f8781526007602052604090819020905163b325312760e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063b32531279060240161018060405180830381865af4158015610f04573d5f5f3e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610f289190611ea0565b949d939c50919a509850965090945092505050565b604051637a2654ed60e01b81526001600482015260248101849052604481018390526064810182905273__$c617d6f30a3108b63ce4034547dfec5d71$__90637a2654ed90608401610b69565b60405163594db6e360e01b815273__$c617d6f30a3108b63ce4034547dfec5d71$__9063594db6e39061094e9060019086908690600401611d9f565b5f8181526007602052604080822090516312bb8c8160e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__906312bb8c8190602401602060405180830381865af4158015611021573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906109fe9190611f19565b61104d611746565b828181811461107d576040516355c5b3e360e11b8152600481019290925260248201526044015b60405180910390fd5b505f90505b83811015610aa45782828281811061109c5761109c611f37565b9050602002013560016004015f8787858181106110bb576110bb611f37565b90506020020160208101906110d09190611c04565b6001600160a01b0316815260208101919091526040015f2055600101611082565b6110f96117c1565b6111016117c1565b6111096117c1565b5f848152600760205260409081902090516364768a4f60e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063c8ed149e9060240160c060405180830381865af4158015611165573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906111899190611f4b565b935093509350509193909250565b61119f6117c1565b6111a76117c1565b5f83815260076020526040908190209051630c1f1c7360e31b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__906360f8e398906024016108c9565b5f818152600760205260408082209051638970f8a560e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__90638970f8a590602401610aec565b60405163bb3d0f2b60e01b8152600160048201526024810182905273__$c617d6f30a3108b63ce4034547dfec5d71$__9063bb3d0f2b90604401610a7c565b5f81815260076020526040808220905163565aebdb60e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063565aebdb90602401602060405180830381865af41580156112cc573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906109fe9190611f8e565b6112f86117c1565b6113006117c1565b5f83815260076020526040908190209051636bedb2e760e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063d7db65ce90602401608060405180830381865af415801561135c573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906109089190611fac565b60405163742fb50760e01b815273__$c617d6f30a3108b63ce4034547dfec5d71$__9063742fb5079061094e9060019086908690600401611d9f565b6113c46117c1565b6113cc6117c1565b5f8381526007602052604090819020905163c2c3f21f60e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063c2c3f21f906024016108c9565b60405163bd9d315760e01b815260016004820152602481018490526001600160a01b03831660448201526064810182905273__$c617d6f30a3108b63ce4034547dfec5d71$__9063bd9d315790608401610b69565b61146f611746565b6006805460ff19169055565b604051631e28763960e11b81525f9073__$2da4c1bc7831bce59d8f8d9cf5a8504e33$__90633c50ec72906109bf9060019087908790600401611d9f565b84838181146114e4576040516355c5b3e360e11b815260048101929092526024820152604401611074565b5083905081818114611512576040516355c5b3e360e11b815260048101929092526024820152604401611074565b505f90505b85811015610b915773__$c617d6f30a3108b63ce4034547dfec5d71$__63bd9d3157600189898581811061154d5761154d611f37565b9050602002013588888681811061156657611566611f37565b905060200201602081019061157b9190611c04565b87878781811061158d5761158d611f37565b905060200201356040518563ffffffff1660e01b81526004016115d2949392919093845260208401929092526001600160a01b03166040830152606082015260800190565b5f6040518083038186803b1580156115e8575f5ffd5b505af41580156115fa573d5f5f3e3d5ffd5b5050600190920191506115179050565b5f818152600760205260408082209051635c06efbf60e11b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__9063b80ddf7e906024016109bf565b5f8181526007602052604080822090516377ffc62360e01b81526004810182905273__$13d4168a6482a4756bee5acfadcccc5f1f$__906377ffc623906024016109bf565b61169c611746565b6001600160a01b0381166116c557604051631e4fbdf760e01b81525f6004820152602401611074565b6116ce81611772565b50565b604051600162804bef60e01b0319815273__$c617d6f30a3108b63ce4034547dfec5d71$__9063ff7fb4119061171490600190889088908890889060040161201c565b5f6040518083038186803b15801561172a575f5ffd5b505af415801561173c573d5f5f3e3d5ffd5b5050505050505050565b5f546001600160a01b03163314610d995760405163118cdaa760e01b8152336004820152602401611074565b5f80546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b60405180604001604052806002906020820280368337509192915050565b5f602082840312156117ef575f5ffd5b5035919050565b805f5b60028110156118215781516001600160a01b03168452602093840193909101906001016117f9565b50505050565b805f5b600281101561182157815184526020938401939091019060010161182a565b6080810161185782856117f6565b6109fe6040830184611827565b5f5f83601f840112611874575f5ffd5b50813567ffffffffffffffff81111561188b575f5ffd5b6020830191508360208285010111156118a2575f5ffd5b9250929050565b5f5f602083850312156118ba575f5ffd5b823567ffffffffffffffff8111156118d0575f5ffd5b6118dc85828601611864565b90969095509350505050565b6001600160a01b03811681146116ce575f5ffd5b5f5f5f6040848603121561190e575f5ffd5b8335611919816118e8565b9250602084013567ffffffffffffffff811115611934575f5ffd5b61194086828701611864565b9497909650939450505050565b610180810161195c82896117f6565b6119696040830188611827565b6119766080830187611827565b61198360c0830186611827565b611991610100830185611827565b61199f610140830184611827565b979650505050505050565b5f5f5f606084860312156119bc575f5ffd5b505081359360208301359350604090920135919050565b634e487b7160e01b5f52602160045260245ffd5b60208101600383106119fb576119fb6119d3565b91905290565b5f5f83601f840112611a11575f5ffd5b50813567ffffffffffffffff811115611a28575f5ffd5b6020830191508360208260051b85010111156118a2575f5ffd5b5f5f5f5f60408587031215611a55575f5ffd5b843567ffffffffffffffff811115611a6b575f5ffd5b611a7787828801611a01565b909550935050602085013567ffffffffffffffff811115611a96575f5ffd5b611aa287828801611a01565b95989497509550505050565b60c08101611abc82866117f6565b611ac96040830185611827565b611ad66080830184611827565b949350505050565b60208101600583106119fb576119fb6119d3565b60808101611b0082856117f6565b60408201835f5b6002811015611b26578151835260209283019290910190600101611b07565b5050509392505050565b5f5f5f60608486031215611b42575f5ffd5b833592506020840135611b54816118e8565b929592945050506040919091013590565b5f5f5f5f5f5f60608789031215611b7a575f5ffd5b863567ffffffffffffffff811115611b90575f5ffd5b611b9c89828a01611a01565b909750955050602087013567ffffffffffffffff811115611bbb575f5ffd5b611bc789828a01611a01565b909550935050604087013567ffffffffffffffff811115611be6575f5ffd5b611bf289828a01611a01565b979a9699509497509295939492505050565b5f60208284031215611c14575f5ffd5b81356109fe816118e8565b5f5f5f5f60608587031215611c32575f5ffd5b843593506020850135611c44816118e8565b9250604085013567ffffffffffffffff811115611c5f575f5ffd5b611aa287828801611864565b604051601f8201601f1916810167ffffffffffffffff81118282101715611ca057634e487b7160e01b5f52604160045260245ffd5b604052919050565b5f82601f830112611cb7575f5ffd5b611cc16040611c6b565b806040840185811115611cd2575f5ffd5b845b81811015611cf5578051611ce7816118e8565b845260209384019301611cd4565b509095945050505050565b5f82601f830112611d0f575f5ffd5b611d196040611c6b565b806040840185811115611d2a575f5ffd5b845b81811015611cf5578051845260209384019301611d2c565b5f5f60808385031215611d55575f5ffd5b611d5f8484611ca8565b9150611d6e8460408501611d00565b90509250929050565b81835281816020850137505f828201602090810191909152601f909101601f19169091010190565b838152604060208201525f611db8604083018486611d77565b95945050505050565b5f60208284031215611dd1575f5ffd5b5051919050565b5f60208284031215611de8575f5ffd5b81516109fe816118e8565b8481526001600160a01b03841660208201526060604082018190525f90611e1d9083018486611d77565b9695505050505050565b5f5f5f5f60808587031215611e3a575f5ffd5b8451602086015160408701519195509350611e54816118e8565b6060959095015193969295505050565b5f5f5f5f60808587031215611e77575f5ffd5b8451611e82816118e8565b60208601516040870151606090970151919890975090945092505050565b5f5f5f5f5f5f6101808789031215611eb6575f5ffd5b611ec08888611ca8565b9550611ecf8860408901611d00565b9450611ede8860808901611d00565b9350611eed8860c08901611d00565b9250611efd886101008901611d00565b9150611f0d886101408901611d00565b90509295509295509295565b5f60208284031215611f29575f5ffd5b8151600381106109fe575f5ffd5b634e487b7160e01b5f52603260045260245ffd5b5f5f5f60c08486031215611f5d575f5ffd5b611f678585611ca8565b9250611f768560408601611d00565b9150611f858560808601611d00565b90509250925092565b5f60208284031215611f9e575f5ffd5b8151600581106109fe575f5ffd5b5f5f60808385031215611fbd575f5ffd5b611fc78484611ca8565b915083605f840112611fd7575f5ffd5b611fe16040611c6b565b806080850186811115611ff2575f5ffd5b604086015b8181101561200f578051845260209384019301611ff7565b5093969095509350505050565b85815284602082015260018060a01b0384166040820152608060608201525f61199f608083018486611d7756fea2646970667358221220b854ba8774655fe28bc32e3ef387b58bba5828e0ab62adf069fee294babc6ef564736f6c634300081e0033",
 }
 
-// CelerLedgerABI is the input ABI used to generate the binding from.
-// Deprecated: Use CelerLedgerMetaData.ABI instead.
-var CelerLedgerABI = CelerLedgerMetaData.ABI
+// AgentPayLedgerABI is the input ABI used to generate the binding from.
+// Deprecated: Use AgentPayLedgerMetaData.ABI instead.
+var AgentPayLedgerABI = AgentPayLedgerMetaData.ABI
 
-// CelerLedgerBin is the compiled bytecode used for deploying new contracts.
-// Deprecated: Use CelerLedgerMetaData.Bin instead.
-var CelerLedgerBin = CelerLedgerMetaData.Bin
+// AgentPayLedgerBin is the compiled bytecode used for deploying new contracts.
+// Deprecated: Use AgentPayLedgerMetaData.Bin instead.
+var AgentPayLedgerBin = AgentPayLedgerMetaData.Bin
 
-// DeployCelerLedger deploys a new Ethereum contract, binding an instance of CelerLedger to it.
-func DeployCelerLedger(auth *bind.TransactOpts, backend bind.ContractBackend, _nativeWrap common.Address, _payRegistry common.Address, _celerWallet common.Address) (common.Address, *types.Transaction, *CelerLedger, error) {
-	parsed, err := CelerLedgerMetaData.GetAbi()
+// DeployAgentPayLedger deploys a new Ethereum contract, binding an instance of AgentPayLedger to it.
+func DeployAgentPayLedger(auth *bind.TransactOpts, backend bind.ContractBackend, _nativeWrap common.Address, _payRegistry common.Address, _wallet common.Address) (common.Address, *types.Transaction, *AgentPayLedger, error) {
+	parsed, err := AgentPayLedgerMetaData.GetAbi()
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -54,111 +54,111 @@ func DeployCelerLedger(auth *bind.TransactOpts, backend bind.ContractBackend, _n
 		return common.Address{}, nil, nil, errors.New("GetABI returned nil")
 	}
 
-	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(CelerLedgerBin), backend, _nativeWrap, _payRegistry, _celerWallet)
+	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(AgentPayLedgerBin), backend, _nativeWrap, _payRegistry, _wallet)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	return address, tx, &CelerLedger{CelerLedgerCaller: CelerLedgerCaller{contract: contract}, CelerLedgerTransactor: CelerLedgerTransactor{contract: contract}, CelerLedgerFilterer: CelerLedgerFilterer{contract: contract}}, nil
+	return address, tx, &AgentPayLedger{AgentPayLedgerCaller: AgentPayLedgerCaller{contract: contract}, AgentPayLedgerTransactor: AgentPayLedgerTransactor{contract: contract}, AgentPayLedgerFilterer: AgentPayLedgerFilterer{contract: contract}}, nil
 }
 
-// CelerLedger is an auto generated Go binding around an Ethereum contract.
-type CelerLedger struct {
-	CelerLedgerCaller     // Read-only binding to the contract
-	CelerLedgerTransactor // Write-only binding to the contract
-	CelerLedgerFilterer   // Log filterer for contract events
+// AgentPayLedger is an auto generated Go binding around an Ethereum contract.
+type AgentPayLedger struct {
+	AgentPayLedgerCaller     // Read-only binding to the contract
+	AgentPayLedgerTransactor // Write-only binding to the contract
+	AgentPayLedgerFilterer   // Log filterer for contract events
 }
 
-// CelerLedgerCaller is an auto generated read-only Go binding around an Ethereum contract.
-type CelerLedgerCaller struct {
+// AgentPayLedgerCaller is an auto generated read-only Go binding around an Ethereum contract.
+type AgentPayLedgerCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// CelerLedgerTransactor is an auto generated write-only Go binding around an Ethereum contract.
-type CelerLedgerTransactor struct {
+// AgentPayLedgerTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type AgentPayLedgerTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// CelerLedgerFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type CelerLedgerFilterer struct {
+// AgentPayLedgerFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type AgentPayLedgerFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// CelerLedgerSession is an auto generated Go binding around an Ethereum contract,
+// AgentPayLedgerSession is an auto generated Go binding around an Ethereum contract,
 // with pre-set call and transact options.
-type CelerLedgerSession struct {
-	Contract     *CelerLedger      // Generic contract binding to set the session for
+type AgentPayLedgerSession struct {
+	Contract     *AgentPayLedger   // Generic contract binding to set the session for
 	CallOpts     bind.CallOpts     // Call options to use throughout this session
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// CelerLedgerCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// AgentPayLedgerCallerSession is an auto generated read-only Go binding around an Ethereum contract,
 // with pre-set call options.
-type CelerLedgerCallerSession struct {
-	Contract *CelerLedgerCaller // Generic contract caller binding to set the session for
-	CallOpts bind.CallOpts      // Call options to use throughout this session
+type AgentPayLedgerCallerSession struct {
+	Contract *AgentPayLedgerCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts         // Call options to use throughout this session
 }
 
-// CelerLedgerTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// AgentPayLedgerTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
 // with pre-set transact options.
-type CelerLedgerTransactorSession struct {
-	Contract     *CelerLedgerTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts      // Transaction auth options to use throughout this session
+type AgentPayLedgerTransactorSession struct {
+	Contract     *AgentPayLedgerTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts         // Transaction auth options to use throughout this session
 }
 
-// CelerLedgerRaw is an auto generated low-level Go binding around an Ethereum contract.
-type CelerLedgerRaw struct {
-	Contract *CelerLedger // Generic contract binding to access the raw methods on
+// AgentPayLedgerRaw is an auto generated low-level Go binding around an Ethereum contract.
+type AgentPayLedgerRaw struct {
+	Contract *AgentPayLedger // Generic contract binding to access the raw methods on
 }
 
-// CelerLedgerCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type CelerLedgerCallerRaw struct {
-	Contract *CelerLedgerCaller // Generic read-only contract binding to access the raw methods on
+// AgentPayLedgerCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type AgentPayLedgerCallerRaw struct {
+	Contract *AgentPayLedgerCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// CelerLedgerTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type CelerLedgerTransactorRaw struct {
-	Contract *CelerLedgerTransactor // Generic write-only contract binding to access the raw methods on
+// AgentPayLedgerTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type AgentPayLedgerTransactorRaw struct {
+	Contract *AgentPayLedgerTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-// NewCelerLedger creates a new instance of CelerLedger, bound to a specific deployed contract.
-func NewCelerLedger(address common.Address, backend bind.ContractBackend) (*CelerLedger, error) {
-	contract, err := bindCelerLedger(address, backend, backend, backend)
+// NewAgentPayLedger creates a new instance of AgentPayLedger, bound to a specific deployed contract.
+func NewAgentPayLedger(address common.Address, backend bind.ContractBackend) (*AgentPayLedger, error) {
+	contract, err := bindAgentPayLedger(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedger{CelerLedgerCaller: CelerLedgerCaller{contract: contract}, CelerLedgerTransactor: CelerLedgerTransactor{contract: contract}, CelerLedgerFilterer: CelerLedgerFilterer{contract: contract}}, nil
+	return &AgentPayLedger{AgentPayLedgerCaller: AgentPayLedgerCaller{contract: contract}, AgentPayLedgerTransactor: AgentPayLedgerTransactor{contract: contract}, AgentPayLedgerFilterer: AgentPayLedgerFilterer{contract: contract}}, nil
 }
 
-// NewCelerLedgerCaller creates a new read-only instance of CelerLedger, bound to a specific deployed contract.
-func NewCelerLedgerCaller(address common.Address, caller bind.ContractCaller) (*CelerLedgerCaller, error) {
-	contract, err := bindCelerLedger(address, caller, nil, nil)
+// NewAgentPayLedgerCaller creates a new read-only instance of AgentPayLedger, bound to a specific deployed contract.
+func NewAgentPayLedgerCaller(address common.Address, caller bind.ContractCaller) (*AgentPayLedgerCaller, error) {
+	contract, err := bindAgentPayLedger(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerCaller{contract: contract}, nil
+	return &AgentPayLedgerCaller{contract: contract}, nil
 }
 
-// NewCelerLedgerTransactor creates a new write-only instance of CelerLedger, bound to a specific deployed contract.
-func NewCelerLedgerTransactor(address common.Address, transactor bind.ContractTransactor) (*CelerLedgerTransactor, error) {
-	contract, err := bindCelerLedger(address, nil, transactor, nil)
+// NewAgentPayLedgerTransactor creates a new write-only instance of AgentPayLedger, bound to a specific deployed contract.
+func NewAgentPayLedgerTransactor(address common.Address, transactor bind.ContractTransactor) (*AgentPayLedgerTransactor, error) {
+	contract, err := bindAgentPayLedger(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerTransactor{contract: contract}, nil
+	return &AgentPayLedgerTransactor{contract: contract}, nil
 }
 
-// NewCelerLedgerFilterer creates a new log filterer instance of CelerLedger, bound to a specific deployed contract.
-func NewCelerLedgerFilterer(address common.Address, filterer bind.ContractFilterer) (*CelerLedgerFilterer, error) {
-	contract, err := bindCelerLedger(address, nil, nil, filterer)
+// NewAgentPayLedgerFilterer creates a new log filterer instance of AgentPayLedger, bound to a specific deployed contract.
+func NewAgentPayLedgerFilterer(address common.Address, filterer bind.ContractFilterer) (*AgentPayLedgerFilterer, error) {
+	contract, err := bindAgentPayLedger(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerFilterer{contract: contract}, nil
+	return &AgentPayLedgerFilterer{contract: contract}, nil
 }
 
-// bindCelerLedger binds a generic wrapper to an already deployed contract.
-func bindCelerLedger(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := CelerLedgerMetaData.GetAbi()
+// bindAgentPayLedger binds a generic wrapper to an already deployed contract.
+func bindAgentPayLedger(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := AgentPayLedgerMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
@@ -169,46 +169,77 @@ func bindCelerLedger(address common.Address, caller bind.ContractCaller, transac
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_CelerLedger *CelerLedgerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _CelerLedger.Contract.CelerLedgerCaller.contract.Call(opts, result, method, params...)
+func (_AgentPayLedger *AgentPayLedgerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _AgentPayLedger.Contract.AgentPayLedgerCaller.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_CelerLedger *CelerLedgerRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _CelerLedger.Contract.CelerLedgerTransactor.contract.Transfer(opts)
+func (_AgentPayLedger *AgentPayLedgerRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.AgentPayLedgerTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_CelerLedger *CelerLedgerRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _CelerLedger.Contract.CelerLedgerTransactor.contract.Transact(opts, method, params...)
+func (_AgentPayLedger *AgentPayLedgerRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.AgentPayLedgerTransactor.contract.Transact(opts, method, params...)
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_CelerLedger *CelerLedgerCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _CelerLedger.Contract.contract.Call(opts, result, method, params...)
+func (_AgentPayLedger *AgentPayLedgerCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _AgentPayLedger.Contract.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_CelerLedger *CelerLedgerTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _CelerLedger.Contract.contract.Transfer(opts)
+func (_AgentPayLedger *AgentPayLedgerTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_CelerLedger *CelerLedgerTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _CelerLedger.Contract.contract.Transact(opts, method, params...)
+func (_AgentPayLedger *AgentPayLedgerTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.contract.Transact(opts, method, params...)
+}
+
+// GetAgentPayWallet is a free data retrieval call binding the contract method 0xb08a52c7.
+//
+// Solidity: function getAgentPayWallet() view returns(address)
+func (_AgentPayLedger *AgentPayLedgerCaller) GetAgentPayWallet(opts *bind.CallOpts) (common.Address, error) {
+	var out []interface{}
+	err := _AgentPayLedger.contract.Call(opts, &out, "getAgentPayWallet")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// GetAgentPayWallet is a free data retrieval call binding the contract method 0xb08a52c7.
+//
+// Solidity: function getAgentPayWallet() view returns(address)
+func (_AgentPayLedger *AgentPayLedgerSession) GetAgentPayWallet() (common.Address, error) {
+	return _AgentPayLedger.Contract.GetAgentPayWallet(&_AgentPayLedger.CallOpts)
+}
+
+// GetAgentPayWallet is a free data retrieval call binding the contract method 0xb08a52c7.
+//
+// Solidity: function getAgentPayWallet() view returns(address)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetAgentPayWallet() (common.Address, error) {
+	return _AgentPayLedger.Contract.GetAgentPayWallet(&_AgentPayLedger.CallOpts)
 }
 
 // GetBalanceLimit is a free data retrieval call binding the contract method 0xec7c637d.
 //
 // Solidity: function getBalanceLimit(address _tokenAddr) view returns(uint256)
-func (_CelerLedger *CelerLedgerCaller) GetBalanceLimit(opts *bind.CallOpts, _tokenAddr common.Address) (*big.Int, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetBalanceLimit(opts *bind.CallOpts, _tokenAddr common.Address) (*big.Int, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getBalanceLimit", _tokenAddr)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getBalanceLimit", _tokenAddr)
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -223,23 +254,23 @@ func (_CelerLedger *CelerLedgerCaller) GetBalanceLimit(opts *bind.CallOpts, _tok
 // GetBalanceLimit is a free data retrieval call binding the contract method 0xec7c637d.
 //
 // Solidity: function getBalanceLimit(address _tokenAddr) view returns(uint256)
-func (_CelerLedger *CelerLedgerSession) GetBalanceLimit(_tokenAddr common.Address) (*big.Int, error) {
-	return _CelerLedger.Contract.GetBalanceLimit(&_CelerLedger.CallOpts, _tokenAddr)
+func (_AgentPayLedger *AgentPayLedgerSession) GetBalanceLimit(_tokenAddr common.Address) (*big.Int, error) {
+	return _AgentPayLedger.Contract.GetBalanceLimit(&_AgentPayLedger.CallOpts, _tokenAddr)
 }
 
 // GetBalanceLimit is a free data retrieval call binding the contract method 0xec7c637d.
 //
 // Solidity: function getBalanceLimit(address _tokenAddr) view returns(uint256)
-func (_CelerLedger *CelerLedgerCallerSession) GetBalanceLimit(_tokenAddr common.Address) (*big.Int, error) {
-	return _CelerLedger.Contract.GetBalanceLimit(&_CelerLedger.CallOpts, _tokenAddr)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetBalanceLimit(_tokenAddr common.Address) (*big.Int, error) {
+	return _AgentPayLedger.Contract.GetBalanceLimit(&_AgentPayLedger.CallOpts, _tokenAddr)
 }
 
 // GetBalanceLimitsEnabled is a free data retrieval call binding the contract method 0x2b559ecc.
 //
 // Solidity: function getBalanceLimitsEnabled() view returns(bool)
-func (_CelerLedger *CelerLedgerCaller) GetBalanceLimitsEnabled(opts *bind.CallOpts) (bool, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetBalanceLimitsEnabled(opts *bind.CallOpts) (bool, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getBalanceLimitsEnabled")
+	err := _AgentPayLedger.contract.Call(opts, &out, "getBalanceLimitsEnabled")
 
 	if err != nil {
 		return *new(bool), err
@@ -254,23 +285,23 @@ func (_CelerLedger *CelerLedgerCaller) GetBalanceLimitsEnabled(opts *bind.CallOp
 // GetBalanceLimitsEnabled is a free data retrieval call binding the contract method 0x2b559ecc.
 //
 // Solidity: function getBalanceLimitsEnabled() view returns(bool)
-func (_CelerLedger *CelerLedgerSession) GetBalanceLimitsEnabled() (bool, error) {
-	return _CelerLedger.Contract.GetBalanceLimitsEnabled(&_CelerLedger.CallOpts)
+func (_AgentPayLedger *AgentPayLedgerSession) GetBalanceLimitsEnabled() (bool, error) {
+	return _AgentPayLedger.Contract.GetBalanceLimitsEnabled(&_AgentPayLedger.CallOpts)
 }
 
 // GetBalanceLimitsEnabled is a free data retrieval call binding the contract method 0x2b559ecc.
 //
 // Solidity: function getBalanceLimitsEnabled() view returns(bool)
-func (_CelerLedger *CelerLedgerCallerSession) GetBalanceLimitsEnabled() (bool, error) {
-	return _CelerLedger.Contract.GetBalanceLimitsEnabled(&_CelerLedger.CallOpts)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetBalanceLimitsEnabled() (bool, error) {
+	return _AgentPayLedger.Contract.GetBalanceLimitsEnabled(&_AgentPayLedger.CallOpts)
 }
 
 // GetBalanceMap is a free data retrieval call binding the contract method 0xbd480cb7.
 //
 // Solidity: function getBalanceMap(bytes32 _channelId) view returns(address[2], uint256[2], uint256[2])
-func (_CelerLedger *CelerLedgerCaller) GetBalanceMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, [2]*big.Int, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetBalanceMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, [2]*big.Int, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getBalanceMap", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getBalanceMap", _channelId)
 
 	if err != nil {
 		return *new([2]common.Address), *new([2]*big.Int), *new([2]*big.Int), err
@@ -287,54 +318,23 @@ func (_CelerLedger *CelerLedgerCaller) GetBalanceMap(opts *bind.CallOpts, _chann
 // GetBalanceMap is a free data retrieval call binding the contract method 0xbd480cb7.
 //
 // Solidity: function getBalanceMap(bytes32 _channelId) view returns(address[2], uint256[2], uint256[2])
-func (_CelerLedger *CelerLedgerSession) GetBalanceMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, [2]*big.Int, error) {
-	return _CelerLedger.Contract.GetBalanceMap(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetBalanceMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, [2]*big.Int, error) {
+	return _AgentPayLedger.Contract.GetBalanceMap(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetBalanceMap is a free data retrieval call binding the contract method 0xbd480cb7.
 //
 // Solidity: function getBalanceMap(bytes32 _channelId) view returns(address[2], uint256[2], uint256[2])
-func (_CelerLedger *CelerLedgerCallerSession) GetBalanceMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, [2]*big.Int, error) {
-	return _CelerLedger.Contract.GetBalanceMap(&_CelerLedger.CallOpts, _channelId)
-}
-
-// GetCelerWallet is a free data retrieval call binding the contract method 0xa099a39f.
-//
-// Solidity: function getCelerWallet() view returns(address)
-func (_CelerLedger *CelerLedgerCaller) GetCelerWallet(opts *bind.CallOpts) (common.Address, error) {
-	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getCelerWallet")
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// GetCelerWallet is a free data retrieval call binding the contract method 0xa099a39f.
-//
-// Solidity: function getCelerWallet() view returns(address)
-func (_CelerLedger *CelerLedgerSession) GetCelerWallet() (common.Address, error) {
-	return _CelerLedger.Contract.GetCelerWallet(&_CelerLedger.CallOpts)
-}
-
-// GetCelerWallet is a free data retrieval call binding the contract method 0xa099a39f.
-//
-// Solidity: function getCelerWallet() view returns(address)
-func (_CelerLedger *CelerLedgerCallerSession) GetCelerWallet() (common.Address, error) {
-	return _CelerLedger.Contract.GetCelerWallet(&_CelerLedger.CallOpts)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetBalanceMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, [2]*big.Int, error) {
+	return _AgentPayLedger.Contract.GetBalanceMap(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetChannelMigrationArgs is a free data retrieval call binding the contract method 0x2f0ac304.
 //
 // Solidity: function getChannelMigrationArgs(bytes32 _channelId) view returns(uint256, uint256, address, uint256)
-func (_CelerLedger *CelerLedgerCaller) GetChannelMigrationArgs(opts *bind.CallOpts, _channelId [32]byte) (*big.Int, *big.Int, common.Address, *big.Int, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetChannelMigrationArgs(opts *bind.CallOpts, _channelId [32]byte) (*big.Int, *big.Int, common.Address, *big.Int, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getChannelMigrationArgs", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getChannelMigrationArgs", _channelId)
 
 	if err != nil {
 		return *new(*big.Int), *new(*big.Int), *new(common.Address), *new(*big.Int), err
@@ -352,23 +352,23 @@ func (_CelerLedger *CelerLedgerCaller) GetChannelMigrationArgs(opts *bind.CallOp
 // GetChannelMigrationArgs is a free data retrieval call binding the contract method 0x2f0ac304.
 //
 // Solidity: function getChannelMigrationArgs(bytes32 _channelId) view returns(uint256, uint256, address, uint256)
-func (_CelerLedger *CelerLedgerSession) GetChannelMigrationArgs(_channelId [32]byte) (*big.Int, *big.Int, common.Address, *big.Int, error) {
-	return _CelerLedger.Contract.GetChannelMigrationArgs(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetChannelMigrationArgs(_channelId [32]byte) (*big.Int, *big.Int, common.Address, *big.Int, error) {
+	return _AgentPayLedger.Contract.GetChannelMigrationArgs(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetChannelMigrationArgs is a free data retrieval call binding the contract method 0x2f0ac304.
 //
 // Solidity: function getChannelMigrationArgs(bytes32 _channelId) view returns(uint256, uint256, address, uint256)
-func (_CelerLedger *CelerLedgerCallerSession) GetChannelMigrationArgs(_channelId [32]byte) (*big.Int, *big.Int, common.Address, *big.Int, error) {
-	return _CelerLedger.Contract.GetChannelMigrationArgs(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetChannelMigrationArgs(_channelId [32]byte) (*big.Int, *big.Int, common.Address, *big.Int, error) {
+	return _AgentPayLedger.Contract.GetChannelMigrationArgs(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetChannelStatus is a free data retrieval call binding the contract method 0xcc0b94b7.
 //
 // Solidity: function getChannelStatus(bytes32 _channelId) view returns(uint8)
-func (_CelerLedger *CelerLedgerCaller) GetChannelStatus(opts *bind.CallOpts, _channelId [32]byte) (uint8, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetChannelStatus(opts *bind.CallOpts, _channelId [32]byte) (uint8, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getChannelStatus", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getChannelStatus", _channelId)
 
 	if err != nil {
 		return *new(uint8), err
@@ -383,23 +383,23 @@ func (_CelerLedger *CelerLedgerCaller) GetChannelStatus(opts *bind.CallOpts, _ch
 // GetChannelStatus is a free data retrieval call binding the contract method 0xcc0b94b7.
 //
 // Solidity: function getChannelStatus(bytes32 _channelId) view returns(uint8)
-func (_CelerLedger *CelerLedgerSession) GetChannelStatus(_channelId [32]byte) (uint8, error) {
-	return _CelerLedger.Contract.GetChannelStatus(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetChannelStatus(_channelId [32]byte) (uint8, error) {
+	return _AgentPayLedger.Contract.GetChannelStatus(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetChannelStatus is a free data retrieval call binding the contract method 0xcc0b94b7.
 //
 // Solidity: function getChannelStatus(bytes32 _channelId) view returns(uint8)
-func (_CelerLedger *CelerLedgerCallerSession) GetChannelStatus(_channelId [32]byte) (uint8, error) {
-	return _CelerLedger.Contract.GetChannelStatus(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetChannelStatus(_channelId [32]byte) (uint8, error) {
+	return _AgentPayLedger.Contract.GetChannelStatus(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetChannelStatusNum is a free data retrieval call binding the contract method 0x307d6f96.
 //
 // Solidity: function getChannelStatusNum(uint256 _channelStatus) view returns(uint256)
-func (_CelerLedger *CelerLedgerCaller) GetChannelStatusNum(opts *bind.CallOpts, _channelStatus *big.Int) (*big.Int, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetChannelStatusNum(opts *bind.CallOpts, _channelStatus *big.Int) (*big.Int, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getChannelStatusNum", _channelStatus)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getChannelStatusNum", _channelStatus)
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -414,23 +414,23 @@ func (_CelerLedger *CelerLedgerCaller) GetChannelStatusNum(opts *bind.CallOpts, 
 // GetChannelStatusNum is a free data retrieval call binding the contract method 0x307d6f96.
 //
 // Solidity: function getChannelStatusNum(uint256 _channelStatus) view returns(uint256)
-func (_CelerLedger *CelerLedgerSession) GetChannelStatusNum(_channelStatus *big.Int) (*big.Int, error) {
-	return _CelerLedger.Contract.GetChannelStatusNum(&_CelerLedger.CallOpts, _channelStatus)
+func (_AgentPayLedger *AgentPayLedgerSession) GetChannelStatusNum(_channelStatus *big.Int) (*big.Int, error) {
+	return _AgentPayLedger.Contract.GetChannelStatusNum(&_AgentPayLedger.CallOpts, _channelStatus)
 }
 
 // GetChannelStatusNum is a free data retrieval call binding the contract method 0x307d6f96.
 //
 // Solidity: function getChannelStatusNum(uint256 _channelStatus) view returns(uint256)
-func (_CelerLedger *CelerLedgerCallerSession) GetChannelStatusNum(_channelStatus *big.Int) (*big.Int, error) {
-	return _CelerLedger.Contract.GetChannelStatusNum(&_CelerLedger.CallOpts, _channelStatus)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetChannelStatusNum(_channelStatus *big.Int) (*big.Int, error) {
+	return _AgentPayLedger.Contract.GetChannelStatusNum(&_AgentPayLedger.CallOpts, _channelStatus)
 }
 
 // GetCooperativeWithdrawSeqNum is a free data retrieval call binding the contract method 0xf0c73d70.
 //
 // Solidity: function getCooperativeWithdrawSeqNum(bytes32 _channelId) view returns(uint256)
-func (_CelerLedger *CelerLedgerCaller) GetCooperativeWithdrawSeqNum(opts *bind.CallOpts, _channelId [32]byte) (*big.Int, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetCooperativeWithdrawSeqNum(opts *bind.CallOpts, _channelId [32]byte) (*big.Int, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getCooperativeWithdrawSeqNum", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getCooperativeWithdrawSeqNum", _channelId)
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -445,23 +445,23 @@ func (_CelerLedger *CelerLedgerCaller) GetCooperativeWithdrawSeqNum(opts *bind.C
 // GetCooperativeWithdrawSeqNum is a free data retrieval call binding the contract method 0xf0c73d70.
 //
 // Solidity: function getCooperativeWithdrawSeqNum(bytes32 _channelId) view returns(uint256)
-func (_CelerLedger *CelerLedgerSession) GetCooperativeWithdrawSeqNum(_channelId [32]byte) (*big.Int, error) {
-	return _CelerLedger.Contract.GetCooperativeWithdrawSeqNum(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetCooperativeWithdrawSeqNum(_channelId [32]byte) (*big.Int, error) {
+	return _AgentPayLedger.Contract.GetCooperativeWithdrawSeqNum(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetCooperativeWithdrawSeqNum is a free data retrieval call binding the contract method 0xf0c73d70.
 //
 // Solidity: function getCooperativeWithdrawSeqNum(bytes32 _channelId) view returns(uint256)
-func (_CelerLedger *CelerLedgerCallerSession) GetCooperativeWithdrawSeqNum(_channelId [32]byte) (*big.Int, error) {
-	return _CelerLedger.Contract.GetCooperativeWithdrawSeqNum(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetCooperativeWithdrawSeqNum(_channelId [32]byte) (*big.Int, error) {
+	return _AgentPayLedger.Contract.GetCooperativeWithdrawSeqNum(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetDisputeTimeout is a free data retrieval call binding the contract method 0xe6322df7.
 //
 // Solidity: function getDisputeTimeout(bytes32 _channelId) view returns(uint256)
-func (_CelerLedger *CelerLedgerCaller) GetDisputeTimeout(opts *bind.CallOpts, _channelId [32]byte) (*big.Int, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetDisputeTimeout(opts *bind.CallOpts, _channelId [32]byte) (*big.Int, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getDisputeTimeout", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getDisputeTimeout", _channelId)
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -476,23 +476,23 @@ func (_CelerLedger *CelerLedgerCaller) GetDisputeTimeout(opts *bind.CallOpts, _c
 // GetDisputeTimeout is a free data retrieval call binding the contract method 0xe6322df7.
 //
 // Solidity: function getDisputeTimeout(bytes32 _channelId) view returns(uint256)
-func (_CelerLedger *CelerLedgerSession) GetDisputeTimeout(_channelId [32]byte) (*big.Int, error) {
-	return _CelerLedger.Contract.GetDisputeTimeout(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetDisputeTimeout(_channelId [32]byte) (*big.Int, error) {
+	return _AgentPayLedger.Contract.GetDisputeTimeout(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetDisputeTimeout is a free data retrieval call binding the contract method 0xe6322df7.
 //
 // Solidity: function getDisputeTimeout(bytes32 _channelId) view returns(uint256)
-func (_CelerLedger *CelerLedgerCallerSession) GetDisputeTimeout(_channelId [32]byte) (*big.Int, error) {
-	return _CelerLedger.Contract.GetDisputeTimeout(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetDisputeTimeout(_channelId [32]byte) (*big.Int, error) {
+	return _AgentPayLedger.Contract.GetDisputeTimeout(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetMigratedTo is a free data retrieval call binding the contract method 0xc38a325d.
 //
 // Solidity: function getMigratedTo(bytes32 _channelId) view returns(address)
-func (_CelerLedger *CelerLedgerCaller) GetMigratedTo(opts *bind.CallOpts, _channelId [32]byte) (common.Address, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetMigratedTo(opts *bind.CallOpts, _channelId [32]byte) (common.Address, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getMigratedTo", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getMigratedTo", _channelId)
 
 	if err != nil {
 		return *new(common.Address), err
@@ -507,23 +507,23 @@ func (_CelerLedger *CelerLedgerCaller) GetMigratedTo(opts *bind.CallOpts, _chann
 // GetMigratedTo is a free data retrieval call binding the contract method 0xc38a325d.
 //
 // Solidity: function getMigratedTo(bytes32 _channelId) view returns(address)
-func (_CelerLedger *CelerLedgerSession) GetMigratedTo(_channelId [32]byte) (common.Address, error) {
-	return _CelerLedger.Contract.GetMigratedTo(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetMigratedTo(_channelId [32]byte) (common.Address, error) {
+	return _AgentPayLedger.Contract.GetMigratedTo(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetMigratedTo is a free data retrieval call binding the contract method 0xc38a325d.
 //
 // Solidity: function getMigratedTo(bytes32 _channelId) view returns(address)
-func (_CelerLedger *CelerLedgerCallerSession) GetMigratedTo(_channelId [32]byte) (common.Address, error) {
-	return _CelerLedger.Contract.GetMigratedTo(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetMigratedTo(_channelId [32]byte) (common.Address, error) {
+	return _AgentPayLedger.Contract.GetMigratedTo(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetNativeWrap is a free data retrieval call binding the contract method 0x61fb19a0.
 //
 // Solidity: function getNativeWrap() view returns(address)
-func (_CelerLedger *CelerLedgerCaller) GetNativeWrap(opts *bind.CallOpts) (common.Address, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetNativeWrap(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getNativeWrap")
+	err := _AgentPayLedger.contract.Call(opts, &out, "getNativeWrap")
 
 	if err != nil {
 		return *new(common.Address), err
@@ -538,23 +538,23 @@ func (_CelerLedger *CelerLedgerCaller) GetNativeWrap(opts *bind.CallOpts) (commo
 // GetNativeWrap is a free data retrieval call binding the contract method 0x61fb19a0.
 //
 // Solidity: function getNativeWrap() view returns(address)
-func (_CelerLedger *CelerLedgerSession) GetNativeWrap() (common.Address, error) {
-	return _CelerLedger.Contract.GetNativeWrap(&_CelerLedger.CallOpts)
+func (_AgentPayLedger *AgentPayLedgerSession) GetNativeWrap() (common.Address, error) {
+	return _AgentPayLedger.Contract.GetNativeWrap(&_AgentPayLedger.CallOpts)
 }
 
 // GetNativeWrap is a free data retrieval call binding the contract method 0x61fb19a0.
 //
 // Solidity: function getNativeWrap() view returns(address)
-func (_CelerLedger *CelerLedgerCallerSession) GetNativeWrap() (common.Address, error) {
-	return _CelerLedger.Contract.GetNativeWrap(&_CelerLedger.CallOpts)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetNativeWrap() (common.Address, error) {
+	return _AgentPayLedger.Contract.GetNativeWrap(&_AgentPayLedger.CallOpts)
 }
 
 // GetNextPayIdListHashMap is a free data retrieval call binding the contract method 0xcd3a1be6.
 //
 // Solidity: function getNextPayIdListHashMap(bytes32 _channelId) view returns(address[2], bytes32[2])
-func (_CelerLedger *CelerLedgerCaller) GetNextPayIdListHashMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2][32]byte, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetNextPayIdListHashMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2][32]byte, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getNextPayIdListHashMap", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getNextPayIdListHashMap", _channelId)
 
 	if err != nil {
 		return *new([2]common.Address), *new([2][32]byte), err
@@ -570,23 +570,23 @@ func (_CelerLedger *CelerLedgerCaller) GetNextPayIdListHashMap(opts *bind.CallOp
 // GetNextPayIdListHashMap is a free data retrieval call binding the contract method 0xcd3a1be6.
 //
 // Solidity: function getNextPayIdListHashMap(bytes32 _channelId) view returns(address[2], bytes32[2])
-func (_CelerLedger *CelerLedgerSession) GetNextPayIdListHashMap(_channelId [32]byte) ([2]common.Address, [2][32]byte, error) {
-	return _CelerLedger.Contract.GetNextPayIdListHashMap(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetNextPayIdListHashMap(_channelId [32]byte) ([2]common.Address, [2][32]byte, error) {
+	return _AgentPayLedger.Contract.GetNextPayIdListHashMap(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetNextPayIdListHashMap is a free data retrieval call binding the contract method 0xcd3a1be6.
 //
 // Solidity: function getNextPayIdListHashMap(bytes32 _channelId) view returns(address[2], bytes32[2])
-func (_CelerLedger *CelerLedgerCallerSession) GetNextPayIdListHashMap(_channelId [32]byte) ([2]common.Address, [2][32]byte, error) {
-	return _CelerLedger.Contract.GetNextPayIdListHashMap(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetNextPayIdListHashMap(_channelId [32]byte) ([2]common.Address, [2][32]byte, error) {
+	return _AgentPayLedger.Contract.GetNextPayIdListHashMap(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetPayClearDeadlineMap is a free data retrieval call binding the contract method 0xc06d5ff5.
 //
 // Solidity: function getPayClearDeadlineMap(bytes32 _channelId) view returns(address[2], uint256[2])
-func (_CelerLedger *CelerLedgerCaller) GetPayClearDeadlineMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetPayClearDeadlineMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getPayClearDeadlineMap", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getPayClearDeadlineMap", _channelId)
 
 	if err != nil {
 		return *new([2]common.Address), *new([2]*big.Int), err
@@ -602,23 +602,23 @@ func (_CelerLedger *CelerLedgerCaller) GetPayClearDeadlineMap(opts *bind.CallOpt
 // GetPayClearDeadlineMap is a free data retrieval call binding the contract method 0xc06d5ff5.
 //
 // Solidity: function getPayClearDeadlineMap(bytes32 _channelId) view returns(address[2], uint256[2])
-func (_CelerLedger *CelerLedgerSession) GetPayClearDeadlineMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
-	return _CelerLedger.Contract.GetPayClearDeadlineMap(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetPayClearDeadlineMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
+	return _AgentPayLedger.Contract.GetPayClearDeadlineMap(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetPayClearDeadlineMap is a free data retrieval call binding the contract method 0xc06d5ff5.
 //
 // Solidity: function getPayClearDeadlineMap(bytes32 _channelId) view returns(address[2], uint256[2])
-func (_CelerLedger *CelerLedgerCallerSession) GetPayClearDeadlineMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
-	return _CelerLedger.Contract.GetPayClearDeadlineMap(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetPayClearDeadlineMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
+	return _AgentPayLedger.Contract.GetPayClearDeadlineMap(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetPayRegistry is a free data retrieval call binding the contract method 0x312ea2c6.
 //
 // Solidity: function getPayRegistry() view returns(address)
-func (_CelerLedger *CelerLedgerCaller) GetPayRegistry(opts *bind.CallOpts) (common.Address, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetPayRegistry(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getPayRegistry")
+	err := _AgentPayLedger.contract.Call(opts, &out, "getPayRegistry")
 
 	if err != nil {
 		return *new(common.Address), err
@@ -633,23 +633,23 @@ func (_CelerLedger *CelerLedgerCaller) GetPayRegistry(opts *bind.CallOpts) (comm
 // GetPayRegistry is a free data retrieval call binding the contract method 0x312ea2c6.
 //
 // Solidity: function getPayRegistry() view returns(address)
-func (_CelerLedger *CelerLedgerSession) GetPayRegistry() (common.Address, error) {
-	return _CelerLedger.Contract.GetPayRegistry(&_CelerLedger.CallOpts)
+func (_AgentPayLedger *AgentPayLedgerSession) GetPayRegistry() (common.Address, error) {
+	return _AgentPayLedger.Contract.GetPayRegistry(&_AgentPayLedger.CallOpts)
 }
 
 // GetPayRegistry is a free data retrieval call binding the contract method 0x312ea2c6.
 //
 // Solidity: function getPayRegistry() view returns(address)
-func (_CelerLedger *CelerLedgerCallerSession) GetPayRegistry() (common.Address, error) {
-	return _CelerLedger.Contract.GetPayRegistry(&_CelerLedger.CallOpts)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetPayRegistry() (common.Address, error) {
+	return _AgentPayLedger.Contract.GetPayRegistry(&_AgentPayLedger.CallOpts)
 }
 
 // GetPeersMigrationInfo is a free data retrieval call binding the contract method 0x88f41465.
 //
 // Solidity: function getPeersMigrationInfo(bytes32 _channelId) view returns(address[2], uint256[2], uint256[2], uint256[2], uint256[2], uint256[2])
-func (_CelerLedger *CelerLedgerCaller) GetPeersMigrationInfo(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, [2]*big.Int, [2]*big.Int, [2]*big.Int, [2]*big.Int, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetPeersMigrationInfo(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, [2]*big.Int, [2]*big.Int, [2]*big.Int, [2]*big.Int, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getPeersMigrationInfo", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getPeersMigrationInfo", _channelId)
 
 	if err != nil {
 		return *new([2]common.Address), *new([2]*big.Int), *new([2]*big.Int), *new([2]*big.Int), *new([2]*big.Int), *new([2]*big.Int), err
@@ -669,23 +669,23 @@ func (_CelerLedger *CelerLedgerCaller) GetPeersMigrationInfo(opts *bind.CallOpts
 // GetPeersMigrationInfo is a free data retrieval call binding the contract method 0x88f41465.
 //
 // Solidity: function getPeersMigrationInfo(bytes32 _channelId) view returns(address[2], uint256[2], uint256[2], uint256[2], uint256[2], uint256[2])
-func (_CelerLedger *CelerLedgerSession) GetPeersMigrationInfo(_channelId [32]byte) ([2]common.Address, [2]*big.Int, [2]*big.Int, [2]*big.Int, [2]*big.Int, [2]*big.Int, error) {
-	return _CelerLedger.Contract.GetPeersMigrationInfo(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetPeersMigrationInfo(_channelId [32]byte) ([2]common.Address, [2]*big.Int, [2]*big.Int, [2]*big.Int, [2]*big.Int, [2]*big.Int, error) {
+	return _AgentPayLedger.Contract.GetPeersMigrationInfo(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetPeersMigrationInfo is a free data retrieval call binding the contract method 0x88f41465.
 //
 // Solidity: function getPeersMigrationInfo(bytes32 _channelId) view returns(address[2], uint256[2], uint256[2], uint256[2], uint256[2], uint256[2])
-func (_CelerLedger *CelerLedgerCallerSession) GetPeersMigrationInfo(_channelId [32]byte) ([2]common.Address, [2]*big.Int, [2]*big.Int, [2]*big.Int, [2]*big.Int, [2]*big.Int, error) {
-	return _CelerLedger.Contract.GetPeersMigrationInfo(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetPeersMigrationInfo(_channelId [32]byte) ([2]common.Address, [2]*big.Int, [2]*big.Int, [2]*big.Int, [2]*big.Int, [2]*big.Int, error) {
+	return _AgentPayLedger.Contract.GetPeersMigrationInfo(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetPendingPayOutMap is a free data retrieval call binding the contract method 0x0165cef8.
 //
 // Solidity: function getPendingPayOutMap(bytes32 _channelId) view returns(address[2], uint256[2])
-func (_CelerLedger *CelerLedgerCaller) GetPendingPayOutMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetPendingPayOutMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getPendingPayOutMap", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getPendingPayOutMap", _channelId)
 
 	if err != nil {
 		return *new([2]common.Address), *new([2]*big.Int), err
@@ -701,23 +701,23 @@ func (_CelerLedger *CelerLedgerCaller) GetPendingPayOutMap(opts *bind.CallOpts, 
 // GetPendingPayOutMap is a free data retrieval call binding the contract method 0x0165cef8.
 //
 // Solidity: function getPendingPayOutMap(bytes32 _channelId) view returns(address[2], uint256[2])
-func (_CelerLedger *CelerLedgerSession) GetPendingPayOutMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
-	return _CelerLedger.Contract.GetPendingPayOutMap(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetPendingPayOutMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
+	return _AgentPayLedger.Contract.GetPendingPayOutMap(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetPendingPayOutMap is a free data retrieval call binding the contract method 0x0165cef8.
 //
 // Solidity: function getPendingPayOutMap(bytes32 _channelId) view returns(address[2], uint256[2])
-func (_CelerLedger *CelerLedgerCallerSession) GetPendingPayOutMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
-	return _CelerLedger.Contract.GetPendingPayOutMap(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetPendingPayOutMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
+	return _AgentPayLedger.Contract.GetPendingPayOutMap(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetSettleFinalizedTime is a free data retrieval call binding the contract method 0x09b65d86.
 //
 // Solidity: function getSettleFinalizedTime(bytes32 _channelId) view returns(uint256)
-func (_CelerLedger *CelerLedgerCaller) GetSettleFinalizedTime(opts *bind.CallOpts, _channelId [32]byte) (*big.Int, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetSettleFinalizedTime(opts *bind.CallOpts, _channelId [32]byte) (*big.Int, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getSettleFinalizedTime", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getSettleFinalizedTime", _channelId)
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -732,23 +732,23 @@ func (_CelerLedger *CelerLedgerCaller) GetSettleFinalizedTime(opts *bind.CallOpt
 // GetSettleFinalizedTime is a free data retrieval call binding the contract method 0x09b65d86.
 //
 // Solidity: function getSettleFinalizedTime(bytes32 _channelId) view returns(uint256)
-func (_CelerLedger *CelerLedgerSession) GetSettleFinalizedTime(_channelId [32]byte) (*big.Int, error) {
-	return _CelerLedger.Contract.GetSettleFinalizedTime(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetSettleFinalizedTime(_channelId [32]byte) (*big.Int, error) {
+	return _AgentPayLedger.Contract.GetSettleFinalizedTime(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetSettleFinalizedTime is a free data retrieval call binding the contract method 0x09b65d86.
 //
 // Solidity: function getSettleFinalizedTime(bytes32 _channelId) view returns(uint256)
-func (_CelerLedger *CelerLedgerCallerSession) GetSettleFinalizedTime(_channelId [32]byte) (*big.Int, error) {
-	return _CelerLedger.Contract.GetSettleFinalizedTime(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetSettleFinalizedTime(_channelId [32]byte) (*big.Int, error) {
+	return _AgentPayLedger.Contract.GetSettleFinalizedTime(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetStateSeqNumMap is a free data retrieval call binding the contract method 0x666a6d65.
 //
 // Solidity: function getStateSeqNumMap(bytes32 _channelId) view returns(address[2], uint256[2])
-func (_CelerLedger *CelerLedgerCaller) GetStateSeqNumMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetStateSeqNumMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getStateSeqNumMap", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getStateSeqNumMap", _channelId)
 
 	if err != nil {
 		return *new([2]common.Address), *new([2]*big.Int), err
@@ -764,23 +764,23 @@ func (_CelerLedger *CelerLedgerCaller) GetStateSeqNumMap(opts *bind.CallOpts, _c
 // GetStateSeqNumMap is a free data retrieval call binding the contract method 0x666a6d65.
 //
 // Solidity: function getStateSeqNumMap(bytes32 _channelId) view returns(address[2], uint256[2])
-func (_CelerLedger *CelerLedgerSession) GetStateSeqNumMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
-	return _CelerLedger.Contract.GetStateSeqNumMap(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetStateSeqNumMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
+	return _AgentPayLedger.Contract.GetStateSeqNumMap(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetStateSeqNumMap is a free data retrieval call binding the contract method 0x666a6d65.
 //
 // Solidity: function getStateSeqNumMap(bytes32 _channelId) view returns(address[2], uint256[2])
-func (_CelerLedger *CelerLedgerCallerSession) GetStateSeqNumMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
-	return _CelerLedger.Contract.GetStateSeqNumMap(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetStateSeqNumMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
+	return _AgentPayLedger.Contract.GetStateSeqNumMap(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetTokenContract is a free data retrieval call binding the contract method 0x2e2a5a02.
 //
 // Solidity: function getTokenContract(bytes32 _channelId) view returns(address)
-func (_CelerLedger *CelerLedgerCaller) GetTokenContract(opts *bind.CallOpts, _channelId [32]byte) (common.Address, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetTokenContract(opts *bind.CallOpts, _channelId [32]byte) (common.Address, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getTokenContract", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getTokenContract", _channelId)
 
 	if err != nil {
 		return *new(common.Address), err
@@ -795,23 +795,23 @@ func (_CelerLedger *CelerLedgerCaller) GetTokenContract(opts *bind.CallOpts, _ch
 // GetTokenContract is a free data retrieval call binding the contract method 0x2e2a5a02.
 //
 // Solidity: function getTokenContract(bytes32 _channelId) view returns(address)
-func (_CelerLedger *CelerLedgerSession) GetTokenContract(_channelId [32]byte) (common.Address, error) {
-	return _CelerLedger.Contract.GetTokenContract(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetTokenContract(_channelId [32]byte) (common.Address, error) {
+	return _AgentPayLedger.Contract.GetTokenContract(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetTokenContract is a free data retrieval call binding the contract method 0x2e2a5a02.
 //
 // Solidity: function getTokenContract(bytes32 _channelId) view returns(address)
-func (_CelerLedger *CelerLedgerCallerSession) GetTokenContract(_channelId [32]byte) (common.Address, error) {
-	return _CelerLedger.Contract.GetTokenContract(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetTokenContract(_channelId [32]byte) (common.Address, error) {
+	return _AgentPayLedger.Contract.GetTokenContract(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetTokenType is a free data retrieval call binding the contract method 0x979a9b5e.
 //
 // Solidity: function getTokenType(bytes32 _channelId) view returns(uint8)
-func (_CelerLedger *CelerLedgerCaller) GetTokenType(opts *bind.CallOpts, _channelId [32]byte) (uint8, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetTokenType(opts *bind.CallOpts, _channelId [32]byte) (uint8, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getTokenType", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getTokenType", _channelId)
 
 	if err != nil {
 		return *new(uint8), err
@@ -826,23 +826,23 @@ func (_CelerLedger *CelerLedgerCaller) GetTokenType(opts *bind.CallOpts, _channe
 // GetTokenType is a free data retrieval call binding the contract method 0x979a9b5e.
 //
 // Solidity: function getTokenType(bytes32 _channelId) view returns(uint8)
-func (_CelerLedger *CelerLedgerSession) GetTokenType(_channelId [32]byte) (uint8, error) {
-	return _CelerLedger.Contract.GetTokenType(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetTokenType(_channelId [32]byte) (uint8, error) {
+	return _AgentPayLedger.Contract.GetTokenType(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetTokenType is a free data retrieval call binding the contract method 0x979a9b5e.
 //
 // Solidity: function getTokenType(bytes32 _channelId) view returns(uint8)
-func (_CelerLedger *CelerLedgerCallerSession) GetTokenType(_channelId [32]byte) (uint8, error) {
-	return _CelerLedger.Contract.GetTokenType(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetTokenType(_channelId [32]byte) (uint8, error) {
+	return _AgentPayLedger.Contract.GetTokenType(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetTotalBalance is a free data retrieval call binding the contract method 0x69d5dd67.
 //
 // Solidity: function getTotalBalance(bytes32 _channelId) view returns(uint256)
-func (_CelerLedger *CelerLedgerCaller) GetTotalBalance(opts *bind.CallOpts, _channelId [32]byte) (*big.Int, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetTotalBalance(opts *bind.CallOpts, _channelId [32]byte) (*big.Int, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getTotalBalance", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getTotalBalance", _channelId)
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -857,23 +857,23 @@ func (_CelerLedger *CelerLedgerCaller) GetTotalBalance(opts *bind.CallOpts, _cha
 // GetTotalBalance is a free data retrieval call binding the contract method 0x69d5dd67.
 //
 // Solidity: function getTotalBalance(bytes32 _channelId) view returns(uint256)
-func (_CelerLedger *CelerLedgerSession) GetTotalBalance(_channelId [32]byte) (*big.Int, error) {
-	return _CelerLedger.Contract.GetTotalBalance(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetTotalBalance(_channelId [32]byte) (*big.Int, error) {
+	return _AgentPayLedger.Contract.GetTotalBalance(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetTotalBalance is a free data retrieval call binding the contract method 0x69d5dd67.
 //
 // Solidity: function getTotalBalance(bytes32 _channelId) view returns(uint256)
-func (_CelerLedger *CelerLedgerCallerSession) GetTotalBalance(_channelId [32]byte) (*big.Int, error) {
-	return _CelerLedger.Contract.GetTotalBalance(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetTotalBalance(_channelId [32]byte) (*big.Int, error) {
+	return _AgentPayLedger.Contract.GetTotalBalance(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetTransferOutMap is a free data retrieval call binding the contract method 0xd927bfc4.
 //
 // Solidity: function getTransferOutMap(bytes32 _channelId) view returns(address[2], uint256[2])
-func (_CelerLedger *CelerLedgerCaller) GetTransferOutMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetTransferOutMap(opts *bind.CallOpts, _channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getTransferOutMap", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getTransferOutMap", _channelId)
 
 	if err != nil {
 		return *new([2]common.Address), *new([2]*big.Int), err
@@ -889,23 +889,23 @@ func (_CelerLedger *CelerLedgerCaller) GetTransferOutMap(opts *bind.CallOpts, _c
 // GetTransferOutMap is a free data retrieval call binding the contract method 0xd927bfc4.
 //
 // Solidity: function getTransferOutMap(bytes32 _channelId) view returns(address[2], uint256[2])
-func (_CelerLedger *CelerLedgerSession) GetTransferOutMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
-	return _CelerLedger.Contract.GetTransferOutMap(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetTransferOutMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
+	return _AgentPayLedger.Contract.GetTransferOutMap(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetTransferOutMap is a free data retrieval call binding the contract method 0xd927bfc4.
 //
 // Solidity: function getTransferOutMap(bytes32 _channelId) view returns(address[2], uint256[2])
-func (_CelerLedger *CelerLedgerCallerSession) GetTransferOutMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
-	return _CelerLedger.Contract.GetTransferOutMap(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetTransferOutMap(_channelId [32]byte) ([2]common.Address, [2]*big.Int, error) {
+	return _AgentPayLedger.Contract.GetTransferOutMap(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetWithdrawIntent is a free data retrieval call binding the contract method 0x76bff117.
 //
 // Solidity: function getWithdrawIntent(bytes32 _channelId) view returns(address, uint256, uint256, bytes32)
-func (_CelerLedger *CelerLedgerCaller) GetWithdrawIntent(opts *bind.CallOpts, _channelId [32]byte) (common.Address, *big.Int, *big.Int, [32]byte, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) GetWithdrawIntent(opts *bind.CallOpts, _channelId [32]byte) (common.Address, *big.Int, *big.Int, [32]byte, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "getWithdrawIntent", _channelId)
+	err := _AgentPayLedger.contract.Call(opts, &out, "getWithdrawIntent", _channelId)
 
 	if err != nil {
 		return *new(common.Address), *new(*big.Int), *new(*big.Int), *new([32]byte), err
@@ -923,23 +923,23 @@ func (_CelerLedger *CelerLedgerCaller) GetWithdrawIntent(opts *bind.CallOpts, _c
 // GetWithdrawIntent is a free data retrieval call binding the contract method 0x76bff117.
 //
 // Solidity: function getWithdrawIntent(bytes32 _channelId) view returns(address, uint256, uint256, bytes32)
-func (_CelerLedger *CelerLedgerSession) GetWithdrawIntent(_channelId [32]byte) (common.Address, *big.Int, *big.Int, [32]byte, error) {
-	return _CelerLedger.Contract.GetWithdrawIntent(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) GetWithdrawIntent(_channelId [32]byte) (common.Address, *big.Int, *big.Int, [32]byte, error) {
+	return _AgentPayLedger.Contract.GetWithdrawIntent(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // GetWithdrawIntent is a free data retrieval call binding the contract method 0x76bff117.
 //
 // Solidity: function getWithdrawIntent(bytes32 _channelId) view returns(address, uint256, uint256, bytes32)
-func (_CelerLedger *CelerLedgerCallerSession) GetWithdrawIntent(_channelId [32]byte) (common.Address, *big.Int, *big.Int, [32]byte, error) {
-	return _CelerLedger.Contract.GetWithdrawIntent(&_CelerLedger.CallOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) GetWithdrawIntent(_channelId [32]byte) (common.Address, *big.Int, *big.Int, [32]byte, error) {
+	return _AgentPayLedger.Contract.GetWithdrawIntent(&_AgentPayLedger.CallOpts, _channelId)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() view returns(address)
-func (_CelerLedger *CelerLedgerCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
+func (_AgentPayLedger *AgentPayLedgerCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
-	err := _CelerLedger.contract.Call(opts, &out, "owner")
+	err := _AgentPayLedger.contract.Call(opts, &out, "owner")
 
 	if err != nil {
 		return *new(common.Address), err
@@ -954,440 +954,440 @@ func (_CelerLedger *CelerLedgerCaller) Owner(opts *bind.CallOpts) (common.Addres
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() view returns(address)
-func (_CelerLedger *CelerLedgerSession) Owner() (common.Address, error) {
-	return _CelerLedger.Contract.Owner(&_CelerLedger.CallOpts)
+func (_AgentPayLedger *AgentPayLedgerSession) Owner() (common.Address, error) {
+	return _AgentPayLedger.Contract.Owner(&_AgentPayLedger.CallOpts)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() view returns(address)
-func (_CelerLedger *CelerLedgerCallerSession) Owner() (common.Address, error) {
-	return _CelerLedger.Contract.Owner(&_CelerLedger.CallOpts)
+func (_AgentPayLedger *AgentPayLedgerCallerSession) Owner() (common.Address, error) {
+	return _AgentPayLedger.Contract.Owner(&_AgentPayLedger.CallOpts)
 }
 
 // ClearPays is a paid mutator transaction binding the contract method 0xfd0a1a61.
 //
 // Solidity: function clearPays(bytes32 _channelId, address _peerFrom, bytes _payIdList) returns()
-func (_CelerLedger *CelerLedgerTransactor) ClearPays(opts *bind.TransactOpts, _channelId [32]byte, _peerFrom common.Address, _payIdList []byte) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "clearPays", _channelId, _peerFrom, _payIdList)
+func (_AgentPayLedger *AgentPayLedgerTransactor) ClearPays(opts *bind.TransactOpts, _channelId [32]byte, _peerFrom common.Address, _payIdList []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "clearPays", _channelId, _peerFrom, _payIdList)
 }
 
 // ClearPays is a paid mutator transaction binding the contract method 0xfd0a1a61.
 //
 // Solidity: function clearPays(bytes32 _channelId, address _peerFrom, bytes _payIdList) returns()
-func (_CelerLedger *CelerLedgerSession) ClearPays(_channelId [32]byte, _peerFrom common.Address, _payIdList []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.ClearPays(&_CelerLedger.TransactOpts, _channelId, _peerFrom, _payIdList)
+func (_AgentPayLedger *AgentPayLedgerSession) ClearPays(_channelId [32]byte, _peerFrom common.Address, _payIdList []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.ClearPays(&_AgentPayLedger.TransactOpts, _channelId, _peerFrom, _payIdList)
 }
 
 // ClearPays is a paid mutator transaction binding the contract method 0xfd0a1a61.
 //
 // Solidity: function clearPays(bytes32 _channelId, address _peerFrom, bytes _payIdList) returns()
-func (_CelerLedger *CelerLedgerTransactorSession) ClearPays(_channelId [32]byte, _peerFrom common.Address, _payIdList []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.ClearPays(&_CelerLedger.TransactOpts, _channelId, _peerFrom, _payIdList)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) ClearPays(_channelId [32]byte, _peerFrom common.Address, _payIdList []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.ClearPays(&_AgentPayLedger.TransactOpts, _channelId, _peerFrom, _payIdList)
 }
 
 // ConfirmSettle is a paid mutator transaction binding the contract method 0xc7ff8625.
 //
 // Solidity: function confirmSettle(bytes32 _channelId) returns()
-func (_CelerLedger *CelerLedgerTransactor) ConfirmSettle(opts *bind.TransactOpts, _channelId [32]byte) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "confirmSettle", _channelId)
+func (_AgentPayLedger *AgentPayLedgerTransactor) ConfirmSettle(opts *bind.TransactOpts, _channelId [32]byte) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "confirmSettle", _channelId)
 }
 
 // ConfirmSettle is a paid mutator transaction binding the contract method 0xc7ff8625.
 //
 // Solidity: function confirmSettle(bytes32 _channelId) returns()
-func (_CelerLedger *CelerLedgerSession) ConfirmSettle(_channelId [32]byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.ConfirmSettle(&_CelerLedger.TransactOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) ConfirmSettle(_channelId [32]byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.ConfirmSettle(&_AgentPayLedger.TransactOpts, _channelId)
 }
 
 // ConfirmSettle is a paid mutator transaction binding the contract method 0xc7ff8625.
 //
 // Solidity: function confirmSettle(bytes32 _channelId) returns()
-func (_CelerLedger *CelerLedgerTransactorSession) ConfirmSettle(_channelId [32]byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.ConfirmSettle(&_CelerLedger.TransactOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) ConfirmSettle(_channelId [32]byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.ConfirmSettle(&_AgentPayLedger.TransactOpts, _channelId)
 }
 
 // ConfirmWithdraw is a paid mutator transaction binding the contract method 0x7e9a7a3e.
 //
 // Solidity: function confirmWithdraw(bytes32 _channelId) returns()
-func (_CelerLedger *CelerLedgerTransactor) ConfirmWithdraw(opts *bind.TransactOpts, _channelId [32]byte) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "confirmWithdraw", _channelId)
+func (_AgentPayLedger *AgentPayLedgerTransactor) ConfirmWithdraw(opts *bind.TransactOpts, _channelId [32]byte) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "confirmWithdraw", _channelId)
 }
 
 // ConfirmWithdraw is a paid mutator transaction binding the contract method 0x7e9a7a3e.
 //
 // Solidity: function confirmWithdraw(bytes32 _channelId) returns()
-func (_CelerLedger *CelerLedgerSession) ConfirmWithdraw(_channelId [32]byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.ConfirmWithdraw(&_CelerLedger.TransactOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) ConfirmWithdraw(_channelId [32]byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.ConfirmWithdraw(&_AgentPayLedger.TransactOpts, _channelId)
 }
 
 // ConfirmWithdraw is a paid mutator transaction binding the contract method 0x7e9a7a3e.
 //
 // Solidity: function confirmWithdraw(bytes32 _channelId) returns()
-func (_CelerLedger *CelerLedgerTransactorSession) ConfirmWithdraw(_channelId [32]byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.ConfirmWithdraw(&_CelerLedger.TransactOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) ConfirmWithdraw(_channelId [32]byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.ConfirmWithdraw(&_AgentPayLedger.TransactOpts, _channelId)
 }
 
 // CooperativeSettle is a paid mutator transaction binding the contract method 0x09683c03.
 //
 // Solidity: function cooperativeSettle(bytes _settleRequest) returns()
-func (_CelerLedger *CelerLedgerTransactor) CooperativeSettle(opts *bind.TransactOpts, _settleRequest []byte) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "cooperativeSettle", _settleRequest)
+func (_AgentPayLedger *AgentPayLedgerTransactor) CooperativeSettle(opts *bind.TransactOpts, _settleRequest []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "cooperativeSettle", _settleRequest)
 }
 
 // CooperativeSettle is a paid mutator transaction binding the contract method 0x09683c03.
 //
 // Solidity: function cooperativeSettle(bytes _settleRequest) returns()
-func (_CelerLedger *CelerLedgerSession) CooperativeSettle(_settleRequest []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.CooperativeSettle(&_CelerLedger.TransactOpts, _settleRequest)
+func (_AgentPayLedger *AgentPayLedgerSession) CooperativeSettle(_settleRequest []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.CooperativeSettle(&_AgentPayLedger.TransactOpts, _settleRequest)
 }
 
 // CooperativeSettle is a paid mutator transaction binding the contract method 0x09683c03.
 //
 // Solidity: function cooperativeSettle(bytes _settleRequest) returns()
-func (_CelerLedger *CelerLedgerTransactorSession) CooperativeSettle(_settleRequest []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.CooperativeSettle(&_CelerLedger.TransactOpts, _settleRequest)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) CooperativeSettle(_settleRequest []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.CooperativeSettle(&_AgentPayLedger.TransactOpts, _settleRequest)
 }
 
 // CooperativeWithdraw is a paid mutator transaction binding the contract method 0xd757abd2.
 //
 // Solidity: function cooperativeWithdraw(bytes _cooperativeWithdrawRequest) returns()
-func (_CelerLedger *CelerLedgerTransactor) CooperativeWithdraw(opts *bind.TransactOpts, _cooperativeWithdrawRequest []byte) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "cooperativeWithdraw", _cooperativeWithdrawRequest)
+func (_AgentPayLedger *AgentPayLedgerTransactor) CooperativeWithdraw(opts *bind.TransactOpts, _cooperativeWithdrawRequest []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "cooperativeWithdraw", _cooperativeWithdrawRequest)
 }
 
 // CooperativeWithdraw is a paid mutator transaction binding the contract method 0xd757abd2.
 //
 // Solidity: function cooperativeWithdraw(bytes _cooperativeWithdrawRequest) returns()
-func (_CelerLedger *CelerLedgerSession) CooperativeWithdraw(_cooperativeWithdrawRequest []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.CooperativeWithdraw(&_CelerLedger.TransactOpts, _cooperativeWithdrawRequest)
+func (_AgentPayLedger *AgentPayLedgerSession) CooperativeWithdraw(_cooperativeWithdrawRequest []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.CooperativeWithdraw(&_AgentPayLedger.TransactOpts, _cooperativeWithdrawRequest)
 }
 
 // CooperativeWithdraw is a paid mutator transaction binding the contract method 0xd757abd2.
 //
 // Solidity: function cooperativeWithdraw(bytes _cooperativeWithdrawRequest) returns()
-func (_CelerLedger *CelerLedgerTransactorSession) CooperativeWithdraw(_cooperativeWithdrawRequest []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.CooperativeWithdraw(&_CelerLedger.TransactOpts, _cooperativeWithdrawRequest)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) CooperativeWithdraw(_cooperativeWithdrawRequest []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.CooperativeWithdraw(&_AgentPayLedger.TransactOpts, _cooperativeWithdrawRequest)
 }
 
 // Deposit is a paid mutator transaction binding the contract method 0xd954863c.
 //
 // Solidity: function deposit(bytes32 _channelId, address _receiver, uint256 _transferFromAmount) payable returns()
-func (_CelerLedger *CelerLedgerTransactor) Deposit(opts *bind.TransactOpts, _channelId [32]byte, _receiver common.Address, _transferFromAmount *big.Int) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "deposit", _channelId, _receiver, _transferFromAmount)
+func (_AgentPayLedger *AgentPayLedgerTransactor) Deposit(opts *bind.TransactOpts, _channelId [32]byte, _receiver common.Address, _transferFromAmount *big.Int) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "deposit", _channelId, _receiver, _transferFromAmount)
 }
 
 // Deposit is a paid mutator transaction binding the contract method 0xd954863c.
 //
 // Solidity: function deposit(bytes32 _channelId, address _receiver, uint256 _transferFromAmount) payable returns()
-func (_CelerLedger *CelerLedgerSession) Deposit(_channelId [32]byte, _receiver common.Address, _transferFromAmount *big.Int) (*types.Transaction, error) {
-	return _CelerLedger.Contract.Deposit(&_CelerLedger.TransactOpts, _channelId, _receiver, _transferFromAmount)
+func (_AgentPayLedger *AgentPayLedgerSession) Deposit(_channelId [32]byte, _receiver common.Address, _transferFromAmount *big.Int) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.Deposit(&_AgentPayLedger.TransactOpts, _channelId, _receiver, _transferFromAmount)
 }
 
 // Deposit is a paid mutator transaction binding the contract method 0xd954863c.
 //
 // Solidity: function deposit(bytes32 _channelId, address _receiver, uint256 _transferFromAmount) payable returns()
-func (_CelerLedger *CelerLedgerTransactorSession) Deposit(_channelId [32]byte, _receiver common.Address, _transferFromAmount *big.Int) (*types.Transaction, error) {
-	return _CelerLedger.Contract.Deposit(&_CelerLedger.TransactOpts, _channelId, _receiver, _transferFromAmount)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) Deposit(_channelId [32]byte, _receiver common.Address, _transferFromAmount *big.Int) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.Deposit(&_AgentPayLedger.TransactOpts, _channelId, _receiver, _transferFromAmount)
 }
 
 // DepositInBatch is a paid mutator transaction binding the contract method 0xe5780db2.
 //
 // Solidity: function depositInBatch(bytes32[] _channelIds, address[] _receivers, uint256[] _transferFromAmounts) returns()
-func (_CelerLedger *CelerLedgerTransactor) DepositInBatch(opts *bind.TransactOpts, _channelIds [][32]byte, _receivers []common.Address, _transferFromAmounts []*big.Int) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "depositInBatch", _channelIds, _receivers, _transferFromAmounts)
+func (_AgentPayLedger *AgentPayLedgerTransactor) DepositInBatch(opts *bind.TransactOpts, _channelIds [][32]byte, _receivers []common.Address, _transferFromAmounts []*big.Int) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "depositInBatch", _channelIds, _receivers, _transferFromAmounts)
 }
 
 // DepositInBatch is a paid mutator transaction binding the contract method 0xe5780db2.
 //
 // Solidity: function depositInBatch(bytes32[] _channelIds, address[] _receivers, uint256[] _transferFromAmounts) returns()
-func (_CelerLedger *CelerLedgerSession) DepositInBatch(_channelIds [][32]byte, _receivers []common.Address, _transferFromAmounts []*big.Int) (*types.Transaction, error) {
-	return _CelerLedger.Contract.DepositInBatch(&_CelerLedger.TransactOpts, _channelIds, _receivers, _transferFromAmounts)
+func (_AgentPayLedger *AgentPayLedgerSession) DepositInBatch(_channelIds [][32]byte, _receivers []common.Address, _transferFromAmounts []*big.Int) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.DepositInBatch(&_AgentPayLedger.TransactOpts, _channelIds, _receivers, _transferFromAmounts)
 }
 
 // DepositInBatch is a paid mutator transaction binding the contract method 0xe5780db2.
 //
 // Solidity: function depositInBatch(bytes32[] _channelIds, address[] _receivers, uint256[] _transferFromAmounts) returns()
-func (_CelerLedger *CelerLedgerTransactorSession) DepositInBatch(_channelIds [][32]byte, _receivers []common.Address, _transferFromAmounts []*big.Int) (*types.Transaction, error) {
-	return _CelerLedger.Contract.DepositInBatch(&_CelerLedger.TransactOpts, _channelIds, _receivers, _transferFromAmounts)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) DepositInBatch(_channelIds [][32]byte, _receivers []common.Address, _transferFromAmounts []*big.Int) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.DepositInBatch(&_AgentPayLedger.TransactOpts, _channelIds, _receivers, _transferFromAmounts)
 }
 
 // DisableBalanceLimits is a paid mutator transaction binding the contract method 0xe063913c.
 //
 // Solidity: function disableBalanceLimits() returns()
-func (_CelerLedger *CelerLedgerTransactor) DisableBalanceLimits(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "disableBalanceLimits")
+func (_AgentPayLedger *AgentPayLedgerTransactor) DisableBalanceLimits(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "disableBalanceLimits")
 }
 
 // DisableBalanceLimits is a paid mutator transaction binding the contract method 0xe063913c.
 //
 // Solidity: function disableBalanceLimits() returns()
-func (_CelerLedger *CelerLedgerSession) DisableBalanceLimits() (*types.Transaction, error) {
-	return _CelerLedger.Contract.DisableBalanceLimits(&_CelerLedger.TransactOpts)
+func (_AgentPayLedger *AgentPayLedgerSession) DisableBalanceLimits() (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.DisableBalanceLimits(&_AgentPayLedger.TransactOpts)
 }
 
 // DisableBalanceLimits is a paid mutator transaction binding the contract method 0xe063913c.
 //
 // Solidity: function disableBalanceLimits() returns()
-func (_CelerLedger *CelerLedgerTransactorSession) DisableBalanceLimits() (*types.Transaction, error) {
-	return _CelerLedger.Contract.DisableBalanceLimits(&_CelerLedger.TransactOpts)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) DisableBalanceLimits() (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.DisableBalanceLimits(&_AgentPayLedger.TransactOpts)
 }
 
 // EnableBalanceLimits is a paid mutator transaction binding the contract method 0x83c8f8b8.
 //
 // Solidity: function enableBalanceLimits() returns()
-func (_CelerLedger *CelerLedgerTransactor) EnableBalanceLimits(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "enableBalanceLimits")
+func (_AgentPayLedger *AgentPayLedgerTransactor) EnableBalanceLimits(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "enableBalanceLimits")
 }
 
 // EnableBalanceLimits is a paid mutator transaction binding the contract method 0x83c8f8b8.
 //
 // Solidity: function enableBalanceLimits() returns()
-func (_CelerLedger *CelerLedgerSession) EnableBalanceLimits() (*types.Transaction, error) {
-	return _CelerLedger.Contract.EnableBalanceLimits(&_CelerLedger.TransactOpts)
+func (_AgentPayLedger *AgentPayLedgerSession) EnableBalanceLimits() (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.EnableBalanceLimits(&_AgentPayLedger.TransactOpts)
 }
 
 // EnableBalanceLimits is a paid mutator transaction binding the contract method 0x83c8f8b8.
 //
 // Solidity: function enableBalanceLimits() returns()
-func (_CelerLedger *CelerLedgerTransactorSession) EnableBalanceLimits() (*types.Transaction, error) {
-	return _CelerLedger.Contract.EnableBalanceLimits(&_CelerLedger.TransactOpts)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) EnableBalanceLimits() (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.EnableBalanceLimits(&_AgentPayLedger.TransactOpts)
 }
 
 // IntendSettle is a paid mutator transaction binding the contract method 0x130d33fe.
 //
 // Solidity: function intendSettle(bytes _signedSimplexStateArray) returns()
-func (_CelerLedger *CelerLedgerTransactor) IntendSettle(opts *bind.TransactOpts, _signedSimplexStateArray []byte) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "intendSettle", _signedSimplexStateArray)
+func (_AgentPayLedger *AgentPayLedgerTransactor) IntendSettle(opts *bind.TransactOpts, _signedSimplexStateArray []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "intendSettle", _signedSimplexStateArray)
 }
 
 // IntendSettle is a paid mutator transaction binding the contract method 0x130d33fe.
 //
 // Solidity: function intendSettle(bytes _signedSimplexStateArray) returns()
-func (_CelerLedger *CelerLedgerSession) IntendSettle(_signedSimplexStateArray []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.IntendSettle(&_CelerLedger.TransactOpts, _signedSimplexStateArray)
+func (_AgentPayLedger *AgentPayLedgerSession) IntendSettle(_signedSimplexStateArray []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.IntendSettle(&_AgentPayLedger.TransactOpts, _signedSimplexStateArray)
 }
 
 // IntendSettle is a paid mutator transaction binding the contract method 0x130d33fe.
 //
 // Solidity: function intendSettle(bytes _signedSimplexStateArray) returns()
-func (_CelerLedger *CelerLedgerTransactorSession) IntendSettle(_signedSimplexStateArray []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.IntendSettle(&_CelerLedger.TransactOpts, _signedSimplexStateArray)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) IntendSettle(_signedSimplexStateArray []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.IntendSettle(&_AgentPayLedger.TransactOpts, _signedSimplexStateArray)
 }
 
 // IntendWithdraw is a paid mutator transaction binding the contract method 0x8942ecb2.
 //
 // Solidity: function intendWithdraw(bytes32 _channelId, uint256 _amount, bytes32 _recipientChannelId) returns()
-func (_CelerLedger *CelerLedgerTransactor) IntendWithdraw(opts *bind.TransactOpts, _channelId [32]byte, _amount *big.Int, _recipientChannelId [32]byte) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "intendWithdraw", _channelId, _amount, _recipientChannelId)
+func (_AgentPayLedger *AgentPayLedgerTransactor) IntendWithdraw(opts *bind.TransactOpts, _channelId [32]byte, _amount *big.Int, _recipientChannelId [32]byte) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "intendWithdraw", _channelId, _amount, _recipientChannelId)
 }
 
 // IntendWithdraw is a paid mutator transaction binding the contract method 0x8942ecb2.
 //
 // Solidity: function intendWithdraw(bytes32 _channelId, uint256 _amount, bytes32 _recipientChannelId) returns()
-func (_CelerLedger *CelerLedgerSession) IntendWithdraw(_channelId [32]byte, _amount *big.Int, _recipientChannelId [32]byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.IntendWithdraw(&_CelerLedger.TransactOpts, _channelId, _amount, _recipientChannelId)
+func (_AgentPayLedger *AgentPayLedgerSession) IntendWithdraw(_channelId [32]byte, _amount *big.Int, _recipientChannelId [32]byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.IntendWithdraw(&_AgentPayLedger.TransactOpts, _channelId, _amount, _recipientChannelId)
 }
 
 // IntendWithdraw is a paid mutator transaction binding the contract method 0x8942ecb2.
 //
 // Solidity: function intendWithdraw(bytes32 _channelId, uint256 _amount, bytes32 _recipientChannelId) returns()
-func (_CelerLedger *CelerLedgerTransactorSession) IntendWithdraw(_channelId [32]byte, _amount *big.Int, _recipientChannelId [32]byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.IntendWithdraw(&_CelerLedger.TransactOpts, _channelId, _amount, _recipientChannelId)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) IntendWithdraw(_channelId [32]byte, _amount *big.Int, _recipientChannelId [32]byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.IntendWithdraw(&_AgentPayLedger.TransactOpts, _channelId, _amount, _recipientChannelId)
 }
 
 // MigrateChannelFrom is a paid mutator transaction binding the contract method 0x2e3c517a.
 //
 // Solidity: function migrateChannelFrom(address _fromLedgerAddr, bytes _migrationRequest) returns()
-func (_CelerLedger *CelerLedgerTransactor) MigrateChannelFrom(opts *bind.TransactOpts, _fromLedgerAddr common.Address, _migrationRequest []byte) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "migrateChannelFrom", _fromLedgerAddr, _migrationRequest)
+func (_AgentPayLedger *AgentPayLedgerTransactor) MigrateChannelFrom(opts *bind.TransactOpts, _fromLedgerAddr common.Address, _migrationRequest []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "migrateChannelFrom", _fromLedgerAddr, _migrationRequest)
 }
 
 // MigrateChannelFrom is a paid mutator transaction binding the contract method 0x2e3c517a.
 //
 // Solidity: function migrateChannelFrom(address _fromLedgerAddr, bytes _migrationRequest) returns()
-func (_CelerLedger *CelerLedgerSession) MigrateChannelFrom(_fromLedgerAddr common.Address, _migrationRequest []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.MigrateChannelFrom(&_CelerLedger.TransactOpts, _fromLedgerAddr, _migrationRequest)
+func (_AgentPayLedger *AgentPayLedgerSession) MigrateChannelFrom(_fromLedgerAddr common.Address, _migrationRequest []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.MigrateChannelFrom(&_AgentPayLedger.TransactOpts, _fromLedgerAddr, _migrationRequest)
 }
 
 // MigrateChannelFrom is a paid mutator transaction binding the contract method 0x2e3c517a.
 //
 // Solidity: function migrateChannelFrom(address _fromLedgerAddr, bytes _migrationRequest) returns()
-func (_CelerLedger *CelerLedgerTransactorSession) MigrateChannelFrom(_fromLedgerAddr common.Address, _migrationRequest []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.MigrateChannelFrom(&_CelerLedger.TransactOpts, _fromLedgerAddr, _migrationRequest)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) MigrateChannelFrom(_fromLedgerAddr common.Address, _migrationRequest []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.MigrateChannelFrom(&_AgentPayLedger.TransactOpts, _fromLedgerAddr, _migrationRequest)
 }
 
 // MigrateChannelTo is a paid mutator transaction binding the contract method 0xe0a515b7.
 //
 // Solidity: function migrateChannelTo(bytes _migrationRequest) returns(bytes32)
-func (_CelerLedger *CelerLedgerTransactor) MigrateChannelTo(opts *bind.TransactOpts, _migrationRequest []byte) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "migrateChannelTo", _migrationRequest)
+func (_AgentPayLedger *AgentPayLedgerTransactor) MigrateChannelTo(opts *bind.TransactOpts, _migrationRequest []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "migrateChannelTo", _migrationRequest)
 }
 
 // MigrateChannelTo is a paid mutator transaction binding the contract method 0xe0a515b7.
 //
 // Solidity: function migrateChannelTo(bytes _migrationRequest) returns(bytes32)
-func (_CelerLedger *CelerLedgerSession) MigrateChannelTo(_migrationRequest []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.MigrateChannelTo(&_CelerLedger.TransactOpts, _migrationRequest)
+func (_AgentPayLedger *AgentPayLedgerSession) MigrateChannelTo(_migrationRequest []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.MigrateChannelTo(&_AgentPayLedger.TransactOpts, _migrationRequest)
 }
 
 // MigrateChannelTo is a paid mutator transaction binding the contract method 0xe0a515b7.
 //
 // Solidity: function migrateChannelTo(bytes _migrationRequest) returns(bytes32)
-func (_CelerLedger *CelerLedgerTransactorSession) MigrateChannelTo(_migrationRequest []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.MigrateChannelTo(&_CelerLedger.TransactOpts, _migrationRequest)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) MigrateChannelTo(_migrationRequest []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.MigrateChannelTo(&_AgentPayLedger.TransactOpts, _migrationRequest)
 }
 
 // OpenChannel is a paid mutator transaction binding the contract method 0x93b7b3ce.
 //
 // Solidity: function openChannel(bytes _openRequest) payable returns()
-func (_CelerLedger *CelerLedgerTransactor) OpenChannel(opts *bind.TransactOpts, _openRequest []byte) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "openChannel", _openRequest)
+func (_AgentPayLedger *AgentPayLedgerTransactor) OpenChannel(opts *bind.TransactOpts, _openRequest []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "openChannel", _openRequest)
 }
 
 // OpenChannel is a paid mutator transaction binding the contract method 0x93b7b3ce.
 //
 // Solidity: function openChannel(bytes _openRequest) payable returns()
-func (_CelerLedger *CelerLedgerSession) OpenChannel(_openRequest []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.OpenChannel(&_CelerLedger.TransactOpts, _openRequest)
+func (_AgentPayLedger *AgentPayLedgerSession) OpenChannel(_openRequest []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.OpenChannel(&_AgentPayLedger.TransactOpts, _openRequest)
 }
 
 // OpenChannel is a paid mutator transaction binding the contract method 0x93b7b3ce.
 //
 // Solidity: function openChannel(bytes _openRequest) payable returns()
-func (_CelerLedger *CelerLedgerTransactorSession) OpenChannel(_openRequest []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.OpenChannel(&_CelerLedger.TransactOpts, _openRequest)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) OpenChannel(_openRequest []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.OpenChannel(&_AgentPayLedger.TransactOpts, _openRequest)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
-func (_CelerLedger *CelerLedgerTransactor) RenounceOwnership(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "renounceOwnership")
+func (_AgentPayLedger *AgentPayLedgerTransactor) RenounceOwnership(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "renounceOwnership")
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
-func (_CelerLedger *CelerLedgerSession) RenounceOwnership() (*types.Transaction, error) {
-	return _CelerLedger.Contract.RenounceOwnership(&_CelerLedger.TransactOpts)
+func (_AgentPayLedger *AgentPayLedgerSession) RenounceOwnership() (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.RenounceOwnership(&_AgentPayLedger.TransactOpts)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
-func (_CelerLedger *CelerLedgerTransactorSession) RenounceOwnership() (*types.Transaction, error) {
-	return _CelerLedger.Contract.RenounceOwnership(&_CelerLedger.TransactOpts)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) RenounceOwnership() (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.RenounceOwnership(&_AgentPayLedger.TransactOpts)
 }
 
 // SetBalanceLimits is a paid mutator transaction binding the contract method 0xa8580cab.
 //
 // Solidity: function setBalanceLimits(address[] _tokenAddrs, uint256[] _limits) returns()
-func (_CelerLedger *CelerLedgerTransactor) SetBalanceLimits(opts *bind.TransactOpts, _tokenAddrs []common.Address, _limits []*big.Int) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "setBalanceLimits", _tokenAddrs, _limits)
+func (_AgentPayLedger *AgentPayLedgerTransactor) SetBalanceLimits(opts *bind.TransactOpts, _tokenAddrs []common.Address, _limits []*big.Int) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "setBalanceLimits", _tokenAddrs, _limits)
 }
 
 // SetBalanceLimits is a paid mutator transaction binding the contract method 0xa8580cab.
 //
 // Solidity: function setBalanceLimits(address[] _tokenAddrs, uint256[] _limits) returns()
-func (_CelerLedger *CelerLedgerSession) SetBalanceLimits(_tokenAddrs []common.Address, _limits []*big.Int) (*types.Transaction, error) {
-	return _CelerLedger.Contract.SetBalanceLimits(&_CelerLedger.TransactOpts, _tokenAddrs, _limits)
+func (_AgentPayLedger *AgentPayLedgerSession) SetBalanceLimits(_tokenAddrs []common.Address, _limits []*big.Int) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.SetBalanceLimits(&_AgentPayLedger.TransactOpts, _tokenAddrs, _limits)
 }
 
 // SetBalanceLimits is a paid mutator transaction binding the contract method 0xa8580cab.
 //
 // Solidity: function setBalanceLimits(address[] _tokenAddrs, uint256[] _limits) returns()
-func (_CelerLedger *CelerLedgerTransactorSession) SetBalanceLimits(_tokenAddrs []common.Address, _limits []*big.Int) (*types.Transaction, error) {
-	return _CelerLedger.Contract.SetBalanceLimits(&_CelerLedger.TransactOpts, _tokenAddrs, _limits)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) SetBalanceLimits(_tokenAddrs []common.Address, _limits []*big.Int) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.SetBalanceLimits(&_AgentPayLedger.TransactOpts, _tokenAddrs, _limits)
 }
 
 // SnapshotStates is a paid mutator transaction binding the contract method 0x4102b9a8.
 //
 // Solidity: function snapshotStates(bytes _signedSimplexStateArray) returns()
-func (_CelerLedger *CelerLedgerTransactor) SnapshotStates(opts *bind.TransactOpts, _signedSimplexStateArray []byte) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "snapshotStates", _signedSimplexStateArray)
+func (_AgentPayLedger *AgentPayLedgerTransactor) SnapshotStates(opts *bind.TransactOpts, _signedSimplexStateArray []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "snapshotStates", _signedSimplexStateArray)
 }
 
 // SnapshotStates is a paid mutator transaction binding the contract method 0x4102b9a8.
 //
 // Solidity: function snapshotStates(bytes _signedSimplexStateArray) returns()
-func (_CelerLedger *CelerLedgerSession) SnapshotStates(_signedSimplexStateArray []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.SnapshotStates(&_CelerLedger.TransactOpts, _signedSimplexStateArray)
+func (_AgentPayLedger *AgentPayLedgerSession) SnapshotStates(_signedSimplexStateArray []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.SnapshotStates(&_AgentPayLedger.TransactOpts, _signedSimplexStateArray)
 }
 
 // SnapshotStates is a paid mutator transaction binding the contract method 0x4102b9a8.
 //
 // Solidity: function snapshotStates(bytes _signedSimplexStateArray) returns()
-func (_CelerLedger *CelerLedgerTransactorSession) SnapshotStates(_signedSimplexStateArray []byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.SnapshotStates(&_CelerLedger.TransactOpts, _signedSimplexStateArray)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) SnapshotStates(_signedSimplexStateArray []byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.SnapshotStates(&_AgentPayLedger.TransactOpts, _signedSimplexStateArray)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
 // Solidity: function transferOwnership(address newOwner) returns()
-func (_CelerLedger *CelerLedgerTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "transferOwnership", newOwner)
+func (_AgentPayLedger *AgentPayLedgerTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "transferOwnership", newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
 // Solidity: function transferOwnership(address newOwner) returns()
-func (_CelerLedger *CelerLedgerSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
-	return _CelerLedger.Contract.TransferOwnership(&_CelerLedger.TransactOpts, newOwner)
+func (_AgentPayLedger *AgentPayLedgerSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.TransferOwnership(&_AgentPayLedger.TransactOpts, newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
 // Solidity: function transferOwnership(address newOwner) returns()
-func (_CelerLedger *CelerLedgerTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
-	return _CelerLedger.Contract.TransferOwnership(&_CelerLedger.TransactOpts, newOwner)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.TransferOwnership(&_AgentPayLedger.TransactOpts, newOwner)
 }
 
 // VetoWithdraw is a paid mutator transaction binding the contract method 0x255aab59.
 //
 // Solidity: function vetoWithdraw(bytes32 _channelId) returns()
-func (_CelerLedger *CelerLedgerTransactor) VetoWithdraw(opts *bind.TransactOpts, _channelId [32]byte) (*types.Transaction, error) {
-	return _CelerLedger.contract.Transact(opts, "vetoWithdraw", _channelId)
+func (_AgentPayLedger *AgentPayLedgerTransactor) VetoWithdraw(opts *bind.TransactOpts, _channelId [32]byte) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.Transact(opts, "vetoWithdraw", _channelId)
 }
 
 // VetoWithdraw is a paid mutator transaction binding the contract method 0x255aab59.
 //
 // Solidity: function vetoWithdraw(bytes32 _channelId) returns()
-func (_CelerLedger *CelerLedgerSession) VetoWithdraw(_channelId [32]byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.VetoWithdraw(&_CelerLedger.TransactOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerSession) VetoWithdraw(_channelId [32]byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.VetoWithdraw(&_AgentPayLedger.TransactOpts, _channelId)
 }
 
 // VetoWithdraw is a paid mutator transaction binding the contract method 0x255aab59.
 //
 // Solidity: function vetoWithdraw(bytes32 _channelId) returns()
-func (_CelerLedger *CelerLedgerTransactorSession) VetoWithdraw(_channelId [32]byte) (*types.Transaction, error) {
-	return _CelerLedger.Contract.VetoWithdraw(&_CelerLedger.TransactOpts, _channelId)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) VetoWithdraw(_channelId [32]byte) (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.VetoWithdraw(&_AgentPayLedger.TransactOpts, _channelId)
 }
 
 // Receive is a paid mutator transaction binding the contract receive function.
 //
 // Solidity: receive() payable returns()
-func (_CelerLedger *CelerLedgerTransactor) Receive(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _CelerLedger.contract.RawTransact(opts, nil) // calldata is disallowed for receive function
+func (_AgentPayLedger *AgentPayLedgerTransactor) Receive(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AgentPayLedger.contract.RawTransact(opts, nil) // calldata is disallowed for receive function
 }
 
 // Receive is a paid mutator transaction binding the contract receive function.
 //
 // Solidity: receive() payable returns()
-func (_CelerLedger *CelerLedgerSession) Receive() (*types.Transaction, error) {
-	return _CelerLedger.Contract.Receive(&_CelerLedger.TransactOpts)
+func (_AgentPayLedger *AgentPayLedgerSession) Receive() (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.Receive(&_AgentPayLedger.TransactOpts)
 }
 
 // Receive is a paid mutator transaction binding the contract receive function.
 //
 // Solidity: receive() payable returns()
-func (_CelerLedger *CelerLedgerTransactorSession) Receive() (*types.Transaction, error) {
-	return _CelerLedger.Contract.Receive(&_CelerLedger.TransactOpts)
+func (_AgentPayLedger *AgentPayLedgerTransactorSession) Receive() (*types.Transaction, error) {
+	return _AgentPayLedger.Contract.Receive(&_AgentPayLedger.TransactOpts)
 }
 
-// CelerLedgerClearOnePayIterator is returned from FilterClearOnePay and is used to iterate over the raw logs and unpacked data for ClearOnePay events raised by the CelerLedger contract.
-type CelerLedgerClearOnePayIterator struct {
-	Event *CelerLedgerClearOnePay // Event containing the contract specifics and raw log
+// AgentPayLedgerClearOnePayIterator is returned from FilterClearOnePay and is used to iterate over the raw logs and unpacked data for ClearOnePay events raised by the AgentPayLedger contract.
+type AgentPayLedgerClearOnePayIterator struct {
+	Event *AgentPayLedgerClearOnePay // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1401,7 +1401,7 @@ type CelerLedgerClearOnePayIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerLedgerClearOnePayIterator) Next() bool {
+func (it *AgentPayLedgerClearOnePayIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1410,7 +1410,7 @@ func (it *CelerLedgerClearOnePayIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerLedgerClearOnePay)
+			it.Event = new(AgentPayLedgerClearOnePay)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1425,7 +1425,7 @@ func (it *CelerLedgerClearOnePayIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerLedgerClearOnePay)
+		it.Event = new(AgentPayLedgerClearOnePay)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1441,19 +1441,19 @@ func (it *CelerLedgerClearOnePayIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerLedgerClearOnePayIterator) Error() error {
+func (it *AgentPayLedgerClearOnePayIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerLedgerClearOnePayIterator) Close() error {
+func (it *AgentPayLedgerClearOnePayIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerLedgerClearOnePay represents a ClearOnePay event raised by the CelerLedger contract.
-type CelerLedgerClearOnePay struct {
+// AgentPayLedgerClearOnePay represents a ClearOnePay event raised by the AgentPayLedger contract.
+type AgentPayLedgerClearOnePay struct {
 	ChannelId [32]byte
 	PayId     [32]byte
 	PeerFrom  common.Address
@@ -1464,7 +1464,7 @@ type CelerLedgerClearOnePay struct {
 // FilterClearOnePay is a free log retrieval operation binding the contract event 0x33252d4bc5cee2ad248475e8c39239a79dc64b2691c9ca1a63ff9af0c75b8776.
 //
 // Solidity: event ClearOnePay(bytes32 indexed channelId, bytes32 indexed payId, address indexed peerFrom, uint256 amount)
-func (_CelerLedger *CelerLedgerFilterer) FilterClearOnePay(opts *bind.FilterOpts, channelId [][32]byte, payId [][32]byte, peerFrom []common.Address) (*CelerLedgerClearOnePayIterator, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) FilterClearOnePay(opts *bind.FilterOpts, channelId [][32]byte, payId [][32]byte, peerFrom []common.Address) (*AgentPayLedgerClearOnePayIterator, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
@@ -1479,17 +1479,17 @@ func (_CelerLedger *CelerLedgerFilterer) FilterClearOnePay(opts *bind.FilterOpts
 		peerFromRule = append(peerFromRule, peerFromItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.FilterLogs(opts, "ClearOnePay", channelIdRule, payIdRule, peerFromRule)
+	logs, sub, err := _AgentPayLedger.contract.FilterLogs(opts, "ClearOnePay", channelIdRule, payIdRule, peerFromRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerClearOnePayIterator{contract: _CelerLedger.contract, event: "ClearOnePay", logs: logs, sub: sub}, nil
+	return &AgentPayLedgerClearOnePayIterator{contract: _AgentPayLedger.contract, event: "ClearOnePay", logs: logs, sub: sub}, nil
 }
 
 // WatchClearOnePay is a free log subscription operation binding the contract event 0x33252d4bc5cee2ad248475e8c39239a79dc64b2691c9ca1a63ff9af0c75b8776.
 //
 // Solidity: event ClearOnePay(bytes32 indexed channelId, bytes32 indexed payId, address indexed peerFrom, uint256 amount)
-func (_CelerLedger *CelerLedgerFilterer) WatchClearOnePay(opts *bind.WatchOpts, sink chan<- *CelerLedgerClearOnePay, channelId [][32]byte, payId [][32]byte, peerFrom []common.Address) (event.Subscription, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) WatchClearOnePay(opts *bind.WatchOpts, sink chan<- *AgentPayLedgerClearOnePay, channelId [][32]byte, payId [][32]byte, peerFrom []common.Address) (event.Subscription, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
@@ -1504,7 +1504,7 @@ func (_CelerLedger *CelerLedgerFilterer) WatchClearOnePay(opts *bind.WatchOpts, 
 		peerFromRule = append(peerFromRule, peerFromItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.WatchLogs(opts, "ClearOnePay", channelIdRule, payIdRule, peerFromRule)
+	logs, sub, err := _AgentPayLedger.contract.WatchLogs(opts, "ClearOnePay", channelIdRule, payIdRule, peerFromRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1514,8 +1514,8 @@ func (_CelerLedger *CelerLedgerFilterer) WatchClearOnePay(opts *bind.WatchOpts, 
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerLedgerClearOnePay)
-				if err := _CelerLedger.contract.UnpackLog(event, "ClearOnePay", log); err != nil {
+				event := new(AgentPayLedgerClearOnePay)
+				if err := _AgentPayLedger.contract.UnpackLog(event, "ClearOnePay", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1539,18 +1539,18 @@ func (_CelerLedger *CelerLedgerFilterer) WatchClearOnePay(opts *bind.WatchOpts, 
 // ParseClearOnePay is a log parse operation binding the contract event 0x33252d4bc5cee2ad248475e8c39239a79dc64b2691c9ca1a63ff9af0c75b8776.
 //
 // Solidity: event ClearOnePay(bytes32 indexed channelId, bytes32 indexed payId, address indexed peerFrom, uint256 amount)
-func (_CelerLedger *CelerLedgerFilterer) ParseClearOnePay(log types.Log) (*CelerLedgerClearOnePay, error) {
-	event := new(CelerLedgerClearOnePay)
-	if err := _CelerLedger.contract.UnpackLog(event, "ClearOnePay", log); err != nil {
+func (_AgentPayLedger *AgentPayLedgerFilterer) ParseClearOnePay(log types.Log) (*AgentPayLedgerClearOnePay, error) {
+	event := new(AgentPayLedgerClearOnePay)
+	if err := _AgentPayLedger.contract.UnpackLog(event, "ClearOnePay", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerLedgerConfirmSettleIterator is returned from FilterConfirmSettle and is used to iterate over the raw logs and unpacked data for ConfirmSettle events raised by the CelerLedger contract.
-type CelerLedgerConfirmSettleIterator struct {
-	Event *CelerLedgerConfirmSettle // Event containing the contract specifics and raw log
+// AgentPayLedgerConfirmSettleIterator is returned from FilterConfirmSettle and is used to iterate over the raw logs and unpacked data for ConfirmSettle events raised by the AgentPayLedger contract.
+type AgentPayLedgerConfirmSettleIterator struct {
+	Event *AgentPayLedgerConfirmSettle // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1564,7 +1564,7 @@ type CelerLedgerConfirmSettleIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerLedgerConfirmSettleIterator) Next() bool {
+func (it *AgentPayLedgerConfirmSettleIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1573,7 +1573,7 @@ func (it *CelerLedgerConfirmSettleIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerLedgerConfirmSettle)
+			it.Event = new(AgentPayLedgerConfirmSettle)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1588,7 +1588,7 @@ func (it *CelerLedgerConfirmSettleIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerLedgerConfirmSettle)
+		it.Event = new(AgentPayLedgerConfirmSettle)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1604,19 +1604,19 @@ func (it *CelerLedgerConfirmSettleIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerLedgerConfirmSettleIterator) Error() error {
+func (it *AgentPayLedgerConfirmSettleIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerLedgerConfirmSettleIterator) Close() error {
+func (it *AgentPayLedgerConfirmSettleIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerLedgerConfirmSettle represents a ConfirmSettle event raised by the CelerLedger contract.
-type CelerLedgerConfirmSettle struct {
+// AgentPayLedgerConfirmSettle represents a ConfirmSettle event raised by the AgentPayLedger contract.
+type AgentPayLedgerConfirmSettle struct {
 	ChannelId     [32]byte
 	SettleBalance [2]*big.Int
 	Raw           types.Log // Blockchain specific contextual infos
@@ -1625,31 +1625,31 @@ type CelerLedgerConfirmSettle struct {
 // FilterConfirmSettle is a free log retrieval operation binding the contract event 0x728ddd8c5acda5947c34db8d759c66ae70884f526ff9b93637d351b012ef3206.
 //
 // Solidity: event ConfirmSettle(bytes32 indexed channelId, uint256[2] settleBalance)
-func (_CelerLedger *CelerLedgerFilterer) FilterConfirmSettle(opts *bind.FilterOpts, channelId [][32]byte) (*CelerLedgerConfirmSettleIterator, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) FilterConfirmSettle(opts *bind.FilterOpts, channelId [][32]byte) (*AgentPayLedgerConfirmSettleIterator, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
 		channelIdRule = append(channelIdRule, channelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.FilterLogs(opts, "ConfirmSettle", channelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.FilterLogs(opts, "ConfirmSettle", channelIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerConfirmSettleIterator{contract: _CelerLedger.contract, event: "ConfirmSettle", logs: logs, sub: sub}, nil
+	return &AgentPayLedgerConfirmSettleIterator{contract: _AgentPayLedger.contract, event: "ConfirmSettle", logs: logs, sub: sub}, nil
 }
 
 // WatchConfirmSettle is a free log subscription operation binding the contract event 0x728ddd8c5acda5947c34db8d759c66ae70884f526ff9b93637d351b012ef3206.
 //
 // Solidity: event ConfirmSettle(bytes32 indexed channelId, uint256[2] settleBalance)
-func (_CelerLedger *CelerLedgerFilterer) WatchConfirmSettle(opts *bind.WatchOpts, sink chan<- *CelerLedgerConfirmSettle, channelId [][32]byte) (event.Subscription, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) WatchConfirmSettle(opts *bind.WatchOpts, sink chan<- *AgentPayLedgerConfirmSettle, channelId [][32]byte) (event.Subscription, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
 		channelIdRule = append(channelIdRule, channelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.WatchLogs(opts, "ConfirmSettle", channelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.WatchLogs(opts, "ConfirmSettle", channelIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1659,8 +1659,8 @@ func (_CelerLedger *CelerLedgerFilterer) WatchConfirmSettle(opts *bind.WatchOpts
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerLedgerConfirmSettle)
-				if err := _CelerLedger.contract.UnpackLog(event, "ConfirmSettle", log); err != nil {
+				event := new(AgentPayLedgerConfirmSettle)
+				if err := _AgentPayLedger.contract.UnpackLog(event, "ConfirmSettle", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1684,18 +1684,18 @@ func (_CelerLedger *CelerLedgerFilterer) WatchConfirmSettle(opts *bind.WatchOpts
 // ParseConfirmSettle is a log parse operation binding the contract event 0x728ddd8c5acda5947c34db8d759c66ae70884f526ff9b93637d351b012ef3206.
 //
 // Solidity: event ConfirmSettle(bytes32 indexed channelId, uint256[2] settleBalance)
-func (_CelerLedger *CelerLedgerFilterer) ParseConfirmSettle(log types.Log) (*CelerLedgerConfirmSettle, error) {
-	event := new(CelerLedgerConfirmSettle)
-	if err := _CelerLedger.contract.UnpackLog(event, "ConfirmSettle", log); err != nil {
+func (_AgentPayLedger *AgentPayLedgerFilterer) ParseConfirmSettle(log types.Log) (*AgentPayLedgerConfirmSettle, error) {
+	event := new(AgentPayLedgerConfirmSettle)
+	if err := _AgentPayLedger.contract.UnpackLog(event, "ConfirmSettle", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerLedgerConfirmSettleFailIterator is returned from FilterConfirmSettleFail and is used to iterate over the raw logs and unpacked data for ConfirmSettleFail events raised by the CelerLedger contract.
-type CelerLedgerConfirmSettleFailIterator struct {
-	Event *CelerLedgerConfirmSettleFail // Event containing the contract specifics and raw log
+// AgentPayLedgerConfirmSettleFailIterator is returned from FilterConfirmSettleFail and is used to iterate over the raw logs and unpacked data for ConfirmSettleFail events raised by the AgentPayLedger contract.
+type AgentPayLedgerConfirmSettleFailIterator struct {
+	Event *AgentPayLedgerConfirmSettleFail // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1709,7 +1709,7 @@ type CelerLedgerConfirmSettleFailIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerLedgerConfirmSettleFailIterator) Next() bool {
+func (it *AgentPayLedgerConfirmSettleFailIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1718,7 +1718,7 @@ func (it *CelerLedgerConfirmSettleFailIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerLedgerConfirmSettleFail)
+			it.Event = new(AgentPayLedgerConfirmSettleFail)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1733,7 +1733,7 @@ func (it *CelerLedgerConfirmSettleFailIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerLedgerConfirmSettleFail)
+		it.Event = new(AgentPayLedgerConfirmSettleFail)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1749,19 +1749,19 @@ func (it *CelerLedgerConfirmSettleFailIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerLedgerConfirmSettleFailIterator) Error() error {
+func (it *AgentPayLedgerConfirmSettleFailIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerLedgerConfirmSettleFailIterator) Close() error {
+func (it *AgentPayLedgerConfirmSettleFailIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerLedgerConfirmSettleFail represents a ConfirmSettleFail event raised by the CelerLedger contract.
-type CelerLedgerConfirmSettleFail struct {
+// AgentPayLedgerConfirmSettleFail represents a ConfirmSettleFail event raised by the AgentPayLedger contract.
+type AgentPayLedgerConfirmSettleFail struct {
 	ChannelId [32]byte
 	Raw       types.Log // Blockchain specific contextual infos
 }
@@ -1769,31 +1769,31 @@ type CelerLedgerConfirmSettleFail struct {
 // FilterConfirmSettleFail is a free log retrieval operation binding the contract event 0xa6549eb18490d42e7ec93f42115d1ee11b706d04077be9597034dd73ec8bcb36.
 //
 // Solidity: event ConfirmSettleFail(bytes32 indexed channelId)
-func (_CelerLedger *CelerLedgerFilterer) FilterConfirmSettleFail(opts *bind.FilterOpts, channelId [][32]byte) (*CelerLedgerConfirmSettleFailIterator, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) FilterConfirmSettleFail(opts *bind.FilterOpts, channelId [][32]byte) (*AgentPayLedgerConfirmSettleFailIterator, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
 		channelIdRule = append(channelIdRule, channelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.FilterLogs(opts, "ConfirmSettleFail", channelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.FilterLogs(opts, "ConfirmSettleFail", channelIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerConfirmSettleFailIterator{contract: _CelerLedger.contract, event: "ConfirmSettleFail", logs: logs, sub: sub}, nil
+	return &AgentPayLedgerConfirmSettleFailIterator{contract: _AgentPayLedger.contract, event: "ConfirmSettleFail", logs: logs, sub: sub}, nil
 }
 
 // WatchConfirmSettleFail is a free log subscription operation binding the contract event 0xa6549eb18490d42e7ec93f42115d1ee11b706d04077be9597034dd73ec8bcb36.
 //
 // Solidity: event ConfirmSettleFail(bytes32 indexed channelId)
-func (_CelerLedger *CelerLedgerFilterer) WatchConfirmSettleFail(opts *bind.WatchOpts, sink chan<- *CelerLedgerConfirmSettleFail, channelId [][32]byte) (event.Subscription, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) WatchConfirmSettleFail(opts *bind.WatchOpts, sink chan<- *AgentPayLedgerConfirmSettleFail, channelId [][32]byte) (event.Subscription, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
 		channelIdRule = append(channelIdRule, channelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.WatchLogs(opts, "ConfirmSettleFail", channelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.WatchLogs(opts, "ConfirmSettleFail", channelIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1803,8 +1803,8 @@ func (_CelerLedger *CelerLedgerFilterer) WatchConfirmSettleFail(opts *bind.Watch
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerLedgerConfirmSettleFail)
-				if err := _CelerLedger.contract.UnpackLog(event, "ConfirmSettleFail", log); err != nil {
+				event := new(AgentPayLedgerConfirmSettleFail)
+				if err := _AgentPayLedger.contract.UnpackLog(event, "ConfirmSettleFail", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1828,18 +1828,18 @@ func (_CelerLedger *CelerLedgerFilterer) WatchConfirmSettleFail(opts *bind.Watch
 // ParseConfirmSettleFail is a log parse operation binding the contract event 0xa6549eb18490d42e7ec93f42115d1ee11b706d04077be9597034dd73ec8bcb36.
 //
 // Solidity: event ConfirmSettleFail(bytes32 indexed channelId)
-func (_CelerLedger *CelerLedgerFilterer) ParseConfirmSettleFail(log types.Log) (*CelerLedgerConfirmSettleFail, error) {
-	event := new(CelerLedgerConfirmSettleFail)
-	if err := _CelerLedger.contract.UnpackLog(event, "ConfirmSettleFail", log); err != nil {
+func (_AgentPayLedger *AgentPayLedgerFilterer) ParseConfirmSettleFail(log types.Log) (*AgentPayLedgerConfirmSettleFail, error) {
+	event := new(AgentPayLedgerConfirmSettleFail)
+	if err := _AgentPayLedger.contract.UnpackLog(event, "ConfirmSettleFail", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerLedgerConfirmWithdrawIterator is returned from FilterConfirmWithdraw and is used to iterate over the raw logs and unpacked data for ConfirmWithdraw events raised by the CelerLedger contract.
-type CelerLedgerConfirmWithdrawIterator struct {
-	Event *CelerLedgerConfirmWithdraw // Event containing the contract specifics and raw log
+// AgentPayLedgerConfirmWithdrawIterator is returned from FilterConfirmWithdraw and is used to iterate over the raw logs and unpacked data for ConfirmWithdraw events raised by the AgentPayLedger contract.
+type AgentPayLedgerConfirmWithdrawIterator struct {
+	Event *AgentPayLedgerConfirmWithdraw // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1853,7 +1853,7 @@ type CelerLedgerConfirmWithdrawIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerLedgerConfirmWithdrawIterator) Next() bool {
+func (it *AgentPayLedgerConfirmWithdrawIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1862,7 +1862,7 @@ func (it *CelerLedgerConfirmWithdrawIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerLedgerConfirmWithdraw)
+			it.Event = new(AgentPayLedgerConfirmWithdraw)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1877,7 +1877,7 @@ func (it *CelerLedgerConfirmWithdrawIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerLedgerConfirmWithdraw)
+		it.Event = new(AgentPayLedgerConfirmWithdraw)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1893,19 +1893,19 @@ func (it *CelerLedgerConfirmWithdrawIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerLedgerConfirmWithdrawIterator) Error() error {
+func (it *AgentPayLedgerConfirmWithdrawIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerLedgerConfirmWithdrawIterator) Close() error {
+func (it *AgentPayLedgerConfirmWithdrawIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerLedgerConfirmWithdraw represents a ConfirmWithdraw event raised by the CelerLedger contract.
-type CelerLedgerConfirmWithdraw struct {
+// AgentPayLedgerConfirmWithdraw represents a ConfirmWithdraw event raised by the AgentPayLedger contract.
+type AgentPayLedgerConfirmWithdraw struct {
 	ChannelId          [32]byte
 	WithdrawnAmount    *big.Int
 	Receiver           common.Address
@@ -1918,7 +1918,7 @@ type CelerLedgerConfirmWithdraw struct {
 // FilterConfirmWithdraw is a free log retrieval operation binding the contract event 0xe8110b4ee08638c48f6a4d5f726927df4e541893efa9d2c2c47a6b889041826e.
 //
 // Solidity: event ConfirmWithdraw(bytes32 indexed channelId, uint256 withdrawnAmount, address indexed receiver, bytes32 indexed recipientChannelId, uint256[2] deposits, uint256[2] withdrawals)
-func (_CelerLedger *CelerLedgerFilterer) FilterConfirmWithdraw(opts *bind.FilterOpts, channelId [][32]byte, receiver []common.Address, recipientChannelId [][32]byte) (*CelerLedgerConfirmWithdrawIterator, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) FilterConfirmWithdraw(opts *bind.FilterOpts, channelId [][32]byte, receiver []common.Address, recipientChannelId [][32]byte) (*AgentPayLedgerConfirmWithdrawIterator, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
@@ -1934,17 +1934,17 @@ func (_CelerLedger *CelerLedgerFilterer) FilterConfirmWithdraw(opts *bind.Filter
 		recipientChannelIdRule = append(recipientChannelIdRule, recipientChannelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.FilterLogs(opts, "ConfirmWithdraw", channelIdRule, receiverRule, recipientChannelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.FilterLogs(opts, "ConfirmWithdraw", channelIdRule, receiverRule, recipientChannelIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerConfirmWithdrawIterator{contract: _CelerLedger.contract, event: "ConfirmWithdraw", logs: logs, sub: sub}, nil
+	return &AgentPayLedgerConfirmWithdrawIterator{contract: _AgentPayLedger.contract, event: "ConfirmWithdraw", logs: logs, sub: sub}, nil
 }
 
 // WatchConfirmWithdraw is a free log subscription operation binding the contract event 0xe8110b4ee08638c48f6a4d5f726927df4e541893efa9d2c2c47a6b889041826e.
 //
 // Solidity: event ConfirmWithdraw(bytes32 indexed channelId, uint256 withdrawnAmount, address indexed receiver, bytes32 indexed recipientChannelId, uint256[2] deposits, uint256[2] withdrawals)
-func (_CelerLedger *CelerLedgerFilterer) WatchConfirmWithdraw(opts *bind.WatchOpts, sink chan<- *CelerLedgerConfirmWithdraw, channelId [][32]byte, receiver []common.Address, recipientChannelId [][32]byte) (event.Subscription, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) WatchConfirmWithdraw(opts *bind.WatchOpts, sink chan<- *AgentPayLedgerConfirmWithdraw, channelId [][32]byte, receiver []common.Address, recipientChannelId [][32]byte) (event.Subscription, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
@@ -1960,7 +1960,7 @@ func (_CelerLedger *CelerLedgerFilterer) WatchConfirmWithdraw(opts *bind.WatchOp
 		recipientChannelIdRule = append(recipientChannelIdRule, recipientChannelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.WatchLogs(opts, "ConfirmWithdraw", channelIdRule, receiverRule, recipientChannelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.WatchLogs(opts, "ConfirmWithdraw", channelIdRule, receiverRule, recipientChannelIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1970,8 +1970,8 @@ func (_CelerLedger *CelerLedgerFilterer) WatchConfirmWithdraw(opts *bind.WatchOp
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerLedgerConfirmWithdraw)
-				if err := _CelerLedger.contract.UnpackLog(event, "ConfirmWithdraw", log); err != nil {
+				event := new(AgentPayLedgerConfirmWithdraw)
+				if err := _AgentPayLedger.contract.UnpackLog(event, "ConfirmWithdraw", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1995,18 +1995,18 @@ func (_CelerLedger *CelerLedgerFilterer) WatchConfirmWithdraw(opts *bind.WatchOp
 // ParseConfirmWithdraw is a log parse operation binding the contract event 0xe8110b4ee08638c48f6a4d5f726927df4e541893efa9d2c2c47a6b889041826e.
 //
 // Solidity: event ConfirmWithdraw(bytes32 indexed channelId, uint256 withdrawnAmount, address indexed receiver, bytes32 indexed recipientChannelId, uint256[2] deposits, uint256[2] withdrawals)
-func (_CelerLedger *CelerLedgerFilterer) ParseConfirmWithdraw(log types.Log) (*CelerLedgerConfirmWithdraw, error) {
-	event := new(CelerLedgerConfirmWithdraw)
-	if err := _CelerLedger.contract.UnpackLog(event, "ConfirmWithdraw", log); err != nil {
+func (_AgentPayLedger *AgentPayLedgerFilterer) ParseConfirmWithdraw(log types.Log) (*AgentPayLedgerConfirmWithdraw, error) {
+	event := new(AgentPayLedgerConfirmWithdraw)
+	if err := _AgentPayLedger.contract.UnpackLog(event, "ConfirmWithdraw", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerLedgerCooperativeSettleIterator is returned from FilterCooperativeSettle and is used to iterate over the raw logs and unpacked data for CooperativeSettle events raised by the CelerLedger contract.
-type CelerLedgerCooperativeSettleIterator struct {
-	Event *CelerLedgerCooperativeSettle // Event containing the contract specifics and raw log
+// AgentPayLedgerCooperativeSettleIterator is returned from FilterCooperativeSettle and is used to iterate over the raw logs and unpacked data for CooperativeSettle events raised by the AgentPayLedger contract.
+type AgentPayLedgerCooperativeSettleIterator struct {
+	Event *AgentPayLedgerCooperativeSettle // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2020,7 +2020,7 @@ type CelerLedgerCooperativeSettleIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerLedgerCooperativeSettleIterator) Next() bool {
+func (it *AgentPayLedgerCooperativeSettleIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2029,7 +2029,7 @@ func (it *CelerLedgerCooperativeSettleIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerLedgerCooperativeSettle)
+			it.Event = new(AgentPayLedgerCooperativeSettle)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2044,7 +2044,7 @@ func (it *CelerLedgerCooperativeSettleIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerLedgerCooperativeSettle)
+		it.Event = new(AgentPayLedgerCooperativeSettle)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2060,19 +2060,19 @@ func (it *CelerLedgerCooperativeSettleIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerLedgerCooperativeSettleIterator) Error() error {
+func (it *AgentPayLedgerCooperativeSettleIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerLedgerCooperativeSettleIterator) Close() error {
+func (it *AgentPayLedgerCooperativeSettleIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerLedgerCooperativeSettle represents a CooperativeSettle event raised by the CelerLedger contract.
-type CelerLedgerCooperativeSettle struct {
+// AgentPayLedgerCooperativeSettle represents a CooperativeSettle event raised by the AgentPayLedger contract.
+type AgentPayLedgerCooperativeSettle struct {
 	ChannelId     [32]byte
 	SettleBalance [2]*big.Int
 	Raw           types.Log // Blockchain specific contextual infos
@@ -2081,31 +2081,31 @@ type CelerLedgerCooperativeSettle struct {
 // FilterCooperativeSettle is a free log retrieval operation binding the contract event 0x6c666557dc97fd52cd2d9d6dd6d109e501ffdb831abeecf13aafeeaf762ee1fd.
 //
 // Solidity: event CooperativeSettle(bytes32 indexed channelId, uint256[2] settleBalance)
-func (_CelerLedger *CelerLedgerFilterer) FilterCooperativeSettle(opts *bind.FilterOpts, channelId [][32]byte) (*CelerLedgerCooperativeSettleIterator, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) FilterCooperativeSettle(opts *bind.FilterOpts, channelId [][32]byte) (*AgentPayLedgerCooperativeSettleIterator, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
 		channelIdRule = append(channelIdRule, channelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.FilterLogs(opts, "CooperativeSettle", channelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.FilterLogs(opts, "CooperativeSettle", channelIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerCooperativeSettleIterator{contract: _CelerLedger.contract, event: "CooperativeSettle", logs: logs, sub: sub}, nil
+	return &AgentPayLedgerCooperativeSettleIterator{contract: _AgentPayLedger.contract, event: "CooperativeSettle", logs: logs, sub: sub}, nil
 }
 
 // WatchCooperativeSettle is a free log subscription operation binding the contract event 0x6c666557dc97fd52cd2d9d6dd6d109e501ffdb831abeecf13aafeeaf762ee1fd.
 //
 // Solidity: event CooperativeSettle(bytes32 indexed channelId, uint256[2] settleBalance)
-func (_CelerLedger *CelerLedgerFilterer) WatchCooperativeSettle(opts *bind.WatchOpts, sink chan<- *CelerLedgerCooperativeSettle, channelId [][32]byte) (event.Subscription, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) WatchCooperativeSettle(opts *bind.WatchOpts, sink chan<- *AgentPayLedgerCooperativeSettle, channelId [][32]byte) (event.Subscription, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
 		channelIdRule = append(channelIdRule, channelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.WatchLogs(opts, "CooperativeSettle", channelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.WatchLogs(opts, "CooperativeSettle", channelIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -2115,8 +2115,8 @@ func (_CelerLedger *CelerLedgerFilterer) WatchCooperativeSettle(opts *bind.Watch
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerLedgerCooperativeSettle)
-				if err := _CelerLedger.contract.UnpackLog(event, "CooperativeSettle", log); err != nil {
+				event := new(AgentPayLedgerCooperativeSettle)
+				if err := _AgentPayLedger.contract.UnpackLog(event, "CooperativeSettle", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2140,18 +2140,18 @@ func (_CelerLedger *CelerLedgerFilterer) WatchCooperativeSettle(opts *bind.Watch
 // ParseCooperativeSettle is a log parse operation binding the contract event 0x6c666557dc97fd52cd2d9d6dd6d109e501ffdb831abeecf13aafeeaf762ee1fd.
 //
 // Solidity: event CooperativeSettle(bytes32 indexed channelId, uint256[2] settleBalance)
-func (_CelerLedger *CelerLedgerFilterer) ParseCooperativeSettle(log types.Log) (*CelerLedgerCooperativeSettle, error) {
-	event := new(CelerLedgerCooperativeSettle)
-	if err := _CelerLedger.contract.UnpackLog(event, "CooperativeSettle", log); err != nil {
+func (_AgentPayLedger *AgentPayLedgerFilterer) ParseCooperativeSettle(log types.Log) (*AgentPayLedgerCooperativeSettle, error) {
+	event := new(AgentPayLedgerCooperativeSettle)
+	if err := _AgentPayLedger.contract.UnpackLog(event, "CooperativeSettle", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerLedgerCooperativeWithdrawIterator is returned from FilterCooperativeWithdraw and is used to iterate over the raw logs and unpacked data for CooperativeWithdraw events raised by the CelerLedger contract.
-type CelerLedgerCooperativeWithdrawIterator struct {
-	Event *CelerLedgerCooperativeWithdraw // Event containing the contract specifics and raw log
+// AgentPayLedgerCooperativeWithdrawIterator is returned from FilterCooperativeWithdraw and is used to iterate over the raw logs and unpacked data for CooperativeWithdraw events raised by the AgentPayLedger contract.
+type AgentPayLedgerCooperativeWithdrawIterator struct {
+	Event *AgentPayLedgerCooperativeWithdraw // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2165,7 +2165,7 @@ type CelerLedgerCooperativeWithdrawIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerLedgerCooperativeWithdrawIterator) Next() bool {
+func (it *AgentPayLedgerCooperativeWithdrawIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2174,7 +2174,7 @@ func (it *CelerLedgerCooperativeWithdrawIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerLedgerCooperativeWithdraw)
+			it.Event = new(AgentPayLedgerCooperativeWithdraw)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2189,7 +2189,7 @@ func (it *CelerLedgerCooperativeWithdrawIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerLedgerCooperativeWithdraw)
+		it.Event = new(AgentPayLedgerCooperativeWithdraw)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2205,19 +2205,19 @@ func (it *CelerLedgerCooperativeWithdrawIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerLedgerCooperativeWithdrawIterator) Error() error {
+func (it *AgentPayLedgerCooperativeWithdrawIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerLedgerCooperativeWithdrawIterator) Close() error {
+func (it *AgentPayLedgerCooperativeWithdrawIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerLedgerCooperativeWithdraw represents a CooperativeWithdraw event raised by the CelerLedger contract.
-type CelerLedgerCooperativeWithdraw struct {
+// AgentPayLedgerCooperativeWithdraw represents a CooperativeWithdraw event raised by the AgentPayLedger contract.
+type AgentPayLedgerCooperativeWithdraw struct {
 	ChannelId          [32]byte
 	WithdrawnAmount    *big.Int
 	Receiver           common.Address
@@ -2231,7 +2231,7 @@ type CelerLedgerCooperativeWithdraw struct {
 // FilterCooperativeWithdraw is a free log retrieval operation binding the contract event 0x1b87d077d9b706e42883b454b67730633fd6b4b29f9a9cf5f57c278c54f51c8f.
 //
 // Solidity: event CooperativeWithdraw(bytes32 indexed channelId, uint256 withdrawnAmount, address indexed receiver, bytes32 indexed recipientChannelId, uint256[2] deposits, uint256[2] withdrawals, uint256 seqNum)
-func (_CelerLedger *CelerLedgerFilterer) FilterCooperativeWithdraw(opts *bind.FilterOpts, channelId [][32]byte, receiver []common.Address, recipientChannelId [][32]byte) (*CelerLedgerCooperativeWithdrawIterator, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) FilterCooperativeWithdraw(opts *bind.FilterOpts, channelId [][32]byte, receiver []common.Address, recipientChannelId [][32]byte) (*AgentPayLedgerCooperativeWithdrawIterator, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
@@ -2247,17 +2247,17 @@ func (_CelerLedger *CelerLedgerFilterer) FilterCooperativeWithdraw(opts *bind.Fi
 		recipientChannelIdRule = append(recipientChannelIdRule, recipientChannelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.FilterLogs(opts, "CooperativeWithdraw", channelIdRule, receiverRule, recipientChannelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.FilterLogs(opts, "CooperativeWithdraw", channelIdRule, receiverRule, recipientChannelIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerCooperativeWithdrawIterator{contract: _CelerLedger.contract, event: "CooperativeWithdraw", logs: logs, sub: sub}, nil
+	return &AgentPayLedgerCooperativeWithdrawIterator{contract: _AgentPayLedger.contract, event: "CooperativeWithdraw", logs: logs, sub: sub}, nil
 }
 
 // WatchCooperativeWithdraw is a free log subscription operation binding the contract event 0x1b87d077d9b706e42883b454b67730633fd6b4b29f9a9cf5f57c278c54f51c8f.
 //
 // Solidity: event CooperativeWithdraw(bytes32 indexed channelId, uint256 withdrawnAmount, address indexed receiver, bytes32 indexed recipientChannelId, uint256[2] deposits, uint256[2] withdrawals, uint256 seqNum)
-func (_CelerLedger *CelerLedgerFilterer) WatchCooperativeWithdraw(opts *bind.WatchOpts, sink chan<- *CelerLedgerCooperativeWithdraw, channelId [][32]byte, receiver []common.Address, recipientChannelId [][32]byte) (event.Subscription, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) WatchCooperativeWithdraw(opts *bind.WatchOpts, sink chan<- *AgentPayLedgerCooperativeWithdraw, channelId [][32]byte, receiver []common.Address, recipientChannelId [][32]byte) (event.Subscription, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
@@ -2273,7 +2273,7 @@ func (_CelerLedger *CelerLedgerFilterer) WatchCooperativeWithdraw(opts *bind.Wat
 		recipientChannelIdRule = append(recipientChannelIdRule, recipientChannelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.WatchLogs(opts, "CooperativeWithdraw", channelIdRule, receiverRule, recipientChannelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.WatchLogs(opts, "CooperativeWithdraw", channelIdRule, receiverRule, recipientChannelIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -2283,8 +2283,8 @@ func (_CelerLedger *CelerLedgerFilterer) WatchCooperativeWithdraw(opts *bind.Wat
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerLedgerCooperativeWithdraw)
-				if err := _CelerLedger.contract.UnpackLog(event, "CooperativeWithdraw", log); err != nil {
+				event := new(AgentPayLedgerCooperativeWithdraw)
+				if err := _AgentPayLedger.contract.UnpackLog(event, "CooperativeWithdraw", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2308,18 +2308,18 @@ func (_CelerLedger *CelerLedgerFilterer) WatchCooperativeWithdraw(opts *bind.Wat
 // ParseCooperativeWithdraw is a log parse operation binding the contract event 0x1b87d077d9b706e42883b454b67730633fd6b4b29f9a9cf5f57c278c54f51c8f.
 //
 // Solidity: event CooperativeWithdraw(bytes32 indexed channelId, uint256 withdrawnAmount, address indexed receiver, bytes32 indexed recipientChannelId, uint256[2] deposits, uint256[2] withdrawals, uint256 seqNum)
-func (_CelerLedger *CelerLedgerFilterer) ParseCooperativeWithdraw(log types.Log) (*CelerLedgerCooperativeWithdraw, error) {
-	event := new(CelerLedgerCooperativeWithdraw)
-	if err := _CelerLedger.contract.UnpackLog(event, "CooperativeWithdraw", log); err != nil {
+func (_AgentPayLedger *AgentPayLedgerFilterer) ParseCooperativeWithdraw(log types.Log) (*AgentPayLedgerCooperativeWithdraw, error) {
+	event := new(AgentPayLedgerCooperativeWithdraw)
+	if err := _AgentPayLedger.contract.UnpackLog(event, "CooperativeWithdraw", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerLedgerDepositIterator is returned from FilterDeposit and is used to iterate over the raw logs and unpacked data for Deposit events raised by the CelerLedger contract.
-type CelerLedgerDepositIterator struct {
-	Event *CelerLedgerDeposit // Event containing the contract specifics and raw log
+// AgentPayLedgerDepositIterator is returned from FilterDeposit and is used to iterate over the raw logs and unpacked data for Deposit events raised by the AgentPayLedger contract.
+type AgentPayLedgerDepositIterator struct {
+	Event *AgentPayLedgerDeposit // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2333,7 +2333,7 @@ type CelerLedgerDepositIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerLedgerDepositIterator) Next() bool {
+func (it *AgentPayLedgerDepositIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2342,7 +2342,7 @@ func (it *CelerLedgerDepositIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerLedgerDeposit)
+			it.Event = new(AgentPayLedgerDeposit)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2357,7 +2357,7 @@ func (it *CelerLedgerDepositIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerLedgerDeposit)
+		it.Event = new(AgentPayLedgerDeposit)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2373,19 +2373,19 @@ func (it *CelerLedgerDepositIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerLedgerDepositIterator) Error() error {
+func (it *AgentPayLedgerDepositIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerLedgerDepositIterator) Close() error {
+func (it *AgentPayLedgerDepositIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerLedgerDeposit represents a Deposit event raised by the CelerLedger contract.
-type CelerLedgerDeposit struct {
+// AgentPayLedgerDeposit represents a Deposit event raised by the AgentPayLedger contract.
+type AgentPayLedgerDeposit struct {
 	ChannelId   [32]byte
 	PeerAddrs   [2]common.Address
 	Deposits    [2]*big.Int
@@ -2396,31 +2396,31 @@ type CelerLedgerDeposit struct {
 // FilterDeposit is a free log retrieval operation binding the contract event 0xb63f5dc096f516663ffb5ef2b611f0e2acca8617a868c2a3653cba5e3ed0e92c.
 //
 // Solidity: event Deposit(bytes32 indexed channelId, address[2] peerAddrs, uint256[2] deposits, uint256[2] withdrawals)
-func (_CelerLedger *CelerLedgerFilterer) FilterDeposit(opts *bind.FilterOpts, channelId [][32]byte) (*CelerLedgerDepositIterator, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) FilterDeposit(opts *bind.FilterOpts, channelId [][32]byte) (*AgentPayLedgerDepositIterator, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
 		channelIdRule = append(channelIdRule, channelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.FilterLogs(opts, "Deposit", channelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.FilterLogs(opts, "Deposit", channelIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerDepositIterator{contract: _CelerLedger.contract, event: "Deposit", logs: logs, sub: sub}, nil
+	return &AgentPayLedgerDepositIterator{contract: _AgentPayLedger.contract, event: "Deposit", logs: logs, sub: sub}, nil
 }
 
 // WatchDeposit is a free log subscription operation binding the contract event 0xb63f5dc096f516663ffb5ef2b611f0e2acca8617a868c2a3653cba5e3ed0e92c.
 //
 // Solidity: event Deposit(bytes32 indexed channelId, address[2] peerAddrs, uint256[2] deposits, uint256[2] withdrawals)
-func (_CelerLedger *CelerLedgerFilterer) WatchDeposit(opts *bind.WatchOpts, sink chan<- *CelerLedgerDeposit, channelId [][32]byte) (event.Subscription, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) WatchDeposit(opts *bind.WatchOpts, sink chan<- *AgentPayLedgerDeposit, channelId [][32]byte) (event.Subscription, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
 		channelIdRule = append(channelIdRule, channelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.WatchLogs(opts, "Deposit", channelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.WatchLogs(opts, "Deposit", channelIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -2430,8 +2430,8 @@ func (_CelerLedger *CelerLedgerFilterer) WatchDeposit(opts *bind.WatchOpts, sink
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerLedgerDeposit)
-				if err := _CelerLedger.contract.UnpackLog(event, "Deposit", log); err != nil {
+				event := new(AgentPayLedgerDeposit)
+				if err := _AgentPayLedger.contract.UnpackLog(event, "Deposit", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2455,18 +2455,18 @@ func (_CelerLedger *CelerLedgerFilterer) WatchDeposit(opts *bind.WatchOpts, sink
 // ParseDeposit is a log parse operation binding the contract event 0xb63f5dc096f516663ffb5ef2b611f0e2acca8617a868c2a3653cba5e3ed0e92c.
 //
 // Solidity: event Deposit(bytes32 indexed channelId, address[2] peerAddrs, uint256[2] deposits, uint256[2] withdrawals)
-func (_CelerLedger *CelerLedgerFilterer) ParseDeposit(log types.Log) (*CelerLedgerDeposit, error) {
-	event := new(CelerLedgerDeposit)
-	if err := _CelerLedger.contract.UnpackLog(event, "Deposit", log); err != nil {
+func (_AgentPayLedger *AgentPayLedgerFilterer) ParseDeposit(log types.Log) (*AgentPayLedgerDeposit, error) {
+	event := new(AgentPayLedgerDeposit)
+	if err := _AgentPayLedger.contract.UnpackLog(event, "Deposit", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerLedgerIntendSettleIterator is returned from FilterIntendSettle and is used to iterate over the raw logs and unpacked data for IntendSettle events raised by the CelerLedger contract.
-type CelerLedgerIntendSettleIterator struct {
-	Event *CelerLedgerIntendSettle // Event containing the contract specifics and raw log
+// AgentPayLedgerIntendSettleIterator is returned from FilterIntendSettle and is used to iterate over the raw logs and unpacked data for IntendSettle events raised by the AgentPayLedger contract.
+type AgentPayLedgerIntendSettleIterator struct {
+	Event *AgentPayLedgerIntendSettle // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2480,7 +2480,7 @@ type CelerLedgerIntendSettleIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerLedgerIntendSettleIterator) Next() bool {
+func (it *AgentPayLedgerIntendSettleIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2489,7 +2489,7 @@ func (it *CelerLedgerIntendSettleIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerLedgerIntendSettle)
+			it.Event = new(AgentPayLedgerIntendSettle)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2504,7 +2504,7 @@ func (it *CelerLedgerIntendSettleIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerLedgerIntendSettle)
+		it.Event = new(AgentPayLedgerIntendSettle)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2520,19 +2520,19 @@ func (it *CelerLedgerIntendSettleIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerLedgerIntendSettleIterator) Error() error {
+func (it *AgentPayLedgerIntendSettleIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerLedgerIntendSettleIterator) Close() error {
+func (it *AgentPayLedgerIntendSettleIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerLedgerIntendSettle represents a IntendSettle event raised by the CelerLedger contract.
-type CelerLedgerIntendSettle struct {
+// AgentPayLedgerIntendSettle represents a IntendSettle event raised by the AgentPayLedger contract.
+type AgentPayLedgerIntendSettle struct {
 	ChannelId [32]byte
 	SeqNums   [2]*big.Int
 	Raw       types.Log // Blockchain specific contextual infos
@@ -2541,31 +2541,31 @@ type CelerLedgerIntendSettle struct {
 // FilterIntendSettle is a free log retrieval operation binding the contract event 0x296143e7e25aa055fbb871702776a67da540876e2be721d5c38ba23c97c90d64.
 //
 // Solidity: event IntendSettle(bytes32 indexed channelId, uint256[2] seqNums)
-func (_CelerLedger *CelerLedgerFilterer) FilterIntendSettle(opts *bind.FilterOpts, channelId [][32]byte) (*CelerLedgerIntendSettleIterator, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) FilterIntendSettle(opts *bind.FilterOpts, channelId [][32]byte) (*AgentPayLedgerIntendSettleIterator, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
 		channelIdRule = append(channelIdRule, channelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.FilterLogs(opts, "IntendSettle", channelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.FilterLogs(opts, "IntendSettle", channelIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerIntendSettleIterator{contract: _CelerLedger.contract, event: "IntendSettle", logs: logs, sub: sub}, nil
+	return &AgentPayLedgerIntendSettleIterator{contract: _AgentPayLedger.contract, event: "IntendSettle", logs: logs, sub: sub}, nil
 }
 
 // WatchIntendSettle is a free log subscription operation binding the contract event 0x296143e7e25aa055fbb871702776a67da540876e2be721d5c38ba23c97c90d64.
 //
 // Solidity: event IntendSettle(bytes32 indexed channelId, uint256[2] seqNums)
-func (_CelerLedger *CelerLedgerFilterer) WatchIntendSettle(opts *bind.WatchOpts, sink chan<- *CelerLedgerIntendSettle, channelId [][32]byte) (event.Subscription, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) WatchIntendSettle(opts *bind.WatchOpts, sink chan<- *AgentPayLedgerIntendSettle, channelId [][32]byte) (event.Subscription, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
 		channelIdRule = append(channelIdRule, channelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.WatchLogs(opts, "IntendSettle", channelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.WatchLogs(opts, "IntendSettle", channelIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -2575,8 +2575,8 @@ func (_CelerLedger *CelerLedgerFilterer) WatchIntendSettle(opts *bind.WatchOpts,
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerLedgerIntendSettle)
-				if err := _CelerLedger.contract.UnpackLog(event, "IntendSettle", log); err != nil {
+				event := new(AgentPayLedgerIntendSettle)
+				if err := _AgentPayLedger.contract.UnpackLog(event, "IntendSettle", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2600,18 +2600,18 @@ func (_CelerLedger *CelerLedgerFilterer) WatchIntendSettle(opts *bind.WatchOpts,
 // ParseIntendSettle is a log parse operation binding the contract event 0x296143e7e25aa055fbb871702776a67da540876e2be721d5c38ba23c97c90d64.
 //
 // Solidity: event IntendSettle(bytes32 indexed channelId, uint256[2] seqNums)
-func (_CelerLedger *CelerLedgerFilterer) ParseIntendSettle(log types.Log) (*CelerLedgerIntendSettle, error) {
-	event := new(CelerLedgerIntendSettle)
-	if err := _CelerLedger.contract.UnpackLog(event, "IntendSettle", log); err != nil {
+func (_AgentPayLedger *AgentPayLedgerFilterer) ParseIntendSettle(log types.Log) (*AgentPayLedgerIntendSettle, error) {
+	event := new(AgentPayLedgerIntendSettle)
+	if err := _AgentPayLedger.contract.UnpackLog(event, "IntendSettle", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerLedgerIntendWithdrawIterator is returned from FilterIntendWithdraw and is used to iterate over the raw logs and unpacked data for IntendWithdraw events raised by the CelerLedger contract.
-type CelerLedgerIntendWithdrawIterator struct {
-	Event *CelerLedgerIntendWithdraw // Event containing the contract specifics and raw log
+// AgentPayLedgerIntendWithdrawIterator is returned from FilterIntendWithdraw and is used to iterate over the raw logs and unpacked data for IntendWithdraw events raised by the AgentPayLedger contract.
+type AgentPayLedgerIntendWithdrawIterator struct {
+	Event *AgentPayLedgerIntendWithdraw // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2625,7 +2625,7 @@ type CelerLedgerIntendWithdrawIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerLedgerIntendWithdrawIterator) Next() bool {
+func (it *AgentPayLedgerIntendWithdrawIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2634,7 +2634,7 @@ func (it *CelerLedgerIntendWithdrawIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerLedgerIntendWithdraw)
+			it.Event = new(AgentPayLedgerIntendWithdraw)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2649,7 +2649,7 @@ func (it *CelerLedgerIntendWithdrawIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerLedgerIntendWithdraw)
+		it.Event = new(AgentPayLedgerIntendWithdraw)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2665,19 +2665,19 @@ func (it *CelerLedgerIntendWithdrawIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerLedgerIntendWithdrawIterator) Error() error {
+func (it *AgentPayLedgerIntendWithdrawIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerLedgerIntendWithdrawIterator) Close() error {
+func (it *AgentPayLedgerIntendWithdrawIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerLedgerIntendWithdraw represents a IntendWithdraw event raised by the CelerLedger contract.
-type CelerLedgerIntendWithdraw struct {
+// AgentPayLedgerIntendWithdraw represents a IntendWithdraw event raised by the AgentPayLedger contract.
+type AgentPayLedgerIntendWithdraw struct {
 	ChannelId [32]byte
 	Receiver  common.Address
 	Amount    *big.Int
@@ -2687,7 +2687,7 @@ type CelerLedgerIntendWithdraw struct {
 // FilterIntendWithdraw is a free log retrieval operation binding the contract event 0x97883669625c4ff7f5432b4ca33fe75fb5fee985deb196a967e5758f846170fe.
 //
 // Solidity: event IntendWithdraw(bytes32 indexed channelId, address indexed receiver, uint256 amount)
-func (_CelerLedger *CelerLedgerFilterer) FilterIntendWithdraw(opts *bind.FilterOpts, channelId [][32]byte, receiver []common.Address) (*CelerLedgerIntendWithdrawIterator, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) FilterIntendWithdraw(opts *bind.FilterOpts, channelId [][32]byte, receiver []common.Address) (*AgentPayLedgerIntendWithdrawIterator, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
@@ -2698,17 +2698,17 @@ func (_CelerLedger *CelerLedgerFilterer) FilterIntendWithdraw(opts *bind.FilterO
 		receiverRule = append(receiverRule, receiverItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.FilterLogs(opts, "IntendWithdraw", channelIdRule, receiverRule)
+	logs, sub, err := _AgentPayLedger.contract.FilterLogs(opts, "IntendWithdraw", channelIdRule, receiverRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerIntendWithdrawIterator{contract: _CelerLedger.contract, event: "IntendWithdraw", logs: logs, sub: sub}, nil
+	return &AgentPayLedgerIntendWithdrawIterator{contract: _AgentPayLedger.contract, event: "IntendWithdraw", logs: logs, sub: sub}, nil
 }
 
 // WatchIntendWithdraw is a free log subscription operation binding the contract event 0x97883669625c4ff7f5432b4ca33fe75fb5fee985deb196a967e5758f846170fe.
 //
 // Solidity: event IntendWithdraw(bytes32 indexed channelId, address indexed receiver, uint256 amount)
-func (_CelerLedger *CelerLedgerFilterer) WatchIntendWithdraw(opts *bind.WatchOpts, sink chan<- *CelerLedgerIntendWithdraw, channelId [][32]byte, receiver []common.Address) (event.Subscription, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) WatchIntendWithdraw(opts *bind.WatchOpts, sink chan<- *AgentPayLedgerIntendWithdraw, channelId [][32]byte, receiver []common.Address) (event.Subscription, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
@@ -2719,7 +2719,7 @@ func (_CelerLedger *CelerLedgerFilterer) WatchIntendWithdraw(opts *bind.WatchOpt
 		receiverRule = append(receiverRule, receiverItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.WatchLogs(opts, "IntendWithdraw", channelIdRule, receiverRule)
+	logs, sub, err := _AgentPayLedger.contract.WatchLogs(opts, "IntendWithdraw", channelIdRule, receiverRule)
 	if err != nil {
 		return nil, err
 	}
@@ -2729,8 +2729,8 @@ func (_CelerLedger *CelerLedgerFilterer) WatchIntendWithdraw(opts *bind.WatchOpt
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerLedgerIntendWithdraw)
-				if err := _CelerLedger.contract.UnpackLog(event, "IntendWithdraw", log); err != nil {
+				event := new(AgentPayLedgerIntendWithdraw)
+				if err := _AgentPayLedger.contract.UnpackLog(event, "IntendWithdraw", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2754,18 +2754,18 @@ func (_CelerLedger *CelerLedgerFilterer) WatchIntendWithdraw(opts *bind.WatchOpt
 // ParseIntendWithdraw is a log parse operation binding the contract event 0x97883669625c4ff7f5432b4ca33fe75fb5fee985deb196a967e5758f846170fe.
 //
 // Solidity: event IntendWithdraw(bytes32 indexed channelId, address indexed receiver, uint256 amount)
-func (_CelerLedger *CelerLedgerFilterer) ParseIntendWithdraw(log types.Log) (*CelerLedgerIntendWithdraw, error) {
-	event := new(CelerLedgerIntendWithdraw)
-	if err := _CelerLedger.contract.UnpackLog(event, "IntendWithdraw", log); err != nil {
+func (_AgentPayLedger *AgentPayLedgerFilterer) ParseIntendWithdraw(log types.Log) (*AgentPayLedgerIntendWithdraw, error) {
+	event := new(AgentPayLedgerIntendWithdraw)
+	if err := _AgentPayLedger.contract.UnpackLog(event, "IntendWithdraw", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerLedgerMigrateChannelFromIterator is returned from FilterMigrateChannelFrom and is used to iterate over the raw logs and unpacked data for MigrateChannelFrom events raised by the CelerLedger contract.
-type CelerLedgerMigrateChannelFromIterator struct {
-	Event *CelerLedgerMigrateChannelFrom // Event containing the contract specifics and raw log
+// AgentPayLedgerMigrateChannelFromIterator is returned from FilterMigrateChannelFrom and is used to iterate over the raw logs and unpacked data for MigrateChannelFrom events raised by the AgentPayLedger contract.
+type AgentPayLedgerMigrateChannelFromIterator struct {
+	Event *AgentPayLedgerMigrateChannelFrom // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2779,7 +2779,7 @@ type CelerLedgerMigrateChannelFromIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerLedgerMigrateChannelFromIterator) Next() bool {
+func (it *AgentPayLedgerMigrateChannelFromIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2788,7 +2788,7 @@ func (it *CelerLedgerMigrateChannelFromIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerLedgerMigrateChannelFrom)
+			it.Event = new(AgentPayLedgerMigrateChannelFrom)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2803,7 +2803,7 @@ func (it *CelerLedgerMigrateChannelFromIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerLedgerMigrateChannelFrom)
+		it.Event = new(AgentPayLedgerMigrateChannelFrom)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2819,19 +2819,19 @@ func (it *CelerLedgerMigrateChannelFromIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerLedgerMigrateChannelFromIterator) Error() error {
+func (it *AgentPayLedgerMigrateChannelFromIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerLedgerMigrateChannelFromIterator) Close() error {
+func (it *AgentPayLedgerMigrateChannelFromIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerLedgerMigrateChannelFrom represents a MigrateChannelFrom event raised by the CelerLedger contract.
-type CelerLedgerMigrateChannelFrom struct {
+// AgentPayLedgerMigrateChannelFrom represents a MigrateChannelFrom event raised by the AgentPayLedger contract.
+type AgentPayLedgerMigrateChannelFrom struct {
 	ChannelId     [32]byte
 	OldLedgerAddr common.Address
 	Raw           types.Log // Blockchain specific contextual infos
@@ -2840,7 +2840,7 @@ type CelerLedgerMigrateChannelFrom struct {
 // FilterMigrateChannelFrom is a free log retrieval operation binding the contract event 0x141a72a1d915a7c4205104b6e564cc991aa827c5f2c672a5d6a1da8bef99d6eb.
 //
 // Solidity: event MigrateChannelFrom(bytes32 indexed channelId, address indexed oldLedgerAddr)
-func (_CelerLedger *CelerLedgerFilterer) FilterMigrateChannelFrom(opts *bind.FilterOpts, channelId [][32]byte, oldLedgerAddr []common.Address) (*CelerLedgerMigrateChannelFromIterator, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) FilterMigrateChannelFrom(opts *bind.FilterOpts, channelId [][32]byte, oldLedgerAddr []common.Address) (*AgentPayLedgerMigrateChannelFromIterator, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
@@ -2851,17 +2851,17 @@ func (_CelerLedger *CelerLedgerFilterer) FilterMigrateChannelFrom(opts *bind.Fil
 		oldLedgerAddrRule = append(oldLedgerAddrRule, oldLedgerAddrItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.FilterLogs(opts, "MigrateChannelFrom", channelIdRule, oldLedgerAddrRule)
+	logs, sub, err := _AgentPayLedger.contract.FilterLogs(opts, "MigrateChannelFrom", channelIdRule, oldLedgerAddrRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerMigrateChannelFromIterator{contract: _CelerLedger.contract, event: "MigrateChannelFrom", logs: logs, sub: sub}, nil
+	return &AgentPayLedgerMigrateChannelFromIterator{contract: _AgentPayLedger.contract, event: "MigrateChannelFrom", logs: logs, sub: sub}, nil
 }
 
 // WatchMigrateChannelFrom is a free log subscription operation binding the contract event 0x141a72a1d915a7c4205104b6e564cc991aa827c5f2c672a5d6a1da8bef99d6eb.
 //
 // Solidity: event MigrateChannelFrom(bytes32 indexed channelId, address indexed oldLedgerAddr)
-func (_CelerLedger *CelerLedgerFilterer) WatchMigrateChannelFrom(opts *bind.WatchOpts, sink chan<- *CelerLedgerMigrateChannelFrom, channelId [][32]byte, oldLedgerAddr []common.Address) (event.Subscription, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) WatchMigrateChannelFrom(opts *bind.WatchOpts, sink chan<- *AgentPayLedgerMigrateChannelFrom, channelId [][32]byte, oldLedgerAddr []common.Address) (event.Subscription, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
@@ -2872,7 +2872,7 @@ func (_CelerLedger *CelerLedgerFilterer) WatchMigrateChannelFrom(opts *bind.Watc
 		oldLedgerAddrRule = append(oldLedgerAddrRule, oldLedgerAddrItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.WatchLogs(opts, "MigrateChannelFrom", channelIdRule, oldLedgerAddrRule)
+	logs, sub, err := _AgentPayLedger.contract.WatchLogs(opts, "MigrateChannelFrom", channelIdRule, oldLedgerAddrRule)
 	if err != nil {
 		return nil, err
 	}
@@ -2882,8 +2882,8 @@ func (_CelerLedger *CelerLedgerFilterer) WatchMigrateChannelFrom(opts *bind.Watc
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerLedgerMigrateChannelFrom)
-				if err := _CelerLedger.contract.UnpackLog(event, "MigrateChannelFrom", log); err != nil {
+				event := new(AgentPayLedgerMigrateChannelFrom)
+				if err := _AgentPayLedger.contract.UnpackLog(event, "MigrateChannelFrom", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2907,18 +2907,18 @@ func (_CelerLedger *CelerLedgerFilterer) WatchMigrateChannelFrom(opts *bind.Watc
 // ParseMigrateChannelFrom is a log parse operation binding the contract event 0x141a72a1d915a7c4205104b6e564cc991aa827c5f2c672a5d6a1da8bef99d6eb.
 //
 // Solidity: event MigrateChannelFrom(bytes32 indexed channelId, address indexed oldLedgerAddr)
-func (_CelerLedger *CelerLedgerFilterer) ParseMigrateChannelFrom(log types.Log) (*CelerLedgerMigrateChannelFrom, error) {
-	event := new(CelerLedgerMigrateChannelFrom)
-	if err := _CelerLedger.contract.UnpackLog(event, "MigrateChannelFrom", log); err != nil {
+func (_AgentPayLedger *AgentPayLedgerFilterer) ParseMigrateChannelFrom(log types.Log) (*AgentPayLedgerMigrateChannelFrom, error) {
+	event := new(AgentPayLedgerMigrateChannelFrom)
+	if err := _AgentPayLedger.contract.UnpackLog(event, "MigrateChannelFrom", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerLedgerMigrateChannelToIterator is returned from FilterMigrateChannelTo and is used to iterate over the raw logs and unpacked data for MigrateChannelTo events raised by the CelerLedger contract.
-type CelerLedgerMigrateChannelToIterator struct {
-	Event *CelerLedgerMigrateChannelTo // Event containing the contract specifics and raw log
+// AgentPayLedgerMigrateChannelToIterator is returned from FilterMigrateChannelTo and is used to iterate over the raw logs and unpacked data for MigrateChannelTo events raised by the AgentPayLedger contract.
+type AgentPayLedgerMigrateChannelToIterator struct {
+	Event *AgentPayLedgerMigrateChannelTo // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2932,7 +2932,7 @@ type CelerLedgerMigrateChannelToIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerLedgerMigrateChannelToIterator) Next() bool {
+func (it *AgentPayLedgerMigrateChannelToIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2941,7 +2941,7 @@ func (it *CelerLedgerMigrateChannelToIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerLedgerMigrateChannelTo)
+			it.Event = new(AgentPayLedgerMigrateChannelTo)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2956,7 +2956,7 @@ func (it *CelerLedgerMigrateChannelToIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerLedgerMigrateChannelTo)
+		it.Event = new(AgentPayLedgerMigrateChannelTo)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2972,19 +2972,19 @@ func (it *CelerLedgerMigrateChannelToIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerLedgerMigrateChannelToIterator) Error() error {
+func (it *AgentPayLedgerMigrateChannelToIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerLedgerMigrateChannelToIterator) Close() error {
+func (it *AgentPayLedgerMigrateChannelToIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerLedgerMigrateChannelTo represents a MigrateChannelTo event raised by the CelerLedger contract.
-type CelerLedgerMigrateChannelTo struct {
+// AgentPayLedgerMigrateChannelTo represents a MigrateChannelTo event raised by the AgentPayLedger contract.
+type AgentPayLedgerMigrateChannelTo struct {
 	ChannelId     [32]byte
 	NewLedgerAddr common.Address
 	Raw           types.Log // Blockchain specific contextual infos
@@ -2993,7 +2993,7 @@ type CelerLedgerMigrateChannelTo struct {
 // FilterMigrateChannelTo is a free log retrieval operation binding the contract event 0xdefb8a94bbfc44ef5297b035407a7dd1314f369e39c3301f5b90f8810fb9fe4f.
 //
 // Solidity: event MigrateChannelTo(bytes32 indexed channelId, address indexed newLedgerAddr)
-func (_CelerLedger *CelerLedgerFilterer) FilterMigrateChannelTo(opts *bind.FilterOpts, channelId [][32]byte, newLedgerAddr []common.Address) (*CelerLedgerMigrateChannelToIterator, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) FilterMigrateChannelTo(opts *bind.FilterOpts, channelId [][32]byte, newLedgerAddr []common.Address) (*AgentPayLedgerMigrateChannelToIterator, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
@@ -3004,17 +3004,17 @@ func (_CelerLedger *CelerLedgerFilterer) FilterMigrateChannelTo(opts *bind.Filte
 		newLedgerAddrRule = append(newLedgerAddrRule, newLedgerAddrItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.FilterLogs(opts, "MigrateChannelTo", channelIdRule, newLedgerAddrRule)
+	logs, sub, err := _AgentPayLedger.contract.FilterLogs(opts, "MigrateChannelTo", channelIdRule, newLedgerAddrRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerMigrateChannelToIterator{contract: _CelerLedger.contract, event: "MigrateChannelTo", logs: logs, sub: sub}, nil
+	return &AgentPayLedgerMigrateChannelToIterator{contract: _AgentPayLedger.contract, event: "MigrateChannelTo", logs: logs, sub: sub}, nil
 }
 
 // WatchMigrateChannelTo is a free log subscription operation binding the contract event 0xdefb8a94bbfc44ef5297b035407a7dd1314f369e39c3301f5b90f8810fb9fe4f.
 //
 // Solidity: event MigrateChannelTo(bytes32 indexed channelId, address indexed newLedgerAddr)
-func (_CelerLedger *CelerLedgerFilterer) WatchMigrateChannelTo(opts *bind.WatchOpts, sink chan<- *CelerLedgerMigrateChannelTo, channelId [][32]byte, newLedgerAddr []common.Address) (event.Subscription, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) WatchMigrateChannelTo(opts *bind.WatchOpts, sink chan<- *AgentPayLedgerMigrateChannelTo, channelId [][32]byte, newLedgerAddr []common.Address) (event.Subscription, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
@@ -3025,7 +3025,7 @@ func (_CelerLedger *CelerLedgerFilterer) WatchMigrateChannelTo(opts *bind.WatchO
 		newLedgerAddrRule = append(newLedgerAddrRule, newLedgerAddrItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.WatchLogs(opts, "MigrateChannelTo", channelIdRule, newLedgerAddrRule)
+	logs, sub, err := _AgentPayLedger.contract.WatchLogs(opts, "MigrateChannelTo", channelIdRule, newLedgerAddrRule)
 	if err != nil {
 		return nil, err
 	}
@@ -3035,8 +3035,8 @@ func (_CelerLedger *CelerLedgerFilterer) WatchMigrateChannelTo(opts *bind.WatchO
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerLedgerMigrateChannelTo)
-				if err := _CelerLedger.contract.UnpackLog(event, "MigrateChannelTo", log); err != nil {
+				event := new(AgentPayLedgerMigrateChannelTo)
+				if err := _AgentPayLedger.contract.UnpackLog(event, "MigrateChannelTo", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -3060,18 +3060,18 @@ func (_CelerLedger *CelerLedgerFilterer) WatchMigrateChannelTo(opts *bind.WatchO
 // ParseMigrateChannelTo is a log parse operation binding the contract event 0xdefb8a94bbfc44ef5297b035407a7dd1314f369e39c3301f5b90f8810fb9fe4f.
 //
 // Solidity: event MigrateChannelTo(bytes32 indexed channelId, address indexed newLedgerAddr)
-func (_CelerLedger *CelerLedgerFilterer) ParseMigrateChannelTo(log types.Log) (*CelerLedgerMigrateChannelTo, error) {
-	event := new(CelerLedgerMigrateChannelTo)
-	if err := _CelerLedger.contract.UnpackLog(event, "MigrateChannelTo", log); err != nil {
+func (_AgentPayLedger *AgentPayLedgerFilterer) ParseMigrateChannelTo(log types.Log) (*AgentPayLedgerMigrateChannelTo, error) {
+	event := new(AgentPayLedgerMigrateChannelTo)
+	if err := _AgentPayLedger.contract.UnpackLog(event, "MigrateChannelTo", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerLedgerOpenChannelIterator is returned from FilterOpenChannel and is used to iterate over the raw logs and unpacked data for OpenChannel events raised by the CelerLedger contract.
-type CelerLedgerOpenChannelIterator struct {
-	Event *CelerLedgerOpenChannel // Event containing the contract specifics and raw log
+// AgentPayLedgerOpenChannelIterator is returned from FilterOpenChannel and is used to iterate over the raw logs and unpacked data for OpenChannel events raised by the AgentPayLedger contract.
+type AgentPayLedgerOpenChannelIterator struct {
+	Event *AgentPayLedgerOpenChannel // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -3085,7 +3085,7 @@ type CelerLedgerOpenChannelIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerLedgerOpenChannelIterator) Next() bool {
+func (it *AgentPayLedgerOpenChannelIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -3094,7 +3094,7 @@ func (it *CelerLedgerOpenChannelIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerLedgerOpenChannel)
+			it.Event = new(AgentPayLedgerOpenChannel)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -3109,7 +3109,7 @@ func (it *CelerLedgerOpenChannelIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerLedgerOpenChannel)
+		it.Event = new(AgentPayLedgerOpenChannel)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -3125,19 +3125,19 @@ func (it *CelerLedgerOpenChannelIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerLedgerOpenChannelIterator) Error() error {
+func (it *AgentPayLedgerOpenChannelIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerLedgerOpenChannelIterator) Close() error {
+func (it *AgentPayLedgerOpenChannelIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerLedgerOpenChannel represents a OpenChannel event raised by the CelerLedger contract.
-type CelerLedgerOpenChannel struct {
+// AgentPayLedgerOpenChannel represents a OpenChannel event raised by the AgentPayLedger contract.
+type AgentPayLedgerOpenChannel struct {
 	ChannelId       [32]byte
 	TokenType       *big.Int
 	TokenAddress    common.Address
@@ -3149,7 +3149,7 @@ type CelerLedgerOpenChannel struct {
 // FilterOpenChannel is a free log retrieval operation binding the contract event 0x9d9f66221370175606b4085f28a419b201c9b6dafd9e0c4520e5bf69ea3e166d.
 //
 // Solidity: event OpenChannel(bytes32 indexed channelId, uint256 tokenType, address indexed tokenAddress, address[2] peerAddrs, uint256[2] initialDeposits)
-func (_CelerLedger *CelerLedgerFilterer) FilterOpenChannel(opts *bind.FilterOpts, channelId [][32]byte, tokenAddress []common.Address) (*CelerLedgerOpenChannelIterator, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) FilterOpenChannel(opts *bind.FilterOpts, channelId [][32]byte, tokenAddress []common.Address) (*AgentPayLedgerOpenChannelIterator, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
@@ -3161,17 +3161,17 @@ func (_CelerLedger *CelerLedgerFilterer) FilterOpenChannel(opts *bind.FilterOpts
 		tokenAddressRule = append(tokenAddressRule, tokenAddressItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.FilterLogs(opts, "OpenChannel", channelIdRule, tokenAddressRule)
+	logs, sub, err := _AgentPayLedger.contract.FilterLogs(opts, "OpenChannel", channelIdRule, tokenAddressRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerOpenChannelIterator{contract: _CelerLedger.contract, event: "OpenChannel", logs: logs, sub: sub}, nil
+	return &AgentPayLedgerOpenChannelIterator{contract: _AgentPayLedger.contract, event: "OpenChannel", logs: logs, sub: sub}, nil
 }
 
 // WatchOpenChannel is a free log subscription operation binding the contract event 0x9d9f66221370175606b4085f28a419b201c9b6dafd9e0c4520e5bf69ea3e166d.
 //
 // Solidity: event OpenChannel(bytes32 indexed channelId, uint256 tokenType, address indexed tokenAddress, address[2] peerAddrs, uint256[2] initialDeposits)
-func (_CelerLedger *CelerLedgerFilterer) WatchOpenChannel(opts *bind.WatchOpts, sink chan<- *CelerLedgerOpenChannel, channelId [][32]byte, tokenAddress []common.Address) (event.Subscription, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) WatchOpenChannel(opts *bind.WatchOpts, sink chan<- *AgentPayLedgerOpenChannel, channelId [][32]byte, tokenAddress []common.Address) (event.Subscription, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
@@ -3183,7 +3183,7 @@ func (_CelerLedger *CelerLedgerFilterer) WatchOpenChannel(opts *bind.WatchOpts, 
 		tokenAddressRule = append(tokenAddressRule, tokenAddressItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.WatchLogs(opts, "OpenChannel", channelIdRule, tokenAddressRule)
+	logs, sub, err := _AgentPayLedger.contract.WatchLogs(opts, "OpenChannel", channelIdRule, tokenAddressRule)
 	if err != nil {
 		return nil, err
 	}
@@ -3193,8 +3193,8 @@ func (_CelerLedger *CelerLedgerFilterer) WatchOpenChannel(opts *bind.WatchOpts, 
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerLedgerOpenChannel)
-				if err := _CelerLedger.contract.UnpackLog(event, "OpenChannel", log); err != nil {
+				event := new(AgentPayLedgerOpenChannel)
+				if err := _AgentPayLedger.contract.UnpackLog(event, "OpenChannel", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -3218,18 +3218,18 @@ func (_CelerLedger *CelerLedgerFilterer) WatchOpenChannel(opts *bind.WatchOpts, 
 // ParseOpenChannel is a log parse operation binding the contract event 0x9d9f66221370175606b4085f28a419b201c9b6dafd9e0c4520e5bf69ea3e166d.
 //
 // Solidity: event OpenChannel(bytes32 indexed channelId, uint256 tokenType, address indexed tokenAddress, address[2] peerAddrs, uint256[2] initialDeposits)
-func (_CelerLedger *CelerLedgerFilterer) ParseOpenChannel(log types.Log) (*CelerLedgerOpenChannel, error) {
-	event := new(CelerLedgerOpenChannel)
-	if err := _CelerLedger.contract.UnpackLog(event, "OpenChannel", log); err != nil {
+func (_AgentPayLedger *AgentPayLedgerFilterer) ParseOpenChannel(log types.Log) (*AgentPayLedgerOpenChannel, error) {
+	event := new(AgentPayLedgerOpenChannel)
+	if err := _AgentPayLedger.contract.UnpackLog(event, "OpenChannel", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerLedgerOwnershipTransferredIterator is returned from FilterOwnershipTransferred and is used to iterate over the raw logs and unpacked data for OwnershipTransferred events raised by the CelerLedger contract.
-type CelerLedgerOwnershipTransferredIterator struct {
-	Event *CelerLedgerOwnershipTransferred // Event containing the contract specifics and raw log
+// AgentPayLedgerOwnershipTransferredIterator is returned from FilterOwnershipTransferred and is used to iterate over the raw logs and unpacked data for OwnershipTransferred events raised by the AgentPayLedger contract.
+type AgentPayLedgerOwnershipTransferredIterator struct {
+	Event *AgentPayLedgerOwnershipTransferred // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -3243,7 +3243,7 @@ type CelerLedgerOwnershipTransferredIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerLedgerOwnershipTransferredIterator) Next() bool {
+func (it *AgentPayLedgerOwnershipTransferredIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -3252,7 +3252,7 @@ func (it *CelerLedgerOwnershipTransferredIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerLedgerOwnershipTransferred)
+			it.Event = new(AgentPayLedgerOwnershipTransferred)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -3267,7 +3267,7 @@ func (it *CelerLedgerOwnershipTransferredIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerLedgerOwnershipTransferred)
+		it.Event = new(AgentPayLedgerOwnershipTransferred)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -3283,19 +3283,19 @@ func (it *CelerLedgerOwnershipTransferredIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerLedgerOwnershipTransferredIterator) Error() error {
+func (it *AgentPayLedgerOwnershipTransferredIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerLedgerOwnershipTransferredIterator) Close() error {
+func (it *AgentPayLedgerOwnershipTransferredIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerLedgerOwnershipTransferred represents a OwnershipTransferred event raised by the CelerLedger contract.
-type CelerLedgerOwnershipTransferred struct {
+// AgentPayLedgerOwnershipTransferred represents a OwnershipTransferred event raised by the AgentPayLedger contract.
+type AgentPayLedgerOwnershipTransferred struct {
 	PreviousOwner common.Address
 	NewOwner      common.Address
 	Raw           types.Log // Blockchain specific contextual infos
@@ -3304,7 +3304,7 @@ type CelerLedgerOwnershipTransferred struct {
 // FilterOwnershipTransferred is a free log retrieval operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
 // Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-func (_CelerLedger *CelerLedgerFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*CelerLedgerOwnershipTransferredIterator, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*AgentPayLedgerOwnershipTransferredIterator, error) {
 
 	var previousOwnerRule []interface{}
 	for _, previousOwnerItem := range previousOwner {
@@ -3315,17 +3315,17 @@ func (_CelerLedger *CelerLedgerFilterer) FilterOwnershipTransferred(opts *bind.F
 		newOwnerRule = append(newOwnerRule, newOwnerItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.FilterLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
+	logs, sub, err := _AgentPayLedger.contract.FilterLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerOwnershipTransferredIterator{contract: _CelerLedger.contract, event: "OwnershipTransferred", logs: logs, sub: sub}, nil
+	return &AgentPayLedgerOwnershipTransferredIterator{contract: _AgentPayLedger.contract, event: "OwnershipTransferred", logs: logs, sub: sub}, nil
 }
 
 // WatchOwnershipTransferred is a free log subscription operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
 // Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-func (_CelerLedger *CelerLedgerFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *CelerLedgerOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *AgentPayLedgerOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error) {
 
 	var previousOwnerRule []interface{}
 	for _, previousOwnerItem := range previousOwner {
@@ -3336,7 +3336,7 @@ func (_CelerLedger *CelerLedgerFilterer) WatchOwnershipTransferred(opts *bind.Wa
 		newOwnerRule = append(newOwnerRule, newOwnerItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.WatchLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
+	logs, sub, err := _AgentPayLedger.contract.WatchLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -3346,8 +3346,8 @@ func (_CelerLedger *CelerLedgerFilterer) WatchOwnershipTransferred(opts *bind.Wa
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerLedgerOwnershipTransferred)
-				if err := _CelerLedger.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+				event := new(AgentPayLedgerOwnershipTransferred)
+				if err := _AgentPayLedger.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -3371,18 +3371,18 @@ func (_CelerLedger *CelerLedgerFilterer) WatchOwnershipTransferred(opts *bind.Wa
 // ParseOwnershipTransferred is a log parse operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
 // Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-func (_CelerLedger *CelerLedgerFilterer) ParseOwnershipTransferred(log types.Log) (*CelerLedgerOwnershipTransferred, error) {
-	event := new(CelerLedgerOwnershipTransferred)
-	if err := _CelerLedger.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+func (_AgentPayLedger *AgentPayLedgerFilterer) ParseOwnershipTransferred(log types.Log) (*AgentPayLedgerOwnershipTransferred, error) {
+	event := new(AgentPayLedgerOwnershipTransferred)
+	if err := _AgentPayLedger.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerLedgerSnapshotStatesIterator is returned from FilterSnapshotStates and is used to iterate over the raw logs and unpacked data for SnapshotStates events raised by the CelerLedger contract.
-type CelerLedgerSnapshotStatesIterator struct {
-	Event *CelerLedgerSnapshotStates // Event containing the contract specifics and raw log
+// AgentPayLedgerSnapshotStatesIterator is returned from FilterSnapshotStates and is used to iterate over the raw logs and unpacked data for SnapshotStates events raised by the AgentPayLedger contract.
+type AgentPayLedgerSnapshotStatesIterator struct {
+	Event *AgentPayLedgerSnapshotStates // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -3396,7 +3396,7 @@ type CelerLedgerSnapshotStatesIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerLedgerSnapshotStatesIterator) Next() bool {
+func (it *AgentPayLedgerSnapshotStatesIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -3405,7 +3405,7 @@ func (it *CelerLedgerSnapshotStatesIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerLedgerSnapshotStates)
+			it.Event = new(AgentPayLedgerSnapshotStates)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -3420,7 +3420,7 @@ func (it *CelerLedgerSnapshotStatesIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerLedgerSnapshotStates)
+		it.Event = new(AgentPayLedgerSnapshotStates)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -3436,19 +3436,19 @@ func (it *CelerLedgerSnapshotStatesIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerLedgerSnapshotStatesIterator) Error() error {
+func (it *AgentPayLedgerSnapshotStatesIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerLedgerSnapshotStatesIterator) Close() error {
+func (it *AgentPayLedgerSnapshotStatesIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerLedgerSnapshotStates represents a SnapshotStates event raised by the CelerLedger contract.
-type CelerLedgerSnapshotStates struct {
+// AgentPayLedgerSnapshotStates represents a SnapshotStates event raised by the AgentPayLedger contract.
+type AgentPayLedgerSnapshotStates struct {
 	ChannelId [32]byte
 	SeqNums   [2]*big.Int
 	Raw       types.Log // Blockchain specific contextual infos
@@ -3457,31 +3457,31 @@ type CelerLedgerSnapshotStates struct {
 // FilterSnapshotStates is a free log retrieval operation binding the contract event 0xd0793cc4198bf052a6d91a9a1273c4af39f02a91b0e19029477511c278c5b271.
 //
 // Solidity: event SnapshotStates(bytes32 indexed channelId, uint256[2] seqNums)
-func (_CelerLedger *CelerLedgerFilterer) FilterSnapshotStates(opts *bind.FilterOpts, channelId [][32]byte) (*CelerLedgerSnapshotStatesIterator, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) FilterSnapshotStates(opts *bind.FilterOpts, channelId [][32]byte) (*AgentPayLedgerSnapshotStatesIterator, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
 		channelIdRule = append(channelIdRule, channelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.FilterLogs(opts, "SnapshotStates", channelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.FilterLogs(opts, "SnapshotStates", channelIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerSnapshotStatesIterator{contract: _CelerLedger.contract, event: "SnapshotStates", logs: logs, sub: sub}, nil
+	return &AgentPayLedgerSnapshotStatesIterator{contract: _AgentPayLedger.contract, event: "SnapshotStates", logs: logs, sub: sub}, nil
 }
 
 // WatchSnapshotStates is a free log subscription operation binding the contract event 0xd0793cc4198bf052a6d91a9a1273c4af39f02a91b0e19029477511c278c5b271.
 //
 // Solidity: event SnapshotStates(bytes32 indexed channelId, uint256[2] seqNums)
-func (_CelerLedger *CelerLedgerFilterer) WatchSnapshotStates(opts *bind.WatchOpts, sink chan<- *CelerLedgerSnapshotStates, channelId [][32]byte) (event.Subscription, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) WatchSnapshotStates(opts *bind.WatchOpts, sink chan<- *AgentPayLedgerSnapshotStates, channelId [][32]byte) (event.Subscription, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
 		channelIdRule = append(channelIdRule, channelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.WatchLogs(opts, "SnapshotStates", channelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.WatchLogs(opts, "SnapshotStates", channelIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -3491,8 +3491,8 @@ func (_CelerLedger *CelerLedgerFilterer) WatchSnapshotStates(opts *bind.WatchOpt
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerLedgerSnapshotStates)
-				if err := _CelerLedger.contract.UnpackLog(event, "SnapshotStates", log); err != nil {
+				event := new(AgentPayLedgerSnapshotStates)
+				if err := _AgentPayLedger.contract.UnpackLog(event, "SnapshotStates", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -3516,18 +3516,18 @@ func (_CelerLedger *CelerLedgerFilterer) WatchSnapshotStates(opts *bind.WatchOpt
 // ParseSnapshotStates is a log parse operation binding the contract event 0xd0793cc4198bf052a6d91a9a1273c4af39f02a91b0e19029477511c278c5b271.
 //
 // Solidity: event SnapshotStates(bytes32 indexed channelId, uint256[2] seqNums)
-func (_CelerLedger *CelerLedgerFilterer) ParseSnapshotStates(log types.Log) (*CelerLedgerSnapshotStates, error) {
-	event := new(CelerLedgerSnapshotStates)
-	if err := _CelerLedger.contract.UnpackLog(event, "SnapshotStates", log); err != nil {
+func (_AgentPayLedger *AgentPayLedgerFilterer) ParseSnapshotStates(log types.Log) (*AgentPayLedgerSnapshotStates, error) {
+	event := new(AgentPayLedgerSnapshotStates)
+	if err := _AgentPayLedger.contract.UnpackLog(event, "SnapshotStates", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// CelerLedgerVetoWithdrawIterator is returned from FilterVetoWithdraw and is used to iterate over the raw logs and unpacked data for VetoWithdraw events raised by the CelerLedger contract.
-type CelerLedgerVetoWithdrawIterator struct {
-	Event *CelerLedgerVetoWithdraw // Event containing the contract specifics and raw log
+// AgentPayLedgerVetoWithdrawIterator is returned from FilterVetoWithdraw and is used to iterate over the raw logs and unpacked data for VetoWithdraw events raised by the AgentPayLedger contract.
+type AgentPayLedgerVetoWithdrawIterator struct {
+	Event *AgentPayLedgerVetoWithdraw // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -3541,7 +3541,7 @@ type CelerLedgerVetoWithdrawIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CelerLedgerVetoWithdrawIterator) Next() bool {
+func (it *AgentPayLedgerVetoWithdrawIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -3550,7 +3550,7 @@ func (it *CelerLedgerVetoWithdrawIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CelerLedgerVetoWithdraw)
+			it.Event = new(AgentPayLedgerVetoWithdraw)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -3565,7 +3565,7 @@ func (it *CelerLedgerVetoWithdrawIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CelerLedgerVetoWithdraw)
+		it.Event = new(AgentPayLedgerVetoWithdraw)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -3581,19 +3581,19 @@ func (it *CelerLedgerVetoWithdrawIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CelerLedgerVetoWithdrawIterator) Error() error {
+func (it *AgentPayLedgerVetoWithdrawIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CelerLedgerVetoWithdrawIterator) Close() error {
+func (it *AgentPayLedgerVetoWithdrawIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CelerLedgerVetoWithdraw represents a VetoWithdraw event raised by the CelerLedger contract.
-type CelerLedgerVetoWithdraw struct {
+// AgentPayLedgerVetoWithdraw represents a VetoWithdraw event raised by the AgentPayLedger contract.
+type AgentPayLedgerVetoWithdraw struct {
 	ChannelId [32]byte
 	Raw       types.Log // Blockchain specific contextual infos
 }
@@ -3601,31 +3601,31 @@ type CelerLedgerVetoWithdraw struct {
 // FilterVetoWithdraw is a free log retrieval operation binding the contract event 0x9a8a5493b616f074b3f754b5fd66049c8e7980f01547289e5e31808485c6002c.
 //
 // Solidity: event VetoWithdraw(bytes32 indexed channelId)
-func (_CelerLedger *CelerLedgerFilterer) FilterVetoWithdraw(opts *bind.FilterOpts, channelId [][32]byte) (*CelerLedgerVetoWithdrawIterator, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) FilterVetoWithdraw(opts *bind.FilterOpts, channelId [][32]byte) (*AgentPayLedgerVetoWithdrawIterator, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
 		channelIdRule = append(channelIdRule, channelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.FilterLogs(opts, "VetoWithdraw", channelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.FilterLogs(opts, "VetoWithdraw", channelIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CelerLedgerVetoWithdrawIterator{contract: _CelerLedger.contract, event: "VetoWithdraw", logs: logs, sub: sub}, nil
+	return &AgentPayLedgerVetoWithdrawIterator{contract: _AgentPayLedger.contract, event: "VetoWithdraw", logs: logs, sub: sub}, nil
 }
 
 // WatchVetoWithdraw is a free log subscription operation binding the contract event 0x9a8a5493b616f074b3f754b5fd66049c8e7980f01547289e5e31808485c6002c.
 //
 // Solidity: event VetoWithdraw(bytes32 indexed channelId)
-func (_CelerLedger *CelerLedgerFilterer) WatchVetoWithdraw(opts *bind.WatchOpts, sink chan<- *CelerLedgerVetoWithdraw, channelId [][32]byte) (event.Subscription, error) {
+func (_AgentPayLedger *AgentPayLedgerFilterer) WatchVetoWithdraw(opts *bind.WatchOpts, sink chan<- *AgentPayLedgerVetoWithdraw, channelId [][32]byte) (event.Subscription, error) {
 
 	var channelIdRule []interface{}
 	for _, channelIdItem := range channelId {
 		channelIdRule = append(channelIdRule, channelIdItem)
 	}
 
-	logs, sub, err := _CelerLedger.contract.WatchLogs(opts, "VetoWithdraw", channelIdRule)
+	logs, sub, err := _AgentPayLedger.contract.WatchLogs(opts, "VetoWithdraw", channelIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -3635,8 +3635,8 @@ func (_CelerLedger *CelerLedgerFilterer) WatchVetoWithdraw(opts *bind.WatchOpts,
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CelerLedgerVetoWithdraw)
-				if err := _CelerLedger.contract.UnpackLog(event, "VetoWithdraw", log); err != nil {
+				event := new(AgentPayLedgerVetoWithdraw)
+				if err := _AgentPayLedger.contract.UnpackLog(event, "VetoWithdraw", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -3660,9 +3660,9 @@ func (_CelerLedger *CelerLedgerFilterer) WatchVetoWithdraw(opts *bind.WatchOpts,
 // ParseVetoWithdraw is a log parse operation binding the contract event 0x9a8a5493b616f074b3f754b5fd66049c8e7980f01547289e5e31808485c6002c.
 //
 // Solidity: event VetoWithdraw(bytes32 indexed channelId)
-func (_CelerLedger *CelerLedgerFilterer) ParseVetoWithdraw(log types.Log) (*CelerLedgerVetoWithdraw, error) {
-	event := new(CelerLedgerVetoWithdraw)
-	if err := _CelerLedger.contract.UnpackLog(event, "VetoWithdraw", log); err != nil {
+func (_AgentPayLedger *AgentPayLedgerFilterer) ParseVetoWithdraw(log types.Log) (*AgentPayLedgerVetoWithdraw, error) {
+	event := new(AgentPayLedgerVetoWithdraw)
+	if err := _AgentPayLedger.contract.UnpackLog(event, "VetoWithdraw", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log

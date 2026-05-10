@@ -18,18 +18,18 @@ where it interacts with the off-chain flow but does not restate it.
 
 ## What a "net" is
 
-A net is identified by `(chainId, CelerLedger)`. Given a `CelerLedger`
+A net is identified by `(chainId, AgentPayLedger)`. Given a `AgentPayLedger`
 deployment on a chain, every other contract in the net is derivable: the
 ledger's constructor binds `NativeWrap` (the chain's WETH-style wrapped-
-native contract), `PayRegistry`, and `CelerWallet`, and the `PayResolver`
+native contract), `PayRegistry`, and `AgentPayWallet`, and the `PayResolver`
 that feeds that `PayRegistry` (with its bound `VirtResolver`) is uniquely
 determined per deployment.
 
-Two OSPs are in the same net iff they boot against the same `CelerLedger`
+Two OSPs are in the same net iff they boot against the same `AgentPayLedger`
 address on the same chain. Channels can only be opened within a single net;
 cross-net pays travel between OSPs in different nets via bridge OSPs.
 
-Two `CelerLedger`s on the same chain are independent state machines with
+Two `AgentPayLedger`s on the same chain are independent state machines with
 disjoint channel namespaces — so they are different nets even though they
 share `chainId`.
 
@@ -44,7 +44,7 @@ short-circuit (e.g. `if dstNetId != 0` in
 
 Why `netId` is decoupled from `block.chainid`:
 
-1. **Contract upgrades on the same chain.** A `CelerLedger` redeployment
+1. **Contract upgrades on the same chain.** A `AgentPayLedger` redeployment
    produces a new net even though `chainId` is unchanged — the new ledger
    enforces `initializer.ledger_address == address(this)` and the matching
    `PayResolver` enforces `pay.payResolver == address(this)`, so signed
@@ -52,7 +52,7 @@ Why `netId` is decoupled from `block.chainid`:
    pair can carry pays across the upgrade window with each side configured
    for a different net that happens to share `chainId`.
 2. **Test harnesses.** `TestE2ECrossNet` deploys three independent
-   `CelerLedger`s on a single geth instance and routes pays across them as
+   `AgentPayLedger`s on a single geth instance and routes pays across them as
    three distinct nets. Without the netId / chainId decoupling, the test
    couldn't exist without spinning up three geth processes.
 
@@ -69,7 +69,7 @@ means same business entity, or two entities with strong off-chain agreement
 (escrow, periodic net-out, etc.).
 
 The cross-bridge link is **not a payment channel**. The two bridges live on
-different chains and cannot share a `CelerLedger` channel. They communicate
+different chains and cannot share a `AgentPayLedger` channel. They communicate
 over a direct gRPC stream (the `CelerStream` they hold for normal peer
 messaging, with the `MultiServer.FwdMsg` RPC as a fallback for messages that
 need to land on a specific OSP host within a multi-host deployment).

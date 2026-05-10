@@ -36,7 +36,7 @@ const (
 	MigrationStateSubmitted   int = 1
 )
 
-// MigrateChannelProcessor defines the structure of channel's CelerLedger migration processor
+// MigrateChannelProcessor defines the structure of channel's AgentPayLedger migration processor
 type MigrateChannelProcessor struct {
 	nodeConfig     common.GlobalNodeConfig
 	signer         eth.Signer
@@ -308,7 +308,7 @@ func (p *MigrateChannelProcessor) monitorOnDeprecatedLedgers() {
 	}
 }
 
-// monitorMigrateChannelEvent monitors onchain event emitted from CelerLedger
+// monitorMigrateChannelEvent monitors onchain event emitted from AgentPayLedger
 func (p *MigrateChannelProcessor) monitorMigrateChannelEvent(contract chain.Contract) {
 	monitorCfg := &monitor.Config{
 		ChainId:       config.ChainId.Uint64(),
@@ -321,7 +321,7 @@ func (p *MigrateChannelProcessor) monitorMigrateChannelEvent(contract chain.Cont
 		func(id monitor.CallbackID, eLog types.Log) bool {
 			// CAVEAT!!!: suppose we have the same struct for all migration event.
 			// If migration event struct changes, this monitor does not work.
-			e := &ledger.CelerLedgerMigrateChannelTo{}
+			e := &ledger.AgentPayLedgerMigrateChannelTo{}
 			if err := contract.ParseEvent(event.MigrateChannelTo, eLog, e); err != nil {
 				log.Error(err)
 				return false
