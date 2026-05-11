@@ -152,7 +152,7 @@ func sendPayTimeout(t *testing.T, tokenType entity.TokenType, tokenAddr string) 
 		return
 	}
 
-	// Wait past the pay deadline + receiver-side safe margin (CELER_PAY_RECV_SAFE_MARGIN_S=5
+	// Wait past the pay deadline + receiver-side safe margin (AGENTPAY_RECV_SAFE_MARGIN_S=5
 	// in TestMain) so SettleExpiredPays sees the pay as expired.
 	err = c1.WaitUntilDeadline(payTime + timeout + 10)
 	if err != nil {

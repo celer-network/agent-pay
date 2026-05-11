@@ -49,7 +49,7 @@ jobs:
 
     env:
       CGO_ENABLED: '1'
-      CELER_INSECURE_TLS: '1'
+      AGENTPAY_INSECURE_TLS: '1'
 
     steps:
       - name: Checkout

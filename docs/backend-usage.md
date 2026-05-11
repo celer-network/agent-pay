@@ -203,7 +203,7 @@ SQLite-backed example:
 ./run_osp.sh 2
 ```
 
-For localhost manual runs, `test/manual/run_osp.sh` defaults `CELER_INSECURE_TLS=1` so inter-OSP dials work with the built-in self-signed localhost certificate.
+For localhost manual runs, `test/manual/run_osp.sh` defaults `AGENTPAY_INSECURE_TLS=1` so inter-OSP dials work with the built-in self-signed localhost certificate.
 
 CockroachDB-backed example:
 
@@ -279,7 +279,7 @@ Optional phase-1 seller-OSP WebAPI listener for a same-host caller:
 -webapigrpc 127.0.0.1:12000
 ```
 
-If this process will dial localhost peers using the built-in localhost certificate, prefix the command with `CELER_INSECURE_TLS=1` unless you are using `test/manual/run_osp.sh`, which already does that for local manual runs.
+If this process will dial localhost peers using the built-in localhost certificate, prefix the command with `AGENTPAY_INSECURE_TLS=1` unless you are using `test/manual/run_osp.sh`, which already does that for local manual runs.
 
 For a CockroachDB-backed node, replace `-storedir` with `-storesql`:
 
@@ -322,13 +322,13 @@ The on-chain contracts use `block.timestamp` (unix seconds) for every challenge 
 - rtconfig `min_dispute_timeout` / `max_dispute_timeout` / `max_payment_timeout`
 - per-token rtconfig `min_deadline_delta` / `max_deadline_delta` (open-channel policy)
 - `config.OpenChannelTimeout`, `CooperativeWithdrawTimeout`, `PayResolveTimeout`, `AdminSendTokenTimeout`, `TcbTimeoutSeconds`
-- env-var safe-margin knobs (`CELER_PAY_RECV_SAFE_MARGIN_S`, `CELER_PAY_SEND_SAFE_MARGIN_S`, `CELER_WITHDRAW_SAFE_MARGIN_S`, default `60` each)
+- env-var safe-margin knobs (`AGENTPAY_RECV_SAFE_MARGIN_S`, `AGENTPAY_SEND_SAFE_MARGIN_S`, `AGENTPAY_WITHDRAW_SAFE_MARGIN_S`, default `60` each)
 
 When tuning rtconfig for a new chain, retune in seconds — not blocks. There is no implicit blocks-per-second multiplier in the off-chain code.
 
 #### Test environment overrides
 
-The e2e test harness sets `CELER_*_SAFE_MARGIN_S=5` in `TestMain` so the timeout-and-sweep flow runs in seconds instead of minutes. Production deployments should leave these unset (default `60`).
+The e2e test harness sets `AGENTPAY_*_SAFE_MARGIN_S=5` in `TestMain` so the timeout-and-sweep flow runs in seconds instead of minutes. Production deployments should leave these unset (default `60`).
 
 ## Server Flags That Matter Most
 
@@ -428,7 +428,7 @@ These clients still use the same backend protocol pipeline and storage model des
 
 ## Practical Notes
 
-- The e2e tests set `CELER_INSECURE_TLS=1` so localhost clients can talk to the server's built-in localhost certificate without CA setup.
+- The e2e tests set `AGENTPAY_INSECURE_TLS=1` so localhost clients can talk to the server's built-in localhost certificate without CA setup.
 - OSP routing behavior only becomes meaningful after the OSP is registered in the on-chain `RouterRegistry`.
 - The server starts periodic OSP cleanup that clears expired or on-chain-resolved payments with peer OSPs.
 - `rtconfig` is operationally important. Payment timeout, refill, and deposit behavior are not hardcoded solely in Go constants.

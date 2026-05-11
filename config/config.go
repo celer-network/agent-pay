@@ -45,10 +45,10 @@ var (
 
 	// Safe-margin knobs are env-var tunable so e2e tests can shrink them. Production
 	// defaults (60s) absorb chain-confirmation slack past a deadline; tests typically
-	// set CELER_*_SAFE_MARGIN_S=5 to keep the timeout-and-sweep flow snappy.
-	WithdrawTimeoutSafeMargin = envUint("CELER_WITHDRAW_SAFE_MARGIN_S", 60) // seconds
-	PaySendTimeoutSafeMargin  = envUint("CELER_PAY_SEND_SAFE_MARGIN_S", 60) // seconds
-	PayRecvTimeoutSafeMargin  = envUint("CELER_PAY_RECV_SAFE_MARGIN_S", 60) // seconds
+	// set AGENTPAY_*_SAFE_MARGIN_S=5 to keep the timeout-and-sweep flow snappy.
+	WithdrawTimeoutSafeMargin = envUint("AGENTPAY_WITHDRAW_SAFE_MARGIN_S", 60) // seconds
+	PaySendTimeoutSafeMargin  = envUint("AGENTPAY_SEND_SAFE_MARGIN_S", 60)     // seconds
+	PayRecvTimeoutSafeMargin  = envUint("AGENTPAY_RECV_SAFE_MARGIN_S", 60)     // seconds
 )
 
 const (
