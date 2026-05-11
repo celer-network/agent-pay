@@ -38,7 +38,7 @@ Then do the same for OSP2, run **`./osp-cli -profile $AGENTPAY_MANUAL_ROOT/profi
 
 Run **`./run_osp.sh 1`** and **`./run_osp.sh 2`** in two new terminals respectively to start OSP1 and OSP2. OSP data store is created at `$AGENTPAY_MANUAL_ROOT/store/[ospAddr]`.
 
-For local manual runs, `run_osp.sh` defaults `CELER_INSECURE_TLS=1` so inter-OSP dials work with the built-in self-signed localhost certificate. If you start the servers directly instead of using this script, set that env var yourself.
+For local manual runs, `run_osp.sh` defaults `AGENTPAY_INSECURE_TLS=1` so inter-OSP dials work with the built-in self-signed localhost certificate. If you start the servers directly instead of using this script, set that env var yourself.
 
 ### Option 2: use CockroachDB as storage backend (higher performance)
 

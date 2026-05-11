@@ -115,12 +115,12 @@ func GetClientTlsOption() grpc.DialOption {
 }
 
 func IsPermissiveClientTLS() bool {
-	v := os.Getenv("CELER_INSECURE_TLS")
+	v := os.Getenv("AGENTPAY_INSECURE_TLS")
 	return v == "1" || strings.EqualFold(v, "true")
 }
 
 // GetClientTlsOptionPermissive returns insecure transport credentials when the
-// environment variable CELER_INSECURE_TLS is set ("1"/"true"). This is useful
+// environment variable AGENTPAY_INSECURE_TLS is set ("1"/"true"). This is useful
 // for local e2e tests where the server uses a self-signed localhost certificate
 // that may not chain to CAs available to the client.
 func GetClientTlsOptionPermissive() grpc.DialOption {
@@ -149,7 +149,7 @@ func WrapLocalTLSDialError(target string, err error) error {
 	if err == nil || IsPermissiveClientTLS() || !IsLoopbackTarget(target) {
 		return err
 	}
-	return fmt.Errorf("%w; local TLS hint: %s uses the built-in self-signed localhost certificate, set CELER_INSECURE_TLS=1 on the dialing process or configure a trusted cert via -tlscert/-tlskey", err, target)
+	return fmt.Errorf("%w; local TLS hint: %s uses the built-in self-signed localhost certificate, set AGENTPAY_INSECURE_TLS=1 on the dialing process or configure a trusted cert via -tlscert/-tlskey", err, target)
 }
 
 // GetClientTlsConfig returns tls.Config with system and celerCA, for https interaction

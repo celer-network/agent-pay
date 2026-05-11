@@ -1,11 +1,11 @@
 #!/bin/sh
 
 MANUAL_ROOT="${AGENTPAY_MANUAL_ROOT:-/tmp/celer_manual_test}"
-LOCAL_INSECURE_TLS="${CELER_INSECURE_TLS:-1}"
+LOCAL_INSECURE_TLS="${AGENTPAY_INSECURE_TLS:-1}"
 
 run_osp_1() {
   echo "run OSP 1"
-  CELER_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
+  AGENTPAY_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
     -profile "${MANUAL_ROOT}/profile/o1_profile.json" \
     -ks "${AGENTPAY}/testing/env/keystore/osp1.json" \
     -port 10001 \
@@ -21,7 +21,7 @@ run_osp_1() {
 
 run_osp_1_crdb() {
   echo "run OSP 1 w/ cockroach db"
-  CELER_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
+  AGENTPAY_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
     -profile "${MANUAL_ROOT}/profile/o1_profile.json" \
     -ks "${AGENTPAY}/testing/env/keystore/osp1.json" \
     -port 10001 \
@@ -37,7 +37,7 @@ run_osp_1_crdb() {
 
 run_osp_2() {
   echo "run OSP 2"
-  CELER_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
+  AGENTPAY_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
     -profile "${MANUAL_ROOT}/profile/o2_profile.json" \
     -ks "${AGENTPAY}/testing/env/keystore/osp2.json" \
     -port 10002 \
@@ -53,7 +53,7 @@ run_osp_2() {
 
 run_osp_2_crdb() {
   echo "run OSP 2 w/ cockroach db"
-  CELER_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
+  AGENTPAY_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
     -profile "${MANUAL_ROOT}/profile/o2_profile.json" \
     -ks "${AGENTPAY}/testing/env/keystore/osp2.json" \
     -port 10002 \
@@ -69,7 +69,7 @@ run_osp_2_crdb() {
 
 run_osp_3() {
   echo "run OSP 3"
-  CELER_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
+  AGENTPAY_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
     -profile "${MANUAL_ROOT}/profile/o3_profile.json" \
     -ks "${AGENTPAY}/testing/env/keystore/osp3.json" \
     -port 10003 \
@@ -85,7 +85,7 @@ run_osp_3() {
 
 run_osp_3_crdb() {
   echo "run OSP 3 w/ cockroach db"
-  CELER_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
+  AGENTPAY_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
     -profile "${MANUAL_ROOT}/profile/o3_profile.json" \
     -ks "${AGENTPAY}/testing/env/keystore/osp3.json" \
     -port 10003 \
@@ -101,7 +101,7 @@ run_osp_3_crdb() {
 
 run_osp_4() {
   echo "run OSP 4"
-  CELER_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
+  AGENTPAY_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
     -profile "${MANUAL_ROOT}/profile/o4_profile.json" \
     -ks "${AGENTPAY}/testing/env/keystore/osp4.json" \
     -port 10004 \
@@ -117,7 +117,7 @@ run_osp_4() {
 
 run_osp_4_crdb() {
   echo "run OSP 4 w/ cockroach db"
-  CELER_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
+  AGENTPAY_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
     -profile "${MANUAL_ROOT}/profile/o4_profile.json" \
     -ks "${AGENTPAY}/testing/env/keystore/osp4.json" \
     -port 10004 \
@@ -133,7 +133,7 @@ run_osp_4_crdb() {
 
 run_osp_5() {
   echo "run OSP 5"
-  CELER_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
+  AGENTPAY_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
     -profile "${MANUAL_ROOT}/profile/o5_profile.json" \
     -ks "${AGENTPAY}/testing/env/keystore/osp5.json" \
     -port 10005 \
@@ -149,7 +149,7 @@ run_osp_5() {
 
 run_osp_5_crdb() {
   echo "run OSP 5 w/ cockroach db"
-  CELER_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
+  AGENTPAY_INSECURE_TLS="${LOCAL_INSECURE_TLS}" go run "${AGENTPAY}/server/server.go" \
     -profile "${MANUAL_ROOT}/profile/o5_profile.json" \
     -ks "${AGENTPAY}/testing/env/keystore/osp5.json" \
     -port 10005 \

@@ -137,7 +137,7 @@ Checks:
 Known-good local example:
 
 ```bash
-CELER_INSECURE_TLS=1 go run ./server/server.go \
+AGENTPAY_INSECURE_TLS=1 go run ./server/server.go \
   -profile $AGENTPAY_MANUAL_ROOT/profile/o1_profile.json \
   -ks ./testing/env/keystore/osp1.json \
   -port 10001 \
@@ -196,7 +196,7 @@ What these usually mean:
 
 - `celer stream already exists`: the server already has a live or remembered stream for that peer and RPC address.
 - `grpcDial ... failed`: the target host or port is wrong, the peer process is not listening, or TLS/networking is broken.
-- When the target is `localhost` or `127.0.0.1`, a dial timeout can also mean the process is using the built-in self-signed localhost certificate without `CELER_INSECURE_TLS=1` on the dialing side.
+- When the target is `localhost` or `127.0.0.1`, a dial timeout can also mean the process is using the built-in self-signed localhost certificate without `AGENTPAY_INSECURE_TLS=1` on the dialing side.
 - `waitRecvWithTimeout failed`: the transport connected, but the auth handshake did not complete.
 - `peer not online` or `no celer stream`: later traffic depends on a stream that was never established or was dropped.
 

@@ -45,7 +45,7 @@ Wire and admin contracts live in [proto/](proto) and [webapi/proto/](webapi/prot
 
 - **macOS amd64 cgo linker bug.** The local `go1.25.5` toolchain has been observed to fail with duplicate `runtime/cgo` symbols on this codebase (reproduces on trivial `import "C"` programs too — it's a toolchain issue, not a repo regression). Before `go build` / `go test`, export `GOTOOLCHAIN=go1.24.9` for the shell. Documented in [docs/backend-troubleshooting.md](docs/backend-troubleshooting.md).
 - **CGO is required for SQLite-backed builds.** `-storedir` mode fails fast with `sqlite3 requires cgo` if you accidentally build with `CGO_ENABLED=0`. CI sets `CGO_ENABLED=1` explicitly.
-- **`CELER_INSECURE_TLS=1` is normal for localhost.** Inter-OSP and client→OSP localhost dials use the built-in self-signed localhost cert; `test/manual/run_osp.sh` and the e2e harness already set this. Set it yourself when launching binaries directly against `localhost`/`127.0.0.1`.
+- **`AGENTPAY_INSECURE_TLS=1` is normal for localhost.** Inter-OSP and client→OSP localhost dials use the built-in self-signed localhost cert; `test/manual/run_osp.sh` and the e2e harness already set this. Set it yourself when launching binaries directly against `localhost`/`127.0.0.1`.
 - **e2e is slow.** CI gives the default suite 30 minutes (40-minute job cap) and crossnet 30/45. For a local validation loop, prefer the focused single-test runs in [AGENTS.md §Build And Test](AGENTS.md) over `go test ./test/e2e`. On failed runs the harness keeps `/tmp/celer_e2e_*` and prints a `-reuse` path — use it instead of paying the rebuild cost again.
 
 ## Logging convention
